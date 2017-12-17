@@ -18,7 +18,7 @@ public class MeshBuilder : MonoBehaviour {
         buildRoadMesh(ref mesh, stretch);
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
-        mesh.Optimize();
+        ;
         //var go = GameObject.Instantiate(gameObject);
         GetComponent<MeshFilter>().mesh = mesh;
         GetComponent<Renderer>().material.mainTexture.wrapMode = TextureWrapMode.Repeat;
@@ -52,7 +52,7 @@ public class MeshBuilder : MonoBehaviour {
             buildRoadMesh(ref mesh, l);
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-            mesh.Optimize();
+            ;
             go.GetComponent<MeshFilter>().mesh = mesh;
             go.GetComponent<Renderer>().material.mainTexture.wrapMode = TextureWrapMode.Repeat;
             //go.transform.position += 3 * (i++) * Vector3.up;
