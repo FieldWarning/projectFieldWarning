@@ -31,7 +31,8 @@ public class PlatoonBehaviour : SelectableBehavior {
         initialized = true;
 	}
 	void Update () {
-        if (!icon.isInitiated) icon.setSource(units);
+
+		if (!icon.isInitiated) icon.setSource(units);
         var pos=new Vector3();
         units.ForEach(x => pos += x.transform.position);
         transform.position = pos/units.Count;

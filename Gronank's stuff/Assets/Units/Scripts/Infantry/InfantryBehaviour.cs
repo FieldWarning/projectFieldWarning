@@ -25,6 +25,7 @@ public class InfantryBehaviour : UnitBehaviour {
         if (!init)
         {
             data = UnitData.Infantry();
+			base.setHealth(data.maxHealth); //health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
             buildMen();
             init = true;
         }

@@ -73,6 +73,7 @@ public class UIManagerBehaviour : MonoBehaviour
 
                 //Debug.Log(go.GetComponent<SelectableBehavior>().getPlatoon());
                 selected.Add(go.GetComponent<SelectableBehavior>().getPlatoon());
+
             }
         }
         selected.update(); ;
@@ -148,6 +149,26 @@ public class UIManagerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+		//////////////////////////////////////////////////////////////////////
+		// Temporary : for testing health until units can damage each other //
+		//////////////////////////////////////////////////////////////////////
+
+		if (Input.GetKey (KeyCode.Space)) 
+		{
+			foreach(var x in selected)
+			{
+				foreach(var y in x.units)
+				{
+					y.setHealth(y.getHealth () - 0.1f);
+					Debug.Log("hp : " + y.getHealth());
+				}
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////
+
         if (spawningUnits)
         {
 

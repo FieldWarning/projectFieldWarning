@@ -4,7 +4,7 @@ using System;
 
 public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 {
-    protected UnitData data;
+    public UnitData data;
     protected TerrainCollider Ground
     {
         get
@@ -23,6 +23,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
     PlatoonBehaviour platoon;
     public bool gotDestination = false;
     Terrain terrain;
+	float health;
     // Use this for initialization
     public void Start()
     {
@@ -30,6 +31,8 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
         transform.position = 100 * Vector3.down;
         enabled = false;
         height = 0;
+		data = UnitData.GenericUnit();
+		health = data.maxHealth; //set the health to 10 (from UnitData.cs)
         setVisible(false);
         
     }
@@ -38,6 +41,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
     public void Update()
     {
         //if (Input.GetKey(KeyCode.Space)) Debug.LogError();
+
         doMovement();
         updateMapOrientation();
     }
@@ -59,6 +63,16 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
     {
         platoon.getDestinationFromGhost();
     }*/
+
+	public float getHealth()
+	{
+		return health;
+	}
+	public void setHealth(float health)
+	{
+		this.health = health;
+	}
+
     public override PlatoonBehaviour getPlatoon()
     {
         return platoon;
