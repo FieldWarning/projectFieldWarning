@@ -5,5 +5,5 @@ Thumbs.db
 Gronank's stuff/*
 !Gronank's stuff/ProjectSettings/
 !Gronank's stuff/Assets/
-*.meta #redundent?
-*.pdb #redundent?
+*.meta #redundant?
+*.pdb #redundant?
