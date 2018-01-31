@@ -1,3 +1,9 @@
+#windows
 Thumbs.db
-*.meta
-*.pdb
+
+#unity
+Gronank's stuff/*
+!Gronank's stuff/ProjectSettings/
+!Gronank's stuff/Assets/
+*.meta #redundent?
+*.pdb #redundent?
