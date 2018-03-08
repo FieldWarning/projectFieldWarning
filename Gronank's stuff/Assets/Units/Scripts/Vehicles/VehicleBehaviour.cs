@@ -3,6 +3,9 @@ using System.Collections;
 
 public class VehicleBehaviour : UnitBehaviour {
     bool ordersDone;
+
+
+
 	// Use this for initialization
 	void Start () {
         data = UnitData.Tank();
@@ -12,7 +15,13 @@ public class VehicleBehaviour : UnitBehaviour {
 	// Update is called once per frame
 	void Update () {
         base.Update();
+
+
 	}
+
+
+
+
     protected override void doMovement()
     {
         ordersDone = false;

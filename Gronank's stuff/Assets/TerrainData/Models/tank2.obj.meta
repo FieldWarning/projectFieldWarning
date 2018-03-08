@@ -1,0 +1,129 @@
+fileFormatVersion: 2
+guid: 9fd18848516e1c54c9d50e7ea6e2caad
+timeCreated: 1463571514
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Hull_Cube.001_Hull
+    100002: Hull_Cube.001_Hull_NONE
+    100004: Hull_Cube.001_Hull_TrackSegment.png
+    100006: Hull_Cube.001_Hull_Untitled
+    100008: Hull_Cube.001_Track
+    100010: Hull_Cube.001_Track_track2.png
+    100012: Muzzle_Cube.002_None
+    100014: //RootNode
+    100016: Turret_Cube_Material
+    400000: Hull_Cube.001_Hull
+    400002: Hull_Cube.001_Hull_NONE
+    400004: Hull_Cube.001_Hull_TrackSegment.png
+    400006: Hull_Cube.001_Hull_Untitled
+    400008: Hull_Cube.001_Track
+    400010: Hull_Cube.001_Track_track2.png
+    400012: Muzzle_Cube.002_None
+    400014: //RootNode
+    400016: Turret_Cube_Material
+    2300000: Hull_Cube.001_Hull
+    2300002: Hull_Cube.001_Hull_NONE
+    2300004: Hull_Cube.001_Hull_TrackSegment.png
+    2300006: Hull_Cube.001_Hull_Untitled
+    2300008: Hull_Cube.001_Track
+    2300010: Hull_Cube.001_Track_track2.png
+    2300012: Muzzle_Cube.002_None
+    2300014: Turret_Cube_Material
+    3300000: Hull_Cube.001_Hull
+    3300002: Hull_Cube.001_Hull_NONE
+    3300004: Hull_Cube.001_Hull_TrackSegment.png
+    3300006: Hull_Cube.001_Hull_Untitled
+    3300008: Hull_Cube.001_Track
+    3300010: Hull_Cube.001_Track_track2.png
+    3300012: Muzzle_Cube.002_None
+    3300014: Turret_Cube_Material
+    4300000: Hull_Cube.001_Hull
+    4300002: Hull_Cube.001_Hull_NONE
+    4300004: Hull_Cube.001_Hull_TrackSegment.png
+    4300006: Hull_Cube.001_Hull_Untitled
+    4300008: Hull_Cube.001_Track
+    4300010: Hull_Cube.001_Track_track2.png
+    4300012: Muzzle_Cube.002_None
+    4300014: Turret_Cube_Material
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
