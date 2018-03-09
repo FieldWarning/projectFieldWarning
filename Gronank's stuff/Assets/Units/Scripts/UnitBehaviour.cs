@@ -64,17 +64,16 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	{
 		return IsAlive;
 	}
-//used in platoon behaviour to find destroyed unit
+	//used in platoon behaviour to find destroyed unit
 
 	public void SetNewHeathOrDestroy (int recivedDamage)
 	{
 		health -= recivedDamage; //This one should be self explanatory
 		if (health < 1) {
 			IsAlive = false;
-			this.transform.parent.GetComponent <PlatoonBehaviour> ().
+			//this.transform.parent.GetComponent <PlatoonBehaviour> ().
 			//parentscriptclass Platton=	GetComponentInParent (PlatoonBehaviour);
-
-
+		
 			Destroy (this.gameObject);
 
 			return;

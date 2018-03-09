@@ -27,9 +27,9 @@ public class PlatoonBehaviour : SelectableBehavior
 		icon = go.GetComponent<IconBehaviour> ();
 		icon.setUnit (this);
 		icon.setTeam (team);
-		if (team == "Red") {
+		/*if (team == "Red") {
 			this.tag = "EnemyUnit";//NOT WORKING-makes the red ones enemies for the damage system 
-		}
+		}*/
 		//enabled = false;
 		//setMembers(Resources.Load<GameObject>("Unit"), 4);
 		//nextWaypoint.destination = transform.position;
@@ -60,7 +60,7 @@ public class PlatoonBehaviour : SelectableBehavior
 	
 	}
 
-	bool RemoveDestroyedUnitFromList ()
+	void RemoveDestroyedUnitFromList ()
 	{
 
 		foreach (var __unit in units) {
@@ -68,6 +68,7 @@ public class PlatoonBehaviour : SelectableBehavior
 			if (__unit.GetIsAlive () == false) {
 				units.Remove (__unit);
 				Debug.Log ("Unit destroyed from platton");
+				return;
 			}
 
 		}
