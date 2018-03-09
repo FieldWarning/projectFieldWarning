@@ -19,17 +19,19 @@ public class PlatoonBehaviour : SelectableBehavior
 	public static float baseDistance = 4;
 	Team team;
 	public bool initialized = false;
+
+
+
 	// Use this for initialization
 	void Start ()
 	{
-		var go = GameObject.Instantiate (Resources.Load<GameObject> ("Icon"));
+		var go = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
 		go.transform.parent = transform;
-		icon = go.GetComponent<IconBehaviour> ();
-		icon.setUnit (this);
-		icon.setTeam (team);
-		/*if (team == "Red") {
-			this.tag = "EnemyUnit";//NOT WORKING-makes the red ones enemies for the damage system 
-		}*/
+		icon = go.GetComponent<IconBehaviour>();
+		icon.setUnit(this);
+		icon.setTeam(team);
+
+
 		//enabled = false;
 		//setMembers(Resources.Load<GameObject>("Unit"), 4);
 		//nextWaypoint.destination = transform.position;
@@ -44,7 +46,7 @@ public class PlatoonBehaviour : SelectableBehavior
 		var pos = new Vector3 ();
 		units.ForEach (x => pos += x.transform.position);
 		transform.position = pos / units.Count;
-		Debug.Log ("Unit count of paton" + GetInstanceID () + "Is " + units.Count ());
+		Debug.Log ("Unit count of platoon " + GetInstanceID () + " is " + units.Count ());
 		modules.ForEach (x => x.Update ());
 		//if (activeWaypoint == null) Debug.LogError("null");
 		if (activeWaypoint == null || activeWaypoint.orderComplete ()) {

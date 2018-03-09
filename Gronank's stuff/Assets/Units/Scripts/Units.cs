@@ -1,12 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public static class Units 
-{
-    public static GameObject getUnit(UnitType type)
-    {
-        switch (type)
-        {
+public static class Units {
+    public static GameObject getUnit(UnitType type) {
+        switch (type) {
             case UnitType.Tank:
                 return Resources.Load<GameObject>("Tank");
             case UnitType.AFV:
@@ -19,10 +15,8 @@ public static class Units
         }
         return null;
     }
-    public static GameObject tank
-    {
-        get
-        {
+    public static GameObject tank {
+        get {
             return Resources.Load<GameObject>("Unit");
         }
     }

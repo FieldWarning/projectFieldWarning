@@ -20,8 +20,6 @@ public class VehicleBehaviour : UnitBehaviour {
 	}
 
 
-
-
     protected override void doMovement()
     {
         ordersDone = false;

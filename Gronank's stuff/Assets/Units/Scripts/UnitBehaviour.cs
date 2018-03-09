@@ -27,9 +27,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	public float timeLeft;
 	bool IsAlive;
 	// Use this for initialization
-	public void Start ()
-	{
-		
+	public void Start () {		
 		destination = new Vector3 (100, 0, -100);
 		transform.position = 100 * Vector3.down;
 		enabled = false;
@@ -38,22 +36,20 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		timeLeft = (float)data.weapon.ReloadTime;
 		health = data.maxHealth; //set the health to 10 (from UnitData.cs)
 		IsAlive = true;
-		setVisible (false); 
-	}
+		setVisible (false);
+
+        // TODO refactor to explicitly tag enemy units when we add multiplayer
+        // TODO maybe refactor the constant out
+        this.tag = "Unit";
+    }
 
 	// Update is called once per frame
-	public void Update ()
-	{
+	public void Update() {
 		//if (Input.GetKey(KeyCode.Space)) Debug.LogError();
 
-		doMovement ();
-		updateMapOrientation ();
-		try {
-			FireWeapon (FindClosesetEnemy ());
-		} catch (Exception ex) {
-
-			Debug.Log ("No EnemyUnits found");
-		}
+		doMovement();
+		updateMapOrientation();
+		FireWeapon(FindClosestEnemy());
 
 	}
 
@@ -66,15 +62,13 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		return false;
 	}*/
 
-	public bool GetIsAlive ()
-	{
+	public bool GetIsAlive () {
 		return IsAlive;
 	}
 	//used in platoon behaviour to find destroyed unit
 
-	public void SetNewHeathOrDestroy (int recivedDamage)
-	{
-		health -= recivedDamage; //This one should be self explanatory
+	public void SetNewHeathOrDestroy (int receivedDamage) {
+		health -= receivedDamage; //This one should be self explanatory
 		if (health < 1) {
 			IsAlive = false;
 			//this.transform.parent.GetComponent <PlatoonBehaviour> ().
@@ -87,8 +81,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	}
 
 
-	public bool FireWeapon (GameObject target)
-	{
+	public bool FireWeapon(GameObject target) {
 		timeLeft -= Time.deltaTime;
 		//Debug.Log ("Reloadtime left::" + timeLeft); spams the console to much 
 		if (timeLeft < 0) {
@@ -97,18 +90,24 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 			Debug.Log ("weapon fired");
 	
 
-			System.Random rnd = new System.Random ();//generates random number between 1 and 100
-			int chance = rnd.Next (1, 100);
-			if (chance < data.weapon.Accuracy) {//if random number is under teh accuracy the shell hits 
+			System.Random rnd = new System.Random();
+			int chance = rnd.Next(1, 100);
+            //if random number is under the accuracy the shell hits:
+            if (chance < data.weapon.Accuracy) {
 
-				Debug.Log ("shot fired and hit");
-				target.GetComponent<UnitBehaviour> ().SetNewHeathOrDestroy (data.weapon.Damage);
+				Debug.Log("shot fired and hit");
+				target
+                    .GetComponent<UnitBehaviour>()
+                    .SetNewHeathOrDestroy(
+                    data
+                    .weapon
+                    .Damage);
 				timeLeft = (float)data.weapon.ReloadTime;
 				return true;
 			}
 
 			timeLeft = (float)data.weapon.ReloadTime;
-			Debug.Log ("shot fired and missed");
+			Debug.Log("shot fired and missed");
 			return false;
 
 		}
@@ -116,32 +115,29 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		return false;
 	}
 
-
-
-
-	public GameObject FindClosesetEnemy ()
-	{
-		GameObject[] Enemies = GameObject.FindGameObjectsWithTag ("EnemyUnit");//find all eenmies with teh eneym unit tag
+	public GameObject FindClosestEnemy() {
+        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
 		GameObject Target = null;
 
-		for (int i = 0; i < (int)Enemies.Length; i++) {
-			if (Enemies [i]) {
+        // TODO filter out friendlies
+		for (int i = 0; i < (int)units.Length; i++) {
+            // TODO is this C-style null check valid? I think not in C#..
+            if (units[i]) {
 
-				var distance = Vector3.Distance (Enemies [i].transform.position, transform.position);
-				if (distance < data.weapon.FireRange) {
-					Target = Enemies [i];//see if they are in range of weapon
+                // See if they are in range of weapon:
+                var distance = Vector3.Distance(units[i].transform.position, transform.position);
+                if (distance < data.weapon.FireRange) {
+                    return units[i];
 				}
 			}
-		}
-		return Target;
+        }
+        Debug.Log("null");
+        return Target;
 	}
 
+	public abstract void updateMapOrientation();
 
-
-	public abstract void updateMapOrientation ();
-
-	public void setPlatoon (PlatoonBehaviour p)
-	{
+	public void setPlatoon(PlatoonBehaviour p) {
 		platoon = p;
 	}
 	/*public override void setDestination(Vector3 v)
