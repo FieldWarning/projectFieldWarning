@@ -48,7 +48,13 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 
 		doMovement ();
 		updateMapOrientation ();
-		FireWeapon (FindClosesetEnemy ());
+		try {
+			FireWeapon (FindClosesetEnemy ());
+		} catch (Exception ex) {
+
+			Debug.Log ("No EnemyUnits found");
+		}
+
 	}
 
 	/*void Countdown (int reloadtime)
