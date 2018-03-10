@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 
-public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
-{
+public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3> {
 	public UnitData data;
 
 	protected TerrainCollider Ground {
@@ -28,8 +25,16 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	bool IsAlive;
 
 
-	// Use this for initialization
-	public void Start() {		
+    public AudioClip shotSound;
+    private AudioSource source;
+    // TODO we probably dont want random pitch, discuss
+    private float lowPitchRange = .75F;
+    private float highPitchRange = 1.5F;
+    private float shotVolume = .04F;
+
+
+    // Use this for initialization
+    public void Start() {		
 		destination = new Vector3(100, 0, -100);
 		transform.position = 100 * Vector3.down;
 		enabled = false;
@@ -43,6 +48,8 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
         // TODO refactor to explicitly tag enemy units when we add multiplayer
         // TODO maybe refactor the constant out
         this.tag = "Unit";
+
+        source = GetComponent<AudioSource>();
     }
 
 	// Update is called once per frame
@@ -53,8 +60,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		FireWeapon(FindClosestEnemy());
 	}
 
-	/*void Countdown (int reloadtime)
-	{
+	/*void Countdown (int reloadtime) {
 		for (int i = 1; i >= 0; i -= 1) {
 
 			yield return false;
@@ -85,15 +91,17 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		}
 	}
 
-
 	public bool FireWeapon(GameObject target) {
 		timeLeft -= Time.deltaTime;
 
 		if (timeLeft < 0) {
 		
-			Debug.Log ("weapon fired");	
+			Debug.Log ("weapon fired");
 
-			System.Random rnd = new System.Random();
+            source.pitch = Random.Range(lowPitchRange, highPitchRange);
+            source.PlayOneShot(shotSound, shotVolume);
+
+            System.Random rnd = new System.Random();
 			int chance = rnd.Next(1, 100);
             if (chance < data.weapon.Accuracy) {
 
@@ -206,7 +214,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 			setLayer(LayerMask.NameToLayer("Ignore Raycast"));
 		}
 	}
-
+    
 	protected float unwrap(float f)	{
 		while (f > Mathf.PI)
 			f -= 2 * Mathf.PI;

@@ -7,7 +7,7 @@ using System;
 public class UIManagerBehaviour : MonoBehaviour {
 
     // Use this for initialization
-    public static Team currentTeam=Team.Red;
+    public static Team currentTeam = Team.Red;
     Vector3 destination;
     Vector3 boxSelectStart;
     public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();//new List<GameObject>();
@@ -60,55 +60,46 @@ public class UIManagerBehaviour : MonoBehaviour {
         
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore))
-        {
+        if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
             Debug.Log("Selectable");
             var go = hit.transform.gameObject;
 
-            if (go.GetComponent<SelectableBehavior>())
-            {
+            if (go.GetComponent<SelectableBehavior>()) {
 
                 //Debug.Log(go.GetComponent<SelectableBehavior>().getPlatoon());
                 selected.Add(go.GetComponent<SelectableBehavior>().getPlatoon());
-
             }
         }
         selected.update();
     }
 
-    void onSelectLongClick()
-    {
+    void onSelectLongClick() {
         if (!Input.GetKey(KeyCode.LeftShift)) selected.Clear();
         selected.AddRange(boxSelectManager.endDrag());
         selected.update();
     }
 
-    void onOrderStart()
-    {
+    void onOrderStart() {
         RaycastHit hit;
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore))
-        {
+        if (getTerrainClickLocation(out hit)) {
             Vector3 com = selected.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll<GhostPlatoonBehaviour>(x => x.ghostPlatoon);
             arrangeGhosts(hit.point, 2 * hit.point - com, ghosts);
             destination = hit.point;
         }
     }
-    void onOrderHold()
-    {
+
+    void onOrderHold() {
         RaycastHit hit;
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore))
-        {
+        if (getTerrainClickLocation(out hit)) {
 
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.ghostPlatoon);
             ghosts.ForEach(x => x.setVisible(true));
             arrangeGhosts(destination, hit.point, ghosts);
         }
     }
-    void onOrderShortClick()
-    {
+
+    void onOrderShortClick() {
         var destinations = selected.ConvertAll(x => x.ghostPlatoon.transform.position);
         var shift = Input.GetKey(KeyCode.LeftShift);
         selected.ForEach(x => x.movement.beginQueueing(shift));
@@ -122,15 +113,13 @@ public class UIManagerBehaviour : MonoBehaviour {
             var behaviour = go.GetComponent<SelectableBehavior>().getPlatoon();
             behaviour.getDestinationFromGhost();
         }*/
-        if (!shift && !Options.StickySelection) selected.endSelection();
-
+        if (!shift && !Options.StickySelection)
+            selected.endSelection();
     }
-    void onOrderLongClick()
-    {
+
+    void onOrderLongClick() {
         RaycastHit hit;
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore))
-        {
+        if (getTerrainClickLocation(out hit)) {
             var shift = Input.GetKey(KeyCode.LeftShift);
             selected.ForEach(x => x.movement.beginQueueing(shift));
             var destinations = selected.ConvertAll(x => x.ghostPlatoon.transform.position);
@@ -145,21 +134,18 @@ public class UIManagerBehaviour : MonoBehaviour {
             if (!shift && !Options.StickySelection) selected.endSelection();
         }
     }
+
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
 
 		//////////////////////////////////////////////////////////////////////
 		// Temporary : for testing health until units can damage each other //
 		//////////////////////////////////////////////////////////////////////
 
-		if (Input.GetKey (KeyCode.Space)) 
-		{
-			foreach(var x in selected)
-			{
-				foreach(var y in x.units)
-				{
-					y.setHealth(y.getHealth () - 0.1f);
+		if (Input.GetKey (KeyCode.Space)) {
+			foreach(var x in selected) {
+				foreach(var y in x.units) {
+					y.setHealth(y.getHealth() - 0.1f);
 					Debug.Log("hp : " + y.getHealth());
 				}
 			}
@@ -168,67 +154,57 @@ public class UIManagerBehaviour : MonoBehaviour {
 		//////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////
 
-        if (spawningUnits)
-        {
+        if (spawningUnits) {
 
             RaycastHit hit;
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            if (Input.GetMouseButtonUp(0) && enteringSpawning)
-            {
+            if (Input.GetMouseButtonUp(0) && enteringSpawning) {
                 enteringSpawning = false;
-            }
-            else if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore) && hit.transform.gameObject.name.Equals("Terrain"))
-            {
+            } else if (getTerrainClickLocation(out hit)
+                && hit.transform.gameObject.name.Equals("Terrain")) {
+
                 arrangeToBeSpawned(hit.point);
 
-                if (Input.GetMouseButtonUp(0) && !enteringSpawning)
-                {
+                if (Input.GetMouseButtonUp(0) && !enteringSpawning) {
                     var spawnPoint = getClosestSpawn(hit.point);
                     var realPlatoons = spawnList.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
 
                     spawnPoint.updateQueue(realPlatoons);
-                    if (Input.GetKey(KeyCode.LeftShift))
-                    {
+                    if (Input.GetKey(KeyCode.LeftShift)) {
                         replaceSpawnList();
                     }
-                    else
-                    {
+                    else {
                         spawnList.Clear();
                         spawningUnits = false;
                     }
                 }
-
-
             }
 
             if (Input.GetMouseButton(1))
-            {
                 destroySpawning();
-            }
-        }
-        else
-        {
+            
+        } else {
 
-            if (!selectMode.IsActive) orderMode.Update();
-            if (!orderMode.IsActive) selectMode.Update();
+            if (!selectMode.IsActive)
+                orderMode.Update();
+            if (!orderMode.IsActive)
+                selectMode.Update();
             processCommands();
-
         }
     }
-    public void buildTanks()
-    {
+
+    public void buildTanks() {
         buildUnit(UnitType.Tank);
     }
-    public void buildInfantry()
-    {
+
+    public void buildInfantry() {
         buildUnit(UnitType.Infantry);
     }
-    public void buildAFV()
-    {
+
+    public void buildAFV() {
         buildUnit(UnitType.AFV);
     }
-    public void buildUnit(UnitType t)
-    {
+
+    public void buildUnit(UnitType t) {
         var behaviour = GhostPlatoonBehaviour.build(t, currentTeam, 4);
         addSpawn(behaviour);
     }
@@ -236,24 +212,22 @@ public class UIManagerBehaviour : MonoBehaviour {
 
 
 
-    private void addSpawn(GhostPlatoonBehaviour g)
-    {
+    private void addSpawn(GhostPlatoonBehaviour g) {
         spawningUnits = true;
         enteringSpawning = true;
         spawnList.Add(g);
     }
-    private void replaceSpawnList()
-    {
+
+    private void replaceSpawnList() {
         var count = spawnList.Count;
         spawnList.Clear();
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             buildTanks();
         }
         enteringSpawning = false;
     }
-    private void arrangeToBeSpawned(Vector3 point)
-    {
+
+    private void arrangeToBeSpawned(Vector3 point) {
         arrangeGhosts(point, 2 * point - getClosestSpawn(point).transform.position, spawnList);
         /*if (spawnList.Count == 0) return;
         Vector3 forward = (point - getClosestSpawn(point).transform.position);
@@ -288,50 +262,43 @@ public class UIManagerBehaviour : MonoBehaviour {
             units[i].GetComponent<GhostPlatoonBehaviour>().setOrientation(pos - i * unitDistance * right, heading);        
     }
 
-    private void destroySpawning()
-    {
-        foreach (var p in spawnList)
-        {
+    private void destroySpawning() {
+        foreach (var p in spawnList) {
             p.GetComponent<GhostPlatoonBehaviour>().destroy();
         }
         spawnList.Clear();
     }
-    private SpawnPointBehaviour getClosestSpawn(Vector3 p)
-    {
+
+    private SpawnPointBehaviour getClosestSpawn(Vector3 p) {
         var pointList = spawnPointList[currentTeam];
         SpawnPointBehaviour go = pointList[0];
         float distance = Single.PositiveInfinity;
-        foreach (var s in pointList)
-        {
-            if (Vector3.Distance(p, s.transform.position) < distance)
-            {
+        foreach (var s in pointList) {
+            if (Vector3.Distance(p, s.transform.position) < distance) {
                 distance = Vector3.Distance(p, s.transform.position);
                 go = s;
             }
         }
         return go;
     }
-    public static void addSpawnPoint(SpawnPointBehaviour s)
-    {
-        if (!spawnPointList.ContainsKey(s.team))
-        {
+
+    public static void addSpawnPoint(SpawnPointBehaviour s) {
+        if (!spawnPointList.ContainsKey(s.team)) {
             spawnPointList.Add(s.team, new List<SpawnPointBehaviour>());
         }
         spawnPointList[s.team].Add(s);
     }
-    public void processCommands()
-    {
-        if (Commands.unload())
-        {
-            foreach (var t in selected.ConvertAll(x => x.transporter).Where((x, i) => x != null))
-            {
+
+    public void processCommands() {
+        if (Commands.unload()) {
+            foreach (var t in selected.ConvertAll(x => x.transporter).Where((x, i) => x != null)) {
                 t.beginQueueing(Input.GetKey(KeyCode.LeftShift));
                 t.unload();
                 t.endQueueing();
             }
         }
-        else if (Commands.load())
-        {
+
+        else if (Commands.load()) {
             
             var transporters = selected.ConvertAll(x => x.transporter).Where((x, i) => x != null).Where(x=>x.transported==null).ToList();
             var infantry = selected.ConvertAll(x => x.transportable).Where((x, i) => x != null).ToList();
@@ -342,20 +309,24 @@ public class UIManagerBehaviour : MonoBehaviour {
             //transporters.ForEach(x => x.endQueueing());  
         }
     }
+
+    bool getTerrainClickLocation(out RaycastHit hit) {
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
+    }        
 }
-public class Commands
-{
-    public static bool unload()
-    {
+
+public class Commands {
+    public static bool unload() {
         return Input.GetKeyDown(Hotkeys.Unload);
     }
-    public static bool load()
-    {
+
+    public static bool load() {
         return Input.GetKeyDown(Hotkeys.Load);
     }
 }
-public class Hotkeys
-{
+
+public class Hotkeys {
     public static KeyCode Unload = KeyCode.U;
     public static KeyCode Load = KeyCode.L;
 }
