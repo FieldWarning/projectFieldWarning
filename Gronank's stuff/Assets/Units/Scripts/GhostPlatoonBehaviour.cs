@@ -32,6 +32,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
             _setIgnoreRaycast(raycastIgnore);
         }
 	}
+
     public void initializeIcon() {
         if (!initIcon) {
             initIcon = true;
@@ -42,8 +43,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
             icon.transform.parent = transform;
         }
     }
-    public void initialize()
-    {
+
+    public void initialize() {
         if (!init) {
             
             init = true;
@@ -52,10 +53,10 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
 
             //setMembers(Resources.Load<GameObject>("Unit"), 4);
             setOrientation(new Vector3(), 0);
-
         }
     }
-    public PlatoonBehaviour getRealPlatoon(){
+
+    public PlatoonBehaviour getRealPlatoon() {
         if (platoonBehaviour == null)
             buildRealPlatoon();
         

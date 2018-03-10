@@ -77,6 +77,11 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		
 			Destroy(this.gameObject);
 
+            // TODO destroy ghosts too
+            if (platoon.units.Count == 0) {
+                Destroy(platoon.gameObject);
+            }
+
 			return;
 		}
 	}
