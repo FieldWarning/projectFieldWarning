@@ -93,7 +93,7 @@ public class TerrainData{
             }
             i++;
         }
-        Debug.Log(score);
+        //Debug.Log(score);
         return score;
     }
     static bool inBounds(Vector3 position)

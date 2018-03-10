@@ -5,18 +5,18 @@ using System.Linq;
 using System;
 
 public class PlatoonBehaviour : SelectableBehavior {
-	public UnitType type;
-	public List<PlatoonModule> modules = new List<PlatoonModule>();
-	public List<UnitBehaviour> units = new List<UnitBehaviour>();
-	public Queue<Waypoint> waypoints = new Queue<Waypoint>();
-	private Waypoint activeWaypoint;
-	public MovementModule movement;
-	public TransporterModule transporter;
-	public TransportableModule transportable;
-	public GhostPlatoonBehaviour ghostPlatoon;
-	public IconBehaviour icon;
-	public static float baseDistance = 4;
-	Team team;
+    public UnitType type;
+    public List<PlatoonModule> modules = new List<PlatoonModule>();
+    public List<UnitBehaviour> units = new List<UnitBehaviour>();
+    public Queue<Waypoint> waypoints = new Queue<Waypoint>();
+    private Waypoint activeWaypoint;
+    public MovementModule movement;
+    public TransporterModule transporter;
+    public TransportableModule transportable;
+    public GhostPlatoonBehaviour ghostPlatoon;
+    public IconBehaviour icon;
+    public static float baseDistance = 4;
+    public Team team { get; private set; }
 	public bool initialized = false;
 
 
@@ -39,14 +39,14 @@ public class PlatoonBehaviour : SelectableBehavior {
 	void Update() {
 
 		if (!icon.isInitiated)
-			icon.setSource (units);
+			icon.setSource(units);
 		var pos = new Vector3();
-		units.ForEach (x => pos += x.transform.position);
+		units.ForEach(x => pos += x.transform.position);
 		transform.position = pos / units.Count;
-		Debug.Log ("Unit count of platoon " + GetInstanceID () + " is " + units.Count ());
-		modules.ForEach (x => x.Update ());
-		//if (activeWaypoint == null) Debug.LogError("null");
-		if (activeWaypoint == null || activeWaypoint.orderComplete ()) {
+		//Debug.Log("Unit count of platoon " + GetInstanceID() + " is " + units.Count());
+		modules.ForEach(x => x.Update());
+
+		if (activeWaypoint == null || activeWaypoint.orderComplete()) {
 			if (waypoints.Count > 0) {
 				activeWaypoint = waypoints.Dequeue ();
 				activeWaypoint.processWaypoint ();
