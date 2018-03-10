@@ -7,6 +7,7 @@ public class IconBehaviour : SelectableBehavior
     int layer=-1;
     public PlatoonBehaviour unit;
     GameObject camera;
+
     SymbolBehaviour symbol
     {
         get
@@ -19,6 +20,7 @@ public class IconBehaviour : SelectableBehavior
         }
     }
     SymbolBehaviour _symbol;
+
     Transform billboard{
         get{
             if(_billboard==null){
@@ -28,20 +30,23 @@ public class IconBehaviour : SelectableBehavior
         }
     }
     Transform _billboard;
+
     float height = 1f;
     float size = 0.1f;
     public bool isInitiated = false;
     private bool init = false;
     Color baseColor = Color.blue;
     bool visible = true;
+
+
 	// Use this for initialization
 	void Start () {
         camera = GameObject.Find("Main Camera");
         //billboard.transform.localPosition = billboard.GetComponent<Renderer>().bounds.extents.y * Vector3.up;
         billboard.GetComponent<Renderer>().material.color = baseColor;
-        if(layer!=-1)setLayer(layer);
+        if (layer!=-1)
+            setLayer(layer);
         setSelected(false);
-        
 	}
 	
 	// Update is called once per frame

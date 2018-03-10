@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class UIManagerBehaviour : MonoBehaviour
-{
+public class UIManagerBehaviour : MonoBehaviour {
 
     // Use this for initialization
     public static Team currentTeam=Team.Red;
@@ -22,8 +21,9 @@ public class UIManagerBehaviour : MonoBehaviour
     ClickManager selectMode = new ClickManager();
     ClickManager orderMode = new ClickManager();
     public static BoxSelectManager boxSelectManager;
-    void Start()
-    {
+
+
+    void Start() {
         boxSelectManager = new BoxSelectManager();
         camera = Camera.main.GetComponent<Camera>();
 
@@ -40,27 +40,24 @@ public class UIManagerBehaviour : MonoBehaviour
         orderMode.OnHoldClick = onOrderHold;
         orderMode.OnShortClick = onOrderShortClick;
         orderMode.OnLongClick = onOrderLongClick;
-
-
     }
-    void OnGUI()
-    {
+
+    void OnGUI() {
         if (boxSelectManager != null) boxSelectManager.OnGui();
     }
-    void onSelectStart()
-    {
+
+    void onSelectStart() {
         boxSelectManager.startDrag();
     }
-    void onSelectHold()
-    {
+
+    void onSelectHold() {
         boxSelectManager.updateDrag();
     }
-    void onSelectShortClick()
-    {
+
+    void onSelectShortClick() {
         if (!Input.GetKey(KeyCode.LeftShift))
-        {
             selected.endSelection();
-        }
+        
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore))
@@ -76,14 +73,16 @@ public class UIManagerBehaviour : MonoBehaviour
 
             }
         }
-        selected.update(); ;
+        selected.update();
     }
+
     void onSelectLongClick()
     {
         if (!Input.GetKey(KeyCode.LeftShift)) selected.Clear();
         selected.AddRange(boxSelectManager.endDrag());
         selected.update();
     }
+
     void onOrderStart()
     {
         RaycastHit hit;
@@ -272,15 +271,13 @@ public class UIManagerBehaviour : MonoBehaviour
         }*/
     }
 
-    private static void arrangeGhosts(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units)
-    {
+    private static void arrangeGhosts(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units) {
 
         var diff = facingPoint - position;
         arrangeGhosts(position, diff.getRadianAngle(), units);
-
     }
-    private static void arrangeGhosts(Vector3 position, float heading, List<GhostPlatoonBehaviour> units)
-    {
+
+    private static void arrangeGhosts(Vector3 position, float heading, List<GhostPlatoonBehaviour> units) {
 
         Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
@@ -288,10 +285,9 @@ public class UIManagerBehaviour : MonoBehaviour
         var right = Vector3.Cross(forward, Vector3.up);
         var pos = position + unitDistance * (formationWidth - 1) * right / 2f;
         for (var i = 0; i < formationWidth; i++)
-        {
-            units[i].GetComponent<GhostPlatoonBehaviour>().setOrientation(pos - i * unitDistance * right, heading);
-        }
+            units[i].GetComponent<GhostPlatoonBehaviour>().setOrientation(pos - i * unitDistance * right, heading);        
     }
+
     private void destroySpawning()
     {
         foreach (var p in spawnList)

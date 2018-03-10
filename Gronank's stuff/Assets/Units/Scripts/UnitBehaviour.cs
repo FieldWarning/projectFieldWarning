@@ -26,6 +26,8 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	float health;
 	public float timeLeft;
 	bool IsAlive;
+
+
 	// Use this for initialization
 	public void Start () {		
 		destination = new Vector3 (100, 0, -100);
@@ -71,10 +73,9 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		health -= receivedDamage; //This one should be self explanatory
 		if (health < 1) {
 			IsAlive = false;
-			//this.transform.parent.GetComponent <PlatoonBehaviour> ().
-			//parentscriptclass Platton=	GetComponentInParent (PlatoonBehaviour);
+            platoon.units.Remove(this);
 		
-			Destroy (this.gameObject);
+			Destroy(this.gameObject);
 
 			return;
 		}
@@ -85,7 +86,6 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		timeLeft -= Time.deltaTime;
 		//Debug.Log ("Reloadtime left::" + timeLeft); spams the console to much 
 		if (timeLeft < 0) {
-			
 		
 			Debug.Log ("weapon fired");
 	
@@ -96,12 +96,8 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
             if (chance < data.weapon.Accuracy) {
 
 				Debug.Log("shot fired and hit");
-				target
-                    .GetComponent<UnitBehaviour>()
-                    .SetNewHeathOrDestroy(
-                    data
-                    .weapon
-                    .Damage);
+				target.GetComponent<UnitBehaviour>()
+                    .SetNewHeathOrDestroy(data.weapon.Damage);
 				timeLeft = (float)data.weapon.ReloadTime;
 				return true;
 			}

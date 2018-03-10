@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class PlatoonBehaviour : SelectableBehavior
-{
+public class PlatoonBehaviour : SelectableBehavior {
 	public UnitType type;
-	public List<PlatoonModule> modules = new List<PlatoonModule> ();
-	public List<UnitBehaviour> units = new List<UnitBehaviour> ();
-	public Queue<Waypoint> waypoints = new Queue<Waypoint> ();
+	public List<PlatoonModule> modules = new List<PlatoonModule>();
+	public List<UnitBehaviour> units = new List<UnitBehaviour>();
+	public Queue<Waypoint> waypoints = new Queue<Waypoint>();
 	private Waypoint activeWaypoint;
 	public MovementModule movement;
 	public TransporterModule transporter;
@@ -23,8 +22,7 @@ public class PlatoonBehaviour : SelectableBehavior
 
 
 	// Use this for initialization
-	void Start ()
-	{
+	void Start() {
 		var go = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
 		go.transform.parent = transform;
 		icon = go.GetComponent<IconBehaviour>();
@@ -38,12 +36,11 @@ public class PlatoonBehaviour : SelectableBehavior
 		initialized = true;
 	}
 
-	void Update ()
-	{
+	void Update() {
 
 		if (!icon.isInitiated)
 			icon.setSource (units);
-		var pos = new Vector3 ();
+		var pos = new Vector3();
 		units.ForEach (x => pos += x.transform.position);
 		transform.position = pos / units.Count;
 		Debug.Log ("Unit count of platoon " + GetInstanceID () + " is " + units.Count ());
@@ -58,74 +55,67 @@ public class PlatoonBehaviour : SelectableBehavior
 				units.ForEach (x => x.gotDestination = false);
 			}
 			//setFinalOrientation(waypoint.destination,waypoint.heading);
-		}
-	
+		}	
 	}
 
-	void RemoveDestroyedUnitFromList ()
-	{
-
+	void RemoveDestroyedUnitFromList() {
 		foreach (var __unit in units) {
 
-			if (__unit.GetIsAlive () == false) {
-				units.Remove (__unit);
-				Debug.Log ("Unit destroyed from platton");
-				return;
+            if (!__unit.GetIsAlive()) {
+				units.Remove(__unit);
+				Debug.Log("Unit destroyed from platoon");
+                return;
 			}
-
 		}
-
 	}
 
 
-	public void buildModules (UnitType t)
-	{
-		movement = new MovementModule (this);
-		modules.Add (movement);
+	public void buildModules(UnitType t) {
+		movement = new MovementModule(this);
+		modules.Add(movement);
 		if (t == UnitType.AFV) {
-			transporter = new TransporterModule (this);
-			modules.Add (transporter);
+			transporter = new TransporterModule(this);
+			modules.Add(transporter);
 		}
 		if (t == UnitType.Infantry) {
-			transportable = new TransportableModule (this);
-			modules.Add (transportable);
+			transportable = new TransportableModule(this);
+			modules.Add(transportable);
 		}
 	}
 
-	public void setMembers (UnitType t, Team team, int n)
-	{
-		UIManagerBehaviour.boxSelectManager.allUnits.Add (this);
+	public void setMembers(UnitType t, Team team, int n) {
+
+		UIManagerBehaviour.boxSelectManager.allUnits.Add(this);
 		type = t;
 		this.team = team;
-		var g = Units.getUnit (t);
+		var g = Units.getUnit(t);
 		for (int i = 0; i < n; i++) {
-			GameObject go = GameObject.Instantiate (g);
-			var unitBehaviour = go.GetComponent<UnitBehaviour> ();
-			unitBehaviour.setPlatoon (this);
-			units.Add (unitBehaviour);
-		}
-		buildModules (t);
+			GameObject go = GameObject.Instantiate(g);
+			var unitBehaviour = go.GetComponent<UnitBehaviour>();
+			unitBehaviour.setPlatoon(this);
+			units.Add(unitBehaviour);
+            //go.transform.parent = this.transform;
+        }
+
+		buildModules(t);
 		if (t == UnitType.AFV) {
-			var ghost = GhostPlatoonBehaviour.build (UnitType.Infantry, team, n);            
-			transporter.setTransported (ghost.getRealPlatoon ());
-			ghost.setOrientation (100 * Vector3.down, 0);
-			ghost.setVisible (false);
+			var ghost = GhostPlatoonBehaviour.build(UnitType.Infantry, team, n);            
+			transporter.setTransported(ghost.getRealPlatoon());
+			ghost.setOrientation(100 * Vector3.down, 0);
+			ghost.setVisible(false);
 		}
-		movement.setDestination (Vector3.forward);
+		movement.setDestination(Vector3.forward);
 	}
 
-	public void setGhostPlatoon (GhostPlatoonBehaviour obj)
-	{
+	public void setGhostPlatoon(GhostPlatoonBehaviour obj)	{
 		ghostPlatoon = obj;
 	}
 
-	public override PlatoonBehaviour getPlatoon ()
-	{
+	public override PlatoonBehaviour getPlatoon() {
 		return this;
 	}
 
-	public void spawn (Vector3 pos)
-	{
+	public void spawn(Vector3 pos) {
 		enabled = true;
 		transform.position = pos;
 		var heading = ghostPlatoon.GetComponent<GhostPlatoonBehaviour> ().finalHeading;
@@ -205,8 +195,7 @@ public class PlatoonBehaviour : SelectableBehavior
 		protected abstract Waypoint getModuleWaypoint ();
 	}
 
-	public class MovementModule : PlatoonModule, Matchable<Vector3>
-	{
+	public class MovementModule : PlatoonModule, Matchable<Vector3>	{
 		MoveWaypoint newWaypoint {
 			get {
 				return base.newWaypoint as MoveWaypoint;
@@ -464,7 +453,8 @@ public class TransporterWaypoint : Waypoint
 				return true;
 			} else {
 				return false;
-			}//platoon.units.All(x => x.GetComponent<TransporterBehaviour>().loadingComplete());//premature true
+			}
+            //platoon.units.All(x => x.GetComponent<TransporterBehaviour>().loadingComplete());//premature true
 		} else {
 			if (platoon.units.All (x => x.GetComponent<TransporterBehaviour> ().unloadingComplete ())) {
 				module.setTransported (null);

@@ -15,14 +15,13 @@ public static class Units {
         }
         return null;
     }
-    public static GameObject tank {
+    public static GameObject Tank {
         get {
             return Resources.Load<GameObject>("Unit");
         }
     }
 }
-public enum UnitType
-{
+public enum UnitType {
     Tank,
     Infantry,
     AFV
