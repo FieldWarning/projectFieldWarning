@@ -27,10 +27,10 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3> {
 
     public AudioClip shotSound;
     private AudioSource source;
-    // TODO we probably dont want random pitch, discuss
-    public float lowPitchRange = .95F;
-    public float highPitchRange = 1.05F;
-    private float shotVolume = .04F;
+
+    public float lowPitchRange = 1.00F;
+    public float highPitchRange = 1.00F;
+    private float shotVolume = 1.0F;
 
 
     // Use this for initialization
