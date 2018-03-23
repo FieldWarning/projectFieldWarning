@@ -1,9 +1,2 @@
 #windows
 Thumbs.db
-
-#unity
-Gronank's stuff/*
-!Gronank's stuff/ProjectSettings/
-!Gronank's stuff/Assets/
-*.meta #redundant?
-*.pdb #redundant?
