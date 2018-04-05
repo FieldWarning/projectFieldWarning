@@ -17,7 +17,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     bool enteringSpawning = false;
     List<PlatoonBehaviour> selected = new List<PlatoonBehaviour>();
     float clickTime;
-    float clickExtent = 0.2f;
+    float clickExtent = 0.05f;
     ClickManager selectMode = new ClickManager();
     ClickManager orderMode = new ClickManager();
     public static BoxSelectManager boxSelectManager;
