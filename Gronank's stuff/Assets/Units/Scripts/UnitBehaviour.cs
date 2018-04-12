@@ -27,9 +27,6 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3> {
 
     public AudioClip shotSound;
     private AudioSource source;
-
-    public float lowPitchRange = 1.00F;
-    public float highPitchRange = 1.00F;
     private float shotVolume = 1.0F;
 
 
@@ -97,8 +94,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3> {
 		if (timeLeft < 0) {
 		
 			Debug.Log ("weapon fired");
-
-            source.pitch = Random.Range(lowPitchRange, highPitchRange);
+            
             source.PlayOneShot(shotSound, shotVolume);
 
             System.Random rnd = new System.Random();
