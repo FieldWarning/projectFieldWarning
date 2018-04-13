@@ -14,6 +14,15 @@ ModelImporter:
     100012: Muzzle_Cube.002_None
     100014: //RootNode
     100016: Turret_Cube_Material
+    100018: Main_Barrel
+    100020: Main_Body
+    100022: Main_Rotor
+    100024: Main_Stuff
+    100026: Main_Turret
+    100028: Main_Wheels
+    100030: Minigun
+    100032: Ministand
+    100034: Track
     400000: Hull_Cube.001_Hull
     400002: Hull_Cube.001_Hull_NONE
     400004: Hull_Cube.001_Hull_TrackSegment.png
@@ -23,6 +32,15 @@ ModelImporter:
     400012: Muzzle_Cube.002_None
     400014: //RootNode
     400016: Turret_Cube_Material
+    400018: Main_Barrel
+    400020: Main_Body
+    400022: Main_Rotor
+    400024: Main_Stuff
+    400026: Main_Turret
+    400028: Main_Wheels
+    400030: Minigun
+    400032: Ministand
+    400034: Track
     2300000: Hull_Cube.001_Hull
     2300002: Hull_Cube.001_Hull_NONE
     2300004: Hull_Cube.001_Hull_TrackSegment.png
@@ -31,6 +49,15 @@ ModelImporter:
     2300010: Hull_Cube.001_Track_track2.png
     2300012: Muzzle_Cube.002_None
     2300014: Turret_Cube_Material
+    2300016: Main_Barrel
+    2300018: Main_Body
+    2300020: Main_Rotor
+    2300022: Main_Stuff
+    2300024: Main_Turret
+    2300026: Main_Wheels
+    2300028: Minigun
+    2300030: Ministand
+    2300032: Track
     3300000: Hull_Cube.001_Hull
     3300002: Hull_Cube.001_Hull_NONE
     3300004: Hull_Cube.001_Hull_TrackSegment.png
@@ -39,6 +66,15 @@ ModelImporter:
     3300010: Hull_Cube.001_Track_track2.png
     3300012: Muzzle_Cube.002_None
     3300014: Turret_Cube_Material
+    3300016: Main_Barrel
+    3300018: Main_Body
+    3300020: Main_Rotor
+    3300022: Main_Stuff
+    3300024: Main_Turret
+    3300026: Main_Wheels
+    3300028: Minigun
+    3300030: Ministand
+    3300032: Track
     4300000: Hull_Cube.001_Hull
     4300002: Hull_Cube.001_Hull_NONE
     4300004: Hull_Cube.001_Hull_TrackSegment.png
@@ -47,12 +83,66 @@ ModelImporter:
     4300010: Hull_Cube.001_Track_track2.png
     4300012: Muzzle_Cube.002_None
     4300014: Turret_Cube_Material
-  externalObjects: {}
+    4300016: Main_Barrel
+    4300018: Main_Body
+    4300020: Main_Rotor
+    4300022: Main_Stuff
+    4300024: Main_Turret
+    4300026: Main_Wheels
+    4300028: Minigun
+    4300030: Ministand
+    4300032: Track
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Main_BarrelMat
+    second: {fileID: 2100000, guid: 47a2086ab6ce35149b2a8a7ce3d8c0fb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Main_BodyMat
+    second: {fileID: 2100000, guid: fcacc493580c57f4596c8a58b56d5afc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Main_RotorMat
+    second: {fileID: 2100000, guid: 69d8bbd15665f354995158abc6442d00, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Main_StuffMat
+    second: {fileID: 2100000, guid: 8d45c5890ce4f6b419db2abbd6b6734e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Main_TurretMat
+    second: {fileID: 2100000, guid: decdfac2688411a47834e3a972a9b03e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Main_WheelsMat
+    second: {fileID: 2100000, guid: f3d9743e8061a3f44873355633e70f09, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MinigunMat
+    second: {fileID: 2100000, guid: 9a09f0f410d453e498c20fdabc487ff2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MinistandMat
+    second: {fileID: 2100000, guid: 79905871ace6664499fc01f4c7e337f0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrackMat
+    second: {fileID: 2100000, guid: 7e46cd1f882ebcd4ebf32d089520b3a9, type: 2}
   materials:
     importMaterials: 1
-    materialName: 0
-    materialSearch: 1
-    materialLocation: 0
+    materialName: 2
+    materialSearch: 2
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -77,7 +167,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.002
     meshCompression: 0
     addColliders: 0
     importVisibility: 0
@@ -96,7 +186,7 @@ ModelImporter:
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 1
+    useFileScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
