@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class SpawnPointBehaviour : MonoBehaviour {
     Camera camera;
     Vector3 oldPosition;
+    [SerializeField] private float height = 0.5f;
     float size = 0.1f;
     private Queue<PlatoonBehaviour> spawnQueue = new Queue<PlatoonBehaviour>();
     public static float spawnDelay=2;
@@ -28,7 +29,7 @@ public class SpawnPointBehaviour : MonoBehaviour {
         if (oldPosition != transform.position)
         {
             var y=GameObject.Find("Terrain").GetComponent<Terrain>().GetComponent<TerrainCollider>().terrainData.GetInterpolatedHeight(transform.position.x, transform.position.z);
-            transform.position += (y + 1) * Vector3.up;
+            transform.position += (y + height) * Vector3.up;
             oldPosition = transform.position;
         }
         transform.rotation = Quaternion.LookRotation(camera.transform.forward);
