@@ -28,10 +28,15 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     [SerializeField]
     private float maxAltitude = 2000;
     
+    // We store the camera facing and reapply it every LateUpdate() for simplicity:
     private float rotateX;
     private float rotateY;
+
+    // Leftover translations from zoom and pan:
     private float translateX;
     private float translateZ;
+    private float leftoverZoom = 0f;
+    private Vector3 zoomDestination;
 
     private Camera cam;
 
@@ -73,9 +78,22 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         translateX -= dx;
         translateZ -= dz;
 
+        // Apply zoom movement:
+        var dzoom = Mathf.Abs(leftoverZoom) < zoomSpeed * Time.deltaTime ? leftoverZoom : zoomSpeed * Time.deltaTime;
+        if (dzoom > 0) {
+            transform.position = Vector3.MoveTowards(transform.position, zoomDestination, dzoom);
+        } else if (dzoom < 0) {
+            transform.Translate(Vector3.forward * dzoom);
+        }
+        leftoverZoom -= dzoom;
+
+        TiltCameraIfNearGround(dzoom);
 
         transform.rotation = Quaternion.identity;
         transform.Rotate(rotateX, rotateY, 0f);
+
+
+        ClampCameraAltitude();
     }
 
     /*
@@ -83,6 +101,8 @@ public class SlidingCameraBehaviour : MonoBehaviour {
      */
     private void AimedZoom() {
         var scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll == 0)
+            return;
 
         // Zoom toward cursor:
         if (scroll > 0) {
@@ -94,21 +114,10 @@ public class SlidingCameraBehaviour : MonoBehaviour {
             if (!Physics.Raycast(ray, out hit)) {
                 return;
             }
-
-            transform.position = Vector3.MoveTowards(transform.position,
-                                                        hit.point,
-                                                        scroll * zoomSpeed * Time.deltaTime);
-        }
-
-        // Zoom out:
-        if (scroll < 0) {
-            transform.Translate(Vector3.forward * scroll * zoomSpeed * Time.deltaTime);
+            zoomDestination = hit.point;
         }
         
-        if (scroll != 0) {
-            TiltLowFlyingCamera(scroll);
-            ClampCameraAltitude();
-        }
+        leftoverZoom += scroll * zoomSpeed * Time.deltaTime;
     }
 
     private void RotateCamera() {
@@ -120,9 +129,9 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     }
 
     // Camera looks down when high and up when low:
-    private void TiltLowFlyingCamera(float scroll) {
+    private void TiltCameraIfNearGround(float dzoom) {
         if (transform.position.y < tiltThreshold) {
-            rotateX -= zoomSpeed * Time.deltaTime * zoomTiltSpeed * scroll;
+            rotateX -= zoomSpeed * Time.deltaTime * zoomTiltSpeed * dzoom;
             rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
         }
     }
