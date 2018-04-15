@@ -20,15 +20,19 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     [SerializeField]
     private float zoomSpeed = 3000;
     [SerializeField]
-    private float zoomTiltSpeed = 3;
+    private float zoomTiltSpeed = 0.3f;
     [SerializeField]
     private float minAltitude = 0.2f;
     [SerializeField]
+    private float tiltThreshold = 2f;
+    [SerializeField]
     private float maxAltitude = 2000;
-
-
+    
     private float rotateX;
     private float rotateY;
+    private float translateX;
+    private float translateZ;
+
     private Camera cam;
 
     private void Awake() {
@@ -41,25 +45,35 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         rotateY = transform.eulerAngles.y;
     }
 
+    // Update() only plans movement; position/rotation are directly changed in LateUpdate().
     private void Update() {
         // Camera panning:
-        // TODO normalize before translation so panning does not slow down if we look down
-        var y = cam.transform.position.y;
-        cam.transform.Translate(Input.GetAxis("Horizontal") * Vector3.right * panSpeed * Time.deltaTime);
-        cam.transform.Translate(Input.GetAxis("Vertical") * Vector3.forward * panSpeed * Time.deltaTime);
+        translateX += Input.GetAxis("Horizontal") * panSpeed * Time.deltaTime;
+        translateZ += Input.GetAxis("Vertical") * panSpeed * Time.deltaTime;  
+        
 
-        // Panning shouldn't change cam altitude:
-        cam.transform.position = new Vector3(cam.transform.position.x, y, cam.transform.position.z);
-
-        // Zoom:
         AimedZoom();
 
         if (Input.GetMouseButton(2)) {
             RotateCamera();
         }
     }
-
+    
     private void LateUpdate() {
+        var dx = translateX < panSpeed * Time.deltaTime ? translateX : panSpeed * Time.deltaTime;
+        var dz = translateZ < panSpeed * Time.deltaTime ? translateZ : panSpeed * Time.deltaTime;
+
+        transform.Translate(dx * Vector3.right);
+
+        // If we move forward in local space, camera will also change altitude. To properly move forward, we have to rotate the forward vector to be horizontal in world space while keeping the magnitude:
+        var worldForward = transform.TransformDirection(Vector3.forward);
+        var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
+        transform.position += angle * worldForward * dz;
+
+        translateX -= dx;
+        translateZ -= dz;
+
+
         transform.rotation = Quaternion.identity;
         transform.Rotate(rotateX, rotateY, 0f);
     }
@@ -81,22 +95,18 @@ public class SlidingCameraBehaviour : MonoBehaviour {
                 return;
             }
 
-            cam.transform.position = Vector3.MoveTowards(cam.transform.position,
+            transform.position = Vector3.MoveTowards(transform.position,
                                                         hit.point,
                                                         scroll * zoomSpeed * Time.deltaTime);
         }
 
         // Zoom out:
         if (scroll < 0) {
-            cam.transform.Translate(Vector3.forward * scroll * zoomSpeed * Time.deltaTime);
+            transform.Translate(Vector3.forward * scroll * zoomSpeed * Time.deltaTime);
         }
-
-        // Tilt camera up/down slightly and limit its angle and altitude:
+        
         if (scroll != 0) {
-            // Tilt camera only if it is close to the ground?
-            //rotateX += zoomSpeed * Time.deltaTime * zoomTiltSpeed * scroll);
-            //Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
-            
+            TiltLowFlyingCamera(scroll);
             ClampCameraAltitude();
         }
     }
@@ -109,9 +119,17 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
     }
 
+    // Camera looks down when high and up when low:
+    private void TiltLowFlyingCamera(float scroll) {
+        if (transform.position.y < tiltThreshold) {
+            rotateX -= zoomSpeed * Time.deltaTime * zoomTiltSpeed * scroll;
+            rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
+        }
+    }
+
     private void ClampCameraAltitude() {
-        cam.transform.position = new Vector3(cam.transform.position.x,
-                                             Mathf.Clamp(cam.transform.position.y, minAltitude, maxAltitude),
-                                             cam.transform.position.z);
+        transform.position = new Vector3(transform.position.x,
+                                             Mathf.Clamp(transform.position.y, minAltitude, maxAltitude),
+                                             transform.position.z);
     }
 }
