@@ -131,7 +131,7 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     // Camera looks down when high and up when low:
     private void TiltCameraIfNearGround(float dzoom) {
         if (transform.position.y < tiltThreshold) {
-            rotateX -= zoomSpeed * Time.deltaTime * zoomTiltSpeed * dzoom;
+            rotateX -= zoomTiltSpeed * dzoom;
             rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
         }
     }
