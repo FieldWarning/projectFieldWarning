@@ -4,13 +4,13 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
     [Header("Translational Movement")]
     [SerializeField]
-    private float panSpeed = 20f;
+    private float panSpeed = 80f;
 
     [Header("Rotational Movement")]
     [SerializeField]
-    private float horizontalRotationSpeed = 400f;
+    private float horizontalRotationSpeed = 600f;
     [SerializeField]
-    private float verticalRotationSpeed = 400f;
+    private float verticalRotationSpeed = 600f;
     [SerializeField]
     private float maxCameraAngle = 85;
     [SerializeField]
@@ -18,14 +18,17 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
     [Header("Zoom Level")]
     [SerializeField]
-    private float zoomSpeed = 1000;
+    private float zoomSpeed = 3000;
     [SerializeField]
     private float zoomTiltSpeed = 3;
     [SerializeField]
-    private int minAltitude = 2;
+    private float minAltitude = 0.2f;
     [SerializeField]
-    private int maxAltitude = 2000;
+    private float maxAltitude = 2000;
 
+
+    private float rotateX;
+    private float rotateY;
     private Camera cam;
 
     private void Awake() {
@@ -34,7 +37,8 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
 
     private void Start() {
-
+        rotateX = transform.eulerAngles.x;
+        rotateY = transform.eulerAngles.y;
     }
 
     private void Update() {
@@ -55,13 +59,18 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         }
     }
 
+    private void LateUpdate() {
+        transform.rotation = Quaternion.identity;
+        transform.Rotate(rotateX, rotateY, 0f);
+    }
+
     /*
-     * When zooming in we gradually approach whatever the cursor is pointing at
+     * When zooming in we gradually approach whatever the cursor is pointing at.
      */
     private void AimedZoom() {
         var scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        // Zoom toward cursor and gradually tilt camera up:
+        // Zoom toward cursor:
         if (scroll > 0) {
             // Use a ray from the cursor to find what we'll be zooming into:
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -84,43 +93,20 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
         // Tilt camera up/down slightly and limit its angle and altitude:
         if (scroll != 0) {
-            cam.transform.Rotate(Vector3.left * zoomSpeed * Time.deltaTime * zoomTiltSpeed * scroll);
-
-            ClampCameraAngle(scroll > 0);
+            // Tilt camera only if it is close to the ground?
+            //rotateX += zoomSpeed * Time.deltaTime * zoomTiltSpeed * scroll);
+            //Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
+            
             ClampCameraAltitude();
         }
     }
 
     private void RotateCamera() {
-        var dy = Input.GetAxis("Mouse Y") * verticalRotationSpeed * Time.deltaTime;
-        var dx = -Input.GetAxis("Mouse X") * horizontalRotationSpeed * Time.deltaTime;
-        cam.transform.eulerAngles -= new Vector3(dy, dx, 0);
+        rotateX += -Input.GetAxis("Mouse Y") * verticalRotationSpeed * Time.deltaTime;
+        rotateY += Input.GetAxis("Mouse X") * horizontalRotationSpeed * Time.deltaTime;
 
-        ClampCameraAngle(dy > 0);
-    }
-
-    /*
-     * So we don't look too far up or down:
-     */
-    private void ClampCameraAngle(bool wasRotatedDownwards) {
-        //  TODO: TO fix gimbal lock, we need to clamp with quaternions; see https://forum.unity.com/threads/how-do-i-clamp-a-quaternion.370041/
-
-        //Debug.LogFormat("{0}; {1}; {2} \n", Quaternion.Angle(cam.transform.rotation, Quaternion.Euler(0, 0, 0)), 
-
-        //    Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 180, 0)), 
-
-        //    Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 0, 0))
-        //    - Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 180, 0)));
-
-        //if (Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 0,0)) 
-        //    - Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 180, 180)) 
-        //    > (maxCameraAngle + minCameraAngle) / 2) {
-
-        if (cam.transform.rotation.x > maxCameraAngle || cam.transform.eulerAngles.x < minCameraAngle) {
-            cam.transform.eulerAngles = new Vector3(wasRotatedDownwards ? minCameraAngle : maxCameraAngle,
-                                                    cam.transform.eulerAngles.y,
-                                                    cam.transform.eulerAngles.z);
-        }
+        // So we don't look too far up or down:
+        rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
     }
 
     private void ClampCameraAltitude() {
