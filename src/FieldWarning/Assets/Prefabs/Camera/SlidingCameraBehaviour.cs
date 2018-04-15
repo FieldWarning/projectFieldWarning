@@ -4,13 +4,13 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
     [Header("Translational Movement")]
     [SerializeField]
-    private float panSpeed = 20f;
+    private float panSpeed = 80f;
 
     [Header("Rotational Movement")]
     [SerializeField]
-    private float horizontalRotationSpeed = 400f;
+    private float horizontalRotationSpeed = 600f;
     [SerializeField]
-    private float verticalRotationSpeed = 400f;
+    private float verticalRotationSpeed = 600f;
     [SerializeField]
     private float maxCameraAngle = 85;
     [SerializeField]
@@ -18,13 +18,20 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
     [Header("Zoom Level")]
     [SerializeField]
-    private float zoomSpeed = 1000;
+    private float zoomSpeed = 3000;
     [SerializeField]
-    private float zoomTiltSpeed = 3;
+    private float zoomTiltSpeed = 0.3f;
     [SerializeField]
-    private int minAltitude = 2;
+    private float minAltitude = 0.2f;
     [SerializeField]
-    private int maxAltitude = 2000;
+    private float tiltThreshold = 2f;
+    [SerializeField]
+    private float maxAltitude = 2000;
+    
+    private float rotateX;
+    private float rotateY;
+    private float translateX;
+    private float translateZ;
 
     private Camera cam;
 
@@ -34,34 +41,50 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
 
     private void Start() {
-
+        rotateX = transform.eulerAngles.x;
+        rotateY = transform.eulerAngles.y;
     }
 
+    // Update() only plans movement; position/rotation are directly changed in LateUpdate().
     private void Update() {
         // Camera panning:
-        // TODO normalize before translation so panning does not slow down if we look down
-        var y = cam.transform.position.y;
-        cam.transform.Translate(Input.GetAxis("Horizontal") * Vector3.right * panSpeed * Time.deltaTime);
-        cam.transform.Translate(Input.GetAxis("Vertical") * Vector3.forward * panSpeed * Time.deltaTime);
+        translateX += Input.GetAxis("Horizontal") * panSpeed * Time.deltaTime;
+        translateZ += Input.GetAxis("Vertical") * panSpeed * Time.deltaTime;  
+        
 
-        // Panning shouldn't change cam altitude:
-        cam.transform.position = new Vector3(cam.transform.position.x, y, cam.transform.position.z);
-
-        // Zoom:
         AimedZoom();
 
         if (Input.GetMouseButton(2)) {
             RotateCamera();
         }
     }
+    
+    private void LateUpdate() {
+        var dx = translateX < panSpeed * Time.deltaTime ? translateX : panSpeed * Time.deltaTime;
+        var dz = translateZ < panSpeed * Time.deltaTime ? translateZ : panSpeed * Time.deltaTime;
+
+        transform.Translate(dx * Vector3.right);
+
+        // If we move forward in local space, camera will also change altitude. To properly move forward, we have to rotate the forward vector to be horizontal in world space while keeping the magnitude:
+        var worldForward = transform.TransformDirection(Vector3.forward);
+        var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
+        transform.position += angle * worldForward * dz;
+
+        translateX -= dx;
+        translateZ -= dz;
+
+
+        transform.rotation = Quaternion.identity;
+        transform.Rotate(rotateX, rotateY, 0f);
+    }
 
     /*
-     * When zooming in we gradually approach whatever the cursor is pointing at
+     * When zooming in we gradually approach whatever the cursor is pointing at.
      */
     private void AimedZoom() {
         var scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        // Zoom toward cursor and gradually tilt camera up:
+        // Zoom toward cursor:
         if (scroll > 0) {
             // Use a ray from the cursor to find what we'll be zooming into:
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -72,60 +95,41 @@ public class SlidingCameraBehaviour : MonoBehaviour {
                 return;
             }
 
-            cam.transform.position = Vector3.MoveTowards(cam.transform.position,
+            transform.position = Vector3.MoveTowards(transform.position,
                                                         hit.point,
                                                         scroll * zoomSpeed * Time.deltaTime);
         }
 
         // Zoom out:
         if (scroll < 0) {
-            cam.transform.Translate(Vector3.forward * scroll * zoomSpeed * Time.deltaTime);
+            transform.Translate(Vector3.forward * scroll * zoomSpeed * Time.deltaTime);
         }
-
-        // Tilt camera up/down slightly and limit its angle and altitude:
+        
         if (scroll != 0) {
-            cam.transform.Rotate(Vector3.left * zoomSpeed * Time.deltaTime * zoomTiltSpeed * scroll);
-
-            ClampCameraAngle(scroll > 0);
+            TiltLowFlyingCamera(scroll);
             ClampCameraAltitude();
         }
     }
 
     private void RotateCamera() {
-        var dy = Input.GetAxis("Mouse Y") * verticalRotationSpeed * Time.deltaTime;
-        var dx = -Input.GetAxis("Mouse X") * horizontalRotationSpeed * Time.deltaTime;
-        cam.transform.eulerAngles -= new Vector3(dy, dx, 0);
+        rotateX += -Input.GetAxis("Mouse Y") * verticalRotationSpeed * Time.deltaTime;
+        rotateY += Input.GetAxis("Mouse X") * horizontalRotationSpeed * Time.deltaTime;
 
-        ClampCameraAngle(dy > 0);
+        // So we don't look too far up or down:
+        rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
     }
 
-    /*
-     * So we don't look too far up or down:
-     */
-    private void ClampCameraAngle(bool wasRotatedDownwards) {
-        //  TODO: TO fix gimbal lock, we need to clamp with quaternions; see https://forum.unity.com/threads/how-do-i-clamp-a-quaternion.370041/
-
-        //Debug.LogFormat("{0}; {1}; {2} \n", Quaternion.Angle(cam.transform.rotation, Quaternion.Euler(0, 0, 0)), 
-
-        //    Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 180, 0)), 
-
-        //    Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 0, 0))
-        //    - Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 180, 0)));
-
-        //if (Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 0,0)) 
-        //    - Quaternion.Angle(cam.transform.rotation, Quaternion.Euler((maxCameraAngle + minCameraAngle) / 2, 180, 180)) 
-        //    > (maxCameraAngle + minCameraAngle) / 2) {
-
-        if (cam.transform.rotation.x > maxCameraAngle || cam.transform.eulerAngles.x < minCameraAngle) {
-            cam.transform.eulerAngles = new Vector3(wasRotatedDownwards ? minCameraAngle : maxCameraAngle,
-                                                    cam.transform.eulerAngles.y,
-                                                    cam.transform.eulerAngles.z);
+    // Camera looks down when high and up when low:
+    private void TiltLowFlyingCamera(float scroll) {
+        if (transform.position.y < tiltThreshold) {
+            rotateX -= zoomSpeed * Time.deltaTime * zoomTiltSpeed * scroll;
+            rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
         }
     }
 
     private void ClampCameraAltitude() {
-        cam.transform.position = new Vector3(cam.transform.position.x,
-                                             Mathf.Clamp(cam.transform.position.y, minAltitude, maxAltitude),
-                                             cam.transform.position.z);
+        transform.position = new Vector3(transform.position.x,
+                                             Mathf.Clamp(transform.position.y, minAltitude, maxAltitude),
+                                             transform.position.z);
     }
 }
