@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrbitCameraBehaviour : MonoBehaviour {
+public class SlidingCameraBehaviour : MonoBehaviour {
 
     [Header("Translational Movement")]
     [SerializeField] private float baseMovementspeed = 1.5f;
