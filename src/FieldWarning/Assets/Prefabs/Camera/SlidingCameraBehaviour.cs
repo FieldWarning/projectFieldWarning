@@ -55,6 +55,7 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     private void Start() {
         rotateX = transform.eulerAngles.x;
         rotateY = transform.eulerAngles.y;
+        targetPosition = transform.position;
     }
 
     // Update() only plans movement; position/rotation are directly changed in LateUpdate().
