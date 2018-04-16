@@ -5,12 +5,16 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     [Header("Translational Movement")]
     [SerializeField]
     private float panSpeed = 80f;
+    [SerializeField]
+    private float panLerpSpeed = 10f;
 
     [Header("Rotational Movement")]
     [SerializeField]
     private float horizontalRotationSpeed = 600f;
     [SerializeField]
     private float verticalRotationSpeed = 600f;
+    [SerializeField]
+    private float rotLerpSpeed = 10f;
     [SerializeField]
     private float maxCameraAngle = 85;
     [SerializeField]
@@ -37,6 +41,9 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     private float translateZ;
     private float leftoverZoom = 0f;
     private Vector3 zoomDestination;
+
+    // All planned transforms are actually applied to a target object, which the camera then lerps to. Maybe it is pointlessly indirect and can be refactored.
+    private Vector3 targetPosition;
 
     private Camera cam;
 
@@ -68,12 +75,12 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         var dx = translateX < panSpeed * Time.deltaTime ? translateX : panSpeed * Time.deltaTime;
         var dz = translateZ < panSpeed * Time.deltaTime ? translateZ : panSpeed * Time.deltaTime;
 
-        transform.Translate(dx * Vector3.right);
+        targetPosition += transform.TransformDirection(dx * Vector3.right);
 
         // If we move forward in local space, camera will also change altitude. To properly move forward, we have to rotate the forward vector to be horizontal in world space while keeping the magnitude:
         var worldForward = transform.TransformDirection(Vector3.forward);
         var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
-        transform.position += angle * worldForward * dz;
+        targetPosition += angle * worldForward * dz;
 
         translateX -= dx;
         translateZ -= dz;
@@ -81,19 +88,18 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         // Apply zoom movement:
         var dzoom = Mathf.Abs(leftoverZoom) < zoomSpeed * Time.deltaTime ? leftoverZoom : zoomSpeed * Time.deltaTime;
         if (dzoom > 0) {
-            transform.position = Vector3.MoveTowards(transform.position, zoomDestination, dzoom);
+            targetPosition = Vector3.MoveTowards(targetPosition, zoomDestination, dzoom);
         } else if (dzoom < 0) {
-            transform.Translate(Vector3.forward * dzoom);
+            targetPosition += transform.TransformDirection(Vector3.forward) * dzoom;
         }
         leftoverZoom -= dzoom;
 
+        ClampCameraAltitude();
         TiltCameraIfNearGround(dzoom);
 
-        transform.rotation = Quaternion.identity;
-        transform.Rotate(rotateX, rotateY, 0f);
-
-
-        ClampCameraAltitude();
+        // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
+        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * panLerpSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(rotateX, rotateY, 0f), Time.deltaTime * rotLerpSpeed);
     }
 
     /*
@@ -137,8 +143,8 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     }
 
     private void ClampCameraAltitude() {
-        transform.position = new Vector3(transform.position.x,
-                                             Mathf.Clamp(transform.position.y, minAltitude, maxAltitude),
-                                             transform.position.z);
+        targetPosition = new Vector3(targetPosition.x,
+                                             Mathf.Clamp(targetPosition.y, minAltitude, maxAltitude),
+                                             targetPosition.z);
     }
 }
