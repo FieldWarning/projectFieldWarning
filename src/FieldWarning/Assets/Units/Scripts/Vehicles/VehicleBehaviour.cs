@@ -19,8 +19,9 @@ public class VehicleBehaviour : UnitBehaviour {
     protected override void doMovement() {
         ordersDone = false;
         float destinationHeading;
+		Vector3 waypoint = pathfinder.GetWaypoint();
         if (gotDestination) {
-            var diff = destination - this.transform.position;
+			var diff = waypoint - this.transform.position;
             destinationHeading = diff.getRadianAngle();
         } else {
             destinationHeading = finalHeading;
@@ -39,7 +40,7 @@ public class VehicleBehaviour : UnitBehaviour {
             }
             return;
         }
-        float distance = (destination - transform.localPosition).magnitude;
+		float distance = (waypoint - transform.localPosition).magnitude;
 
         if (distance < 1f) {
             gotDestination = false;

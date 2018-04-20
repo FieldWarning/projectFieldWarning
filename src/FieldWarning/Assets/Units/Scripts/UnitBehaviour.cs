@@ -24,6 +24,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	float health;
 	public float timeLeft;
 	bool IsAlive;
+	protected Pathfinder pathfinder;
 
 	public Transform turret;
 	public Transform barrel;
@@ -55,6 +56,8 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		this.tag = "Unit";
 
 		source = GetComponent<AudioSource> ();
+
+		pathfinder = new Pathfinder (this, new PathfinderData (null));
 	}
 
 	// Update is called once per frame
@@ -205,6 +208,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		return platoon;
 	}
 
+	// Sets the unit's destination location, with a default heading value
 	public void setUnitDestination (Vector3 v)
 	{
 
@@ -212,20 +216,23 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		setFinalOrientation (v, diff.getRadianAngle ());
 	}
 
+	// Sets the unit's destination location, with a specific given heading value
 	public void setFinalOrientation (Vector3 d, float heading)
 	{
 		gotDestination = true;
 		destination = d;
 		setUnitFinalHeading (heading);
-        
+		pathfinder.FindPath (destination, MoveCommandType.Fast);
 	}
 
+	// Updates the unit's final heading so that it faces the specified location
 	public void setUnitFinalFacing (Vector3 v)
 	{
 		var diff = (v - destination).normalized;
 		setUnitFinalHeading (diff.getRadianAngle ());
 	}
 
+	// Updates the unit's final heading to the specified value 
 	public virtual void setUnitFinalHeading (float heading)
 	{
 		finalHeading = heading;
@@ -291,3 +298,10 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 
 	public abstract bool ordersComplete ();
 }
+
+public enum MoveCommandType
+{
+	Fast,
+	Slow
+}
+

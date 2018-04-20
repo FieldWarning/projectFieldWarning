@@ -5,11 +5,12 @@ using PFW.Weapons;
 public class UnitData
 {
     //create from xml file or something
-    public float movementSpeed 	= 5f;
-    public float rotationSpeed 	= 50;
-	public float maxHealth 		= 10f;
+    public float movementSpeed 	  = 5f;
+    public float rotationSpeed 	  = 50;
+	public float maxHealth 		  = 10f;
 	public Weapon weapon;
-
+	public float radius           = 5f;  // Used for pathfinding and collisions
+	public MobilityType mobility = MobilityType.TrackHeavy;
 
 	public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP
 	{
@@ -38,3 +39,16 @@ public class UnitData
         return d;
     }
 }
+
+public enum MobilityType
+{
+	InfImmobile,
+	InfMobile,
+	InfAmphib,
+	WheelImmobile,
+	WheelMobile,
+	WheelAmphib,
+	TrackHeavy,
+	TrackLight,
+	TrackAmphib
+};
