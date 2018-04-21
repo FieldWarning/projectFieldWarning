@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class TerrainData{
-    static Vector3 size;
+    public static Vector3 size;
     static float[, ,] alphaMap;
     static int width, height;
     public static void initialize(float[, ,] alphaMap)

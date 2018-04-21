@@ -42,7 +42,8 @@ public class VehicleBehaviour : UnitBehaviour {
         }
 		float distance = (waypoint - transform.localPosition).magnitude;
 
-        if (distance < 1f) {
+		//if (distance < 1f) {
+		if (! pathfinder.HasDestination()) {
             gotDestination = false;
         } else {
             float offset = data.movementSpeed * Time.deltaTime;

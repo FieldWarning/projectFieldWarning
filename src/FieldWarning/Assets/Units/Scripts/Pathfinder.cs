@@ -3,15 +3,20 @@ using System.Collections.Generic;
 
 public class Pathfinder
 {
-	public const float forever = float.MaxValue;
-	public static Vector3 invalid = new Vector3 (float.NaN, float.NaN, float.NaN);
-	private static Vector3 up = new Vector3 (0f, 1f, 0f);
-	private const float stepSize = 5f; // Any object that the pathfinder is able to navigate around must have at least this radius
-	private const float completionDist = 3*stepSize; // Good enough if we can get within this distance of the target destination
+	public const float Forever = float.MaxValue;
+	public static Vector3 NoPosition = new Vector3 (float.NaN, float.NaN, float.NaN);
+	public static PathNode NoNode = new PathNode (NoPosition);
+	private static Vector3 Up = new Vector3 (0f, 1f, 0f);
+
+	private const float StepSize = 1f; // Any object that the pathfinder is able to navigate around must have at least this radius
+	private const float CompletionDist = 2*StepSize; // Good enough if we can get within this distance of the target destination
+	private const float AngSearchInc = 20f; // Angluar search increment for local path finding
+	private const float MaxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
 
 	private UnitBehaviour unit;
 	private PathfinderData data;
-	private List<PathNode> path;
+	private List<PathNode> path;  // path[0] is the final destination
+	private PathNode previousNode;
 	private MoveCommandType command;
 	private Vector3 waypoint;
 	private int timeToUpdate;
@@ -23,16 +28,17 @@ public class Pathfinder
 		path = new List<PathNode> ();
 	}
 
-	// Generate and store the sequence of points leading to the destination using the global graph
+	// Generate and store the sequence of nodes leading to the destination using the global graph
 	// Returns the total normalized path time
 	// If no path was found, return 'forever' and set the path directly to the destination
 	public float FindPath (Vector3 destination, MoveCommandType command)
 	{
 		this.command = command;
-		path.Clear ();
+		path.Clear();
+		previousNode = NoNode;
 
 		float pathTime = FindLocalPath (data, unit.transform.position, destination, unit.data.mobility, unit.data.radius);
-		if (pathTime < forever)
+		if (pathTime < Forever)
 			path.Add (new PathNode (destination));
 		return pathTime;
 	}
@@ -43,43 +49,50 @@ public class Pathfinder
 	public Vector3 GetWaypoint()
 	{
 		if (!HasDestination ()) { // Nowhere to go
-			waypoint = invalid;
+			waypoint = NoPosition;
 			return waypoint;
 		}
 
 		timeToUpdate--;
 		if (timeToUpdate <= 0) {
+			PathNode targetNode = path[path.Count - 1];
 
-			float distance = Vector3.Distance (unit.transform.position, path[path.Count - 1].position);
-			if (distance < completionDist) { // We have arrived at the next path node
+			float distance = Vector3.Distance (unit.transform.position, targetNode.position);
+			if (distance < CompletionDist) { // Unit arrived at the next path node
 				path.RemoveAt (path.Count - 1);
-				if (!HasDestination ()) { // We have arrived at the destination
-					waypoint = invalid;
+				if (!HasDestination ()) { // Unit arrived at the destination
+					waypoint = NoPosition;
 					return waypoint;
+				} else {
+					previousNode = NoNode;
+					targetNode = path[path.Count - 1];
 				}
 			}
 
 			Vector3 newWaypoint = TakeStep (
-				data, unit.transform.position, path[path.Count - 1].position, unit.data.mobility, unit.data.radius);
+				data, unit.transform.position, targetNode.position, unit.data.mobility, unit.data.radius);
 
 			if (newWaypoint != null) {
 				waypoint = newWaypoint;
 			} else {
 				
 				// The unit has gotten stuck when following the previously computed path.
-				// Now recompute a new path using the global graph
+				// Now recompute a new path to the destination using the global graph
 				float pathTime = FindPath (path[0].position, command);
-				if (pathTime == forever) {  // The unit has somehow gotten itself trapped
+				if (pathTime == Forever) {  // The unit has somehow gotten itself trapped
 					Debug.Log ("I am stuck!!!");
-					waypoint = invalid;
+					waypoint = NoPosition;
 				} else {
-
-					// TODO: If this is an intermediate step of the path, then the pre-computed global graph might
-					//       be broken and the corresponding arc should be recomputed to avoid having units cycle forever
+					// If this is an intermediate step of the path, then the pre-computed global graph might
+					// be broken and the corresponding arc should be recomputed to avoid having units cycle forever
+					if (! previousNode.Equals(NoNode)) {
+						data.RemoveArc (previousNode, targetNode);
+						data.AddArc (previousNode, targetNode);
+					}
 				}
 			}
 
-			timeToUpdate = 2 * (int)(stepSize / unit.data.movementSpeed);
+			timeToUpdate = 4; // (int)(StepSize / unit.data.movementSpeed);
 		}
 
 		return waypoint;
@@ -103,11 +116,11 @@ public class Pathfinder
 		Vector3 waypoint = start;
 		float time = 0f;
 
-		while (distance > completionDist) {
+		while (distance > CompletionDist) {
 			waypoint = TakeStep (data, waypoint, destination, mobility, radius);
-			if (waypoint == invalid)
-				return forever;
-			time += stepSize / data.GetUnitSpeed (mobility, waypoint);
+			if (waypoint == NoPosition)
+				return Forever;
+			time += StepSize / data.GetUnitSpeed (mobility, waypoint);
 			distance = (destination - waypoint).magnitude;
 		}
 
@@ -122,23 +135,20 @@ public class Pathfinder
 		MobilityType mobility,
 		float radius)
 	{
-		const float angSearchInc = 20f; // Angluar search increment for local path finding
-		const float maxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
-
-		Vector3 straight = (destination - start).normalized * stepSize;
+		Vector3 straight = (destination - start).normalized * StepSize;
 
 		// Fan out in a two-point horizontal pattern to find a way forward
-		for (float ang1 = 0f; ang1 <= maxAngle; ang1 += angSearchInc) {
+		for (float ang1 = 0f; ang1 <= MaxAngle; ang1 += AngSearchInc) {
 
 			for (int direction = -1; direction <= 1; direction += 2) {
 
-				Vector3 midpoint = start + Quaternion.AngleAxis (ang1*direction, up) * straight;
+				Vector3 midpoint = start + Quaternion.AngleAxis (ang1*direction, Up) * straight;
 				float midspeed = data.GetUnitSpeed (mobility, midpoint);
 
 				if (midspeed > 0f) {
-					for (float ang2 = 0f; ang2 <= ang1; ang2 += angSearchInc) {
+					for (float ang2 = 0f; ang2 <= ang1; ang2 += AngSearchInc) {
 
-						Vector3 endpoint = midpoint + Quaternion.AngleAxis (ang2*direction, up) * straight;
+						Vector3 endpoint = midpoint + Quaternion.AngleAxis (ang2*direction, Up) * straight;
 						float endspeed = data.GetUnitSpeed (mobility, endpoint);
 
 						if (endspeed > 0f) 
@@ -151,20 +161,7 @@ public class Pathfinder
 		}
 
 		// No step was found
-		return invalid;
-	}
-	
-	private struct PathNode {
-		public Vector3 position;
-
-		public PathNode (Vector3 position)
-		{
-			this.position = position;
-		}
-	}
-	
-	private struct PathArc {
-		
+		return NoPosition;
 	}
 	
 }
