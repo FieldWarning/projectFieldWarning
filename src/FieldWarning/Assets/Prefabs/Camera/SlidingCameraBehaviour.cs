@@ -4,7 +4,7 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
     [Header("Translational Movement")]
     [SerializeField]
-    private float panSpeed = 80f;
+    private float panSpeed = 5f;
     [SerializeField]
     private float panLerpSpeed = 10f;
 
@@ -16,13 +16,13 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     [SerializeField]
     private float rotLerpSpeed = 10f;
     [SerializeField]
-    private float maxCameraAngle = 85;
+    private float maxCameraAngle = 85f;
     [SerializeField]
-    private float minCameraAngle = 5;
+    private float minCameraAngle = 5f;
 
     [Header("Zoom Level")]
     [SerializeField]
-    private float zoomSpeed = 3000;
+    private float zoomSpeed = 500f;
     [SerializeField]
     private float zoomTiltSpeed = 0.3f;
     [SerializeField]
@@ -31,7 +31,9 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     private float tiltThreshold = 2f;
     [SerializeField]
     private float maxAltitude = 2000;
-    
+    [SerializeField]
+    private float heightSpeedScaling = 0.75f;
+
     // We store the camera facing and reapply it every LateUpdate() for simplicity:
     private float rotateX;
     private float rotateY;
@@ -47,6 +49,15 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
     private Camera cam;
 
+    // If we allow the camera to get to height = 0 we would need special cases for the height scaling.
+    private float getScaledPanSpeed() {
+        return panSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, heightSpeedScaling);
+    }
+    
+    private float getScaledZoomSpeed() {
+        return zoomSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, heightSpeedScaling);
+    }
+
     private void Awake() {
         cam = GetComponent<Camera>();
     }
@@ -61,8 +72,8 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     // Update() only plans movement; position/rotation are directly changed in LateUpdate().
     private void Update() {
         // Camera panning:
-        translateX += Input.GetAxis("Horizontal") * panSpeed * Time.deltaTime;
-        translateZ += Input.GetAxis("Vertical") * panSpeed * Time.deltaTime;  
+        translateX += Input.GetAxis("Horizontal") * getScaledPanSpeed();
+        translateZ += Input.GetAxis("Vertical") * getScaledPanSpeed();  
         
 
         AimedZoom();
@@ -73,8 +84,8 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     }
     
     private void LateUpdate() {
-        var dx = translateX < panSpeed * Time.deltaTime ? translateX : panSpeed * Time.deltaTime;
-        var dz = translateZ < panSpeed * Time.deltaTime ? translateZ : panSpeed * Time.deltaTime;
+        var dx = translateX < getScaledPanSpeed() ? translateX : getScaledPanSpeed();
+        var dz = translateZ < getScaledPanSpeed() ? translateZ : getScaledPanSpeed();
 
         targetPosition += transform.TransformDirection(dx * Vector3.right);
 
@@ -87,7 +98,7 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         translateZ -= dz;
 
         // Apply zoom movement:
-        var dzoom = Mathf.Abs(leftoverZoom) < zoomSpeed * Time.deltaTime ? leftoverZoom : zoomSpeed * Time.deltaTime;
+        var dzoom = Mathf.Abs(leftoverZoom) < getScaledZoomSpeed() ? leftoverZoom : getScaledZoomSpeed();
         if (dzoom > 0) {
             targetPosition = Vector3.MoveTowards(targetPosition, zoomDestination, dzoom);
         } else if (dzoom < 0) {
@@ -124,7 +135,7 @@ public class SlidingCameraBehaviour : MonoBehaviour {
             zoomDestination = hit.point;
         }
         
-        leftoverZoom += scroll * zoomSpeed * Time.deltaTime;
+        leftoverZoom += scroll * getScaledZoomSpeed();
     }
 
     private void RotateCamera() {
