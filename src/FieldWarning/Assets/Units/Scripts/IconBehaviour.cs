@@ -41,7 +41,7 @@ public class IconBehaviour : SelectableBehavior
 
 	// Use this for initialization
 	void Start () {
-        camera = GameObject.Find("Main Camera");
+        camera = Camera.main.gameObject;
         //billboard.transform.localPosition = billboard.GetComponent<Renderer>().bounds.extents.y * Vector3.up;
         billboard.GetComponent<Renderer>().material.color = baseColor;
         if (layer!=-1)
