@@ -1,17 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Priority_Queue;
 
 public class Pathfinder
 {
 	public const float Forever = float.MaxValue;
 	public static Vector3 NoPosition = new Vector3 (float.NaN, float.NaN, float.NaN);
-	public static PathNode NoNode = new PathNode (NoPosition);
 	private static Vector3 Up = new Vector3 (0f, 1f, 0f);
 
-	private const float StepSize = 1f; // Any object that the pathfinder is able to navigate around must have at least this radius
+	private const float StepSize = 1.2f; // Any object that the pathfinder is able to navigate around must have at least this radius
 	private const float CompletionDist = 2*StepSize; // Good enough if we can get within this distance of the target destination
-	private const float AngSearchInc = 20f; // Angluar search increment for local path finding
+	private const float AngSearchInc = 12f; // Angluar search increment for local path finding
 	private const float MaxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
+
+	private static FastPriorityQueue<PathNode> fScore;
 
 	private UnitBehaviour unit;
 	private PathfinderData data;
@@ -31,15 +33,14 @@ public class Pathfinder
 	// Generate and store the sequence of nodes leading to the destination using the global graph
 	// Returns the total normalized path time
 	// If no path was found, return 'forever' and set the path directly to the destination
-	public float FindPath (Vector3 destination, MoveCommandType command)
+	public float SetPath (Vector3 destination, MoveCommandType command)
 	{
 		this.command = command;
-		path.Clear();
-		previousNode = NoNode;
+		previousNode = null;
 
-		float pathTime = FindLocalPath (data, unit.transform.position, destination, unit.data.mobility, unit.data.radius);
-		if (pathTime < Forever)
-			path.Add (new PathNode (destination));
+		//float pathTime = FindLocalPath (data, unit.transform.position, destination, unit.data.mobility, unit.data.radius);
+		//path.Add (new PathNode (destination));
+		float pathTime = data.FindPath (path, unit.transform.position, destination, unit.data.mobility, unit.data.radius, command);
 		return pathTime;
 	}
 
@@ -64,7 +65,7 @@ public class Pathfinder
 					waypoint = NoPosition;
 					return waypoint;
 				} else {
-					previousNode = NoNode;
+					previousNode = null;
 					targetNode = path[path.Count - 1];
 				}
 			}
@@ -78,14 +79,14 @@ public class Pathfinder
 				
 				// The unit has gotten stuck when following the previously computed path.
 				// Now recompute a new path to the destination using the global graph
-				float pathTime = FindPath (path[0].position, command);
+				float pathTime = SetPath (path[0].position, command);
 				if (pathTime == Forever) {  // The unit has somehow gotten itself trapped
 					Debug.Log ("I am stuck!!!");
 					waypoint = NoPosition;
 				} else {
 					// If this is an intermediate step of the path, then the pre-computed global graph might
 					// be broken and the corresponding arc should be recomputed to avoid having units cycle forever
-					if (! previousNode.Equals(NoNode)) {
+					if (previousNode != null && path.Count > 1) {
 						data.RemoveArc (previousNode, targetNode);
 						data.AddArc (previousNode, targetNode);
 					}
@@ -120,7 +121,7 @@ public class Pathfinder
 			waypoint = TakeStep (data, waypoint, destination, mobility, radius);
 			if (waypoint == NoPosition)
 				return Forever;
-			time += StepSize / data.GetUnitSpeed (mobility, waypoint);
+			time += StepSize / data.GetUnitSpeed (mobility, waypoint, radius);
 			distance = (destination - waypoint).magnitude;
 		}
 
@@ -143,13 +144,13 @@ public class Pathfinder
 			for (int direction = -1; direction <= 1; direction += 2) {
 
 				Vector3 midpoint = start + Quaternion.AngleAxis (ang1*direction, Up) * straight;
-				float midspeed = data.GetUnitSpeed (mobility, midpoint);
+				float midspeed = data.GetUnitSpeed (mobility, midpoint, radius);
 
 				if (midspeed > 0f) {
 					for (float ang2 = 0f; ang2 <= ang1; ang2 += AngSearchInc) {
 
 						Vector3 endpoint = midpoint + Quaternion.AngleAxis (ang2*direction, Up) * straight;
-						float endspeed = data.GetUnitSpeed (mobility, endpoint);
+						float endspeed = data.GetUnitSpeed (mobility, endpoint, radius);
 
 						if (endspeed > 0f) 
 							return midpoint;

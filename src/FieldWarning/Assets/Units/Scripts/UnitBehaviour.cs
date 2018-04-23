@@ -222,7 +222,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		gotDestination = true;
 		destination = d;
 		setUnitFinalHeading (heading);
-		pathfinder.FindPath (destination, MoveCommandType.Fast);
+		pathfinder.SetPath (destination, MoveCommandType.Fast);
 	}
 
 	// Updates the unit's final heading so that it faces the specified location
