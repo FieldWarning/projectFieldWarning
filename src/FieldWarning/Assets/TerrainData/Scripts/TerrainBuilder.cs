@@ -33,7 +33,7 @@ public class TerrainBuilder : MonoBehaviour
         TerrainData.initialize(alphaMap);
         RoadNetwork.buildNetwork();
 
-
+		PathfinderData.singleton = new PathfinderData (new TerrainData ());
 
     }
 

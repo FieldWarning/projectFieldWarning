@@ -57,7 +57,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 
 		source = GetComponent<AudioSource> ();
 
-		pathfinder = new Pathfinder (this, new PathfinderData (null));
+		pathfinder = new Pathfinder (this, PathfinderData.singleton);
 	}
 
 	// Update is called once per frame

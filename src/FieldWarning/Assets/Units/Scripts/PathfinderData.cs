@@ -5,6 +5,8 @@ using Priority_Queue;
 
 public class PathfinderData
 {
+	public static PathfinderData singleton;
+
 	public static int NumMobilityTypes;
 	private const float GraphRadius = 3f; // This should be replaced with the largest unit radius of the given MobilityType
 	private const float SparseGridSpacing = 200f;
@@ -18,7 +20,6 @@ public class PathfinderData
 		NumMobilityTypes = Enum.GetNames (typeof(MobilityType)).Length;
 		this.terrain = terrain;
 		graph = new List<PathNode> ();
-		openSet = new FastPriorityQueue<PathNode> (1000);
 		BuildGraph ();
 	}
 
@@ -44,6 +45,8 @@ public class PathfinderData
 					graph.Add (new PathNode (newPos));
 			}
 		}
+
+		openSet = new FastPriorityQueue<PathNode> (graph.Count + 1);
 
 		// Compute arcs for all pairs of nodes
 		for (int i = 0; i < graph.Count; i++) {
