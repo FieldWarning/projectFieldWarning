@@ -8,8 +8,9 @@ public class PathfinderData
 	public static PathfinderData singleton;
 
 	public static int NumMobilityTypes;
+	private static PathArc InvalidArc = new PathArc (null, null);
 	private const float GraphRadius = 3f; // This should be replaced with the largest unit radius of the given MobilityType
-	private const float SparseGridSpacing = 200f;
+	private const float SparseGridSpacing = 150f;
 
 	public TerrainData terrain;
 	public List<PathNode> graph;
@@ -30,8 +31,8 @@ public class PathfinderData
 		// TODO: Add nodes for terrain features and roads
 
 
-		// Fill in any big open spaces with a sparse grid
-		Vector3 size = TerrainData.size;
+		// Fill in any big open spaces with a sparse grid in case the above missed anything important
+		Vector3 size = TerrainBuilder.size;
 		Vector3 newPos = new Vector3 (0f, 0f, 0f);
 		for (float x = 0f; x < size.x; x += SparseGridSpacing / 10) {
 			for (float z = 0f; z < size.z; z += SparseGridSpacing / 10) {
@@ -56,7 +57,45 @@ public class PathfinderData
 		}
 
 		// Remove unnecessary arcs
+		// An arc in necessary if for any MobilityType, the direct path between the nodes is at least
+		// as good as the optimal global path. This is a brute force approach and it might be too slow
+		List<PathNode> path = new List<PathNode> ();
+		for (int i = 0; i < graph.Count; i++) {
+			for (int j = i + 1; j < graph.Count; j++) {
 
+				PathArc arc = GetArc (graph[i], graph[j]);
+				if (arc.Equals (InvalidArc))
+					continue;
+
+				bool necessary = false;
+				for (int k = 0; k < NumMobilityTypes; k++) {
+					if (arc.time[k] == Pathfinder.Forever)
+						continue;
+
+					float time = FindPath (path,
+						graph[i].position, graph[j].position,
+						(MobilityType)k, GraphRadius, MoveCommandType.Fast);
+					if (arc.time[k] < time) {
+						necessary = true;
+						break;
+					}
+				}
+
+				Debug.Log (i + " " + j + " " + necessary);
+				if (! necessary)
+					RemoveArc (graph[i], graph[j]);
+			}
+		}
+	}
+
+	public PathArc GetArc (PathNode node1, PathNode node2)
+	{
+		for (int i = 0; i < node1.arcs.Count; i++) {
+			PathArc arc = node1.arcs[i];
+			if (arc.node1 == node2 || arc.node2 == node2)
+				return arc;
+		}
+		return InvalidArc;
 	}
 
 	public void AddArc (PathNode node1, PathNode node2)
@@ -74,17 +113,13 @@ public class PathfinderData
 
 	public void RemoveArc (PathNode node1, PathNode node2)
 	{
-		for (int i = 0; i < node1.arcs.Count; i++) {
-			PathArc arc = node1.arcs[i];
-			if (arc.node1 == node2 || arc.node2 == node2) {
-				node1.arcs.Remove (arc);
-				node2.arcs.Remove (arc);
-			}
-		}
+		PathArc arc = GetArc (node1, node2);
+		node1.arcs.Remove (arc);
+		node2.arcs.Remove (arc);
 	}
 
 	// Gives the relative speed of a unit with the given MobilityType at the given location
-	// Relative speed is 0 if the terrain is impassible and 1 for road
+	// Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
 	public float GetUnitSpeed (MobilityType mobility, Vector3 location, float radius)
 	{
 		GameObject[] units = GameObject.FindGameObjectsWithTag ("Unit");
@@ -99,6 +134,7 @@ public class PathfinderData
 	}
 
 	// Run the A* algorithm and put the result in path
+	// If no path was found, return 'forever' and put only the destination in path
 	// Returns the total path time
 	public float FindPath (
 		List<PathNode> path,

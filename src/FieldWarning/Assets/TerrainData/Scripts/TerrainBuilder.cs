@@ -10,7 +10,7 @@ public class TerrainBuilder : MonoBehaviour
     int treeCount = 1;
     static int[,] map;
     static Terrain terrain;
-    static Vector3 size;
+    public static Vector3 size;
     static float[, ,] alphaMap;
     // Use this for initialization
     void Start()
