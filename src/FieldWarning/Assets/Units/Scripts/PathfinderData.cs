@@ -9,7 +9,7 @@ public class PathfinderData
 
 	public static int NumMobilityTypes;
 	private static PathArc InvalidArc = new PathArc (null, null);
-	private const float GraphRadius = 3f; // This should be replaced with the largest unit radius of the given MobilityType
+	private const float GraphRadius = 0f;
 	private const float SparseGridSpacing = 150f;
 
 	public TerrainData terrain;
@@ -81,7 +81,6 @@ public class PathfinderData
 					}
 				}
 
-				Debug.Log (i + " " + j + " " + necessary);
 				if (! necessary)
 					RemoveArc (graph[i], graph[j]);
 			}
@@ -120,13 +119,16 @@ public class PathfinderData
 
 	// Gives the relative speed of a unit with the given MobilityType at the given location
 	// Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
+	// If radius > 0, check for units in the way, otherwise just look at terrain
 	public float GetUnitSpeed (MobilityType mobility, Vector3 location, float radius)
 	{
-		GameObject[] units = GameObject.FindGameObjectsWithTag ("Unit");
-		foreach (GameObject unit in units) {
-			float dist = Vector3.Distance (location, unit.transform.position);
-			if (dist < radius + unit.GetComponent<UnitBehaviour> ().data.radius)
-				return 0f;
+		if (radius > 0f) {
+			GameObject[] units = GameObject.FindGameObjectsWithTag ("Unit");
+			foreach (GameObject unit in units) {
+				float dist = Vector3.Distance (location, unit.transform.position);
+				if (dist < radius + unit.GetComponent<UnitBehaviour> ().data.radius)
+					return 0f;
+			}
 		}
 
 		// TODO: find unit speed on terrain

@@ -40,13 +40,13 @@ public class Pathfinder
 
 		//float pathTime = FindLocalPath (data, unit.transform.position, destination, unit.data.mobility, unit.data.radius);
 		//path.Add (new PathNode (destination));
-		float pathTime = data.FindPath (path, unit.transform.position, destination, unit.data.mobility, unit.data.radius, command);
+		float pathTime = data.FindPath (path, unit.transform.position, destination, unit.data.mobility, 0f, command);
 		return pathTime;
 	}
 
 	// Gives the next step along the previously computed path
 	// For speed, this will only update the waypoint on some frames
-	// Returns 'invalid' if there is no destination or a step cannot be found
+	// Returns 'NoPosition' if there is no destination or a step cannot be found
 	public Vector3 GetWaypoint()
 	{
 		if (!HasDestination ()) { // Nowhere to go
@@ -78,8 +78,10 @@ public class Pathfinder
 			} else {
 				
 				// The unit has gotten stuck when following the previously computed path.
-				// Now recompute a new path to the destination using the global graph
-				float pathTime = SetPath (path[0].position, command);
+				// Now recompute a new path to the destination using the global graph, this time using finite radius
+				float pathTime = data.FindPath (path, unit.transform.position, path[0].position, unit.data.mobility, unit.data.radius, command);
+				//float pathTime = SetPath (path[0].position, command);
+
 				if (pathTime == Forever) {  // The unit has somehow gotten itself trapped
 					Debug.Log ("I am stuck!!!");
 					waypoint = NoPosition;
@@ -129,7 +131,7 @@ public class Pathfinder
 	}
 
 	// Finds an intermediate step along the way from start to destination
-	// Returns 'invalid' if stuck
+	// Returns 'NoPosition' if stuck
 	private static Vector3 TakeStep (
 		PathfinderData data,
 		Vector3 start, Vector3 destination,
@@ -143,17 +145,17 @@ public class Pathfinder
 
 			for (int direction = -1; direction <= 1; direction += 2) {
 
-				Vector3 midpoint = start + Quaternion.AngleAxis (ang1*direction, Up) * straight;
+				Vector3 midpoint = start + (ang1 > 0f ? Quaternion.AngleAxis (ang1*direction, Up) * straight : straight);
 				float midspeed = data.GetUnitSpeed (mobility, midpoint, radius);
 
 				if (midspeed > 0f) {
 					for (float ang2 = 0f; ang2 <= ang1; ang2 += AngSearchInc) {
 
-						Vector3 endpoint = midpoint + Quaternion.AngleAxis (ang2*direction, Up) * straight;
+						Vector3 endpoint = midpoint + (ang2 > 0f ? Quaternion.AngleAxis (ang2*direction, Up) * straight : straight);
 						float endspeed = data.GetUnitSpeed (mobility, endpoint, radius);
 
 						if (endspeed > 0f) 
-							return midpoint;
+							return ang1 > 0f ? midpoint : endpoint;
 					}
 				}
 
