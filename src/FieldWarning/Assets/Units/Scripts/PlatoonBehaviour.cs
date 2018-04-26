@@ -52,7 +52,7 @@ public class PlatoonBehaviour : SelectableBehavior {
 				activeWaypoint.processWaypoint ();
 			} else {
 				activeWaypoint = null;
-				units.ForEach (x => x.gotDestination = false);
+				//units.ForEach (x => x.gotDestination = false);
 			}
 			//setFinalOrientation(waypoint.destination,waypoint.heading);
 		}	
@@ -406,7 +406,7 @@ public class MoveWaypoint : Waypoint
 
 	public override bool interrupt ()
 	{
-		platoon.units.ForEach (x => x.gotDestination = false);
+		//platoon.units.ForEach (x => x.gotDestination = false);
 		return true;
 	}
 }

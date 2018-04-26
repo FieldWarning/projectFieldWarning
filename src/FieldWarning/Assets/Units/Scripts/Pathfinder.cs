@@ -6,7 +6,6 @@ public class Pathfinder
 {
 	public const float Forever = float.MaxValue;
 	public static Vector3 NoPosition = new Vector3 (float.NaN, float.NaN, float.NaN);
-	private static Vector3 Up = new Vector3 (0f, 1f, 0f);
 
 	private const float StepSize = 1.2f; // Any object that the pathfinder is able to navigate around must have at least this radius
 	private const float CompletionDist = 2*StepSize; // Good enough if we can get within this distance of the target destination
@@ -145,13 +144,13 @@ public class Pathfinder
 
 			for (int direction = -1; direction <= 1; direction += 2) {
 
-				Vector3 midpoint = start + (ang1 > 0f ? Quaternion.AngleAxis (ang1*direction, Up) * straight : straight);
+				Vector3 midpoint = start + (ang1 > 0f ? Quaternion.AngleAxis (ang1*direction, Vector3.up) * straight : straight);
 				float midspeed = data.GetUnitSpeed (mobility, midpoint, radius);
 
 				if (midspeed > 0f) {
 					for (float ang2 = 0f; ang2 <= ang1; ang2 += AngSearchInc) {
 
-						Vector3 endpoint = midpoint + (ang2 > 0f ? Quaternion.AngleAxis (ang2*direction, Up) * straight : straight);
+						Vector3 endpoint = midpoint + (ang2 > 0f ? Quaternion.AngleAxis (ang2*direction, Vector3.up) * straight : straight);
 						float endspeed = data.GetUnitSpeed (mobility, endpoint, radius);
 
 						if (endspeed > 0f) 

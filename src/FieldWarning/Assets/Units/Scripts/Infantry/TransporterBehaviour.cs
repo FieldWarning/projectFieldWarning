@@ -20,7 +20,7 @@ public class TransporterBehaviour : MonoBehaviour {
                 GetComponent<UnitBehaviour>().setUnitDestination(transform.position);
             }
             //target.setRally(getRallyPoint(), transform.position);//???????
-            else if (GetComponent<UnitBehaviour>().gotDestination)
+			else if (GetComponent<UnitBehaviour>().pathfinder.HasDestination())
             {
                 GetComponent<UnitBehaviour>().setUnitDestination(target.transform.position);
             }
@@ -43,7 +43,7 @@ public class TransporterBehaviour : MonoBehaviour {
     public void load(InfantryBehaviour t)
     {
         this.target = t;
-        GetComponent<UnitBehaviour>().gotDestination = true;
+		//GetComponent<UnitBehaviour>().gotDestination = true;
         
     }
     public bool loadingComplete()

@@ -19,12 +19,11 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	public Vector3 destination;
 	protected float finalHeading;
 	PlatoonBehaviour platoon;
-	public bool gotDestination = false;
 	Terrain terrain;
 	float health;
 	public float timeLeft;
 	bool IsAlive;
-	protected Pathfinder pathfinder;
+	public Pathfinder pathfinder;
 
 	public Transform turret;
 	public Transform barrel;
@@ -219,7 +218,6 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	// Sets the unit's destination location, with a specific given heading value
 	public void setFinalOrientation (Vector3 d, float heading)
 	{
-		gotDestination = true;
 		destination = d;
 		setUnitFinalHeading (heading);
 		pathfinder.SetPath (destination, MoveCommandType.Fast);

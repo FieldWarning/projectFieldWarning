@@ -7,7 +7,8 @@ public class UnitData
 {
     //create from xml file or something
     public float movementSpeed 	  = 5f;
-    public float rotationSpeed 	  = 50;
+	public float accelRate        = 1.5f;
+    public float rotationSpeed 	  = 50f;
 	public float maxHealth 		  = 10f;
 	public Weapon weapon;
 	public float radius           = 0.4f;  // Used for pathfinding and collisions

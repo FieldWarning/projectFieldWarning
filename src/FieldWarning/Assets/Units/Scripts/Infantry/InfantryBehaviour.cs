@@ -102,7 +102,7 @@ public class InfantryBehaviour : UnitBehaviour {
         if (reachedDestination())
         {
             men.ForEach(x => x.fixFormationOffset(transform.position));
-            if (gotDestination)
+			if (pathfinder.HasDestination())
             {
                 moveToDestination();
             }
@@ -116,7 +116,6 @@ public class InfantryBehaviour : UnitBehaviour {
     private void moveToDestination(){
         men.ForEach(x => x.setDestination(destination));
         behaviour = InfantryBehaviourState.MoveToWaypoint;
-        gotDestination = false;
     }
     private void unloading()
     {

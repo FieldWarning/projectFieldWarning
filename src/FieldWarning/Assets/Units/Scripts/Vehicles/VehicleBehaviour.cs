@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 
 public class VehicleBehaviour : UnitBehaviour {
-    bool ordersDone;
 
+	const float DecelFactor = 1.5f;
+
+    bool ordersDone;
+	float speed;
 
     // Use this for initialization
     void Start() {
@@ -20,7 +23,7 @@ public class VehicleBehaviour : UnitBehaviour {
         ordersDone = false;
         float destinationHeading;
 		Vector3 waypoint = pathfinder.GetWaypoint();
-        if (gotDestination) {
+		if (pathfinder.HasDestination()) {
 			var diff = waypoint - this.transform.position;
             destinationHeading = diff.getRadianAngle();
         } else {
@@ -34,26 +37,29 @@ public class VehicleBehaviour : UnitBehaviour {
         if (Mathf.Abs(turn) > Mathf.Abs(diffheading)) turn = diffheading;
         transform.Rotate(Vector3.up, -turn);
 
-        if (!gotDestination) {
+		float targetSpeed;
+		if (!pathfinder.HasDestination()) {
+			targetSpeed = 0f;
             if (Mathf.Abs(turn) < 0.01f) {
                 ordersDone = true;
             }
-            return;
-        }
-		float distance = (waypoint - transform.localPosition).magnitude;
+		}else{
+			float destDist = (destination - transform.localPosition).magnitude;
+			targetSpeed = Mathf.Min (data.movementSpeed, Mathf.Sqrt (2 * destDist * data.accelRate * DecelFactor));
 
-		//if (distance < 1f) {
-		if (! pathfinder.HasDestination()) {
-            gotDestination = false;
-        } else {
-            float offset = data.movementSpeed * Time.deltaTime;
-            var turnradius = distance / (1000 * Mathf.Abs(diffheading));
-            float factor = data.rotationSpeed * turnradius;
-
-            if (factor < 1)
-                offset *= factor;
-            transform.Translate(offset * Vector3.forward);
+			float waypointDist = (waypoint - transform.localPosition).magnitude;
+			var turnradius = waypointDist / (1000 * Mathf.Abs(diffheading));
+			float turnFactor = data.rotationSpeed * turnradius;
+            if (turnFactor < 1)
+                targetSpeed *= turnFactor;
         }
+
+		if (targetSpeed > speed) {
+			speed = Mathf.Min (targetSpeed, speed + data.accelRate * Time.deltaTime);
+		} else {
+			speed = Mathf.Max (targetSpeed, speed - DecelFactor * data.accelRate * Time.deltaTime);
+		}
+		transform.Translate(speed * Time.deltaTime * Vector3.forward);
     }
 
     protected override Renderer[] getRenderers() {
@@ -74,6 +80,6 @@ public class VehicleBehaviour : UnitBehaviour {
     }
 
     public override bool ordersComplete() {
-        return !gotDestination;
+		return !pathfinder.HasDestination();
     }
 }
