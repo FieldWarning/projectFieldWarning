@@ -11,7 +11,7 @@ public class UnitData
     public float rotationSpeed 	  = 50f;
 	public float maxHealth 		  = 10f;
 	public Weapon weapon;
-	public float radius           = 0.4f;  // Used for pathfinding and collisions
+	public float radius           = 0.5f;  // Used for pathfinding and collisions
 	public MobilityType mobility = MobilityType.Track;
 
 	public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP

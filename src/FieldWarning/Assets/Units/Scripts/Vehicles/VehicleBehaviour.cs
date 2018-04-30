@@ -2,7 +2,7 @@
 
 public class VehicleBehaviour : UnitBehaviour {
 
-	const float DecelFactor = 1.5f;
+	const float DecelFactor = 2.0f;
 
     bool ordersDone;
 	float speed;
@@ -63,7 +63,8 @@ public class VehicleBehaviour : UnitBehaviour {
     }
 
     protected override Renderer[] getRenderers() {
-        return transform.GetChild(0).GetComponentsInChildren<Renderer>();
+		// Child 0 is the collider
+        return transform.GetChild(1).GetComponentsInChildren<Renderer>();
     }
 
     public override void setOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true) {

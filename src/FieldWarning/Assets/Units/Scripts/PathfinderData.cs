@@ -75,7 +75,7 @@ public class PathfinderData
 					float time = FindPath (path,
 						graph[i].position, graph[j].position,
 						(MobilityType)k, GraphRadius, MoveCommandType.Fast);
-					if (arc.time[k] < time) {
+					if (arc.time[k] < 1.1*time) {
 						necessary = true;
 						break;
 					}
@@ -147,6 +147,12 @@ public class PathfinderData
 		path.Clear ();
 		path.Add (new PathNode(destination));
 
+		PathNode cameFromDest = null;
+		float gScoreDest = Pathfinder.FindLocalPath (this, start, destination, mobility, radius);
+
+		if (command == MoveCommandType.Slow && gScoreDest < Pathfinder.Forever)
+			return gScoreDest;
+		
 		// Initialize with all nodes accessible from the starting point
 		// (this can be optimized later by throwing out some from the start)
 		openSet.Clear ();
@@ -163,13 +169,7 @@ public class PathfinderData
 			}
 		}
 
-		PathNode cameFromDest = null;
-		float gScoreDest = Pathfinder.FindLocalPath (this, start, destination, mobility, radius);
-
 		while (openSet.Count > 0) {
-
-			if (command == MoveCommandType.Slow && gScoreDest < Pathfinder.Forever)
-				break;
 
 			PathNode current = openSet.Dequeue ();
 			current.isClosed = true;
@@ -205,6 +205,8 @@ public class PathfinderData
 			float arcTimeDest = Pathfinder.FindLocalPath (this, current.position, destination, mobility, radius);
 			if (arcTimeDest >= Pathfinder.Forever)
 				continue;
+			if (arcTimeDest < Pathfinder.Forever && command == MoveCommandType.Slow)
+				arcTimeDest = 0f;
 
 			float gScoreDestNew = current.gScore + arcTimeDest;
 			if (gScoreDestNew < gScoreDest) {
