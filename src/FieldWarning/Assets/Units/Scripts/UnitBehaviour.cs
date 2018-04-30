@@ -30,8 +30,6 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	public Transform Shooting_root;
 	public ParticleSystem shooter_effect;
 
-
-
 	public AudioClip shotSound;
 	private AudioSource source;
 	private float shotVolume = 1.0F;
@@ -57,6 +55,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		source = GetComponent<AudioSource> ();
 
 		pathfinder = new Pathfinder (this, PathfinderData.singleton);
+		//Debug.Log (turret);
 	}
 
 	// Update is called once per frame
@@ -65,7 +64,9 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 
 		doMovement ();
 		updateMapOrientation ();
-		FireWeapon (FindClosestEnemy ());
+		GameObject target = FindClosestEnemy ();
+		if (RotateTurret (target))
+			FireWeapon (target);
 	}
 
 	/*void Countdown (int reloadtime) {
@@ -101,19 +102,63 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		}
 	}
 
+	bool RotateTurret (GameObject target)
+	{
+		bool aimed = false;
+		float targetTurretAngle = 0f;
+		float targetBarrelAngle = 0f;
 
+		if (target != null) {
+			aimed = true;
+			Shooting_root.LookAt (target.transform);
+
+			Vector3 directionToTarget = target.transform.position - turret.position;
+			Quaternion rotationToTarget = Quaternion.LookRotation (transform.InverseTransformDirection (directionToTarget));
+
+			targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
+			if (Mathf.Abs (targetTurretAngle) > data.weapon.ArcHorizontal) {
+				targetTurretAngle = 0f;
+				aimed = false;
+			}
+
+			targetBarrelAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
+			if (targetBarrelAngle < -data.weapon.ArcUp || targetBarrelAngle > data.weapon.ArcDown) {
+				targetBarrelAngle = 0f;
+				aimed = false;
+			}
+		}
+
+		float turretAngle = turret.localEulerAngles.y;
+		float barrelAngle = barrel.localEulerAngles.x;
+		float turn = Time.deltaTime * data.weapon.RotationRate;
+		float deltaAngle;
+
+		deltaAngle = (targetTurretAngle - turretAngle).unwrapDegree();
+		if (Mathf.Abs (deltaAngle) > turn) {
+			turretAngle += (deltaAngle > 0 ? 1 : -1) * turn;
+			aimed = false;
+		} else {
+			turretAngle = targetTurretAngle;
+		}
+			
+		deltaAngle = (targetBarrelAngle - barrelAngle).unwrapDegree();
+		if (Mathf.Abs (deltaAngle) > turn) {
+			barrelAngle += (deltaAngle > 0 ? 1 : -1) * turn;
+			aimed = false;
+		} else {
+			barrelAngle = targetBarrelAngle;
+		}
+
+		turret.localEulerAngles = new Vector3 (0, turretAngle, 0);
+		barrel.localEulerAngles = new Vector3 (barrelAngle, 0, 0);
+		//Shooting_root.localEulerAngles = new Vector3 (barrelAngle, turretAngle, 0);
+
+		return aimed;
+	}
 
 	void FireBullet (GameObject target)
 	{
-		Vector3 direction_to_target = target.transform.position - turret.position;
-		Quaternion rotation_to_target = Quaternion.LookRotation (direction_to_target);
-
-		turret.eulerAngles = new Vector3 (0, rotation_to_target.eulerAngles.y, 0);
-		barrel.localEulerAngles = new Vector3 (rotation_to_target.eulerAngles.x, 0, 0);
-
-		Shooting_root.LookAt (target.transform);
 		shooter_effect.Play ();
-
 
 	}
 

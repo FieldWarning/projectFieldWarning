@@ -12,8 +12,11 @@ namespace PFW.Weapons
 		public int ReloadTime;
 		public int ShotBurst; ///used to describe if the weapon fires single shell or in burst
 		public int Accuracy;
+		public int ArcHorizontal, ArcUp, ArcDown;
+		public float RotationRate;
 
-		public Weapon (int fireRange=2000,int damage=5,int reloadTime=10,int shortBurst=1, int accuracy=40)
+		public Weapon (int fireRange=2000,int damage=5,int reloadTime=10,int shortBurst=1, int accuracy=40,
+			int arcHorizontal=180, int arcUp=30, int arcDown=20, float rotationRate=40f)
 		//base constructor with default values
 		{
 			FireRange = fireRange;
@@ -21,6 +24,10 @@ namespace PFW.Weapons
 			ReloadTime = reloadTime;
 			ShotBurst = shortBurst;
 			Accuracy = accuracy;
+			ArcHorizontal = arcHorizontal;
+			ArcUp = arcUp;
+			ArcDown = arcDown;
+			RotationRate = rotationRate;
 		}
 	}
 }
