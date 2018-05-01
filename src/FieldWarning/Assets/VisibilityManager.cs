@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 public class VisibilityManager : MonoBehaviour
 {
@@ -47,7 +46,6 @@ public class VisibilityManager : MonoBehaviour
     {
         var go = Resources.Load<GameObject>("VisTest");
         var friend = GameObject.Instantiate<GameObject>(go);
-        friend.AddComponent<simpleMove>();
         var friendBehaviour = friend.GetComponent<VisibleBehavior>();
         friendBehaviour.initialize(Team.Red);
         var n = 100;
