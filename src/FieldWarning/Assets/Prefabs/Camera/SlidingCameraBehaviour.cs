@@ -73,8 +73,7 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     private void Update() {
         // Camera panning:
         translateX += Input.GetAxis("Horizontal") * getScaledPanSpeed();
-        translateZ += Input.GetAxis("Vertical") * getScaledPanSpeed();  
-        
+        translateZ += Input.GetAxis("Vertical") * getScaledPanSpeed();
 
         AimedZoom();
 
@@ -99,15 +98,18 @@ public class SlidingCameraBehaviour : MonoBehaviour {
 
         // Apply zoom movement:
         var dzoom = Mathf.Abs(leftoverZoom) < getScaledZoomSpeed() ? leftoverZoom : getScaledZoomSpeed();
-        if (dzoom > 0) {
-            targetPosition = Vector3.MoveTowards(targetPosition, zoomDestination, dzoom);
-        } else if (dzoom < 0) {
-            targetPosition += transform.TransformDirection(Vector3.forward) * dzoom;
-        }
-        leftoverZoom -= dzoom;
+        var oldAltitude = targetPosition.y;
 
+        // Zoom in:
+        if (dzoom > 0) {
+            ApplyZoomIn(dzoom);
+        } else if (dzoom < 0) {
+            ApplyZoomOut(dzoom);
+        }
+        
+        leftoverZoom -= dzoom;
         ClampCameraAltitude();
-        TiltCameraIfNearGround(dzoom);
+        TiltCameraIfNearGround(oldAltitude);
 
         // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * panLerpSpeed);
@@ -146,10 +148,21 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
     }
 
+    private void ApplyZoomIn(float dzoom) {
+        targetPosition = Vector3.MoveTowards(targetPosition, zoomDestination, dzoom);
+    }
+
+    private void ApplyZoomOut(float dzoom) {
+        Vector3 diagonallyBackAndUp = Vector3.up + Vector3.back;
+        Quaternion rotateToCamFacing = Quaternion.AngleAxis(rotateY, Vector3.up);
+        targetPosition -= rotateToCamFacing * diagonallyBackAndUp * dzoom;
+    }
+
     // Camera looks down when high and up when low:
-    private void TiltCameraIfNearGround(float dzoom) {
-        if (transform.position.y < tiltThreshold) {
-            rotateX -= zoomTiltSpeed * dzoom;
+    private void TiltCameraIfNearGround(float oldAltitude) {
+        if (transform.position.y < tiltThreshold || targetPosition.y < tiltThreshold) {
+
+            rotateX +=  targetPosition.y - oldAltitude * zoomTiltSpeed;
             rotateX = Mathf.Clamp(rotateX, minCameraAngle, maxCameraAngle);
         }
     }
