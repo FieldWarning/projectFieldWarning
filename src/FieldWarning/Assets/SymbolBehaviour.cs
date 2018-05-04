@@ -1,23 +1,20 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+
 public class SymbolBehaviour : MonoBehaviour {
     public Material iconMaterial;
     public Material[] textures;
-	// Use this for initialization
+
 	void Start () {
 	
 	}
 	
-	// Update is called once per frame
 	void Update () {
 	
 	}
-    public void setIcon(UnitType t)
-    {
+
+    public void setIcon(UnitType t) {
         int i = 0;
-        switch (t)
-        {
+        switch (t) {
             case UnitType.Infantry:
                 i = 0;
                 break;
@@ -31,6 +28,5 @@ public class SymbolBehaviour : MonoBehaviour {
         
         var mat = textures[i];
         GetComponent<Renderer>().material = mat;
-
     }
 }
