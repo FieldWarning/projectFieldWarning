@@ -123,7 +123,7 @@ public class PathfinderData
 	public float GetUnitSpeed (MobilityType mobility, Vector3 location, float radius)
 	{
 		if (radius > 0f) {
-			GameObject[] units = GameObject.FindGameObjectsWithTag ("Unit");
+			GameObject[] units = GameObject.FindGameObjectsWithTag (UnitBehaviour.UNIT_TAG);
 			foreach (GameObject unit in units) {
 				float dist = Vector3.Distance (location, unit.transform.position);
 				if (dist < radius + unit.GetComponent<UnitBehaviour> ().data.radius)

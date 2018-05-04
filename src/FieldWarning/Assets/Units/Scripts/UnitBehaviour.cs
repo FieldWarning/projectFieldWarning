@@ -34,6 +34,8 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	private AudioSource source;
 	private float shotVolume = 1.0F;
 
+    public const string UNIT_TAG = "Unit";
+
 	// Use this for initialization
 	public void Start ()
 	{		
@@ -45,12 +47,11 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		health = data.maxHealth; //set the health to 10 (from UnitData.cs)
 		IsAlive = true;
 		setVisible (false);
+        
+        this.tag = UNIT_TAG;
 
-		// TODO refactor to explicitly tag enemy units when we add multiplayer
-		// TODO maybe refactor the constant out
-		this.tag = "Unit";
 
-		source = GetComponent<AudioSource> ();
+        source = GetComponent<AudioSource> ();
 
 		pathfinder = new Pathfinder (this, PathfinderData.singleton);
 	}
@@ -64,10 +65,10 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		if (RotateTurret (target))
 			TryFireWeapon (target);
 	}
-
-	public void SetNewHeathOrDestroy (int receivedDamage)
+    
+	public void HandleHit (int receivedDamage)
 	{
-		health -= receivedDamage; //This one should be self explanatory
+		health -= receivedDamage; 
 		if (health < 1) {
 			IsAlive = false;
 			platoon.units.Remove (this);
@@ -152,7 +153,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
         // HIT
         if (roll < data.weapon.Accuracy) {
             target.GetComponent<UnitBehaviour>()
-                    .SetNewHeathOrDestroy(data.weapon.Damage);
+                    .HandleHit(data.weapon.Damage);
             return true;
         }
 
@@ -173,7 +174,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 
 	public GameObject FindClosestEnemy ()
 	{
-		GameObject[] units = GameObject.FindGameObjectsWithTag ("Unit");
+		GameObject[] units = GameObject.FindGameObjectsWithTag (UNIT_TAG);
 		GameObject Target = null;
 		Team thisTeam = this.platoon.team;
         
@@ -188,7 +189,6 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 				return units [i];
 			}
 		}
-		//Debug.Log ("null");
 		return Target;
 	}
 
