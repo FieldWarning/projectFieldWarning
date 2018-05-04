@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 public class PlatoonBehaviour : SelectableBehavior {
     public UnitType type;
@@ -61,9 +59,8 @@ public class PlatoonBehaviour : SelectableBehavior {
 	void RemoveDestroyedUnitFromList() {
 		foreach (var __unit in units) {
 
-            if (!__unit.GetIsAlive()) {
+            if (!__unit.IsAlive) {
 				units.Remove(__unit);
-				Debug.Log("Unit destroyed from platoon");
                 return;
 			}
 		}
@@ -73,10 +70,12 @@ public class PlatoonBehaviour : SelectableBehavior {
 	public void buildModules(UnitType t) {
 		movement = new MovementModule(this);
 		modules.Add(movement);
+
 		if (t == UnitType.AFV) {
 			transporter = new TransporterModule(this);
 			modules.Add(transporter);
 		}
+
 		if (t == UnitType.Infantry) {
 			transportable = new TransportableModule(this);
 			modules.Add(transportable);

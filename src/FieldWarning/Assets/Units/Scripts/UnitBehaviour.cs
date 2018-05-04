@@ -14,26 +14,25 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	}
 
 	private TerrainCollider _Ground;
-	float height;
-	//TODO ask gronak wtf this is
+
 	public Vector3 destination;
 	protected float finalHeading;
 	PlatoonBehaviour platoon;
-	Terrain terrain;
-	float health;
-	public float timeLeft;
-	bool IsAlive;
+	private Terrain terrain;
+	private float health;
+	public float reloadTimeLeft;
+	public bool IsAlive { get;  private set; }
 	public Pathfinder pathfinder;
 
 	public Transform turret;
 	public Transform barrel;
-	public Transform Shooting_root;
-	public ParticleSystem shooter_effect;
+	public Transform shotStartingPosition;
+	public ParticleSystem shotEffect;
 
-	public AudioClip shotSound;
+    [SerializeField]
+    private AudioClip shotSound;
 	private AudioSource source;
 	private float shotVolume = 1.0F;
-
 
 	// Use this for initialization
 	public void Start ()
@@ -41,9 +40,8 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		destination = new Vector3 (100, 0, -100);
 		transform.position = 100 * Vector3.down;
 		enabled = false;
-		height = 0;
 		data = UnitData.GenericUnit ();
-		timeLeft = (float)data.weapon.ReloadTime;
+		reloadTimeLeft = (float)data.weapon.ReloadTime;
 		health = data.maxHealth; //set the health to 10 (from UnitData.cs)
 		IsAlive = true;
 		setVisible (false);
@@ -55,33 +53,17 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 		source = GetComponent<AudioSource> ();
 
 		pathfinder = new Pathfinder (this, PathfinderData.singleton);
-		//Debug.Log (turret);
 	}
 
 	// Update is called once per frame
 	public void Update ()
 	{
-
 		doMovement ();
 		updateMapOrientation ();
 		GameObject target = FindClosestEnemy ();
 		if (RotateTurret (target))
-			FireWeapon (target);
+			TryFireWeapon (target);
 	}
-
-	/*void Countdown (int reloadtime) {
-		for (int i = 1; i >= 0; i -= 1) {
-
-			yield return false;
-		}
-		return false;
-	}*/
-
-	public bool GetIsAlive ()
-	{
-		return IsAlive;
-	}
-	//used in platoon behaviour to find destroyed unit
 
 	public void SetNewHeathOrDestroy (int receivedDamage)
 	{
@@ -110,7 +92,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 
 		if (target != null) {
 			aimed = true;
-			Shooting_root.LookAt (target.transform);
+			shotStartingPosition.LookAt (target.transform);
 
 			Vector3 directionToTarget = target.transform.position - turret.position;
 			Quaternion rotationToTarget = Quaternion.LookRotation (transform.InverseTransformDirection (directionToTarget));
@@ -151,50 +133,42 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 
 		turret.localEulerAngles = new Vector3 (0, turretAngle, 0);
 		barrel.localEulerAngles = new Vector3 (barrelAngle, 0, 0);
-		//Shooting_root.localEulerAngles = new Vector3 (barrelAngle, turretAngle, 0);
+		//shotStartingPosition.localEulerAngles = new Vector3 (barrelAngle, turretAngle, 0);
 
 		return aimed;
 	}
 
-	void FireBullet (GameObject target)
+    public bool FireWeapon(GameObject target) 
+    {
+        // sound
+        source.PlayOneShot(shotSound, shotVolume);
+        // particle
+        shotEffect.Play();
+
+
+        System.Random rnd = new System.Random();
+        int roll = rnd.Next(1, 100);
+
+        // HIT
+        if (roll < data.weapon.Accuracy) {
+            target.GetComponent<UnitBehaviour>()
+                    .SetNewHeathOrDestroy(data.weapon.Damage);
+            return true;
+        }
+
+        // MISS
+        return false;
+    }
+
+
+	public bool TryFireWeapon (GameObject target)
 	{
-		shooter_effect.Play ();
-
-	}
-
-
-	public bool FireWeapon (GameObject target)
-	{
-		timeLeft -= Time.deltaTime;
-
-		if (timeLeft < 0) {
-		
-			Debug.Log ("weapon fired");
-            
-			source.PlayOneShot (shotSound, shotVolume);
-
-			FireBullet (target);
-
-
-
-			System.Random rnd = new System.Random ();
-			int chance = rnd.Next (1, 100);
-			if (chance < data.weapon.Accuracy) {
-
-				Debug.Log ("shot fired and hit");
-				target.GetComponent<UnitBehaviour> ()
-                        .SetNewHeathOrDestroy (data.weapon.Damage);
-				timeLeft = (float)data.weapon.ReloadTime;
-				return true;
-			}
-
-			timeLeft = (float)data.weapon.ReloadTime;
-			Debug.Log ("shot fired and missed");
-			return false;
-
-		}
-
-		return false;
+		reloadTimeLeft -= Time.deltaTime;
+        if (reloadTimeLeft > 0)
+            return false;
+        
+        reloadTimeLeft = (float)data.weapon.ReloadTime;        
+		return FireWeapon(target);
 	}
 
 	public GameObject FindClosestEnemy ()
