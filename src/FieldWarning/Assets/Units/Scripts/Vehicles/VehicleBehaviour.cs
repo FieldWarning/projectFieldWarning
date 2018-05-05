@@ -8,13 +8,13 @@ public class VehicleBehaviour : UnitBehaviour {
 	float speed;
 
     // Use this for initialization
-    void Start() {
+    new void Start() {
         data = UnitData.Tank();
         base.Start();
 	}
 	
 	// Update is called once per frame
-	void Update() {
+	new void Update() {
         base.Update();
 	}
 
@@ -43,7 +43,7 @@ public class VehicleBehaviour : UnitBehaviour {
             if (Mathf.Abs(turn) < 0.01f) {
                 ordersDone = true;
             }
-		}else{
+		} else {
 			float destDist = (destination - transform.localPosition).magnitude;
 			targetSpeed = Mathf.Min (data.movementSpeed, Mathf.Sqrt (2 * destDist * data.accelRate * DecelFactor));
 

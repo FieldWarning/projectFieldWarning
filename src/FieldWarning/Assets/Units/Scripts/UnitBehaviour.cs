@@ -69,7 +69,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 	public void HandleHit (int receivedDamage)
 	{
 		health -= receivedDamage; 
-		if (health < 1) {
+		if (health <= 0) {
 			IsAlive = false;
 			platoon.units.Remove (this);
 		

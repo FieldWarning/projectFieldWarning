@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
-public class ClickManager{
+public class ClickManager {
     public int Button;
     public float ClickDelay;
     public bool IsActive;
@@ -11,34 +10,32 @@ public class ClickManager{
     public Action OnShortClick;
     public Action OnLongClick;
     public Action OnHoldClick;
-    public void Update()
-    {
+
+    public void Update() {
         
-        if (Input.GetMouseButtonDown(Button))
-        {
+        if (Input.GetMouseButtonDown(Button)) {
             LongClickTime = Time.time + ClickDelay;
             IsActive = true;
-            if (OnClickStart != null) OnClickStart();
+            if (OnClickStart != null)
+                OnClickStart();
         }
-        if (LongClickTime < Time.time)
-        {
-            if (Input.GetMouseButton(Button))
-            {
-                if (OnHoldClick != null) OnHoldClick();
-            }
-            else if (Input.GetMouseButtonUp(Button))
-            {
+
+        if (LongClickTime < Time.time) {
+            if (Input.GetMouseButton(Button)) {
+                if (OnHoldClick != null)
+                    OnHoldClick();
+            } else if (Input.GetMouseButtonUp(Button)) {
                 IsActive = false;
-                if (OnLongClick != null) OnLongClick();
-                else if (OnShortClick != null) OnShortClick();
+                if (OnLongClick != null)
+                    OnLongClick();
+                else if (OnShortClick != null)
+                    OnShortClick();
             }
-        }
-        else
-        {
-            if (Input.GetMouseButtonUp(Button))
-            {
+        } else {
+            if (Input.GetMouseButtonUp(Button)) {
                 IsActive = false;
-                if (OnShortClick != null) OnShortClick();
+                if (OnShortClick != null)
+                    OnShortClick();
             }
         }
     }

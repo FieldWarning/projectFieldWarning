@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -8,24 +7,24 @@ public class UIManagerBehaviour : MonoBehaviour {
 
     // Use this for initialization
     public static Team currentTeam = Team.Red;
-    Vector3 destination;
-    Vector3 boxSelectStart;
-    public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();//new List<GameObject>();
+    private Vector3 destination;
+    private Vector3 boxSelectStart;
+    public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
     List<GhostPlatoonBehaviour> spawnList = new List<GhostPlatoonBehaviour>();
-    Camera camera;
-    bool spawningUnits = false;
-    bool enteringSpawning = false;
+    Camera cam;
+    private bool spawningUnits = false;
+    private bool enteringSpawning = false;
     List<PlatoonBehaviour> selected = new List<PlatoonBehaviour>();
-    float clickTime;
-    float clickExtent = 0.05f;
-    ClickManager selectMode = new ClickManager();
-    ClickManager orderMode = new ClickManager();
+    private float clickTime;
+    private float clickExtent = 0.05f;
+    private ClickManager selectMode = new ClickManager();
+    private ClickManager orderMode = new ClickManager();
     public static BoxSelectManager boxSelectManager;
 
 
     void Start() {
         boxSelectManager = new BoxSelectManager();
-        camera = Camera.main.GetComponent<Camera>();
+        cam = Camera.main.GetComponent<Camera>();
 
         selectMode.Button = 0;
         selectMode.ClickDelay = clickExtent;
@@ -40,6 +39,61 @@ public class UIManagerBehaviour : MonoBehaviour {
         orderMode.OnHoldClick = onOrderHold;
         orderMode.OnShortClick = onOrderShortClick;
         orderMode.OnLongClick = onOrderLongClick;
+    }
+    
+    void Update() {
+
+        //////////////////////////////////////////////////////////////////////
+        // Temporary : for testing health until units can damage each other //
+        //////////////////////////////////////////////////////////////////////
+
+        if (Input.GetKey(KeyCode.Space)) {
+            foreach (var x in selected) {
+                foreach (var y in x.units) {
+                    y.setHealth(y.getHealth() - 0.1f);
+                    Debug.Log("hp : " + y.getHealth());
+                }
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////
+
+        if (spawningUnits) {
+
+            RaycastHit hit;
+            if (Input.GetMouseButtonUp(0) && enteringSpawning) {
+                enteringSpawning = false;
+            } else if (getTerrainClickLocation(out hit)
+                && hit.transform.gameObject.name.Equals("Terrain")) {
+
+                arrangeToBeSpawned(hit.point);
+
+                if (Input.GetMouseButtonUp(0) && !enteringSpawning) {
+                    var spawnPoint = getClosestSpawn(hit.point);
+                    var realPlatoons = spawnList.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
+
+                    spawnPoint.updateQueue(realPlatoons);
+                    if (Input.GetKey(KeyCode.LeftShift)) {
+                        replaceSpawnList();
+                    } else {
+                        spawnList.Clear();
+                        spawningUnits = false;
+                    }
+                }
+            }
+
+            if (Input.GetMouseButton(1))
+                destroySpawning();
+
+        } else {
+
+            if (!selectMode.IsActive)
+                orderMode.Update();
+            if (!orderMode.IsActive)
+                selectMode.Update();
+            processCommands();
+        }
     }
 
     void OnGUI() {
@@ -59,7 +113,7 @@ public class UIManagerBehaviour : MonoBehaviour {
             selected.endSelection();
         
         RaycastHit hit;
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
             Debug.Log("Selectable");
             var go = hit.transform.gameObject;
@@ -132,63 +186,6 @@ public class UIManagerBehaviour : MonoBehaviour {
                 go.GetComponent<PlatoonBehaviour>().ghostPlatoon.GetComponent<GhostPlatoonBehaviour>().setVisible(false);
             }*/
             if (!shift && !Options.StickySelection) selected.endSelection();
-        }
-    }
-
-    // Update is called once per frame
-    void Update() {
-
-		//////////////////////////////////////////////////////////////////////
-		// Temporary : for testing health until units can damage each other //
-		//////////////////////////////////////////////////////////////////////
-
-		if (Input.GetKey (KeyCode.Space)) {
-			foreach(var x in selected) {
-				foreach(var y in x.units) {
-					y.setHealth(y.getHealth() - 0.1f);
-					Debug.Log("hp : " + y.getHealth());
-				}
-			}
-		}
-
-		//////////////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////////////
-
-        if (spawningUnits) {
-
-            RaycastHit hit;
-            if (Input.GetMouseButtonUp(0) && enteringSpawning) {
-                enteringSpawning = false;
-            } else if (getTerrainClickLocation(out hit)
-                && hit.transform.gameObject.name.Equals("Terrain")) {
-
-                arrangeToBeSpawned(hit.point);
-
-                if (Input.GetMouseButtonUp(0) && !enteringSpawning) {
-                    var spawnPoint = getClosestSpawn(hit.point);
-                    var realPlatoons = spawnList.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
-
-                    spawnPoint.updateQueue(realPlatoons);
-                    if (Input.GetKey(KeyCode.LeftShift)) {
-                        replaceSpawnList();
-                    }
-                    else {
-                        spawnList.Clear();
-                        spawningUnits = false;
-                    }
-                }
-            }
-
-            if (Input.GetMouseButton(1))
-                destroySpawning();
-            
-        } else {
-
-            if (!selectMode.IsActive)
-                orderMode.Update();
-            if (!orderMode.IsActive)
-                selectMode.Update();
-            processCommands();
         }
     }
 
@@ -311,7 +308,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     bool getTerrainClickLocation(out RaycastHit hit) {
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
     }        
 }
