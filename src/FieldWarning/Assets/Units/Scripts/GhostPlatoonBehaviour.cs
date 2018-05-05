@@ -159,5 +159,13 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         GameObject go = GameObject.Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
         return behaviour;
-    }    
+    }
+
+    public void handleRealUnitDestroyed() {
+        GameObject u = units[0];
+        units.Remove(u);
+        Destroy(u);
+        if (units.Count == 0)
+            destroy();
+    }
 }

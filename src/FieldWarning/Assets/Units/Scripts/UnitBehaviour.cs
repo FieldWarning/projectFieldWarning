@@ -74,8 +74,7 @@ public abstract class UnitBehaviour : SelectableBehavior,Matchable<Vector3>
 			platoon.units.Remove (this);
 		
 			Destroy (this.gameObject);
-
-			// TODO destroy ghosts too
+            platoon.ghostPlatoon.handleRealUnitDestroyed ();
 			if (platoon.units.Count == 0) {
 				Destroy (platoon.gameObject);
 				// TODO remove from selection if part of one
