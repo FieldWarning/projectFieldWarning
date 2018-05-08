@@ -9,8 +9,8 @@ public class VehicleBehaviour : UnitBehaviour {
 
     // Use this for initialization
     new void Start() {
-        data = UnitData.Tank();
         base.Start();
+		data = UnitData.Tank();
 	}
 	
 	// Update is called once per frame
@@ -30,9 +30,9 @@ public class VehicleBehaviour : UnitBehaviour {
             destinationHeading = finalHeading;
         }
 
-        destinationHeading = unwrap(destinationHeading);
+		destinationHeading = destinationHeading.unwrapRadian ();
         var currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
-        var diffheading = unwrap(destinationHeading + currentHeading - Mathf.PI / 2);
+		var diffheading = (destinationHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
         var turn = Mathf.Sign(diffheading) * data.rotationSpeed * Time.deltaTime;
         if (Mathf.Abs(turn) > Mathf.Abs(diffheading)) turn = diffheading;
         transform.Rotate(Vector3.up, -turn);

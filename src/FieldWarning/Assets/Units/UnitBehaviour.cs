@@ -1,8 +1,16 @@
 ﻿using UnityEngine;
+using PFW.Weapons;
 
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
+	public const string UNIT_TAG = "Unit";
+
 	public UnitData data;
+	public Vector3 destination;
+	public PlatoonBehaviour platoon { get; private set; }
+	public bool IsAlive { get; private set; }
+	public Pathfinder pathfinder { get; private set; }
+	public AudioSource source { get; private set; }
 
 	protected TerrainCollider Ground {
 		get {
@@ -13,28 +21,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 		}
 	}
 
-	private TerrainCollider _Ground;
-
-	public Vector3 destination;
 	protected float finalHeading;
-	PlatoonBehaviour platoon;
+
 	private Terrain terrain;
+	private TerrainCollider _Ground;
 	private float health;
-	public float reloadTimeLeft;
-	public bool IsAlive { get;  private set; }
-	public Pathfinder pathfinder;
 
-	public Transform turret;
-	public Transform barrel;
-	public Transform shotStartingPosition;
-	public ParticleSystem shotEffect;
-
-    [SerializeField]
-    private AudioClip shotSound;
-	private AudioSource source;
-	private float shotVolume = 1.0F;
-
-    public const string UNIT_TAG = "Unit";
 
 	// Use this for initialization
 	public void Start ()
@@ -43,17 +35,15 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 		transform.position = 100 * Vector3.down;
 		enabled = false;
 		data = UnitData.GenericUnit ();
-		reloadTimeLeft = (float)data.weapon.ReloadTime;
 		health = data.maxHealth; //set the health to 10 (from UnitData.cs)
 		IsAlive = true;
 		setVisible (false);
-        
         this.tag = UNIT_TAG;
-
 
         source = GetComponent<AudioSource> ();
 
 		pathfinder = new Pathfinder (this, PathfinderData.singleton);
+
 	}
 
 	// Update is called once per frame
@@ -61,13 +51,14 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 	{
 		doMovement ();
 		updateMapOrientation ();
-		GameObject target = FindClosestEnemy ();
-		if (RotateTurret (target))
-			TryFireWeapon (target);
+
 	}
     
-	public void HandleHit (int receivedDamage)
+	public void HandleHit (float receivedDamage)
 	{
+		if (health <= 0)
+			return;
+
 		health -= receivedDamage; 
 		if (health <= 0) {
 			IsAlive = false;
@@ -82,113 +73,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
 			return;
 		}
-	}
-
-	bool RotateTurret (GameObject target)
-	{
-		bool aimed = false;
-		float targetTurretAngle = 0f;
-		float targetBarrelAngle = 0f;
-
-		if (target != null) {
-			aimed = true;
-			shotStartingPosition.LookAt (target.transform);
-
-			Vector3 directionToTarget = target.transform.position - turret.position;
-			Quaternion rotationToTarget = Quaternion.LookRotation (transform.InverseTransformDirection (directionToTarget));
-
-			targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
-			if (Mathf.Abs (targetTurretAngle) > data.weapon.ArcHorizontal) {
-				targetTurretAngle = 0f;
-				aimed = false;
-			}
-
-			targetBarrelAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
-			if (targetBarrelAngle < -data.weapon.ArcUp || targetBarrelAngle > data.weapon.ArcDown) {
-				targetBarrelAngle = 0f;
-				aimed = false;
-			}
-		}
-
-		float turretAngle = turret.localEulerAngles.y;
-		float barrelAngle = barrel.localEulerAngles.x;
-		float turn = Time.deltaTime * data.weapon.RotationRate;
-		float deltaAngle;
-
-		deltaAngle = (targetTurretAngle - turretAngle).unwrapDegree();
-		if (Mathf.Abs (deltaAngle) > turn) {
-			turretAngle += (deltaAngle > 0 ? 1 : -1) * turn;
-			aimed = false;
-		} else {
-			turretAngle = targetTurretAngle;
-		}
-			
-		deltaAngle = (targetBarrelAngle - barrelAngle).unwrapDegree();
-		if (Mathf.Abs (deltaAngle) > turn) {
-			barrelAngle += (deltaAngle > 0 ? 1 : -1) * turn;
-			aimed = false;
-		} else {
-			barrelAngle = targetBarrelAngle;
-		}
-
-		turret.localEulerAngles = new Vector3 (0, turretAngle, 0);
-		barrel.localEulerAngles = new Vector3 (barrelAngle, 0, 0);
-		//shotStartingPosition.localEulerAngles = new Vector3 (barrelAngle, turretAngle, 0);
-
-		return aimed;
-	}
-
-    public bool FireWeapon(GameObject target) 
-    {
-        // sound
-        source.PlayOneShot(shotSound, shotVolume);
-        // particle
-        shotEffect.Play();
-
-
-        System.Random rnd = new System.Random();
-        int roll = rnd.Next(1, 100);
-
-        // HIT
-        if (roll < data.weapon.Accuracy) {
-            target.GetComponent<UnitBehaviour>()
-                    .HandleHit(data.weapon.Damage);
-            return true;
-        }
-
-        // MISS
-        return false;
-    }
-
-
-	public bool TryFireWeapon (GameObject target)
-	{
-		reloadTimeLeft -= Time.deltaTime;
-        if (reloadTimeLeft > 0)
-            return false;
-        
-        reloadTimeLeft = (float)data.weapon.ReloadTime;        
-		return FireWeapon(target);
-	}
-
-	public GameObject FindClosestEnemy ()
-	{
-		GameObject[] units = GameObject.FindGameObjectsWithTag (UNIT_TAG);
-		GameObject Target = null;
-		Team thisTeam = this.platoon.team;
-        
-		for (int i = 0; i < (int)units.Length; i++) {
-			// Filter out friendlies:
-			if (units [i].GetComponent<UnitBehaviour> ().platoon.team == thisTeam)
-				continue;
-
-			// See if they are in range of weapon:
-			var distance = Vector3.Distance (units [i].transform.position, transform.position);
-			if (distance < data.weapon.FireRange) {
-				return units [i];
-			}
-		}
-		return Target;
 	}
 
 	public abstract void updateMapOrientation ();
@@ -278,15 +162,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 		}
 	}
 
-	protected float unwrap (float f)
-	{
-		while (f > Mathf.PI)
-			f -= 2 * Mathf.PI;
-		while (f < -Mathf.PI)
-			f += 2 * Mathf.PI;
-		return f;
-	}
-
 	protected float getHeading ()
 	{
 		return (destination - transform.position).getDegreeAngle ();
@@ -310,9 +185,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 	{
 		enabled = true;
 		setVisible (true);
+		foreach (Weapon weapon in gameObject.GetComponents<Weapon>())
+			weapon.WakeUp ();
 	}
 
 	public abstract bool ordersComplete ();
+
 }
 
 public enum MoveCommandType

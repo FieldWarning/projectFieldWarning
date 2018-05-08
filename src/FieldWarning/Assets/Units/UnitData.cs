@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using PFW.Weapons;
 
 public class UnitData
@@ -10,9 +11,14 @@ public class UnitData
 	public float accelRate        = 1.5f;
     public float rotationSpeed 	  = 50f;
 	public float maxHealth 		  = 10f;
-	public Weapon weapon;
+	public List<WeaponData> weaponData;
 	public float radius           = 0.5f;  // Used for pathfinding and collisions
 	public MobilityType mobility = MobilityType.Track;
+
+	public UnitData ()
+	{
+		weaponData = new List<WeaponData> ();
+	}
 
 	public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP
 	{
@@ -20,7 +26,7 @@ public class UnitData
 		d.movementSpeed = 5f;
 		d.rotationSpeed = 50;
 		d.maxHealth = 10f;
-		d.weapon = new Weapon ();
+		d.weaponData.Add (new WeaponData ());
 		return d;
 	}
 
@@ -29,7 +35,8 @@ public class UnitData
         var d = new UnitData();
         d.movementSpeed = 5f;
         d.rotationSpeed = 50;
-		d.weapon = new Weapon (2000,2,8,1,40); //will use tanks for the damage tests
+		d.weaponData.Add (new WeaponData (200,2,8,1,30)); //will use tanks for the damage tests
+		d.weaponData.Add (new WeaponData (20,0,1.5f,1,40)); // minigun
         return d;
     }
     public static UnitData Infantry()
@@ -37,7 +44,7 @@ public class UnitData
         var d = new UnitData();
         d.movementSpeed = 3f;
         d.rotationSpeed = 50;
-		d.weapon = new Weapon ();
+		d.weaponData.Add (new WeaponData ());
         return d;
     }
 }
