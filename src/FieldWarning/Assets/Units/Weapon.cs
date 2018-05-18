@@ -11,17 +11,24 @@ namespace PFW.Weapons
 		public UnitBehaviour unit { get; private set; }
 		public float reloadTimeLeft { get; private set; }
 
-		// --------------- BEGIN PREFAB ----------------
-		public int dataIndex;
-		public Transform mount;
-		public Transform turret;
-		public Transform barrel;
-		public Transform shotEmitter;
-		public ParticleSystem shotEffect;
+        // --------------- BEGIN PREFAB ----------------
+        [SerializeField]
+        private int dataIndex;
+        [SerializeField]
+        private Transform mount;
+        [SerializeField]
+        private Transform turret;
+        [SerializeField]
+        private Transform barrel;
+        [SerializeField]
+        private Transform shotEmitter;
+        [SerializeField]
+        private ParticleSystem shotEffect;
 
 		[SerializeField]
-		public AudioClip shotSound;
-		public float shotVolume = 1.0F;
+		private AudioClip shotSound;
+        [SerializeField]
+        private float shotVolume = 1.0F;
 		// ---------------- END PREFAB -----------------
 
 		public void Start ()
