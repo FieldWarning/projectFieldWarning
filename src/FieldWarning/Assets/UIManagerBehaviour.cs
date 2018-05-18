@@ -16,9 +16,10 @@ public class UIManagerBehaviour : MonoBehaviour {
     private bool enteringSpawning = false;
     List<PlatoonBehaviour> selected = new List<PlatoonBehaviour>();
     private float clickTime;
-    private float clickExtent = 0.05f;
-    private ClickManager selectMode = new ClickManager();
-    private ClickManager orderMode = new ClickManager();
+    [SerializeField]
+    private float shortestLongClick = 0.05f;
+    private ClickManager selectMode;
+    private ClickManager orderMode;
     public static BoxSelectManager boxSelectManager;
 
 
@@ -26,19 +27,8 @@ public class UIManagerBehaviour : MonoBehaviour {
         boxSelectManager = new BoxSelectManager();
         cam = Camera.main.GetComponent<Camera>();
 
-        selectMode.Button = 0;
-        selectMode.ClickDelay = clickExtent;
-        selectMode.OnClickStart = onSelectStart;
-        selectMode.OnHoldClick = onSelectHold;
-        selectMode.OnShortClick = onSelectShortClick;
-        selectMode.OnLongClick = onSelectLongClick;
-
-        orderMode.Button = 1;
-        orderMode.ClickDelay = clickExtent;
-        orderMode.OnClickStart = onOrderStart;
-        orderMode.OnHoldClick = onOrderHold;
-        orderMode.OnShortClick = onOrderShortClick;
-        orderMode.OnLongClick = onOrderLongClick;
+        selectMode = new ClickManager(0, shortestLongClick, onSelectStart, onSelectShortClick, onSelectLongClick, onSelectHold);
+        orderMode = new ClickManager(1, shortestLongClick, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
     }
     
     void Update() {
@@ -54,6 +44,10 @@ public class UIManagerBehaviour : MonoBehaviour {
                     Debug.Log("hp : " + y.getHealth());
                 }
             }
+        }
+
+        if (Input.GetKey(KeyCode.T)) {
+            Debug.Log("fire pos hotkey");
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -88,9 +82,9 @@ public class UIManagerBehaviour : MonoBehaviour {
 
         } else {
 
-            if (!selectMode.IsActive)
+            if (!selectMode.isActive)
                 orderMode.Update();
-            if (!orderMode.IsActive)
+            if (!orderMode.isActive)
                 selectMode.Update();
             processCommands();
         }

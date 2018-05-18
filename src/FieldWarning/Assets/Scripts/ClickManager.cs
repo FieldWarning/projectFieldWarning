@@ -2,41 +2,55 @@
 using System;
 
 public class ClickManager {
-    public int Button;
-    public float ClickDelay;
-    public bool IsActive;
+    public bool isActive;
+
+    private int button;
+    private float shortestLongClick;
     private float LongClickTime;
-    public Action OnClickStart;
-    public Action OnShortClick;
-    public Action OnLongClick;
-    public Action OnHoldClick;
+    private Action onClickStart;
+    private Action onShortClick;
+    private Action onLongClick;
+    private Action onHoldClick;
+
+    public ClickManager(int button,  float clickDelay, Action onClickStart, Action onShortClick, Action onLongClick, Action onHoldClick) {
+        this.button = button;
+        this.shortestLongClick = clickDelay;
+        this.onClickStart = onClickStart;
+        this.onShortClick = onShortClick;
+        this.onLongClick = onLongClick;
+        this.onHoldClick = onHoldClick;
+    }
 
     public void Update() {
-        
-        if (Input.GetMouseButtonDown(Button)) {
-            LongClickTime = Time.time + ClickDelay;
-            IsActive = true;
-            if (OnClickStart != null)
-                OnClickStart();
-        }
 
-        if (LongClickTime < Time.time) {
-            if (Input.GetMouseButton(Button)) {
-                if (OnHoldClick != null)
-                    OnHoldClick();
-            } else if (Input.GetMouseButtonUp(Button)) {
-                IsActive = false;
-                if (OnLongClick != null)
-                    OnLongClick();
-                else if (OnShortClick != null)
-                    OnShortClick();
+        if (Input.GetMouseButtonDown(button)) {
+            LongClickTime = Time.time + shortestLongClick;
+            isActive = true;
+            if (onClickStart != null)
+                onClickStart();
+        } 
+
+        if (isActive && isLongClick()) {
+            if (Input.GetMouseButton(button)) {
+                if (onHoldClick != null)
+                    onHoldClick();
+            } else if (Input.GetMouseButtonUp(button)) {
+                isActive = false;
+                if (onLongClick != null)
+                    onLongClick();
+                else if (onShortClick != null)
+                    onShortClick();
             }
         } else {
-            if (Input.GetMouseButtonUp(Button)) {
-                IsActive = false;
-                if (OnShortClick != null)
-                    OnShortClick();
+            if (Input.GetMouseButtonUp(button)) {
+                isActive = false;
+                if (onShortClick != null)
+                    onShortClick();
             }
         }
+    }
+
+    private bool isLongClick() {
+        return LongClickTime < Time.time;
     }
 }

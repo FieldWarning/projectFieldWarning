@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class BoxSelectManager{
+public class BoxSelectManager {
 
     public List<PlatoonBehaviour> allUnits = new List<PlatoonBehaviour>();
     private Vector3 mouseStart;
@@ -11,7 +10,7 @@ public class BoxSelectManager{
     private Texture2D texture;
     private Texture2D borderTexture;
     private List<PlatoonBehaviour> selection;
-    public Color color=Color.red;
+    public Color color = Color.red;
     public bool active;
     public void startDrag()
     {
@@ -60,8 +59,7 @@ public class BoxSelectManager{
     }
     public void OnGui(){
 
-        if (texture == null)
-        {
+        if (texture == null) {
             var areaTransparency = .95f;
             var borderTransparency = .75f;
             texture = new Texture2D(1, 1);
@@ -74,30 +72,25 @@ public class BoxSelectManager{
             borderTexture.SetPixel(0, 0, color - borderTransparency * Color.black);
             borderTexture.Apply();
         }
-        if (active)
-        {
+
+        if (active) {
             
             float lineWidth = 3;
             float startX;
             float endX;
-            if(mouseStart.x<mouseEnd.x){
-            startX=mouseStart.x;
-            endX = mouseEnd.x;
-            }
-            else
-            {
+            if (mouseStart.x<mouseEnd.x) {
+                startX=mouseStart.x;
+                endX = mouseEnd.x;
+            } else {
                 startX = mouseEnd.x;
                 endX = mouseStart.x;
             }
             float startY;
             float endY;
-            if (mouseStart.y < mouseEnd.y)
-            {
+            if (mouseStart.y < mouseEnd.y) {
                 startY = Screen.height - mouseStart.y;
                 endY = Screen.height - mouseEnd.y;
-            }
-            else
-            {
+            } else {
                 startY = Screen.height - mouseEnd.y;
                 endY = Screen.height - mouseStart.y;
             }
@@ -113,6 +106,5 @@ public class BoxSelectManager{
             GUI.DrawTexture(topEdge, borderTexture, ScaleMode.StretchToFill, true);
             GUI.DrawTexture(bottomEdge, borderTexture, ScaleMode.StretchToFill, true);
         }
-         
     }
 }
