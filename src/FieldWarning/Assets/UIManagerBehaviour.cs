@@ -6,7 +6,7 @@ using System;
 public class UIManagerBehaviour : MonoBehaviour {
 
     // Use this for initialization
-    public static Team currentTeam = Team.Red;
+    public Player owner;
     private Vector3 destination;
     private Vector3 boxSelectStart;
     public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
@@ -148,12 +148,11 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     public void buildUnit(UnitType t) {
-        var behaviour = GhostPlatoonBehaviour.build(t, currentTeam, 4);
+        var behaviour = GhostPlatoonBehaviour.build(t, owner, 4);
         addSpawn(behaviour);
     }
 
-
-
+    
 
     private void addSpawn(GhostPlatoonBehaviour g) {
         spawningUnits = true;
@@ -213,7 +212,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     private SpawnPointBehaviour getClosestSpawn(Vector3 p) {
-        var pointList = spawnPointList[currentTeam];
+        var pointList = spawnPointList[owner.getTeam()];
         SpawnPointBehaviour go = pointList[0];
         float distance = Single.PositiveInfinity;
         foreach (var s in pointList) {

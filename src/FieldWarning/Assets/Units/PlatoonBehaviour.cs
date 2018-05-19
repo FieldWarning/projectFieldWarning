@@ -14,24 +14,11 @@ public class PlatoonBehaviour : SelectableBehavior {
     public GhostPlatoonBehaviour ghostPlatoon;
     public IconBehaviour icon;
     public static float baseDistance = 4;
-    public Team team { get; private set; }
+    public Player owner { get; private set; }
 	public bool initialized = false;
-
-
 
 	// Use this for initialization
 	void Start() {
-		var go = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
-		go.transform.parent = transform;
-		icon = go.GetComponent<IconBehaviour>();
-		icon.setUnit(this);
-		icon.setTeam(team);
-
-
-		//enabled = false;
-		//setMembers(Resources.Load<GameObject>("Unit"), 4);
-		//nextWaypoint.destination = transform.position;
-		initialized = true;
 	}
 
 	void Update() {
@@ -53,19 +40,8 @@ public class PlatoonBehaviour : SelectableBehavior {
 				//units.ForEach (x => x.gotDestination = false);
 			}
 			//setFinalOrientation(waypoint.destination,waypoint.heading);
-		}	
-	}
-
-	void RemoveDestroyedUnitFromList() {
-		foreach (var __unit in units) {
-
-            if (!__unit.IsAlive) {
-				units.Remove(__unit);
-                return;
-			}
 		}
 	}
-
 
 	public void buildModules(UnitType t) {
 		movement = new MovementModule(this);
@@ -82,14 +58,20 @@ public class PlatoonBehaviour : SelectableBehavior {
 		}
 	}
 
-	public void setMembers(UnitType t, Team team, int n) {
+	public void setMembers(UnitType t, Player owner, int n) {
+        var go = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
+        go.transform.parent = transform;
+        icon = go.GetComponent<IconBehaviour>();
+        icon.setUnit(this);
 
-		UIManagerBehaviour.selectionManager.allUnits.Add(this);
+        UIManagerBehaviour.selectionManager.allUnits.Add(this);
 		type = t;
-		this.team = team;
-		var g = Units.getUnit(t);
+		this.owner = owner;
+        icon.setTeam(owner.getTeam());
+
+        var g = Units.getUnit(t);
 		for (int i = 0; i < n; i++) {
-			GameObject go = GameObject.Instantiate(g);
+			go = GameObject.Instantiate(g);
 			var unitBehaviour = go.GetComponent<UnitBehaviour>();
 			unitBehaviour.setPlatoon(this);
 			units.Add(unitBehaviour);
@@ -97,14 +79,17 @@ public class PlatoonBehaviour : SelectableBehavior {
         }
 
 		buildModules(t);
+
 		if (t == UnitType.AFV) {
-			var ghost = GhostPlatoonBehaviour.build(UnitType.Infantry, team, n);            
+			var ghost = GhostPlatoonBehaviour.build(UnitType.Infantry, owner, n);            
 			transporter.setTransported(ghost.getRealPlatoon());
 			ghost.setOrientation(100 * Vector3.down, 0);
 			ghost.setVisible(false);
 		}
 		movement.setDestination(Vector3.forward);
-	}
+
+        initialized = true;
+    }
 
 	public void setGhostPlatoon(GhostPlatoonBehaviour obj)	{
 		ghostPlatoon = obj;
