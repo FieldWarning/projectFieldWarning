@@ -68,8 +68,9 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
             platoon.ghostPlatoon.handleRealUnitDestroyed ();
 			if (platoon.units.Count == 0) {
 				Destroy (platoon.gameObject);
-				// TODO remove from selection if part of one
-			}
+                UIManagerBehaviour.selectionManager.allUnits.Remove(platoon);
+                UIManagerBehaviour.selectionManager.selection.Remove(platoon);
+            }
 
 			return;
 		}
