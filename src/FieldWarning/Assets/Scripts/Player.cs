@@ -24,9 +24,9 @@ public class Player : MonoBehaviour {
         if (quit == null)
             throw new Exception(ERR_START + " quit missing.");
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    
+    // Update is called once per frame
+    void Update () {
+    
+    }
 }
