@@ -17,6 +17,7 @@ public class SelectionManager {
     private ClickManager clickManager;
 
     public SelectionManager(int button, float mouseDragThreshold) {
+        selection = new List<PlatoonBehaviour>();
         clickManager = new ClickManager(button, mouseDragThreshold, startBoxSelection, onSelectShortClick, endDrag, updateBoxSelection);
     }
 
@@ -106,7 +107,6 @@ public class SelectionManager {
             var borderTransparency = .75f;
             texture = new Texture2D(1, 1);
             texture.wrapMode = TextureWrapMode.Repeat;
-            var a = .95f;
             texture.SetPixel(0, 0, color - areaTransparency * Color.black);
             texture.Apply();
             borderTexture = new Texture2D(1, 1);
