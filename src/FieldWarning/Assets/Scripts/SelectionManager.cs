@@ -47,6 +47,8 @@ public class SelectionManager {
     }
 
     private void onSelectShortClick() {
+        unselectAll(selection);
+
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
