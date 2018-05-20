@@ -64,7 +64,7 @@ public class PlatoonBehaviour : SelectableBehavior {
         icon = go.GetComponent<IconBehaviour>();
         icon.setUnit(this);
 
-        UIManagerBehaviour.selectionManager.allUnits.Add(this);
+        UIManagerBehaviour.registerPlatoonBirth(this);
 		type = t;
 		this.owner = owner;
         icon.setTeam(owner.getTeam());
