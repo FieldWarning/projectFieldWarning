@@ -64,7 +64,7 @@ namespace PFW.Weapons
             float targetTurretAngle = 0f;
             float targetBarrelAngle = 0f;
 
-            Vector3 pos = target.position == null ? target.enemy.transform.position : target.position;
+            Vector3 pos = target.enemy == null ? target.position : target.enemy.transform.position;
 
             if (pos != Vector3.zero) {
                 aimed = true;
@@ -119,7 +119,6 @@ namespace PFW.Weapons
             unit.source.PlayOneShot(shotSound, shotVolume);
             // particle
             shotEffect.Play();
-
 
             if (target.enemy != null) {
                 System.Random rnd = new System.Random();
