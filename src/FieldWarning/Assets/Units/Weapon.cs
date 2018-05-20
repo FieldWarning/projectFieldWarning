@@ -11,6 +11,11 @@ namespace PFW.Weapons
         public UnitBehaviour unit { get; private set; }
         public float reloadTimeLeft { get; private set; }
 
+        private TargetTuple target;
+        public void setTarget(Vector3 position) {
+            target = new TargetTuple(position);
+        }
+
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
         private int dataIndex;
@@ -39,8 +44,9 @@ namespace PFW.Weapons
 
         public void Update()
         {
+            if (target == null)
+                target = new TargetTuple(FindClosestEnemy());
 
-            GameObject target = FindClosestEnemy ();
             if (RotateTurret (target))
                 TryFireWeapon (target);
         }
@@ -52,17 +58,19 @@ namespace PFW.Weapons
             enabled = true;
         }
 
-        bool RotateTurret (GameObject target)
+        bool RotateTurret (TargetTuple target)
         {
             bool aimed = false;
             float targetTurretAngle = 0f;
             float targetBarrelAngle = 0f;
 
-            if (target != null) {
-                aimed = true;
-                shotEmitter.LookAt (target.transform);
+            Vector3 pos = target.enemy == null ? target.position : target.enemy.transform.position;
 
-                Vector3 directionToTarget = target.transform.position - turret.position;
+            if (pos != Vector3.zero) {
+                aimed = true;
+                shotEmitter.LookAt (pos);
+
+                Vector3 directionToTarget = pos - turret.position;
                 Quaternion rotationToTarget = Quaternion.LookRotation (mount.transform.InverseTransformDirection (directionToTarget));
 
                 targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
@@ -105,22 +113,26 @@ namespace PFW.Weapons
             return aimed;
         }
 
-        public bool FireWeapon(GameObject target) 
+        private bool FireWeapon(TargetTuple target) 
         {
             // sound
             unit.source.PlayOneShot(shotSound, shotVolume);
             // particle
             shotEffect.Play();
 
+            if (target.enemy != null) {
+                System.Random rnd = new System.Random();
+                int roll = rnd.Next(1, 100);
 
-            System.Random rnd = new System.Random();
-            int roll = rnd.Next(1, 100);
-
-            // HIT
-            if (roll < data.Accuracy) {
-                target.GetComponent<UnitBehaviour>()
-                    .HandleHit(data.Damage);
-                return true;
+                // HIT
+                if (roll < data.Accuracy) {
+                    target.enemy.GetComponent<UnitBehaviour>()
+                        .HandleHit(data.Damage);
+                    return true;
+                }
+            } else { 
+                // ensure we only fire pos once
+                this.target = null;
             }
 
             // MISS
@@ -128,7 +140,7 @@ namespace PFW.Weapons
         }
 
 
-        public bool TryFireWeapon (GameObject target)
+        private bool TryFireWeapon (TargetTuple target)
         {
             reloadTimeLeft -= Time.deltaTime;
             if (reloadTimeLeft > 0)
@@ -156,6 +168,21 @@ namespace PFW.Weapons
                 }
             }
             return Target;
+        }
+
+
+        private class TargetTuple {
+            public Vector3 position { get; private set; }
+            public GameObject enemy { get; private set; }
+
+            public TargetTuple(Vector3 position) {
+                this.position = position;
+                enemy = null;
+            }
+            public TargetTuple(GameObject go) {
+                position = Vector3.zero;
+                enemy = go;
+            }
         }
     }
 }

@@ -165,17 +165,17 @@ public class TerrainBuilder : MonoBehaviour
         var y0 = size.z * edgePadding;
         Vector3[,] nodes = new Vector3[n, n];
         List<Road> roads = new List<Road>();
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                var x = x0 + i * dx + dx * (padding + (1 - 2 * padding) * UnityEngine.Random.value);
-                var y = y0 + j * dy + dy * (padding + (1 - 2 * padding) * UnityEngine.Random.value); ;
-                var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                //obj.transform.localScale = 10 * Vector3.one;
-                nodes[i, j] = new Vector3(x, 0, y);
-            }
-        }
+        //for (int i = 0; i < n; i++)
+        //{
+        //    for (int j = 0; j < n; j++)
+        //    {
+        //        var x = x0 + i * dx + dx * (padding + (1 - 2 * padding) * UnityEngine.Random.value);
+        //        var y = y0 + j * dy + dy * (padding + (1 - 2 * padding) * UnityEngine.Random.value); ;
+        //        var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        //        //obj.transform.localScale = 10 * Vector3.one;
+        //        nodes[i, j] = new Vector3(x, 0, y);
+        //    }
+        //}
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)

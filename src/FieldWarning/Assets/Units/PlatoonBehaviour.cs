@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using PFW.Weapons;
 
 public class PlatoonBehaviour : SelectableBehavior {
     public UnitType type;
@@ -64,7 +65,7 @@ public class PlatoonBehaviour : SelectableBehavior {
         icon = go.GetComponent<IconBehaviour>();
         icon.setUnit(this);
 
-        UIManagerBehaviour.selectionManager.allUnits.Add(this);
+        UIManagerBehaviour.registerPlatoonBirth(this);
 		type = t;
 		this.owner = owner;
         icon.setTeam(owner.getTeam());
@@ -75,7 +76,9 @@ public class PlatoonBehaviour : SelectableBehavior {
 			var unitBehaviour = go.GetComponent<UnitBehaviour>();
 			unitBehaviour.setPlatoon(this);
 			units.Add(unitBehaviour);
-            //go.transform.parent = this.transform;
+
+            var collider = go.GetComponentInChildren<BoxCollider>();
+            collider.enabled = true;
         }
 
 		buildModules(t);
@@ -126,6 +129,15 @@ public class PlatoonBehaviour : SelectableBehavior {
 			icon.setVisible (enabled);
         
 	}
+
+    public void sendFirePosOrder(Vector3 position) {
+        foreach (var unit in units) {
+            var weapons = unit.GetComponents<Weapon>();
+
+            foreach (var weapon in weapons) 
+                weapon.setTarget(position);
+        }
+    }
 
 	public abstract class PlatoonModule
 	{

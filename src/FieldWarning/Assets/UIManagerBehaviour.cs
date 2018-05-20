@@ -4,6 +4,8 @@ using System.Linq;
 using System;
 
 public class UIManagerBehaviour : MonoBehaviour {
+    [SerializeField] private float mouseDragThreshold = 10.0f;
+    [SerializeField] private Texture2D firePosReticle;
 
     // Use this for initialization
     public Player owner;
@@ -11,21 +13,21 @@ public class UIManagerBehaviour : MonoBehaviour {
     private Vector3 boxSelectStart;
     public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
     List<GhostPlatoonBehaviour> spawnList = new List<GhostPlatoonBehaviour>();
-    Camera cam;
     private bool spawningUnits = false;
     private bool enteringSpawning = false;
-    private float clickTime;
-    [SerializeField]
-    private float mouseDragThreshold = 10.0f;
-    private ClickManager orderMode;
-    public static SelectionManager selectionManager;
+    private ClickManager rightClickManager;
+    private static SelectionManager selectionManager;
 
+    private enum OrderMode {normal, spawning, firePos};
+    private OrderMode mouseMode = OrderMode.normal;
 
     void Start() {
-        selectionManager = new SelectionManager(0, mouseDragThreshold);
-        cam = Camera.main.GetComponent<Camera>();
+        if (firePosReticle == null)
+            throw new Exception("No fire pos reticle specified!");
+
+        selectionManager = new SelectionManager(this, 0, mouseDragThreshold);
         
-        orderMode = new ClickManager(1, mouseDragThreshold, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
+        rightClickManager = new ClickManager(1, mouseDragThreshold, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
     }
     
     void Update() {
@@ -57,11 +59,25 @@ public class UIManagerBehaviour : MonoBehaviour {
                 destroySpawning();
 
         } else {
+            processHotkeys();
             if (selectionManager != null)
                 selectionManager.Update();
 
-            orderMode.Update();
-            processCommands();
+            switch (mouseMode) { 
+                case OrderMode.normal:
+                    rightClickManager.Update();
+                    break;
+
+                case OrderMode.firePos:
+                    if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
+                        leaveFirePosMode();
+                    }
+
+                    break;
+
+                default:
+                    throw new Exception("impossible state");
+            }
         }
     }
 
@@ -152,7 +168,13 @@ public class UIManagerBehaviour : MonoBehaviour {
         addSpawn(behaviour);
     }
 
-    
+    public static void registerPlatoonBirth(PlatoonBehaviour platoon) {
+        selectionManager.allUnits.Add(platoon);
+    }
+    public static void registerPlatoonDeath(PlatoonBehaviour platoon) {
+        selectionManager.allUnits.Remove(platoon);
+        selectionManager.selection.Remove(platoon);
+    }
 
     private void addSpawn(GhostPlatoonBehaviour g) {
         spawningUnits = true;
@@ -231,7 +253,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         spawnPointList[s.team].Add(s);
     }
 
-    public void processCommands() {
+    public void processHotkeys() {
         var selected = selectionManager.selection;
 
         if (Commands.unload()) {
@@ -240,24 +262,185 @@ public class UIManagerBehaviour : MonoBehaviour {
                 t.unload();
                 t.endQueueing();
             }
-        }
+        } else if (Commands.load()) {
 
-        else if (Commands.load()) {
-            
-            var transporters = selected.ConvertAll(x => x.transporter).Where((x, i) => x != null).Where(x=>x.transported==null).ToList();
+            var transporters = selected.ConvertAll(x => x.transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
             var infantry = selected.ConvertAll(x => x.transportable).Where((x, i) => x != null).ToList();
 
             transporters.ForEach(x => x.beginQueueing(Input.GetKey(KeyCode.LeftShift)));
             transporters.ConvertAll(x => x as Matchable<PlatoonBehaviour.TransportableModule>).Match(infantry);
             transporters.ForEach(x => x.endQueueing());
-            //transporters.ForEach(x => x.endQueueing());  
+
+        } else if (Commands.firePos()) {
+            mouseMode = OrderMode.firePos;
+            Cursor.SetCursor(firePosReticle, Vector2.zero, CursorMode.Auto);
         }
     }
 
-    bool getTerrainClickLocation(out RaycastHit hit) {
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+    private void enterFirePosMode() {
+        mouseMode = OrderMode.firePos;
+        Cursor.SetCursor(firePosReticle, Vector2.zero, CursorMode.Auto);
+    }
+
+    private void leaveFirePosMode() {
+        mouseMode = OrderMode.normal;
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+    }
+
+    static bool getTerrainClickLocation(out RaycastHit hit) {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
-    }        
+    }
+
+    private class SelectionManager {
+        public List<PlatoonBehaviour> allUnits = new List<PlatoonBehaviour>();
+        public List<PlatoonBehaviour> selection { get; private set; }
+
+        private Vector3 mouseStart;
+        private Vector3 mouseEnd;
+        private Texture2D texture;
+        private Texture2D borderTexture;
+        private Color selectionBoxColor = Color.red;
+        private bool active;
+
+        private ClickManager clickManager;
+        private UIManagerBehaviour outer;
+
+        public SelectionManager(UIManagerBehaviour outer, int button, float mouseDragThreshold) {
+            this.outer = outer;
+            selection = new List<PlatoonBehaviour>();
+            clickManager = new ClickManager(button, mouseDragThreshold, startBoxSelection, onSelectShortClick, endDrag, updateBoxSelection);
+
+            if (texture == null) {
+                var areaTransparency = .95f;
+                var borderTransparency = .75f;
+                texture = new Texture2D(1, 1);
+                texture.wrapMode = TextureWrapMode.Repeat;
+                texture.SetPixel(0, 0, selectionBoxColor - areaTransparency * Color.black);
+                texture.Apply();
+                borderTexture = new Texture2D(1, 1);
+                borderTexture.wrapMode = TextureWrapMode.Repeat;
+                borderTexture.SetPixel(0, 0, selectionBoxColor - borderTransparency * Color.black);
+                borderTexture.Apply();
+            }
+        }
+
+        public void Update() {
+            clickManager.Update();
+
+            if (outer.mouseMode == OrderMode.firePos && Input.GetMouseButtonDown(0)) {
+                RaycastHit hit;
+                getTerrainClickLocation(out hit);
+
+                foreach (var platoon in selection) {
+                    platoon.sendFirePosOrder(hit.point);
+                }
+            }
+        }
+
+        public void changeSelectionAfterOrder() {
+            if (!Input.GetKey(KeyCode.LeftShift) && !Options.StickySelection)
+                unselectAll(selection);
+        }
+
+        private void startBoxSelection() {
+            mouseStart = Input.mousePosition;
+            active = false;
+        }
+
+        private void updateBoxSelection() {
+            Debug.Log(outer.mouseMode);
+            if (outer.mouseMode != OrderMode.normal)
+                return;
+
+            mouseEnd = Input.mousePosition;
+            updateSelection();
+            active = true;
+        }
+
+        private void endDrag() {
+            active = false;
+            updateSelection();
+        }
+
+        private void onSelectShortClick() {
+            unselectAll(selection);
+
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
+                var go = hit.transform.gameObject;
+                var selectable = go.GetComponent<SelectableBehavior>();
+
+                if (selectable != null)
+                    selection.Add(selectable.getPlatoon());
+            }
+
+            setSelected(selection);
+        }
+
+        private void updateSelection() {
+            List<PlatoonBehaviour> newSelection = allUnits.Where(x => isInside(x)).ToList();
+            if (!Input.GetKey(KeyCode.LeftShift) && selection != null) {
+                List<PlatoonBehaviour> old = selection.Except(newSelection).ToList();
+                unselectAll(old);
+            }
+            setSelected(newSelection);
+            selection = newSelection;
+        }
+
+        private bool isInside(PlatoonBehaviour obj) {
+            var platoon = obj.GetComponent<PlatoonBehaviour>();
+            if (!platoon.initialized)
+                return false;
+
+            bool inside = false;
+            inside |= platoon.units.Any(x => isInside(x.transform.position));
+
+            // TODO: This checks if the center of the icon is within the selection box. It should instead check if any of the four corners of the icon are within the box:
+            inside |= isInside(platoon.icon.transform.GetChild(0).position);
+            return inside;
+        }
+
+        private bool isInside(Vector3 t) {
+            Vector3 test = Camera.main.WorldToScreenPoint(t);
+            bool insideX = (test.x - mouseStart.x) * (test.x - mouseEnd.x) < 0;
+            bool insideY = (test.y - mouseStart.y) * (test.y - mouseEnd.y) < 0;
+            return insideX && insideY;
+        }
+
+        private void unselectAll(List<PlatoonBehaviour> l) {
+            l.ForEach(x => x.setSelected(false));
+            l.Clear();
+        }
+
+        private void setSelected(List<PlatoonBehaviour> l) {
+            l.ForEach(x => x.setSelected(true));
+        }
+
+        // Responsible for drawing the selection rectangle
+        public void OnGui() {
+            if (active) {
+                float lineWidth = 3;
+                float startX = mouseStart.x;
+                float endX = mouseEnd.x;
+                float startY = Screen.height - mouseStart.y;
+                float endY = Screen.height - mouseEnd.y;
+
+                Rect leftEdge = new Rect(startX - lineWidth / 2, startY + lineWidth / 2, lineWidth, endY - startY - lineWidth);
+                Rect rightEdge = new Rect(endX - lineWidth / 2, startY + lineWidth / 2, lineWidth, endY - startY - lineWidth);
+                Rect topEdge = new Rect(startX + lineWidth / 2, startY - lineWidth / 2, endX - startX - lineWidth, lineWidth);
+                Rect bottomEdge = new Rect(startX + lineWidth / 2, endY - lineWidth / 2, endX - startX - lineWidth, lineWidth);
+                Rect area = new Rect(startX + lineWidth / 2, startY + lineWidth / 2, endX - startX - lineWidth, endY - startY - lineWidth);
+                GUI.DrawTexture(area, texture, ScaleMode.StretchToFill, true);
+                GUI.DrawTexture(leftEdge, borderTexture, ScaleMode.StretchToFill, true);
+                GUI.DrawTexture(rightEdge, borderTexture, ScaleMode.StretchToFill, true);
+                GUI.DrawTexture(topEdge, borderTexture, ScaleMode.StretchToFill, true);
+                GUI.DrawTexture(bottomEdge, borderTexture, ScaleMode.StretchToFill, true);
+            }
+        }
+    }
+
 }
 
 public class Commands {
@@ -268,11 +451,16 @@ public class Commands {
     public static bool load() {
         return Input.GetKeyDown(Hotkeys.Load);
     }
+
+    public static bool firePos() {
+        return Input.GetKeyDown(Hotkeys.FirePos);
+    }
 }
 
 public class Hotkeys {
     public static KeyCode Unload = KeyCode.U;
     public static KeyCode Load = KeyCode.L;
+    public static KeyCode FirePos = KeyCode.T;
 }
 
 
