@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
 public class TeamButton : MonoBehaviour {
-    public Team team;
+    [SerializeField]
+    private Player p;
+    [SerializeField]
+    private UIManagerBehaviour uiManager;
     // Use this for initialization
     void Start () {
     
@@ -11,9 +14,9 @@ public class TeamButton : MonoBehaviour {
     void Update () {
     
     }
-    public void onClick() {
 
-        UIManagerBehaviour.currentTeam = team;
+    public void onClick() {
+        uiManager.owner = p;
         VisibilityManager.updateTeamBelonging();
     }
 }

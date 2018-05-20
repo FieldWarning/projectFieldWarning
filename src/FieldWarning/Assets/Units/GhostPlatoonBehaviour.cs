@@ -14,13 +14,12 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
     UnitType unitType;
     GameObject realPlatoon;
     PlatoonBehaviour platoonBehaviour;
-    Team team;
+    Player owner;
     List<GameObject> units = new List<GameObject>();
 
 
 	void Start () {
-        buildRealPlatoon();
-        initializeIcon();        
+
 	}
 	
 	// Update is called once per frame
@@ -38,7 +37,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
             icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
             //Debug.Log(platoonBehaviour.gameObject);
             icon.GetComponent<IconBehaviour>().setUnit(platoonBehaviour);
-            icon.GetComponent<IconBehaviour>().setTeam(team);
+            icon.GetComponent<IconBehaviour>().setTeam(owner.getTeam());
             icon.transform.parent = transform;
         }
     }
@@ -64,16 +63,16 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
 
     public void buildRealPlatoon() {
         realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
-        //yield return null;
+
         platoonBehaviour = realPlatoon.GetComponent<PlatoonBehaviour>();
-        platoonBehaviour.setMembers(unitType, team, units.Count);
-        platoonBehaviour.setEnabled(false) ;
+        platoonBehaviour.setMembers(unitType, owner, units.Count);
+        //platoonBehaviour.setEnabled(false);
         platoonBehaviour.setGhostPlatoon(this);
-        realPlatoon.transform.position = transform.position+100*Vector3.down;        
+        realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
-    public void setMembers(UnitType t, Team team, int n) {
-        this.team = team;
+    public void setMembers(UnitType t, Player owner, int n) {
+        this.owner = owner;
         unitType = t;
         baseUnit = Units.getUnit(t);
         //create Infantry
@@ -148,14 +147,16 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         Object.Destroy(gameObject);
     }
 
-    public static GhostPlatoonBehaviour build(UnitType t, Team currentTeam,int count) {
+    public static GhostPlatoonBehaviour build(UnitType t, Player owner, int count) {
         var behaviour = GhostPlatoonBehaviour.build();
-        behaviour.setMembers(t, currentTeam, count);
+        behaviour.setMembers(t, owner, count);
+        behaviour.buildRealPlatoon();
+        behaviour.initializeIcon();
         return behaviour;
     }
 
     public static GhostPlatoonBehaviour build() {
-        GameObject go = GameObject.Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
+        GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
         return behaviour;
     }

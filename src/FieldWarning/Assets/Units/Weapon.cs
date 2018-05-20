@@ -142,11 +142,11 @@ namespace PFW.Weapons
         {
             GameObject[] units = GameObject.FindGameObjectsWithTag (UnitBehaviour.UNIT_TAG);
             GameObject Target = null;
-            Team thisTeam = unit.platoon.team;
+            Team thisTeam = unit.platoon.owner.getTeam();
 
             for (int i = 0; i < (int)units.Length; i++) {
                 // Filter out friendlies:
-                if (units [i].GetComponent<UnitBehaviour> ().platoon.team == thisTeam)
+                if (units [i].GetComponent<UnitBehaviour> ().platoon.owner.getTeam() == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:

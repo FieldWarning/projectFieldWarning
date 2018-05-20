@@ -146,14 +146,14 @@ public class VisibleBehavior : MonoBehaviour {
 
     internal void updateTeamBelonging()
     {
-        hostile = team != UIManagerBehaviour.currentTeam;
-        if (!hostile || spottedByCount > 0)
-        {
-            GetComponent<Renderer>().enabled = true;
-        }
-        else
-        {
-            GetComponent<Renderer>().enabled = false;
-        }
+        //hostile = team != UIManagerBehaviour.owner.team;
+        //if (!hostile || spottedByCount > 0)
+        //{
+        //    GetComponent<Renderer>().enabled = true;
+        //}
+        //else
+        //{
+        //    GetComponent<Renderer>().enabled = false;
+        //}
     }
 }
