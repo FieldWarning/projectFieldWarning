@@ -301,7 +301,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         private Texture2D texture;
         private Texture2D borderTexture;
         private Color selectionBoxColor = Color.red;
-        public bool active;
+        private bool active;
 
         private ClickManager clickManager;
         private UIManagerBehaviour outer;
@@ -310,29 +310,31 @@ public class UIManagerBehaviour : MonoBehaviour {
             this.outer = outer;
             selection = new List<PlatoonBehaviour>();
             clickManager = new ClickManager(button, mouseDragThreshold, startBoxSelection, onSelectShortClick, endDrag, updateBoxSelection);
+
+            if (texture == null) {
+                var areaTransparency = .95f;
+                var borderTransparency = .75f;
+                texture = new Texture2D(1, 1);
+                texture.wrapMode = TextureWrapMode.Repeat;
+                texture.SetPixel(0, 0, selectionBoxColor - areaTransparency * Color.black);
+                texture.Apply();
+                borderTexture = new Texture2D(1, 1);
+                borderTexture.wrapMode = TextureWrapMode.Repeat;
+                borderTexture.SetPixel(0, 0, selectionBoxColor - borderTransparency * Color.black);
+                borderTexture.Apply();
+            }
         }
 
         public void Update() {
-            switch (outer.mouseMode) {
-                case OrderMode.normal:
-                    clickManager.Update();
-                    break;
+            clickManager.Update();
 
-                case OrderMode.firePos:
-                    // clear boxes
+            if (outer.mouseMode == OrderMode.firePos && Input.GetMouseButtonDown(0)) {
+                RaycastHit hit;
+                getTerrainClickLocation(out hit);
 
-                    if (Input.GetMouseButtonDown(0)) {
-                        RaycastHit hit;
-                        getTerrainClickLocation(out hit);
-
-                        foreach (var platoon in selection) {
-                            platoon.sendFirePosOrder(hit.point);
-                        }
-                    }
-                    break;
-
-                default:
-                    throw new Exception("impossible state");
+                foreach (var platoon in selection) {
+                    platoon.sendFirePosOrder(hit.point);
+                }
             }
         }
 
@@ -347,6 +349,10 @@ public class UIManagerBehaviour : MonoBehaviour {
         }
 
         private void updateBoxSelection() {
+            Debug.Log(outer.mouseMode);
+            if (outer.mouseMode != OrderMode.normal)
+                return;
+
             mouseEnd = Input.mousePosition;
             updateSelection();
             active = true;
@@ -414,20 +420,6 @@ public class UIManagerBehaviour : MonoBehaviour {
 
         // Responsible for drawing the selection rectangle
         public void OnGui() {
-
-            if (texture == null) {
-                var areaTransparency = .95f;
-                var borderTransparency = .75f;
-                texture = new Texture2D(1, 1);
-                texture.wrapMode = TextureWrapMode.Repeat;
-                texture.SetPixel(0, 0, selectionBoxColor - areaTransparency * Color.black);
-                texture.Apply();
-                borderTexture = new Texture2D(1, 1);
-                borderTexture.wrapMode = TextureWrapMode.Repeat;
-                borderTexture.SetPixel(0, 0, selectionBoxColor - borderTransparency * Color.black);
-                borderTexture.Apply();
-            }
-
             if (active) {
                 float lineWidth = 3;
                 float startX = mouseStart.x;
