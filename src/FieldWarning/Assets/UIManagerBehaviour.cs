@@ -14,51 +14,21 @@ public class UIManagerBehaviour : MonoBehaviour {
     Camera cam;
     private bool spawningUnits = false;
     private bool enteringSpawning = false;
-    List<PlatoonBehaviour> selected = new List<PlatoonBehaviour>();
     private float clickTime;
-    private float clickExtent = 0.05f;
-    private ClickManager selectMode = new ClickManager();
-    private ClickManager orderMode = new ClickManager();
-    public static BoxSelectManager boxSelectManager;
+    [SerializeField]
+    private float mouseDragThreshold = 10.0f;
+    private ClickManager orderMode;
+    public static SelectionManager selectionManager;
 
 
     void Start() {
-        boxSelectManager = new BoxSelectManager();
+        selectionManager = new SelectionManager(0, mouseDragThreshold);
         cam = Camera.main.GetComponent<Camera>();
-
-        selectMode.Button = 0;
-        selectMode.ClickDelay = clickExtent;
-        selectMode.OnClickStart = onSelectStart;
-        selectMode.OnHoldClick = onSelectHold;
-        selectMode.OnShortClick = onSelectShortClick;
-        selectMode.OnLongClick = onSelectLongClick;
-
-        orderMode.Button = 1;
-        orderMode.ClickDelay = clickExtent;
-        orderMode.OnClickStart = onOrderStart;
-        orderMode.OnHoldClick = onOrderHold;
-        orderMode.OnShortClick = onOrderShortClick;
-        orderMode.OnLongClick = onOrderLongClick;
+        
+        orderMode = new ClickManager(1, mouseDragThreshold, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
     }
     
     void Update() {
-
-        //////////////////////////////////////////////////////////////////////
-        // Temporary : for testing health until units can damage each other //
-        //////////////////////////////////////////////////////////////////////
-
-        if (Input.GetKey(KeyCode.Space)) {
-            foreach (var x in selected) {
-                foreach (var y in x.units) {
-                    y.setHealth(y.getHealth() - 0.1f);
-                    Debug.Log("hp : " + y.getHealth());
-                }
-            }
-        }
-
-        //////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////
-
         if (spawningUnits) {
 
             RaycastHit hit;
@@ -87,53 +57,22 @@ public class UIManagerBehaviour : MonoBehaviour {
                 destroySpawning();
 
         } else {
+            if (selectionManager != null)
+                selectionManager.Update();
 
-            if (!selectMode.IsActive)
-                orderMode.Update();
-            if (!orderMode.IsActive)
-                selectMode.Update();
+            orderMode.Update();
             processCommands();
         }
     }
 
     void OnGUI() {
-        if (boxSelectManager != null) boxSelectManager.OnGui();
-    }
-
-    void onSelectStart() {
-        boxSelectManager.startDrag();
-    }
-
-    void onSelectHold() {
-        boxSelectManager.updateDrag();
-    }
-
-    void onSelectShortClick() {
-        if (!Input.GetKey(KeyCode.LeftShift))
-            selected.endSelection();
-        
-        RaycastHit hit;
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
-            Debug.Log("Selectable");
-            var go = hit.transform.gameObject;
-
-            if (go.GetComponent<SelectableBehavior>()) {
-
-                //Debug.Log(go.GetComponent<SelectableBehavior>().getPlatoon());
-                selected.Add(go.GetComponent<SelectableBehavior>().getPlatoon());
-            }
-        }
-        selected.update();
-    }
-
-    void onSelectLongClick() {
-        if (!Input.GetKey(KeyCode.LeftShift)) selected.Clear();
-        selected.AddRange(boxSelectManager.endDrag());
-        selected.update();
+        if (selectionManager != null)
+            selectionManager.OnGui();
     }
 
     void onOrderStart() {
+        var selected = selectionManager.selection;
+
         RaycastHit hit;
         if (getTerrainClickLocation(out hit)) {
             Vector3 com = selected.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
@@ -144,6 +83,8 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     void onOrderHold() {
+        var selected = selectionManager.selection;
+
         RaycastHit hit;
         if (getTerrainClickLocation(out hit)) {
 
@@ -154,6 +95,8 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     void onOrderShortClick() {
+        var selected = selectionManager.selection;
+
         var destinations = selected.ConvertAll(x => x.ghostPlatoon.transform.position);
         var shift = Input.GetKey(KeyCode.LeftShift);
         selected.ForEach(x => x.movement.beginQueueing(shift));
@@ -167,11 +110,13 @@ public class UIManagerBehaviour : MonoBehaviour {
             var behaviour = go.GetComponent<SelectableBehavior>().getPlatoon();
             behaviour.getDestinationFromGhost();
         }*/
-        if (!shift && !Options.StickySelection)
-            selected.endSelection();
+
+        selectionManager.changeSelectionAfterOrder();
     }
 
     void onOrderLongClick() {
+        var selected = selectionManager.selection;
+
         RaycastHit hit;
         if (getTerrainClickLocation(out hit)) {
             var shift = Input.GetKey(KeyCode.LeftShift);
@@ -185,7 +130,8 @@ public class UIManagerBehaviour : MonoBehaviour {
                 go.GetComponent<SelectableBehavior>().getDestinationFromGhost();
                 go.GetComponent<PlatoonBehaviour>().ghostPlatoon.GetComponent<GhostPlatoonBehaviour>().setVisible(false);
             }*/
-            if (!shift && !Options.StickySelection) selected.endSelection();
+
+            selectionManager.changeSelectionAfterOrder();
         }
     }
 
@@ -287,6 +233,8 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     public void processCommands() {
+        var selected = selectionManager.selection;
+
         if (Commands.unload()) {
             foreach (var t in selected.ConvertAll(x => x.transporter).Where((x, i) => x != null)) {
                 t.beginQueueing(Input.GetKey(KeyCode.LeftShift));

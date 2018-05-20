@@ -84,7 +84,7 @@ public class PlatoonBehaviour : SelectableBehavior {
 
 	public void setMembers(UnitType t, Team team, int n) {
 
-		UIManagerBehaviour.boxSelectManager.allUnits.Add(this);
+		UIManagerBehaviour.selectionManager.allUnits.Add(this);
 		type = t;
 		this.team = team;
 		var g = Units.getUnit(t);
