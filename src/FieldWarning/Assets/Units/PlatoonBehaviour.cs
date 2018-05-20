@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using PFW.Weapons;
 
 public class PlatoonBehaviour : SelectableBehavior {
     public UnitType type;
@@ -126,6 +127,15 @@ public class PlatoonBehaviour : SelectableBehavior {
 			icon.setVisible (enabled);
         
 	}
+
+    public void sendFirePosOrder(Vector3 position) {
+        foreach (var unit in units) {
+            var weapons = unit.GetComponents<Weapon>();
+
+            foreach (var weapon in weapons) 
+                weapon.setTarget(position);
+        }
+    }
 
 	public abstract class PlatoonModule
 	{

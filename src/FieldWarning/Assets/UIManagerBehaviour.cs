@@ -25,7 +25,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         if (firePosReticle == null)
             throw new Exception("No fire pos reticle specified!");
 
-        selectionManager = new SelectionManager(0, mouseDragThreshold);
+        selectionManager = new SelectionManager(this, 0, mouseDragThreshold);
         
         rightClickManager = new ClickManager(1, mouseDragThreshold, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
     }
@@ -60,19 +60,15 @@ public class UIManagerBehaviour : MonoBehaviour {
 
         } else {
             processHotkeys();
+            if (selectionManager != null)
+                selectionManager.Update();
 
             switch (mouseMode) { 
                 case OrderMode.normal:
-                    if (selectionManager != null)
-                        selectionManager.Update();
                     rightClickManager.Update();
                     break;
 
                 case OrderMode.firePos:
-                    if (Input.GetMouseButtonDown(0)) {
-                        // make unit fire
-                    }
-
                     if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
                         leaveFirePosMode();
                     }
@@ -291,7 +287,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
-    bool getTerrainClickLocation(out RaycastHit hit) {
+    static bool getTerrainClickLocation(out RaycastHit hit) {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
     }
@@ -308,14 +304,36 @@ public class UIManagerBehaviour : MonoBehaviour {
         public bool active;
 
         private ClickManager clickManager;
+        private UIManagerBehaviour outer;
 
-        public SelectionManager(int button, float mouseDragThreshold) {
+        public SelectionManager(UIManagerBehaviour outer, int button, float mouseDragThreshold) {
+            this.outer = outer;
             selection = new List<PlatoonBehaviour>();
             clickManager = new ClickManager(button, mouseDragThreshold, startBoxSelection, onSelectShortClick, endDrag, updateBoxSelection);
         }
 
         public void Update() {
-            clickManager.Update();
+            switch (outer.mouseMode) {
+                case OrderMode.normal:
+                    clickManager.Update();
+                    break;
+
+                case OrderMode.firePos:
+                    // clear boxes
+
+                    if (Input.GetMouseButtonDown(0)) {
+                        RaycastHit hit;
+                        getTerrainClickLocation(out hit);
+
+                        foreach (var platoon in selection) {
+                            platoon.sendFirePosOrder(hit.point);
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new Exception("impossible state");
+            }
         }
 
         public void changeSelectionAfterOrder() {
