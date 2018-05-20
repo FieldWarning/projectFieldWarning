@@ -76,7 +76,9 @@ public class PlatoonBehaviour : SelectableBehavior {
 			var unitBehaviour = go.GetComponent<UnitBehaviour>();
 			unitBehaviour.setPlatoon(this);
 			units.Add(unitBehaviour);
-            //go.transform.parent = this.transform;
+
+            var collider = go.GetComponentInChildren<BoxCollider>();
+            collider.enabled = true;
         }
 
 		buildModules(t);
