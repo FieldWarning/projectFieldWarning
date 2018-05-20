@@ -11,10 +11,8 @@ public class UIManagerBehaviour : MonoBehaviour {
     private Vector3 boxSelectStart;
     public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
     List<GhostPlatoonBehaviour> spawnList = new List<GhostPlatoonBehaviour>();
-    Camera cam;
     private bool spawningUnits = false;
     private bool enteringSpawning = false;
-    private float clickTime;
     [SerializeField]
     private float mouseDragThreshold = 10.0f;
     private ClickManager orderMode;
@@ -23,7 +21,6 @@ public class UIManagerBehaviour : MonoBehaviour {
 
     void Start() {
         selectionManager = new SelectionManager(0, mouseDragThreshold);
-        cam = Camera.main.GetComponent<Camera>();
         
         orderMode = new ClickManager(1, mouseDragThreshold, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
     }
@@ -255,7 +252,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     bool getTerrainClickLocation(out RaycastHit hit) {
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
     }        
 }
