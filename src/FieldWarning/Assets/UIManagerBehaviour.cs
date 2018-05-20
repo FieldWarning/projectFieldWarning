@@ -349,10 +349,6 @@ public class UIManagerBehaviour : MonoBehaviour {
         }
 
         private void updateBoxSelection() {
-            Debug.Log(outer.mouseMode);
-            if (outer.mouseMode != OrderMode.normal)
-                return;
-
             mouseEnd = Input.mousePosition;
             updateSelection();
             active = true;
