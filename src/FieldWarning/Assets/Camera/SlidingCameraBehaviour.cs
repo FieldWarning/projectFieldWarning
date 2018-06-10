@@ -12,39 +12,42 @@
  */
 
 using UnityEngine;
+
+/**
+ * Sliding camera is our main RTS cam. It is wargame-like and provides almost entirely free movement. Zooming in goes toward the cursor ("sliding"), zooming out moves back and up at a fixed angle. The camera faces up slightly when zoomed all the way into the ground, and tries to restore its facing when zoomed out again.
+ * 
+ * Restrictions:
+ * - Players can't look too far up or down.
+ * - There are minimal and maximal altitudes to prevent going below the level.
+ * 
+ * TODO:
+ * - Make the camera stay above terrain deformations.
+ * - Maybe prevent the camera from clipping into units.
+ * - A/B test values for a better feel.
+ */ 
 public class SlidingCameraBehaviour : MonoBehaviour {
 
     [Header("Translational Movement")]
-    [SerializeField]
-    private float panSpeed = 5f;
-    [SerializeField]
-    private float panLerpSpeed = 10f;
+    [SerializeField] private float panSpeed = 5f;
+    [SerializeField] private float panLerpSpeed = 10f;
 
     [Header("Rotational Movement")]
-    [SerializeField]
-    private float horizontalRotationSpeed = 600f;
-    [SerializeField]
-    private float verticalRotationSpeed = 600f;
-    [SerializeField]
-    private float rotLerpSpeed = 10f;
-    [SerializeField]
-    private float maxCameraAngle = 85f;
-    [SerializeField]
-    private float minCameraAngle = 5f;
+    [SerializeField] private float horizontalRotationSpeed = 600f;
+    [SerializeField] private float verticalRotationSpeed = 600f;
+    [SerializeField] private float rotLerpSpeed = 10f;
+    [SerializeField] private float maxCameraAngle = 85f;
+    [SerializeField] private float minCameraAngle = 5f;
 
     [Header("Zoom Level")]
-    [SerializeField]
-    private float zoomSpeed = 500f;
-    [SerializeField]
-    private float zoomTiltSpeed = 0.3f;
-    [SerializeField]
-    private float minAltitude = 0.2f;
-    [SerializeField]
-    private float tiltThreshold = 2f;
-    [SerializeField]
-    private float maxAltitude = 2000;
-    [SerializeField]
-    private float heightSpeedScaling = 0.75f;
+    [SerializeField] private float zoomSpeed = 500f;
+    [SerializeField] private float zoomTiltSpeed = 0.3f;
+    [SerializeField] private float minAltitude = 0.2f;
+    [SerializeField] private float tiltThreshold = 2f;
+    [SerializeField] private float maxAltitude = 2000;
+    [SerializeField] private float heightSpeedScaling = 0.75f;
+    [SerializeField] private float zoomOutAngle = 45f;
+
+    private Vector3 zoomOutDirection;
 
     // We store the camera facing and reapply it every LateUpdate() for simplicity:
     private float rotateX;
@@ -79,6 +82,8 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         rotateX = transform.eulerAngles.x;
         rotateY = transform.eulerAngles.y;
         targetPosition = transform.position;
+
+        zoomOutDirection = Quaternion.AngleAxis(zoomOutAngle, Vector3.right) * Vector3.back;
     }
 
     // Update() only plans movement; position/rotation are directly changed in LateUpdate().
@@ -165,9 +170,8 @@ public class SlidingCameraBehaviour : MonoBehaviour {
     }
 
     private void ApplyZoomOut(float dzoom) {
-        Vector3 diagonallyBackAndUp = Vector3.up + Vector3.back;
         Quaternion rotateToCamFacing = Quaternion.AngleAxis(rotateY, Vector3.up);
-        targetPosition -= rotateToCamFacing * diagonallyBackAndUp * dzoom;
+        targetPosition -= rotateToCamFacing * zoomOutDirection * dzoom;
     }
 
     // Camera looks down when high and up when low:
