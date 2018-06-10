@@ -21,4 +21,10 @@ public class DestructibleStructure : MonoBehaviour {
         intactModel.SetActive(false);
         ruinsModel.SetActive(true);
     }
+
+    void OnParticleCollision(GameObject other) {
+        Debug.Log("works");
+        //intactModel.SetActive(false);
+        //ruinsModel.SetActive(true);
+    }
 }
