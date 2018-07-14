@@ -227,8 +227,3 @@ public struct Point
     }
     
 }
-public enum Team : int
-{
-    Red,
-    Blue
-}
