@@ -45,7 +45,6 @@ public class UIManagerBehaviour : MonoBehaviour {
     
     void Update() {
         if (spawningUnits) {
-
             RaycastHit hit;
             if (Input.GetMouseButtonUp(0) && enteringSpawning) {
                 enteringSpawning = false;
@@ -76,21 +75,24 @@ public class UIManagerBehaviour : MonoBehaviour {
             if (selectionManager != null)
                 selectionManager.Update();
 
-            switch (mouseMode) { 
-                case OrderMode.normal:
-                    rightClickManager.Update();
-                    break;
+            dispatchUnitOrders();
+        }
+    }
 
-                case OrderMode.firePos:
-                    if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
-                        leaveFirePosMode();
-                    }
+    void dispatchUnitOrders() {
+        switch (mouseMode) {
+            case OrderMode.normal:
+                rightClickManager.Update();
+                break;
 
-                    break;
+            case OrderMode.firePos:
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
+                    leaveFirePosMode();
+                }
+                break;
 
-                default:
-                    throw new Exception("impossible state");
-            }
+            default:
+                throw new Exception("impossible state");
         }
     }
 
@@ -206,20 +208,6 @@ public class UIManagerBehaviour : MonoBehaviour {
 
     private void arrangeToBeSpawned(Vector3 point) {
         arrangeGhosts(point, 2 * point - getClosestSpawn(point).transform.position, spawnList);
-        /*if (spawnList.Count == 0) return;
-        Vector3 forward = (point - getClosestSpawn(point).transform.position);
-        forward.y = 0;
-        forward.Normalize();
-        float heading = Mathf.Atan2(forward.z, forward.x);
-
-        int formationWidth = spawnList.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
-        float unitDistance=4 * PlatoonBehaviour.baseDistance;
-        var right = Vector3.Cross(forward, Vector3.up);
-        var pos = point + unitDistance * (formationWidth-1) * right / 2f;
-        for (var i = 0; i < formationWidth; i++)
-        {            
-            spawnList[i].GetComponent<GhostPlatoonBehaviour>().setOrientation(pos - i*unitDistance * right,heading);
-        }*/
     }
 
     private static void arrangeGhosts(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units) {

@@ -20,10 +20,11 @@ public class SpawnPointBehaviour : MonoBehaviour {
     [SerializeField] private float height = 0.5f;
     float size = 0.1f;
     private Queue<PlatoonBehaviour> spawnQueue = new Queue<PlatoonBehaviour>();
-    public static float spawnDelay = 2f;
-    public static float queueDelay = 1f;
-    float spawnTime = spawnDelay;
+    public const float MIN_SPAWN_INTERVAL = 2f;
+    public const float QUEUE_DELAY = 1f;
+    float spawnTime = MIN_SPAWN_INTERVAL;
     public Team team;
+
 	// Use this for initialization
 	void Start () {
         camera = Camera.main;
@@ -43,22 +44,20 @@ public class SpawnPointBehaviour : MonoBehaviour {
 
         if (spawnQueue.Count > 0) {
             spawnTime -= Time.deltaTime;
-            if (spawnTime < 0) {
+            if (spawnTime <= 0) {
                 var go=spawnQueue.Dequeue();
                 go.GetComponent<PlatoonBehaviour>().spawn(transform.position);
 
                 if (spawnQueue.Count > 0) {
-                    spawnTime = spawnDelay;
+                    spawnTime += MIN_SPAWN_INTERVAL;
                 } else {
-                    spawnTime = queueDelay;
+                    spawnTime = QUEUE_DELAY;
                 }
             }
         }
 	}
 
-    public void updateQueue(List<PlatoonBehaviour> list)
-    {
+    public void updateQueue(List<PlatoonBehaviour> list) {
         list.ForEach(x => spawnQueue.Enqueue(x));
     }
-    
 }
