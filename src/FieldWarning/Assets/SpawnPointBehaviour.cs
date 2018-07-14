@@ -32,17 +32,11 @@ public class SpawnPointBehaviour : MonoBehaviour {
             GetComponent<Renderer>().material.color = Color.blue;
         } else {
             GetComponent<Renderer>().material.color = Color.red;
-        }        
+        }
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (oldPosition != transform.position) {
-            var y = GameObject.Find("Terrain").GetComponent<Terrain>().GetComponent<TerrainCollider>().terrainData.GetInterpolatedHeight(transform.position.x, transform.position.z);
-            transform.position += (y + height) * Vector3.up;
-            oldPosition = transform.position;
-        }
-
         transform.rotation = Quaternion.LookRotation(camera.transform.forward);
         var distance = (camera.transform.position - transform.position).magnitude;
         transform.localScale = size * distance * Vector3.one;
