@@ -76,7 +76,7 @@ public class PlatoonBehaviour : SelectableBehavior {
         var go = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
         go.transform.parent = transform;
         icon = go.GetComponent<IconBehaviour>();
-        icon.setUnit(this);
+        icon.setPlatoon(this);
 
         UIManagerBehaviour.registerPlatoonBirth(this);
 		type = t;

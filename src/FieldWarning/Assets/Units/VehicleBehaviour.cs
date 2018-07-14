@@ -16,8 +16,7 @@ using UnityEngine;
 public class VehicleBehaviour : UnitBehaviour {
 
 	const float DecelFactor = 2.0f;
-
-    bool ordersDone;
+    
 	float speed;
 
     // Use this for initialization
@@ -33,7 +32,6 @@ public class VehicleBehaviour : UnitBehaviour {
 
 
     protected override void doMovement() {
-        ordersDone = false;
         float destinationHeading;
 		Vector3 waypoint = pathfinder.GetWaypoint();
 		if (pathfinder.HasDestination()) {
@@ -53,9 +51,6 @@ public class VehicleBehaviour : UnitBehaviour {
 		float targetSpeed;
 		if (!pathfinder.HasDestination()) {
 			targetSpeed = 0f;
-            if (Mathf.Abs(turn) < 0.01f) {
-                ordersDone = true;
-            }
 		} else {
 			float destDist = (destination - transform.localPosition).magnitude;
 			targetSpeed = Mathf.Min (data.movementSpeed, Mathf.Sqrt (2 * destDist * data.accelRate * DecelFactor));

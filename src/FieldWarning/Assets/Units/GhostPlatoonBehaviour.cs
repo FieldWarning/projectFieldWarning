@@ -49,7 +49,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
             initIcon = true;
             icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
             //Debug.Log(platoonBehaviour.gameObject);
-            icon.GetComponent<IconBehaviour>().setUnit(platoonBehaviour);
+            icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
             icon.GetComponent<IconBehaviour>().setTeam(owner.getTeam());
             icon.transform.parent = transform;
         }

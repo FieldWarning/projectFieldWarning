@@ -12,13 +12,12 @@
  */
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class IconBehaviour : SelectableBehavior
 {
     int layer=-1;
-    public PlatoonBehaviour unit;
+    public PlatoonBehaviour platoon;
     GameObject camera;
 
     SymbolBehaviour _symbol;
@@ -37,6 +36,7 @@ public class IconBehaviour : SelectableBehavior
             if (_billboard == null) {
                 _billboard=transform.GetChild(0);
             }
+
             return _billboard;
         }
     }
@@ -52,34 +52,31 @@ public class IconBehaviour : SelectableBehavior
 	// Use this for initialization
 	void Start () {
         camera = Camera.main.gameObject;
-        //billboard.transform.localPosition = billboard.GetComponent<Renderer>().bounds.extents.y * Vector3.up;
+
         billboard.GetComponent<Renderer>().material.color = baseColor;
-        if (layer!=-1)
+        if (layer != -1)
             setLayer(layer);
+
         setSelected(false);
-	}
+        setVisible(visible);
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        if (!init) {
-            setVisible(visible);
-            init = true;
-        }
-
         transform.localPosition = ALTITUDE * camera.transform.up;
-        transform.rotation=Quaternion.LookRotation(camera.transform.forward);
+        transform.rotation = Quaternion.LookRotation(camera.transform.forward);
         var distance = (camera.transform.position - transform.position).magnitude;
-        transform.localScale = SIZE * distance * Vector3.one;        
+        transform.localScale = SIZE * distance * Vector3.one;
 	}
 
-    public void setUnit(PlatoonBehaviour u) {
-        unit = u;
-        symbol.setIcon(u.type);
+    public void setPlatoon(PlatoonBehaviour p) {
+        platoon = p;
+        symbol.setIcon(p.type);
     }
 
     public void setLayer(int l) {
         layer = l;
-        if (billboard!=null)
+        if (billboard != null)
             billboard.gameObject.layer = l;
         gameObject.layer = l;
     }
@@ -92,11 +89,11 @@ public class IconBehaviour : SelectableBehavior
     public void setVisible(bool vis) {
 
         gameObject.SetActive(vis);
-        if (_billboard != null) {                        
+        if (_billboard != null) {
             billboard.GetComponent<Renderer>().enabled = vis;
             symbol.GetComponent<Renderer>().enabled = vis;
 
-        } else {            
+        } else {
             visible = vis;
         }
 
@@ -131,6 +128,6 @@ public class IconBehaviour : SelectableBehavior
             baseColor = Color.Lerp(Color.blue,Color.white,.1f);
         } else {
             baseColor = Color.red;
-        }        
+        }
     }
 }
