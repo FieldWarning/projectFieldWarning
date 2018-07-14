@@ -30,5 +30,6 @@ public class TeamButton : MonoBehaviour {
 
     public void onClick() {
         uiManager.owner = p;
+        VisibilityManager.updateTeamBelonging();
     }
 }
