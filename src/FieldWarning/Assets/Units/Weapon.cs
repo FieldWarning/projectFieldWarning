@@ -56,7 +56,7 @@ namespace PFW.Weapons
 
         public void Update()
         {
-            if (target == null)
+            if (target == null || target.enemy == null)
                 target = new TargetTuple(FindClosestEnemy());
 
             if (RotateTurret (target))
@@ -158,7 +158,7 @@ namespace PFW.Weapons
             if (reloadTimeLeft > 0)
                 return false;
 
-            reloadTimeLeft = (float)data.ReloadTime;        
+            reloadTimeLeft = data.ReloadTime;        
             return FireWeapon(target);
         }
 

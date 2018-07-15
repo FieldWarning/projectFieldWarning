@@ -30,12 +30,12 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
     List<GameObject> units = new List<GameObject>();
 
 
-	void Start () {
+	void Start() {
 
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update() {
         if (raycastIgnoreChange) {
             raycastIgnoreChange = false;
             _setIgnoreRaycast(raycastIgnore);
