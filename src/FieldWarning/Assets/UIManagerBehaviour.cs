@@ -369,6 +369,9 @@ public class UIManagerBehaviour : MonoBehaviour {
         }
 
         private void updateSelection() {
+            if (outer.mouseMode == MouseMode.firePos)
+                return;
+
             List<PlatoonBehaviour> newSelection = allUnits.Where(x => isInside(x)).ToList();
             if (!Input.GetKey(KeyCode.LeftShift) && selection != null) {
                 List<PlatoonBehaviour> old = selection.Except(newSelection).ToList();

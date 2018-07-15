@@ -25,7 +25,10 @@ namespace PFW.Weapons
 
         private TargetTuple target;
         public void setTarget(Vector3 position) {
-            target = new TargetTuple(position);
+            var distance = Vector3.Distance(unit.transform.position, position);
+
+            if (distance < data.FireRange)
+                target = new TargetTuple(position);
         }
 
         // --------------- BEGIN PREFAB ----------------
@@ -50,27 +53,27 @@ namespace PFW.Weapons
 
         public void Start ()
         {
-            unit = gameObject.GetComponent<UnitBehaviour> ();
+            unit = gameObject.GetComponent<UnitBehaviour>();
             enabled = false;
         }
 
         public void Update()
         {
-            if (target == null || target.enemy == null)
+            if (target == null || !target.exists())
                 target = new TargetTuple(FindClosestEnemy());
 
-            if (RotateTurret (target))
-                TryFireWeapon (target);
+            if (RotateTurret(target))
+                TryFireWeapon(target);
         }
 
-        public void WakeUp ()
+        public void WakeUp()
         {
             data = unit.data.weaponData[dataIndex];
-            reloadTimeLeft = (float)data.ReloadTime;
+            reloadTimeLeft = data.ReloadTime;
             enabled = true;
         }
 
-        bool RotateTurret (TargetTuple target)
+        bool RotateTurret(TargetTuple target)
         {
             bool aimed = false;
             float targetTurretAngle = 0f;
@@ -170,13 +173,13 @@ namespace PFW.Weapons
 
             for (int i = 0; i < (int)units.Length; i++) {
                 // Filter out friendlies:
-                if (units [i].GetComponent<UnitBehaviour> ().platoon.owner.getTeam() == thisTeam)
+                if (units[i].GetComponent<UnitBehaviour> ().platoon.owner.getTeam() == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance (units [i].transform.position, unit.transform.position);
+                var distance = Vector3.Distance(units[i].transform.position, unit.transform.position);
                 if (distance < data.FireRange) {
-                    return units [i];
+                    return units[i];
                 }
             }
             return Target;
@@ -194,6 +197,10 @@ namespace PFW.Weapons
             public TargetTuple(GameObject go) {
                 position = Vector3.zero;
                 enemy = go;
+            }
+
+            public bool exists() {
+                return enemy != null || position != Vector3.zero;
             }
         }
     }
