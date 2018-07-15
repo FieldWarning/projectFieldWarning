@@ -15,7 +15,7 @@ using UnityEngine;
 
 public class VehicleBehaviour : UnitBehaviour {
 
-	const float DecelFactor = 2.0f;
+	const float DECELERATION_FACTOR = 2.0f;
     
 	float speed;
 
@@ -32,42 +32,67 @@ public class VehicleBehaviour : UnitBehaviour {
 
 
     protected override void doMovement() {
+        Vector3 waypoint = pathfinder.GetWaypoint();
+
+        float destinationHeading = calculateDestinationHeading(waypoint);
+        float remainingTurn = turnTowardDestination(destinationHeading);
+
+        float targetSpeed = calculateTargetSpeed(remainingTurn, waypoint);
+        updateRealSpeed(targetSpeed);
+		transform.Translate(speed * Time.deltaTime * Vector3.forward);
+    }
+
+    private float calculateDestinationHeading(Vector3 waypoint) {
         float destinationHeading;
-		Vector3 waypoint = pathfinder.GetWaypoint();
-		if (pathfinder.HasDestination()) {
-			var diff = waypoint - this.transform.position;
+
+        if (pathfinder.HasDestination()) {
+            var diff = waypoint - this.transform.position;
             destinationHeading = diff.getRadianAngle();
         } else {
             destinationHeading = finalHeading;
         }
 
-		destinationHeading = destinationHeading.unwrapRadian ();
+        return destinationHeading;
+    }
+
+    private float turnTowardDestination(float destinationHeading) {
+        destinationHeading = destinationHeading.unwrapRadian();
         var currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
-		var diffheading = (destinationHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
-        var turn = Mathf.Sign(diffheading) * data.rotationSpeed * Time.deltaTime;
-        if (Mathf.Abs(turn) > Mathf.Abs(diffheading)) turn = diffheading;
+        var remainingTurn = (destinationHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
+        var turn = Mathf.Sign(remainingTurn) * data.rotationSpeed * Time.deltaTime;
+        if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
+            turn = remainingTurn;
+
         transform.Rotate(Vector3.up, -turn);
 
-		float targetSpeed;
-		if (!pathfinder.HasDestination()) {
-			targetSpeed = 0f;
-		} else {
-			float destDist = (destination - transform.localPosition).magnitude;
-			targetSpeed = Mathf.Min (data.movementSpeed, Mathf.Sqrt (2 * destDist * data.accelRate * DecelFactor));
+        return remainingTurn;
+    }
 
-			float waypointDist = (waypoint - transform.localPosition).magnitude;
-			var turnradius = waypointDist / (1000 * Mathf.Abs(diffheading));
-			float turnFactor = data.rotationSpeed * turnradius;
+    private float calculateTargetSpeed(float headingDiff, Vector3 waypoint) {
+        float targetSpeed;
+
+        if (!pathfinder.HasDestination()) {
+            targetSpeed = 0f;
+        } else {
+            float destDist = (destination - transform.localPosition).magnitude;
+            targetSpeed = Mathf.Min(data.movementSpeed, Mathf.Sqrt(2 * destDist * data.accelRate * DECELERATION_FACTOR));
+
+            float waypointDist = (waypoint - transform.localPosition).magnitude;
+            var turnradius = waypointDist / (1000 * Mathf.Abs(headingDiff));
+            float turnFactor = data.rotationSpeed * turnradius;
             if (turnFactor < 1)
                 targetSpeed *= turnFactor;
         }
 
-		if (targetSpeed > speed) {
-			speed = Mathf.Min (targetSpeed, speed + data.accelRate * Time.deltaTime);
-		} else {
-			speed = Mathf.Max (targetSpeed, speed - DecelFactor * data.accelRate * Time.deltaTime);
-		}
-		transform.Translate(speed * Time.deltaTime * Vector3.forward);
+        return targetSpeed;
+    }
+
+    private void updateRealSpeed(float targetSpeed) {
+        if (targetSpeed > speed) {
+            speed = Mathf.Min(targetSpeed, speed + data.accelRate * Time.deltaTime);
+        } else {
+            speed = Mathf.Max(targetSpeed, speed - DECELERATION_FACTOR * data.accelRate * Time.deltaTime);
+        }
     }
 
     protected override Renderer[] getRenderers() {
