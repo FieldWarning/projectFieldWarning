@@ -40,7 +40,7 @@ public class IconBehaviour : SelectableBehavior
         }
     }
    
-    public bool isInitiated = false;
+    public bool isInitialized = false;
     private bool init = false;
     Color baseColor = Color.blue;
     bool visible = true;
@@ -74,7 +74,7 @@ public class IconBehaviour : SelectableBehavior
     }
 
     public void setSource(List<UnitBehaviour> list) {
-        isInitiated = true;
+        isInitialized = true;
         billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().setSource(list);
     }
 

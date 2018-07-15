@@ -37,12 +37,12 @@ public class PlatoonBehaviour : SelectableBehavior {
 
 	void Update() {
 
-		if (!icon.isInitiated)
+		if (!icon.isInitialized)
 			icon.setSource(units);
 		var pos = new Vector3();
 		units.ForEach(x => pos += x.transform.position);
 		transform.position = pos / units.Count;
-		//Debug.Log("Unit count of platoon " + GetInstanceID() + " is " + units.Count());
+
 		modules.ForEach(x => x.Update());
 
 		if (activeWaypoint == null || activeWaypoint.orderComplete()) {
@@ -107,7 +107,7 @@ public class PlatoonBehaviour : SelectableBehavior {
         initialized = true;
     }
 
-	public void setGhostPlatoon(GhostPlatoonBehaviour obj)	{
+	public void setGhostPlatoon(GhostPlatoonBehaviour obj) {
 		ghostPlatoon = obj;
 	}
 
@@ -118,29 +118,25 @@ public class PlatoonBehaviour : SelectableBehavior {
 	public void spawn(Vector3 pos) {
 		enabled = true;
 		transform.position = pos;
-		var heading = ghostPlatoon.GetComponent<GhostPlatoonBehaviour> ().finalHeading;
-		Vector3 forward = new Vector3 (Mathf.Cos (heading), 0, Mathf.Sin (heading));
+		var heading = ghostPlatoon.GetComponent<GhostPlatoonBehaviour>().finalHeading;
+		Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
 		float spawndistance = 2;
 		for (int i = 0; i < units.Count; i++) {
-			units [i].setOriginalOrientation (pos + i * spawndistance * forward, Quaternion.FromToRotation (Vector3.forward, forward));
+			units[i].setOriginalOrientation(pos + i * spawndistance * forward, Quaternion.FromToRotation(Vector3.forward, forward));
 		}
-		movement.beginQueueing (false);
-		movement.getDestinationFromGhost ();
-		movement.endQueueing ();
-		ghostPlatoon.setVisible (false);
+		movement.beginQueueing(false);
+		movement.getDestinationFromGhost();
+		movement.endQueueing();
+		ghostPlatoon.setVisible(false);
 	}
 
-	public void setSelected (bool selected)
-	{
-		icon.setSelected (selected);
+	public void setSelected(bool selected) {
+		icon.setSelected(selected);
 	}
 
-	public void setEnabled (bool enabled)
-	{
+	public void setEnabled(bool enabled) {
 		this.enabled = enabled;
-		if (icon != null)
-			icon.setVisible (enabled);
-        
+		icon?.setVisible(enabled);        
 	}
 
     public void sendFirePosOrder(Vector3 position) {
@@ -152,8 +148,7 @@ public class PlatoonBehaviour : SelectableBehavior {
         }
     }
 
-	public abstract class PlatoonModule
-	{
+	public abstract class PlatoonModule	{
 		public PlatoonBehaviour platoon;
 
 		protected Waypoint newWaypoint {
@@ -171,17 +166,15 @@ public class PlatoonBehaviour : SelectableBehavior {
 		private Waypoint _newWaypoint;
 		protected bool queueing = false;
 
-		public PlatoonModule (PlatoonBehaviour p)
-		{
+		public PlatoonModule(PlatoonBehaviour p) {
 			platoon = p;
 		}
 
-		public virtual void Update ()
-		{
+		public virtual void Update() {
 
 		}
 
-		public void beginQueueing (bool queue)
+		public void beginQueueing(bool queue)
 		{
 			queueing = queue;
 			if (!queue) {
@@ -191,8 +184,7 @@ public class PlatoonBehaviour : SelectableBehavior {
 
 		}
 
-		public void endQueueing ()
-		{
+		public void endQueueing() {
 			if (queueing || (platoon.activeWaypoint != null && !platoon.activeWaypoint.interrupt ())) {
 				platoon.waypoints.Enqueue (newWaypoint);
 			} else {
@@ -219,30 +211,26 @@ public class PlatoonBehaviour : SelectableBehavior {
 
 		}
 
-		public override void Update ()
-		{
+		public override void Update() {
             
 		}
 
-		public void setDestination (Vector3 v)
-		{
+		public void setDestination(Vector3 v) {
 			var finalHeading = v - getFunctionalPosition ();
 			setFinalOrientation (v, finalHeading.getRadianAngle ());
 		}
 
-		public void getDestinationFromGhost ()
-		{
+		public void getDestinationFromGhost() {
 			var heading = platoon.ghostPlatoon.GetComponent<GhostPlatoonBehaviour> ().finalHeading;
 			setFinalOrientation (platoon.ghostPlatoon.transform.position, heading);
 		}
 
-		public void getHeadingFromGhost ()
-		{
+		public void getHeadingFromGhost() {
 			var heading = platoon.ghostPlatoon.GetComponent<GhostPlatoonBehaviour> ().finalHeading;
 			setFinalOrientation (newWaypoint.destination, heading);
 		}
 
-		private Vector3 getFunctionalPosition ()
+		private Vector3 getFunctionalPosition()
 		{
 			var moveWaypoint = platoon.waypoints.Where (x => x is MoveWaypoint);
 			if (moveWaypoint.Count () > 0) {
@@ -253,35 +241,28 @@ public class PlatoonBehaviour : SelectableBehavior {
 
 		}
 
-		public void setFinalOrientation (Vector3 v, float h)
-		{
+		public void setFinalOrientation(Vector3 v, float h) {
 			newWaypoint.destination = v;
 			newWaypoint.heading = h;
 		}
 
-		public void setMatch (Vector3 match)
-		{
+		public void setMatch(Vector3 match)	{
 			platoon.ghostPlatoon.setVisible (false);
 			setDestination (match);
 		}
 
-		public float getScore (Vector3 matchees)
-		{
+		public float getScore(Vector3 matchees)	{
 			Vector3 pos = getFunctionalPosition ();
 
 			return (matchees - pos).magnitude;
 		}
 
-		protected override Waypoint getModuleWaypoint ()
-		{
+		protected override Waypoint getModuleWaypoint()	{
 			return new MoveWaypoint (platoon);
-		}
-        
-        
+		}        
 	}
 
-	public class TransporterModule : PlatoonModule, Matchable<PlatoonBehaviour.TransportableModule>
-	{
+	public class TransporterModule : PlatoonModule, Matchable<PlatoonBehaviour.TransportableModule>	{
 		public PlatoonBehaviour transported;
 
 		public TransporterWaypoint newWaypoint {
@@ -290,41 +271,37 @@ public class PlatoonBehaviour : SelectableBehavior {
 			}
 		}
 
-		public TransporterModule (PlatoonBehaviour p) : base (p)
+		public TransporterModule(PlatoonBehaviour p) : base (p)
 		{
 		}
 
-		public void load ()
-		{
+		public void load() {
 			newWaypoint.loading = true;
 		}
 
-		public void unload ()
-		{
+		public void unload() {
 			newWaypoint.loading = false;
 		}
 
-		public void setTransported (PlatoonBehaviour p)
-		{
+		public void setTransported(PlatoonBehaviour p)	{
 			transported = p;
 			for (int i = 0; i < platoon.units.Count; i++) {
-                
-				if (p != null) {
-					if (i == p.units.Count)
-						break;
-					platoon.units [i].GetComponent<TransporterBehaviour> ().transported = p.units [i] as InfantryBehaviour;
-				} else
-					platoon.units [i].GetComponent<TransporterBehaviour> ().transported = null;
+
+                if (p != null) {
+                    if (i == p.units.Count)
+                        break;
+                    platoon.units[i].GetComponent<TransporterBehaviour>().transported = p.units[i] as InfantryBehaviour;
+                } else {
+                    platoon.units[i].GetComponent<TransporterBehaviour>().transported = null;
+                }
 			}
 		}
 
-		protected override Waypoint getModuleWaypoint ()
-		{
+		protected override Waypoint getModuleWaypoint() {
 			return new TransporterWaypoint (platoon, this);
 		}
 
-		public void setMatch (PlatoonBehaviour.TransportableModule match)
-		{
+		public void setMatch(TransportableModule match) {
 			newWaypoint.loading = true;
 			match.beginQueueing (queueing);
 			match.setTransport (this);
@@ -332,8 +309,7 @@ public class PlatoonBehaviour : SelectableBehavior {
 			match.endQueueing ();
 		}
 
-		public float getScore (PlatoonBehaviour.TransportableModule matchees)
-		{
+		public float getScore(TransportableModule matchees) {
 			return platoon.movement.getScore (matchees.platoon.transform.position);
 		}
 	}
@@ -341,196 +317,26 @@ public class PlatoonBehaviour : SelectableBehavior {
     {
         MovementModule
     }*/
-	public class TransportableModule : PlatoonModule
-	{
+	public class TransportableModule : PlatoonModule {
 		public TransportableWaypoint newWaypoint {
 			get {
 				return base.newWaypoint as TransportableWaypoint;
 			}
 		}
 
-		public TransportableModule (PlatoonBehaviour p) : base (p)
-		{
+		public TransportableModule(PlatoonBehaviour p) : base (p)
+        {
 		}
 
-		protected override Waypoint getModuleWaypoint ()
-		{
+		protected override Waypoint getModuleWaypoint() {
 			return new TransportableWaypoint (platoon);
 		}
 
-		public void setTransport (PlatoonBehaviour.TransporterModule transport)
-		{
-            
+		public void setTransport(TransporterModule transport) {
 			newWaypoint.transporterWaypoint = transport.newWaypoint;
-            
 		}
 	}
 }
 
-public abstract class Waypoint
-{
-	public bool interrupted;
-	public PlatoonBehaviour platoon;
 
-	public Waypoint (PlatoonBehaviour p)
-	{
-		platoon = p;
-	}
 
-	public abstract void processWaypoint ();
-
-	public abstract bool orderComplete ();
-
-	public abstract bool interrupt ();
-}
-
-public class MoveWaypoint : Waypoint
-{
-	public Vector3 destination;
-	public float heading;
-
-	public MoveWaypoint (PlatoonBehaviour p) : base (p)
-	{
-	}
-
-	public override void processWaypoint ()
-	{
-		Vector3 v = new Vector3 (Mathf.Cos (heading), 0, Mathf.Sin (heading));
-		var left = new Vector3 (-v.z, 0, v.x);
-
-		var pos = destination + (platoon.units.Count - 1) * (PlatoonBehaviour.baseDistance / 2) * left;
-		var destinations = new List<Vector3> ();
-		for (int i = 0; i < platoon.units.Count; i++) {
-			destinations.Add (pos - PlatoonBehaviour.baseDistance * i * left);
-		}
-
-		platoon.units.ConvertAll (x => x as Matchable<Vector3>).Match (destinations);
-		platoon.units.ForEach (x => x.setUnitFinalHeading (heading));
-	}
-
-	public override bool orderComplete ()
-	{
-		return platoon.units.All (x => x.ordersComplete ());
-	}
-
-	public override bool interrupt ()
-	{
-		//platoon.units.ForEach (x => x.gotDestination = false);
-		return true;
-	}
-}
-
-public class TransporterWaypoint : Waypoint
-{
-	public bool loading;
-	PlatoonBehaviour.TransporterModule module;
-	public TransportableWaypoint transportableWaypoint;
-	//public PlatoonBehaviour target;
-	public TransporterWaypoint (PlatoonBehaviour p, PlatoonBehaviour.TransporterModule m) : base (p)
-	{
-		module = m;
-	}
-
-	public override void processWaypoint ()
-	{
-		if (loading) {
-			if (transportableWaypoint == null)
-				return;
-			for (int i = 0; i < transportableWaypoint.platoon.units.Count; i++) {
-				platoon.units [i].GetComponent<TransporterBehaviour> ().load (transportableWaypoint.platoon.units [i] as InfantryBehaviour);
-			}
-		} else {
-			if (module.transported == null)
-				return;
-			module.transported.setEnabled (true);
-			module.transported = null;
-			platoon.units.ForEach (x => x.GetComponent<TransporterBehaviour> ().unload ());
-		}
-	}
-
-	public override bool orderComplete ()
-	{
-		if (transportableWaypoint != null && transportableWaypoint.interrupted) {
-			platoon.units.ForEach (x => x.GetComponent<TransporterBehaviour> ().target = null);
-			return true;
-		}
-		if (loading) {
-			if (transportableWaypoint.orderComplete ()) {
-				module.setTransported (transportableWaypoint.platoon);
-				platoon.units.ForEach (x => x.GetComponent<TransporterBehaviour> ().target = null);
-				transportableWaypoint.platoon.setEnabled (false);
-				return true;
-			} else {
-				return false;
-			}
-            //platoon.units.All(x => x.GetComponent<TransporterBehaviour>().loadingComplete());//premature true
-		} else {
-			if (platoon.units.All (x => x.GetComponent<TransporterBehaviour> ().unloadingComplete ())) {
-				module.setTransported (null);
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	public override bool interrupt ()
-	{
-		if (transportableWaypoint != null && transportableWaypoint.interrupt ()) {
-			platoon.units.ForEach (x => x.GetComponent<TransporterBehaviour> ().target = null);
-			Debug.Log ("transport interupted");
-			interrupted = true;
-			return true;
-		} else {
-			return false;
-		}
-        
-	}
-}
-
-public class TransportableWaypoint : Waypoint
-{
-	public TransporterWaypoint transporterWaypoint;
-
-	public TransportableWaypoint (PlatoonBehaviour p)
-		: base (p)
-	{
-
-	}
-
-	public override void processWaypoint ()
-	{
-		for (int i = 0; i < platoon.units.Count; i++) {
-			(platoon.units [i] as InfantryBehaviour).setTransportTarget (transporterWaypoint.platoon.units [i].GetComponent<TransporterBehaviour> ());
-		}
-        
-	}
-
-	public override bool orderComplete ()
-	{
-		if (transporterWaypoint.interrupted) {
-			platoon.units.ForEach (x => (x as InfantryBehaviour).setTransportTarget (null));
-			return true;
-		} else {
-			if (!platoon.units.Any (x => (x as InfantryBehaviour).interactsWithTransport (false))) {
-                
-				return true;
-			} else {
-				return false;
-			}
-		}
-		//return transporterWaypoint.interrupted || platoon.units.All(x => !(x as InfantryBehaviour).interactsWithTransport(true));
-	}
-
-	public override bool interrupt ()
-	{
-		if (!platoon.units.Any (x => (x as InfantryBehaviour).interactsWithTransport (true))) {
-            
-			interrupted = true;
-			return true;
-		} else {
-			return false;
-		}
-        
-	}
-}

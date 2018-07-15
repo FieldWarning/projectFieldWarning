@@ -46,7 +46,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     void Update() {
         if (spawningUnits) {
             RaycastHit hit;
-            if (Input.GetMouseButtonUp(0) && enteringSpawning && !Input.GetKeyDown("left shift")) {
+            if (Input.GetMouseButtonUp(0) && enteringSpawning && !Input.GetKeyDown(KeyCode.LeftShift)) {
                 enteringSpawning = false;
             } else if (getTerrainClickLocation(out hit)
                 && hit.transform.gameObject.name.Equals("Terrain")) {
@@ -97,8 +97,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     void OnGUI() {
-        if (selectionManager != null)
-            selectionManager.OnGui();
+        selectionManager?.OnGui();
     }
 
     void onOrderStart() {
