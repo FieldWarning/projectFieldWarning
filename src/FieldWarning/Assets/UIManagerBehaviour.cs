@@ -29,8 +29,8 @@ public class UIManagerBehaviour : MonoBehaviour {
     private ClickManager rightClickManager;
     private static SelectionManager selectionManager;
 
-    private enum OrderMode {normal, spawning, firePos};
-    private OrderMode mouseMode = OrderMode.normal;
+    private enum MouseMode {normal, purchasing, firePos};
+    private MouseMode mouseMode = MouseMode.normal;
 
     void Start() {
         if (firePosReticle == null)
@@ -42,7 +42,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
     
     void Update() {
-        if (mouseMode == OrderMode.spawning) {
+        if (mouseMode == MouseMode.purchasing) {
             RaycastHit hit;
             if (getTerrainClickLocation(out hit)
                 && hit.transform.gameObject.name.Equals("Terrain")) {
@@ -54,21 +54,20 @@ public class UIManagerBehaviour : MonoBehaviour {
                     ghostUnits);
 
                 if (Input.GetMouseButtonUp(0)) {
-                    var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
-                    closestSpawn.add(realPlatoons);
+                    closestSpawn.buyUnits(ghostUnits);
 
                     if (Input.GetKey(KeyCode.LeftShift)) {
                         // We turned the current ghosts into real units, so:
                         makeNewGhostUnits();
                     } else {
                         ghostUnits.Clear();
-                        mouseMode = OrderMode.spawning;
+                        mouseMode = MouseMode.normal;
                     }
                 }
             }
 
             if (Input.GetMouseButton(1))
-                destroySpawning();
+                exitPurchasingMode();
 
         } else {
             applyHotkeys();
@@ -79,11 +78,11 @@ public class UIManagerBehaviour : MonoBehaviour {
 
     void dispatchUnitOrders() {
         switch (mouseMode) {
-            case OrderMode.normal:
+            case MouseMode.normal:
                 rightClickManager.Update();
                 break;
 
-            case OrderMode.firePos:
+            case MouseMode.firePos:
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
                     leaveFirePosMode();
                 }
@@ -189,7 +188,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     private void addSpawn(GhostPlatoonBehaviour g) {
-        mouseMode = OrderMode.spawning;
+        mouseMode = MouseMode.purchasing;
         ghostUnits.Add(g);
     }
 
@@ -199,7 +198,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         for (int i = 0; i < count; i++) {
             buildTanks();
         }
-        mouseMode = OrderMode.spawning;
+        mouseMode = MouseMode.purchasing;
     }
 
     private static void positionGhostUnits(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units) {
@@ -219,11 +218,12 @@ public class UIManagerBehaviour : MonoBehaviour {
             units[i].GetComponent<GhostPlatoonBehaviour>().setOrientation(pos - i * unitDistance * right, heading);        
     }
 
-    private void destroySpawning() {
+    private void exitPurchasingMode() {
         foreach (var p in ghostUnits) {
             p.GetComponent<GhostPlatoonBehaviour>().destroy();
         }
         ghostUnits.Clear();
+        mouseMode = MouseMode.normal;
     }
 
     private SpawnPointBehaviour getClosestSpawn(Vector3 p) {
@@ -265,18 +265,18 @@ public class UIManagerBehaviour : MonoBehaviour {
             transporters.ForEach(x => x.endQueueing());
 
         } else if (Commands.firePos()) {
-            mouseMode = OrderMode.firePos;
+            mouseMode = MouseMode.firePos;
             Cursor.SetCursor(firePosReticle, Vector2.zero, CursorMode.Auto);
         }
     }
 
     private void enterFirePosMode() {
-        mouseMode = OrderMode.firePos;
+        mouseMode = MouseMode.firePos;
         Cursor.SetCursor(firePosReticle, Vector2.zero, CursorMode.Auto);
     }
 
     private void leaveFirePosMode() {
-        mouseMode = OrderMode.normal;
+        mouseMode = MouseMode.normal;
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
@@ -321,7 +321,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         public void Update() {
             clickManager.Update();
 
-            if (outer.mouseMode == OrderMode.firePos && Input.GetMouseButtonDown(0)) {
+            if (outer.mouseMode == MouseMode.firePos && Input.GetMouseButtonDown(0)) {
                 RaycastHit hit;
                 getTerrainClickLocation(out hit);
 
