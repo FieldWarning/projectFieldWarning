@@ -23,7 +23,7 @@ public class SpawnPointBehaviour : MonoBehaviour {
     public Team team;
 
 	// Use this for initialization
-	void Start () {
+	void Start() {
         UIManagerBehaviour.addSpawnPoint(this);
         if (team == Team.Blue) {
             GetComponentInChildren<Renderer>().material.color = Color.blue;
@@ -33,7 +33,7 @@ public class SpawnPointBehaviour : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 
         if (spawnQueue.Count > 0) {
             spawnTime -= Time.deltaTime;
@@ -50,7 +50,9 @@ public class SpawnPointBehaviour : MonoBehaviour {
         }
 	}
 
-    public void updateQueue(List<PlatoonBehaviour> list) {
+    public void add(List<PlatoonBehaviour> list) {
         list.ForEach(x => spawnQueue.Enqueue(x));
     }
+
+    
 }

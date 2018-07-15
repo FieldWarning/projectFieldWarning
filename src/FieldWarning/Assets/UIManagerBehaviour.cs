@@ -25,9 +25,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     private Vector3 destination;
     private Vector3 boxSelectStart;
     public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
-    List<GhostPlatoonBehaviour> spawnList = new List<GhostPlatoonBehaviour>();
-    private bool spawningUnits = false;
-    private bool enteringSpawning = false;
+    List<GhostPlatoonBehaviour> ghostUnits = new List<GhostPlatoonBehaviour>();
     private ClickManager rightClickManager;
     private static SelectionManager selectionManager;
 
@@ -44,25 +42,27 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
     
     void Update() {
-        if (spawningUnits) {
+        if (mouseMode == OrderMode.spawning) {
             RaycastHit hit;
-            if (Input.GetMouseButtonUp(0) && enteringSpawning && !Input.GetKeyDown(KeyCode.LeftShift)) {
-                enteringSpawning = false;
-            } else if (getTerrainClickLocation(out hit)
+            if (getTerrainClickLocation(out hit)
                 && hit.transform.gameObject.name.Equals("Terrain")) {
 
-                arrangeToBeSpawned(hit.point);
+                SpawnPointBehaviour closestSpawn = getClosestSpawn(hit.point);
+                positionGhostUnits(
+                    hit.point, 
+                    2* hit.point - closestSpawn.transform.position,
+                    ghostUnits);
 
-                if (Input.GetMouseButtonUp(0) && !enteringSpawning) {
-                    var spawnPoint = getClosestSpawn(hit.point);
-                    var realPlatoons = spawnList.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
+                if (Input.GetMouseButtonUp(0)) {
+                    var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
+                    closestSpawn.add(realPlatoons);
 
-                    spawnPoint.updateQueue(realPlatoons);
                     if (Input.GetKey(KeyCode.LeftShift)) {
-                        replaceSpawnList();
+                        // We turned the current ghosts into real units, so:
+                        makeNewGhostUnits();
                     } else {
-                        spawnList.Clear();
-                        spawningUnits = false;
+                        ghostUnits.Clear();
+                        mouseMode = OrderMode.spawning;
                     }
                 }
             }
@@ -71,10 +71,8 @@ public class UIManagerBehaviour : MonoBehaviour {
                 destroySpawning();
 
         } else {
-            processHotkeys();
-            if (selectionManager != null)
-                selectionManager.Update();
-
+            applyHotkeys();
+            selectionManager?.Update();
             dispatchUnitOrders();
         }
     }
@@ -107,7 +105,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         if (getTerrainClickLocation(out hit)) {
             Vector3 com = selected.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll<GhostPlatoonBehaviour>(x => x.ghostPlatoon);
-            arrangeGhosts(hit.point, 2 * hit.point - com, ghosts);
+            positionGhostUnits(hit.point, 2 * hit.point - com, ghosts);
             destination = hit.point;
         }
     }
@@ -120,7 +118,7 @@ public class UIManagerBehaviour : MonoBehaviour {
 
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.ghostPlatoon);
             ghosts.ForEach(x => x.setVisible(true));
-            arrangeGhosts(destination, hit.point, ghosts);
+            positionGhostUnits(destination, hit.point, ghosts);
         }
     }
 
@@ -191,31 +189,26 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     private void addSpawn(GhostPlatoonBehaviour g) {
-        spawningUnits = true;
-        enteringSpawning = true;
-        spawnList.Add(g);
+        mouseMode = OrderMode.spawning;
+        ghostUnits.Add(g);
     }
 
-    private void replaceSpawnList() {
-        var count = spawnList.Count;
-        spawnList.Clear();
+    private void makeNewGhostUnits() {
+        var count = ghostUnits.Count;
+        ghostUnits.Clear();
         for (int i = 0; i < count; i++) {
             buildTanks();
         }
-        enteringSpawning = false;
+        mouseMode = OrderMode.spawning;
     }
 
-    private void arrangeToBeSpawned(Vector3 point) {
-        arrangeGhosts(point, 2 * point - getClosestSpawn(point).transform.position, spawnList);
-    }
-
-    private static void arrangeGhosts(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units) {
+    private static void positionGhostUnits(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units) {
 
         var diff = facingPoint - position;
-        arrangeGhosts(position, diff.getRadianAngle(), units);
+        positionGhostUnits(position, diff.getRadianAngle(), units);
     }
 
-    private static void arrangeGhosts(Vector3 position, float heading, List<GhostPlatoonBehaviour> units) {
+    private static void positionGhostUnits(Vector3 position, float heading, List<GhostPlatoonBehaviour> units) {
 
         Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
@@ -227,10 +220,10 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     private void destroySpawning() {
-        foreach (var p in spawnList) {
+        foreach (var p in ghostUnits) {
             p.GetComponent<GhostPlatoonBehaviour>().destroy();
         }
-        spawnList.Clear();
+        ghostUnits.Clear();
     }
 
     private SpawnPointBehaviour getClosestSpawn(Vector3 p) {
@@ -253,7 +246,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         spawnPointList[s.team].Add(s);
     }
 
-    public void processHotkeys() {
+    public void applyHotkeys() {
         var selected = selectionManager.selection;
 
         if (Commands.unload()) {
