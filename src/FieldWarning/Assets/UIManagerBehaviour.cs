@@ -60,14 +60,17 @@ public class UIManagerBehaviour : MonoBehaviour {
                         // We turned the current ghosts into real units, so:
                         makeNewGhostUnits();
                     } else {
-                        ghostUnits.Clear();
-                        mouseMode = MouseMode.normal;
+                        exitPurchasingMode();
                     }
                 }
             }
 
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButton(1)) {
+                foreach (var g in ghostUnits) 
+                    g.GetComponent<GhostPlatoonBehaviour>().destroy();
+
                 exitPurchasingMode();
+            }
 
         } else {
             applyHotkeys();
@@ -83,9 +86,10 @@ public class UIManagerBehaviour : MonoBehaviour {
                 break;
 
             case MouseMode.firePos:
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
-                    leaveFirePosMode();
-                }
+                if (Input.GetMouseButtonDown(0)
+                    || Input.GetMouseButtonDown(1)) 
+                    exitFirePosMode();
+                
                 break;
 
             default:
@@ -162,41 +166,40 @@ public class UIManagerBehaviour : MonoBehaviour {
         }
     }
 
-    public void buildTanks() {
+    public void tankButtonCallback() {
         buildUnit(UnitType.Tank);
+        mouseMode = MouseMode.purchasing;
     }
 
-    public void buildInfantry() {
+    public void infantryButtonCallback() {
         buildUnit(UnitType.Infantry);
+        mouseMode = MouseMode.purchasing;
     }
 
-    public void buildAFV() {
+    public void afvButtonCallback() {
         buildUnit(UnitType.AFV);
+        mouseMode = MouseMode.purchasing;
     }
 
     public void buildUnit(UnitType t) {
         var behaviour = GhostPlatoonBehaviour.build(t, owner, 4);
-        addSpawn(behaviour);
+        ghostUnits.Add(behaviour);
     }
 
     public static void registerPlatoonBirth(PlatoonBehaviour platoon) {
         selectionManager.allUnits.Add(platoon);
     }
+
     public static void registerPlatoonDeath(PlatoonBehaviour platoon) {
         selectionManager.allUnits.Remove(platoon);
         selectionManager.selection.Remove(platoon);
-    }
-
-    private void addSpawn(GhostPlatoonBehaviour g) {
-        mouseMode = MouseMode.purchasing;
-        ghostUnits.Add(g);
     }
 
     private void makeNewGhostUnits() {
         var count = ghostUnits.Count;
         ghostUnits.Clear();
         for (int i = 0; i < count; i++) {
-            buildTanks();
+            buildUnit(UnitType.Tank);
         }
         mouseMode = MouseMode.purchasing;
     }
@@ -219,9 +222,6 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
 
     private void exitPurchasingMode() {
-        foreach (var p in ghostUnits) {
-            p.GetComponent<GhostPlatoonBehaviour>().destroy();
-        }
         ghostUnits.Clear();
         mouseMode = MouseMode.normal;
     }
@@ -275,7 +275,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         Cursor.SetCursor(firePosReticle, Vector2.zero, CursorMode.Auto);
     }
 
-    private void leaveFirePosMode() {
+    private void exitFirePosMode() {
         mouseMode = MouseMode.normal;
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }

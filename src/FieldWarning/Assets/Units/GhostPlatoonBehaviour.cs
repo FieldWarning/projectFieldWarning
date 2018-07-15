@@ -17,7 +17,6 @@ using System.Collections.Generic;
 public class GhostPlatoonBehaviour : MonoBehaviour {
 
 	// Use this for initialization
-    bool init = false;
     bool initIcon = false;
     bool raycastIgnore;
     bool raycastIgnoreChange = false;
@@ -37,7 +36,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        initialize();
         if (raycastIgnoreChange) {
             raycastIgnoreChange = false;
             _setIgnoreRaycast(raycastIgnore);
@@ -55,18 +53,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         }
     }
 
-    public void initialize() {
-        if (!init) {
-            
-            init = true;
-            gameObject.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
-            icon.GetComponent<IconBehaviour>().setGhost();
-
-            //setMembers(Resources.Load<GameObject>("Unit"), 4);
-            setOrientation(new Vector3(), 0);
-        }
-    }
-
     public PlatoonBehaviour getRealPlatoon() {
         if (platoonBehaviour == null)
             buildRealPlatoon();
@@ -78,17 +64,19 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
 
         platoonBehaviour = realPlatoon.GetComponent<PlatoonBehaviour>();
-        platoonBehaviour.setMembers(unitType, owner, units.Count);
+        platoonBehaviour.initialize(unitType, owner, units.Count);
         //platoonBehaviour.setEnabled(false);
         platoonBehaviour.setGhostPlatoon(this);
         realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
-    public void setMembers(UnitType t, Player owner, int n) {
+    public void initialize(UnitType t, Player owner, int n) {
         this.owner = owner;
         unitType = t;
-        baseUnit = Units.getUnit(t);
-        //create Infantry
+        baseUnit = Units.getUnit(unitType);
+        transform.position = 100 * Vector3.down;
+
+        // Create units:
         for (int i = 0; i < n; i++) {
             GameObject go = GameObject.Instantiate(baseUnit);
             go.GetComponent<UnitBehaviour>().enabled = false;
@@ -98,13 +86,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
             units.Add(go);
             //go.transform.parent = this.transform;
         }
-    }
-
-    public void setOrientation(Vector3 position, Vector3 facing) {
-        var diff = (facing - position);
-        var heading = Mathf.Atan2(diff.y, diff.x);
-        
-        setOrientation(position, heading);
     }
 
     public void setOrientation(Vector3 position, float heading) {
@@ -122,10 +103,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
             units[i].GetComponent<UnitBehaviour>().setOriginalOrientation(localPosition, localRotation,false);
             units[i].GetComponent<UnitBehaviour>().updateMapOrientation();          
         }
-    }
-
-    public void setFacing(Vector3 facing) {
-        setOrientation(transform.position, facing);
     }
 
     public void setVisible(bool vis) {
@@ -155,22 +132,21 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
 
     public void destroy() {
         foreach (var u in units)
-            Object.Destroy(u);
+            Destroy(u);
         
-        Object.Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     public static GhostPlatoonBehaviour build(UnitType t, Player owner, int count) {
-        var behaviour = GhostPlatoonBehaviour.build();
-        behaviour.setMembers(t, owner, count);
-        behaviour.buildRealPlatoon();
-        behaviour.initializeIcon();
-        return behaviour;
-    }
-
-    public static GhostPlatoonBehaviour build() {
         GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
+        behaviour.initialize(t, owner, count);
+        behaviour.buildRealPlatoon();
+        behaviour.initializeIcon();
+
+        go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
+        behaviour.icon.GetComponent<IconBehaviour>().setGhost();
+
         return behaviour;
     }
 

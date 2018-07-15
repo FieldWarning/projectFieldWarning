@@ -72,7 +72,7 @@ public class PlatoonBehaviour : SelectableBehavior {
 		}
 	}
 
-	public void setMembers(UnitType t, Player owner, int n) {
+	public void initialize(UnitType t, Player owner, int n) {
         var go = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
         go.transform.parent = transform;
         icon = go.GetComponent<IconBehaviour>();
