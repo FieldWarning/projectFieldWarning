@@ -13,6 +13,9 @@
 
 using UnityEngine;
 
+/*
+ * A billboard is a 2d texture that is always facing the camera.
+ */
 public class BillboardBehavior : SelectableBehavior {
     [SerializeField] private float ALTITUDE = 1f;
     [SerializeField] private float SIZE = 0.1f;

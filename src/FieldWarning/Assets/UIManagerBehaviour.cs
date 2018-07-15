@@ -46,7 +46,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     void Update() {
         if (spawningUnits) {
             RaycastHit hit;
-            if (Input.GetMouseButtonUp(0) && enteringSpawning) {
+            if (Input.GetMouseButtonUp(0) && enteringSpawning && !Input.GetKeyDown("left shift")) {
                 enteringSpawning = false;
             } else if (getTerrainClickLocation(out hit)
                 && hit.transform.gameObject.name.Equals("Terrain")) {
