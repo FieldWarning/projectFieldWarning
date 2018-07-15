@@ -18,7 +18,6 @@ public class IconBehaviour : SelectableBehavior
 {
     int layer=-1;
     public PlatoonBehaviour platoon;
-    GameObject camera;
 
     SymbolBehaviour _symbol;
     SymbolBehaviour symbol {
@@ -40,9 +39,7 @@ public class IconBehaviour : SelectableBehavior
             return _billboard;
         }
     }
-
-    const float ALTITUDE = 1f;
-    const float SIZE = 0.1f;
+   
     public bool isInitiated = false;
     private bool init = false;
     Color baseColor = Color.blue;
@@ -51,8 +48,6 @@ public class IconBehaviour : SelectableBehavior
 
 	// Use this for initialization
 	void Start () {
-        camera = Camera.main.gameObject;
-
         billboard.GetComponent<Renderer>().material.color = baseColor;
         if (layer != -1)
             setLayer(layer);
@@ -63,10 +58,7 @@ public class IconBehaviour : SelectableBehavior
 	
 	// Update is called once per frame
 	void Update () {
-        transform.localPosition = ALTITUDE * camera.transform.up;
-        transform.rotation = Quaternion.LookRotation(camera.transform.forward);
-        var distance = (camera.transform.position - transform.position).magnitude;
-        transform.localScale = SIZE * distance * Vector3.one;
+
 	}
 
     public void setPlatoon(PlatoonBehaviour p) {

@@ -15,10 +15,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class SpawnPointBehaviour : MonoBehaviour {
-    Camera camera;
     Vector3 oldPosition;
-    [SerializeField] private float height = 0.5f;
-    float size = 0.1f;
     private Queue<PlatoonBehaviour> spawnQueue = new Queue<PlatoonBehaviour>();
     public const float MIN_SPAWN_INTERVAL = 2f;
     public const float QUEUE_DELAY = 1f;
@@ -27,20 +24,16 @@ public class SpawnPointBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        camera = Camera.main;
         UIManagerBehaviour.addSpawnPoint(this);
-        if (team==Team.Blue) {
-            GetComponent<Renderer>().material.color = Color.blue;
+        if (team == Team.Blue) {
+            GetComponentInChildren<Renderer>().material.color = Color.blue;
         } else {
-            GetComponent<Renderer>().material.color = Color.red;
+            GetComponentInChildren<Renderer>().material.color = Color.red;
         }
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        transform.rotation = Quaternion.LookRotation(camera.transform.forward);
-        var distance = (camera.transform.position - transform.position).magnitude;
-        transform.localScale = size * distance * Vector3.one;
 
         if (spawnQueue.Count > 0) {
             spawnTime -= Time.deltaTime;

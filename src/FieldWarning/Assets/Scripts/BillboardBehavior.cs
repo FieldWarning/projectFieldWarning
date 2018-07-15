@@ -12,29 +12,26 @@
  */
 
 using UnityEngine;
-using System.Collections;
 
 public class BillboardBehavior : SelectableBehavior {
-    public IconBehaviour icon;
-	// Use this for initialization
-	void Start () {
+    [SerializeField] private float ALTITUDE = 1f;
+    [SerializeField] private float SIZE = 0.1f;
+
+    // Use this for initialization
+    void Start () {
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
-    /*public override void setDestination(Vector3 v)
-    {
-        icon.setDestination(v);
+        transform.localPosition = ALTITUDE * Camera.main.transform.up;
+        faceCamera();
     }
-    public override void setFinalHeading(Vector3 v)
-    {
-        icon.setFinalHeading(v);
+
+    private void faceCamera() {
+
+        transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+        var distance = (Camera.main.transform.position - transform.position).magnitude;
+        transform.localScale = SIZE * distance * Vector3.one;
     }
-    public override void getDestinationFromGhost()
-    {
-        icon.getDestinationFromGhost();
-    }*/
 }
