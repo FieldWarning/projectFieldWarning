@@ -42,58 +42,59 @@ public class UIManagerBehaviour : MonoBehaviour {
     }
     
     void Update() {
-        if (mouseMode == MouseMode.purchasing) {
-            RaycastHit hit;
-            if (getTerrainClickLocation(out hit)
-                && hit.transform.gameObject.name.Equals("Terrain")) {
-
-                SpawnPointBehaviour closestSpawn = getClosestSpawn(hit.point);
-                positionGhostUnits(
-                    hit.point, 
-                    2* hit.point - closestSpawn.transform.position,
-                    ghostUnits);
-
-                if (Input.GetMouseButtonUp(0)) {
-                    closestSpawn.buyUnits(ghostUnits);
-
-                    if (Input.GetKey(KeyCode.LeftShift)) {
-                        // We turned the current ghosts into real units, so:
-                        makeNewGhostUnits();
-                    } else {
-                        exitPurchasingMode();
-                    }
-                }
-            }
-
-            if (Input.GetMouseButton(1)) {
-                foreach (var g in ghostUnits) 
-                    g.GetComponent<GhostPlatoonBehaviour>().destroy();
-
-                exitPurchasingMode();
-            }
-
-        } else {
-            applyHotkeys();
-            selectionManager?.Update();
-            dispatchUnitOrders();
-        }
-    }
-
-    void dispatchUnitOrders() {
         switch (mouseMode) {
+            case MouseMode.purchasing:
+                showGhostUnitsAndMaybePurchase();
+                break;
+
             case MouseMode.normal:
+                applyHotkeys();
+                selectionManager?.Update();
                 rightClickManager.Update();
                 break;
 
             case MouseMode.firePos:
+                applyHotkeys();
+                selectionManager?.Update();
                 if (Input.GetMouseButtonDown(0)
-                    || Input.GetMouseButtonDown(1)) 
+                    || Input.GetMouseButtonDown(1))
                     exitFirePosMode();
-                
                 break;
 
             default:
                 throw new Exception("impossible state");
+        }
+    }
+
+    void showGhostUnitsAndMaybePurchase() {
+        RaycastHit hit;
+        if (getTerrainClickLocation(out hit)
+            && hit.transform.gameObject.name.Equals("Terrain")) {
+
+            // Show ghost units under mouse:
+            SpawnPointBehaviour closestSpawn = getClosestSpawn(hit.point);
+            positionGhostUnits(
+                hit.point,
+                2 * hit.point - closestSpawn.transform.position,
+                ghostUnits);
+
+            if (Input.GetMouseButtonUp(0)) {
+                closestSpawn.buyUnits(ghostUnits);
+
+                if (Input.GetKey(KeyCode.LeftShift)) {
+                    // We turned the current ghosts into real units, so:
+                    makeNewGhostUnits();
+                } else {
+                    exitPurchasingMode();
+                }
+            }
+        }
+        
+        if (Input.GetMouseButton(1)) {
+            foreach (var g in ghostUnits)
+                g.GetComponent<GhostPlatoonBehaviour>().destroy();
+
+            exitPurchasingMode();
         }
     }
 
