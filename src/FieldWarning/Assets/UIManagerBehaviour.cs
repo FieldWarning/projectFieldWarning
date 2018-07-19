@@ -276,7 +276,7 @@ public class UIManagerBehaviour : MonoBehaviour {
             transporters.ConvertAll(x => x as Matchable<PlatoonBehaviour.TransportableModule>).Match(infantry);
             transporters.ForEach(x => x.endQueueing());
 
-        } else if (Commands.firePos()) {
+        } else if (Commands.firePos() && selected.Count != 0) {
             mouseMode = MouseMode.firePos;
             Cursor.SetCursor(firePosReticle, Vector2.zero, CursorMode.Auto);
         }
