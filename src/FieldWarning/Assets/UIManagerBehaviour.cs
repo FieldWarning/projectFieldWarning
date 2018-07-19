@@ -43,53 +43,64 @@ public class UIManagerBehaviour : MonoBehaviour {
     
     void Update() {
         switch (mouseMode) {
-            case MouseMode.purchasing:
-                showGhostUnitsAndMaybePurchase();
-                break;
+        case MouseMode.purchasing:
 
-            case MouseMode.normal:
-                applyHotkeys();
-                selectionManager?.Update();
-                rightClickManager.Update();
-                break;
+            RaycastHit hit;
+            if (getTerrainClickLocation(out hit)
+                && hit.transform.gameObject.name.Equals("Terrain")) {
+                showGhostUnits(hit);
+                maybePurchaseGhostUnits(hit);
+            }
 
-            case MouseMode.firePos:
-                applyHotkeys();
-                selectionManager?.Update();
-                if (Input.GetMouseButtonDown(0)
-                    || Input.GetMouseButtonDown(1))
-                    exitFirePosMode();
-                break;
+             maybeExitPurchasingMode();
 
-            default:
-                throw new Exception("impossible state");
+            break;
+
+        case MouseMode.normal:
+            applyHotkeys();
+            selectionManager?.Update();
+            rightClickManager.Update();
+            break;
+
+        case MouseMode.firePos:
+            applyHotkeys();
+            selectionManager?.Update();
+            if (Input.GetMouseButtonDown(0)
+                || Input.GetMouseButtonDown(1))
+                exitFirePosMode();
+            break;
+
+        default:
+            throw new Exception("impossible state");
         }
     }
 
-    void showGhostUnitsAndMaybePurchase() {
-        RaycastHit hit;
-        if (getTerrainClickLocation(out hit)
-            && hit.transform.gameObject.name.Equals("Terrain")) {
+    private void showGhostUnits(RaycastHit terrainHover) {
 
-            // Show ghost units under mouse:
-            SpawnPointBehaviour closestSpawn = getClosestSpawn(hit.point);
-            positionGhostUnits(
-                hit.point,
-                2 * hit.point - closestSpawn.transform.position,
-                ghostUnits);
+        // Show ghost units under mouse:
+        SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);
+        positionGhostUnits(
+            terrainHover.point,
+            2 * terrainHover.point - closestSpawn.transform.position,
+            ghostUnits);
+    }
 
-            if (Input.GetMouseButtonUp(0)) {
-                closestSpawn.buyUnits(ghostUnits);
+    private void maybePurchaseGhostUnits(RaycastHit terrainHover) {
+        if (Input.GetMouseButtonUp(0)) {
+            // TODO we already get closest spawn above, reuse it
+            SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);
+            closestSpawn.buyUnits(ghostUnits);
 
-                if (Input.GetKey(KeyCode.LeftShift)) {
-                    // We turned the current ghosts into real units, so:
-                    makeNewGhostUnits();
-                } else {
-                    exitPurchasingMode();
-                }
+            if (Input.GetKey(KeyCode.LeftShift)) {
+                // We turned the current ghosts into real units, so:
+                makeNewGhostUnits();
+            } else {
+                exitPurchasingMode();
             }
         }
-        
+    }
+
+    private void maybeExitPurchasingMode() {
         if (Input.GetMouseButton(1)) {
             foreach (var g in ghostUnits)
                 g.GetComponent<GhostPlatoonBehaviour>().destroy();
@@ -98,7 +109,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         }
     }
 
-    void OnGUI() {
+     void OnGUI() {
         selectionManager?.OnGui();
     }
 
