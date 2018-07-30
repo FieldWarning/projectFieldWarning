@@ -77,15 +77,19 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         transform.position = 100 * Vector3.down;
 
         // Create units:
-        for (int i = 0; i < n; i++) {
-            GameObject go = GameObject.Instantiate(baseUnit);
-            go.GetComponent<UnitBehaviour>().enabled = false;
-            var shader = Resources.Load<Shader>("Ghost");
-            go.ApplyShaderRecursively(shader);
-            go.transform.position = 100 * Vector3.down;
-            units.Add(go);
-            //go.transform.parent = this.transform;
-        }
+        for (int i = 0; i < n; i++)
+            AddSingleUnit();
+    }
+
+    public void AddSingleUnit()
+    {
+        GameObject go = GameObject.Instantiate(baseUnit);
+        go.GetComponent<UnitBehaviour>().enabled = false;
+        var shader = Resources.Load<Shader>("Ghost");
+        go.ApplyShaderRecursively(shader);
+        go.transform.position = 100 * Vector3.down;
+        units.Add(go);
+        //go.transform.parent = this.transform;
     }
 
     public void setOrientation(Vector3 position, float heading) {
