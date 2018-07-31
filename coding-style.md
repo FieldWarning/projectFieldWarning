@@ -27,9 +27,10 @@ public void Foo(int someArg, int someOtherArg, int someThirdArg) {
    For example avoid `if (someVar == 0)...`, where the dots mark the spurious free spaces.
    Consider enabling "View White Space (Ctrl+E, S)" if using Visual Studio to aid detection.
    Extra free space may however be used for alignment, e.g.:   
-   
+```C#
 firstUnit  = NewUnit();
 secondUnit = NewUnit();
+```
 
 9. If a file happens to differ in style from these guidelines (e.g. private members are named `m_member`
    rather than `_member`), the existing style in that file takes precedence.
