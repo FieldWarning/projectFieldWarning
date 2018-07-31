@@ -6,12 +6,13 @@ For non code files (xml, etc), our current best guidance is consistency. When ed
 1. We use [K&R java style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line. A single line statement block can go without braces but the block must be properly indented on its own line and must not be nested in other statement blocks that use braces. You are strongly encouraged to add an empty line between any opening brace and the statement following it if you find it improves readability, e.g.:
 ```C#
 public void Foo(int someArg, int someOtherArg, int someThirdArg) {
-// optional empty line, use own judgement
+
     if (someCondition) {
-        // optional empty line, use own judgement
-        doSomething();
+        DoSomething();
+        DoMore();
     }
-}
+} // The programmer has decided to insert an empty line after the opening brace of the method,
+  // but not after the opening brace of the if() statement. This is a judgement call.
 ```
 2. We use four spaces of indentation (no tabs).
 3. We use `_camelCase` for internal and private fields and use `readonly` where possible. Prefix internal and private instance fields with `_`, static fields with `s_` and thread static fields with `t_`. When used on static fields, `readonly` should come after `static` (e.g. `static readonly` not `readonly static`).  Public fields should be used sparingly and should use PascalCasing with no prefix when used.
