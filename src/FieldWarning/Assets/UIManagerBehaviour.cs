@@ -37,6 +37,7 @@ public class UIManagerBehaviour : MonoBehaviour
 
     private BuyTransaction _currentBuyTransaction;
 
+
     void Start()
     {
         if (firePosReticle == null)

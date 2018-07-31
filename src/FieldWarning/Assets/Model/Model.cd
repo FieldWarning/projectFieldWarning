@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Assets.Model.Game.GameSession">
+    <Position X="1" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Model\Game\GameSession.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Settings" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Teams" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Assets.Model.Game.Settings">
+    <Position X="4" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABACAAAAAEAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Model\Game\Settings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.Model.Game.Team">
+    <Position X="1" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Model\Game\Team.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Players" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="2.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAEAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.Model.Armory.Coalition">
+    <Position X="8.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Model\Armory\Coalition.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Faction" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.Model.Armory.Faction">
+    <Position X="9" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Assets\Model\Armory\Faction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.Model.Armory.Unit">
+    <Position X="8.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAQAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Assets\Model\Armory\Unit.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Category" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.Model.Armory.UnitCategory">
+    <Position X="11.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Model\Armory\UnitCategory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.Model.Profile.Deck">
+    <Position X="5.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAQAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Model\Profile\Deck.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Coalition" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Units" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
