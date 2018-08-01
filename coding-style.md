@@ -3,16 +3,22 @@ C# Coding Style
 
 For non code files (xml, etc), our current best guidance is consistency. When editing files, keep new code and changes consistent with the style in the files. For new files, it should conform to the style for that component. If there is a completely new component, anything that is reasonably broadly accepted is fine.
 
-1. We use [K&R java style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line. A single line statement block can go without braces but the block must be properly indented on its own line and must not be nested in other statement blocks that use braces. You are strongly encouraged to add an empty line between any opening brace and the statement following it if you find it improves readability, e.g.:
+1. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods. A single line statement block can go without braces but the block must be properly indented on its own line and must not be nested in other statement blocks that use braces. You are strongly encouraged to add an empty line between any opening brace and the statement following it if you find it improves readability, e.g.:
 ```C#
-public void Foo(int someArg, int someOtherArg, int someThirdArg) {
-
+public void Foo(int someArg, int someOtherArg, int someThirdArg) 
+{
     if (someCondition) {
+    
         DoSomething();
         DoMore();
     }
-} // The programmer has decided to insert an empty line after the opening brace of the method,
-  // but not after the opening brace of the if() statement. This is a judgement call.
+    
+    if (someOtherCondition) {    
+        DoSomething();
+        DoMore();
+    }
+} // The programmer has decided to insert an empty line after the opening brace of the first
+  // control statement, but not after that of the second. This is a judgement call.
 ```
 2. We use four spaces of indentation (no tabs).
 3. We use `_camelCase` for internal and private fields and use `readonly` where possible. Prefix internal and private instance fields with `_`, static fields with `s_` and thread static fields with `t_`. When used on static fields, `readonly` should come after `static` (e.g. `static readonly` not `readonly static`).  Public fields should be used sparingly and should use PascalCasing with no prefix when used.
@@ -40,12 +46,12 @@ secondUnit = NewUnit();
 13. We use ```nameof(...)``` instead of ```"..."``` whenever possible and relevant.
 14. Fields should be specified at the top within type declarations.
 15. When including non-ASCII characters in the source code use Unicode escape sequences (\uXXXX) instead of literal characters. Literal non-ASCII characters occasionally get garbled by a tool or editor.
-16. TODO can we not indent namespaces, switch cases..
+16. Case labels are not indented. When VS allows it, namespace contents will also not be indented..
 17. Methods have the following casing and spacing: ```public MethodName(int arg, int arg2) {```
 
-We have provided a Visual Studio 2013 vssettings file (`corefx.vssettings`) at the root of the corefx repository, enabling C# auto-formatting conforming to the above guidelines. Note that rules 7 and 8 are not covered by the vssettings, since these are not rules currently supported by VS formatting. // TODO
+We have provided a Visual Studio 2013 vssettings file (`coding-style.vssettings`) at the root of the repository, enabling C# auto-formatting conforming to the above guidelines. Note that rules 7 and 8 are not covered by the vssettings, since these are not rules currently supported by VS formatting. Ctrl+k Ctrl+d.
 
-We also use the [.NET Codeformatter Tool](https://github.com/dotnet/codeformatter) to ensure the code base maintains a consistent style over time, the tool automatically fixes the code base to conform to the guidelines outlined above. // TODO
+// TODO some sort of automatic formatting tool, i dont think codeformatter does the job since its not customizable enough
 
 // TODO adapt example
 ### Example File:
