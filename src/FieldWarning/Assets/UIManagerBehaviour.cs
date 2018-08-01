@@ -45,7 +45,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         if (firePosReticle == null)
             throw new Exception("No fire pos reticle specified!");
 
-        selectionManager  = new SelectionManager(this, 0, mouseDragThreshold);
+        selectionManager = new SelectionManager(this, 0, mouseDragThreshold);
 
         rightClickManager = new ClickManager(1, mouseDragThreshold, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
     }
@@ -105,7 +105,7 @@ public class UIManagerBehaviour : MonoBehaviour {
                 return;
 
             if (_currentBuyTransaction == null)
-                return;            
+                return;
 
             // TODO we already get closest spawn above, reuse it
             SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);

@@ -45,10 +45,5 @@ namespace Assets.Ingame.UI {
             _ghostPlatoonBehaviour.AddSingleUnit();
             _ghostPlatoonBehaviour.buildRealPlatoon();
         }
-
-        public GhostPlatoonBehaviour Finish()
-        {
-            return _ghostPlatoonBehaviour;
-        }
     }
 }
