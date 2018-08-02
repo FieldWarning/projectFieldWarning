@@ -18,17 +18,18 @@ using System;
 using Assets.Ingame.UI;
 using UnityEngine.EventSystems;
 
-public class UIManagerBehaviour : MonoBehaviour
-{
-    [SerializeField] private float mouseDragThreshold = 10.0f;
-    [SerializeField] private Texture2D firePosReticle;
+public class UIManagerBehaviour : MonoBehaviour {
+
+    [SerializeField]
+    private float mouseDragThreshold = 10.0f;
+    [SerializeField]
+    private Texture2D firePosReticle;
 
     // Use this for initialization
     public Player owner;
     private Vector3 destination;
     private Vector3 boxSelectStart;
     public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
-    List<GhostPlatoonBehaviour> ghostUnits = new List<GhostPlatoonBehaviour>();
     private ClickManager rightClickManager;
     private static SelectionManager selectionManager;
 
@@ -50,56 +51,53 @@ public class UIManagerBehaviour : MonoBehaviour
 
     void Update()
     {
-        switch (mouseMode)
-        {
-            case MouseMode.purchasing:
+        switch (mouseMode) {
 
-                RaycastHit hit;
-                if (getTerrainClickLocation(out hit)
-                    && hit.transform.gameObject.name.Equals("Terrain"))
-                {
-                    showGhostUnits(hit);
-                    maybePurchaseGhostUnits(hit);
-                }
+        case MouseMode.purchasing:
 
-                maybeExitPurchasingMode();
+            RaycastHit hit;
+            if (getTerrainClickLocation(out hit)
+                && hit.transform.gameObject.name.Equals("Terrain")) {
 
-                break;
+                showGhostUnits(hit);
+                maybePurchaseGhostUnits(hit);
+            }
 
-            case MouseMode.normal:
-                applyHotkeys();
-                selectionManager?.Update();
-                rightClickManager.Update();
-                break;
+            maybeExitPurchasingMode();
+            break;
 
-            case MouseMode.firePos:
-                applyHotkeys();
-                selectionManager?.Update();
-                if (Input.GetMouseButtonDown(0)
-                    || Input.GetMouseButtonDown(1))
-                    exitFirePosMode();
-                break;
+        case MouseMode.normal:
+            applyHotkeys();
+            selectionManager?.Update();
+            rightClickManager.Update();
+            break;
 
-            default:
-                throw new Exception("impossible state");
+        case MouseMode.firePos:
+            applyHotkeys();
+            selectionManager?.Update();
+            if (Input.GetMouseButtonDown(0)
+                || Input.GetMouseButtonDown(1))
+                exitFirePosMode();
+            break;
+
+        default:
+            throw new Exception("impossible state");
         }
     }
 
     private void showGhostUnits(RaycastHit terrainHover)
     {
-
         // Show ghost units under mouse:
         SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);
         positionGhostUnits(
             terrainHover.point,
             2 * terrainHover.point - closestSpawn.transform.position,
-            ghostUnits);
+            _currentBuyTransaction.GhostUnits);
     }
 
     private void maybePurchaseGhostUnits(RaycastHit terrainHover)
     {
-        if (Input.GetMouseButtonUp(0))
-        {
+        if (Input.GetMouseButtonUp(0)) {
             bool noUIcontrolsInUse = EventSystem.current.currentSelectedGameObject == null;
 
             if (!noUIcontrolsInUse)
@@ -108,19 +106,14 @@ public class UIManagerBehaviour : MonoBehaviour
             if (_currentBuyTransaction == null)
                 return;
 
-            ghostUnits.Add(_currentBuyTransaction.Finish());
-
             // TODO we already get closest spawn above, reuse it
             SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);
-            closestSpawn.buyUnits(ghostUnits);
+            closestSpawn.buyUnits(_currentBuyTransaction.GhostUnits);
 
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
+            if (Input.GetKey(KeyCode.LeftShift)) {
                 // We turned the current ghosts into real units, so:
-                makeNewGhostUnits();
-            }
-            else
-            {
+                _currentBuyTransaction = _currentBuyTransaction.Clone();
+            } else {
                 exitPurchasingMode();
             }
         }
@@ -128,9 +121,8 @@ public class UIManagerBehaviour : MonoBehaviour
 
     private void maybeExitPurchasingMode()
     {
-        if (Input.GetMouseButton(1))
-        {
-            foreach (var g in ghostUnits)
+        if (Input.GetMouseButton(1)) {
+            foreach (var g in _currentBuyTransaction.GhostUnits)
                 g.GetComponent<GhostPlatoonBehaviour>().destroy();
 
             exitPurchasingMode();
@@ -147,8 +139,7 @@ public class UIManagerBehaviour : MonoBehaviour
         var selected = selectionManager.selection;
 
         RaycastHit hit;
-        if (getTerrainClickLocation(out hit))
-        {
+        if (getTerrainClickLocation(out hit)) {
             Vector3 com = selected.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll<GhostPlatoonBehaviour>(x => x.ghostPlatoon);
             positionGhostUnits(hit.point, 2 * hit.point - com, ghosts);
@@ -161,8 +152,7 @@ public class UIManagerBehaviour : MonoBehaviour
         var selected = selectionManager.selection;
 
         RaycastHit hit;
-        if (getTerrainClickLocation(out hit))
-        {
+        if (getTerrainClickLocation(out hit)) {
 
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.ghostPlatoon);
             ghosts.ForEach(x => x.setVisible(true));
@@ -196,8 +186,7 @@ public class UIManagerBehaviour : MonoBehaviour
         var selected = selectionManager.selection;
 
         RaycastHit hit;
-        if (getTerrainClickLocation(out hit))
-        {
+        if (getTerrainClickLocation(out hit)) {
             var shift = Input.GetKey(KeyCode.LeftShift);
             selected.ForEach(x => x.movement.beginQueueing(shift));
             var destinations = selected.ConvertAll(x => x.ghostPlatoon.transform.position);
@@ -240,7 +229,7 @@ public class UIManagerBehaviour : MonoBehaviour
     public void buildUnit(UnitType t)
     {
         var behaviour = GhostPlatoonBehaviour.build(t, owner, 4);
-        ghostUnits.Add(behaviour);
+        _currentBuyTransaction.GhostUnits.Add(behaviour);
     }
 
     public static void registerPlatoonBirth(PlatoonBehaviour platoon)
@@ -254,27 +243,14 @@ public class UIManagerBehaviour : MonoBehaviour
         selectionManager.selection.Remove(platoon);
     }
 
-    private void makeNewGhostUnits()
-    {
-        var count = ghostUnits.Count;
-        ghostUnits.Clear();
-        for (int i = 0; i < count; i++)
-        {
-            buildUnit(UnitType.Tank);
-        }
-        mouseMode = MouseMode.purchasing;
-    }
-
     private static void positionGhostUnits(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units)
     {
-
         var diff = facingPoint - position;
         positionGhostUnits(position, diff.getRadianAngle(), units);
     }
 
     private static void positionGhostUnits(Vector3 position, float heading, List<GhostPlatoonBehaviour> units)
     {
-
         Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
         float unitDistance = 4 * PlatoonBehaviour.baseDistance;
@@ -286,7 +262,7 @@ public class UIManagerBehaviour : MonoBehaviour
 
     private void exitPurchasingMode()
     {
-        ghostUnits.Clear();
+        _currentBuyTransaction.GhostUnits.Clear();
 
         _currentBuyTransaction = null;
 
@@ -298,10 +274,8 @@ public class UIManagerBehaviour : MonoBehaviour
         var pointList = spawnPointList[owner.getTeam()];
         SpawnPointBehaviour go = pointList[0];
         float distance = Single.PositiveInfinity;
-        foreach (var s in pointList)
-        {
-            if (Vector3.Distance(p, s.transform.position) < distance)
-            {
+        foreach (var s in pointList) {
+            if (Vector3.Distance(p, s.transform.position) < distance) {
                 distance = Vector3.Distance(p, s.transform.position);
                 go = s;
             }
@@ -311,8 +285,7 @@ public class UIManagerBehaviour : MonoBehaviour
 
     public static void addSpawnPoint(SpawnPointBehaviour s)
     {
-        if (!spawnPointList.ContainsKey(s.team))
-        {
+        if (!spawnPointList.ContainsKey(s.team)) {
             spawnPointList.Add(s.team, new List<SpawnPointBehaviour>());
         }
         spawnPointList[s.team].Add(s);
@@ -322,17 +295,14 @@ public class UIManagerBehaviour : MonoBehaviour
     {
         var selected = selectionManager.selection;
 
-        if (Commands.unload())
-        {
-            foreach (var t in selected.ConvertAll(x => x.transporter).Where((x, i) => x != null))
-            {
+        if (Commands.unload()) {
+            foreach (var t in selected.ConvertAll(x => x.transporter).Where((x, i) => x != null)) {
                 t.beginQueueing(Input.GetKey(KeyCode.LeftShift));
                 t.unload();
                 t.endQueueing();
             }
-        }
-        else if (Commands.load())
-        {
+
+        } else if (Commands.load()) {
 
             var transporters = selected.ConvertAll(x => x.transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
             var infantry = selected.ConvertAll(x => x.transportable).Where((x, i) => x != null).ToList();
@@ -341,9 +311,7 @@ public class UIManagerBehaviour : MonoBehaviour
             transporters.ConvertAll(x => x as Matchable<PlatoonBehaviour.TransportableModule>).Match(infantry);
             transporters.ForEach(x => x.endQueueing());
 
-        }
-        else if (Commands.firePos() && selected.Count != 0)
-        {
+        } else if (Commands.firePos() && selected.Count != 0) {
             mouseMode = MouseMode.firePos;
             Cursor.SetCursor(firePosReticle, Vector2.zero, CursorMode.Auto);
         }
@@ -367,8 +335,7 @@ public class UIManagerBehaviour : MonoBehaviour
         return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
     }
 
-    private class SelectionManager
-    {
+    private class SelectionManager {
         public List<PlatoonBehaviour> allUnits = new List<PlatoonBehaviour>();
         public List<PlatoonBehaviour> selection { get; private set; }
 
@@ -388,8 +355,7 @@ public class UIManagerBehaviour : MonoBehaviour
             selection = new List<PlatoonBehaviour>();
             clickManager = new ClickManager(button, mouseDragThreshold, startBoxSelection, onSelectShortClick, endDrag, updateBoxSelection);
 
-            if (texture == null)
-            {
+            if (texture == null) {
                 var areaTransparency = .95f;
                 var borderTransparency = .75f;
                 texture = new Texture2D(1, 1);
@@ -407,13 +373,11 @@ public class UIManagerBehaviour : MonoBehaviour
         {
             clickManager.Update();
 
-            if (outer.mouseMode == MouseMode.firePos && Input.GetMouseButtonDown(0))
-            {
+            if (outer.mouseMode == MouseMode.firePos && Input.GetMouseButtonDown(0)) {
                 RaycastHit hit;
                 getTerrainClickLocation(out hit);
 
-                foreach (var platoon in selection)
-                {
+                foreach (var platoon in selection) {
                     platoon.sendFirePosOrder(hit.point);
                 }
             }
@@ -450,8 +414,7 @@ public class UIManagerBehaviour : MonoBehaviour
 
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore))
-            {
+            if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
                 var go = hit.transform.gameObject;
                 var selectable = go.GetComponent<SelectableBehavior>();
 
@@ -468,8 +431,7 @@ public class UIManagerBehaviour : MonoBehaviour
                 return;
 
             List<PlatoonBehaviour> newSelection = allUnits.Where(x => isInside(x)).ToList();
-            if (!Input.GetKey(KeyCode.LeftShift) && selection != null)
-            {
+            if (!Input.GetKey(KeyCode.LeftShift) && selection != null) {
                 List<PlatoonBehaviour> old = selection.Except(newSelection).ToList();
                 unselectAll(old);
             }
@@ -513,8 +475,7 @@ public class UIManagerBehaviour : MonoBehaviour
         // Responsible for drawing the selection rectangle
         public void OnGui()
         {
-            if (active)
-            {
+            if (active) {
                 float lineWidth = 3;
                 float startX = mouseStart.x;
                 float endX = mouseEnd.x;
@@ -537,8 +498,7 @@ public class UIManagerBehaviour : MonoBehaviour
 
 }
 
-public class Commands
-{
+public class Commands {
     public static bool unload()
     {
         return Input.GetKeyDown(Hotkeys.Unload);
@@ -555,8 +515,7 @@ public class Commands
     }
 }
 
-public class Hotkeys
-{
+public class Hotkeys {
     public static KeyCode Unload = KeyCode.U;
     public static KeyCode Load = KeyCode.L;
     public static KeyCode FirePos = KeyCode.T;
