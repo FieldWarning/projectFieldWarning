@@ -30,7 +30,6 @@ public class UIManagerBehaviour : MonoBehaviour {
     private Vector3 destination;
     private Vector3 boxSelectStart;
     public static Dictionary<Team, List<SpawnPointBehaviour>> spawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
-    List<GhostPlatoonBehaviour> ghostUnits = new List<GhostPlatoonBehaviour>();
     private ClickManager rightClickManager;
     private static SelectionManager selectionManager;
 
@@ -93,7 +92,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         positionGhostUnits(
             terrainHover.point,
             2 * terrainHover.point - closestSpawn.transform.position,
-            ghostUnits);
+            _currentBuyTransaction.GhostUnits);
     }
 
     private void maybePurchaseGhostUnits(RaycastHit terrainHover)
@@ -109,11 +108,11 @@ public class UIManagerBehaviour : MonoBehaviour {
 
             // TODO we already get closest spawn above, reuse it
             SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);
-            closestSpawn.buyUnits(ghostUnits);
+            closestSpawn.buyUnits(_currentBuyTransaction.GhostUnits);
 
             if (Input.GetKey(KeyCode.LeftShift)) {
                 // We turned the current ghosts into real units, so:
-                makeNewGhostUnits();
+                _currentBuyTransaction = _currentBuyTransaction.Clone();
             } else {
                 exitPurchasingMode();
             }
@@ -123,7 +122,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     private void maybeExitPurchasingMode()
     {
         if (Input.GetMouseButton(1)) {
-            foreach (var g in ghostUnits)
+            foreach (var g in _currentBuyTransaction.GhostUnits)
                 g.GetComponent<GhostPlatoonBehaviour>().destroy();
 
             exitPurchasingMode();
@@ -207,7 +206,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     public void tankButtonCallback()
     {
         if (_currentBuyTransaction == null)
-            _currentBuyTransaction = new BuyTransaction(UnitType.Tank, owner, ghostUnits);
+            _currentBuyTransaction = new BuyTransaction(UnitType.Tank, owner);
         else
             _currentBuyTransaction.AddUnit();
 
@@ -230,7 +229,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     public void buildUnit(UnitType t)
     {
         var behaviour = GhostPlatoonBehaviour.build(t, owner, 4);
-        ghostUnits.Add(behaviour);
+        _currentBuyTransaction.GhostUnits.Add(behaviour);
     }
 
     public static void registerPlatoonBirth(PlatoonBehaviour platoon)
@@ -244,16 +243,6 @@ public class UIManagerBehaviour : MonoBehaviour {
         selectionManager.selection.Remove(platoon);
     }
 
-    private void makeNewGhostUnits()
-    {
-        var count = ghostUnits.Count;
-        ghostUnits.Clear();
-        for (int i = 0; i < count; i++)
-            buildUnit(UnitType.Tank);
-
-        mouseMode = MouseMode.purchasing;
-    }
-
     private static void positionGhostUnits(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units)
     {
         var diff = facingPoint - position;
@@ -262,7 +251,6 @@ public class UIManagerBehaviour : MonoBehaviour {
 
     private static void positionGhostUnits(Vector3 position, float heading, List<GhostPlatoonBehaviour> units)
     {
-
         Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
         float unitDistance = 4 * PlatoonBehaviour.baseDistance;
@@ -274,7 +262,7 @@ public class UIManagerBehaviour : MonoBehaviour {
 
     private void exitPurchasingMode()
     {
-        ghostUnits.Clear();
+        _currentBuyTransaction.GhostUnits.Clear();
 
         _currentBuyTransaction = null;
 
@@ -313,6 +301,7 @@ public class UIManagerBehaviour : MonoBehaviour {
                 t.unload();
                 t.endQueueing();
             }
+
         } else if (Commands.load()) {
 
             var transporters = selected.ConvertAll(x => x.transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();

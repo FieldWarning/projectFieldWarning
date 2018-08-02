@@ -16,7 +16,6 @@ using System.Collections.Generic;
 namespace Assets.Ingame.UI {
     public class BuyTransaction {
         private GhostPlatoonBehaviour _ghostPlatoonBehaviour;
-        private readonly List<GhostPlatoonBehaviour> _ghostUnits;
 
         private const int MAX_PLATOON_SIZE = 4;
         private const int MIN_PLATOON_SIZE = 1;
@@ -25,6 +24,7 @@ namespace Assets.Ingame.UI {
 
         public UnitType UnitType { get; }
         public Player Owner { get; }
+        public List<GhostPlatoonBehaviour> GhostUnits { get; }
 
         //public event Action<GhostPlatoonBehaviour> Finished;
 
@@ -33,7 +33,7 @@ namespace Assets.Ingame.UI {
         //    Finished?.Invoke(behaviour);
         //}
 
-        public BuyTransaction(UnitType type, Player owner, List<GhostPlatoonBehaviour> ghostUnits)
+        public BuyTransaction(UnitType type, Player owner)
         {
             UnitType = type;
             Owner = owner;
@@ -42,8 +42,8 @@ namespace Assets.Ingame.UI {
             _ghostPlatoonBehaviour = 
                 GhostPlatoonBehaviour.build(type, owner, _smallestPlatoonSize);
 
-            _ghostUnits = ghostUnits;
-            _ghostUnits.Add(_ghostPlatoonBehaviour);
+            GhostUnits = new List<GhostPlatoonBehaviour>();
+            GhostUnits.Add(_ghostPlatoonBehaviour);
         }
 
         public void AddUnit()
@@ -58,8 +58,20 @@ namespace Assets.Ingame.UI {
                 // If all platoons in the transaction are max size, we add a new one and update the size counter:
                 _smallestPlatoonSize = MIN_PLATOON_SIZE;
                 _ghostPlatoonBehaviour = GhostPlatoonBehaviour.build(UnitType, Owner, _smallestPlatoonSize);
-                _ghostUnits.Add(_ghostPlatoonBehaviour);
+                GhostUnits.Add(_ghostPlatoonBehaviour);
             }
+        }
+
+        public BuyTransaction Clone()
+        {
+            BuyTransaction clone = new BuyTransaction(UnitType, Owner);
+
+            int unitCount = (GhostUnits.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
+
+            while (unitCount-- > 1)
+                clone.AddUnit();            
+
+            return clone;
         }
     }
 }
