@@ -15,9 +15,13 @@ using System.Collections.Generic;
 
 namespace Assets.Ingame.UI {
     public class BuyTransaction {
-        private readonly GhostPlatoonBehaviour _ghostPlatoonBehaviour;
+        private GhostPlatoonBehaviour _ghostPlatoonBehaviour;
         private readonly List<GhostPlatoonBehaviour> _ghostUnits;
 
+        private const int MAX_PLATOON_SIZE = 4;
+        private const int MIN_PLATOON_SIZE = 1;
+
+        private int _smallestPlatoonSize;
 
         public UnitType UnitType { get; }
         public Player Owner { get; }
@@ -34,7 +38,9 @@ namespace Assets.Ingame.UI {
             UnitType = type;
             Owner = owner;
 
-            _ghostPlatoonBehaviour = GhostPlatoonBehaviour.build(type, owner, 1);
+            _smallestPlatoonSize = MIN_PLATOON_SIZE;
+            _ghostPlatoonBehaviour = 
+                GhostPlatoonBehaviour.build(type, owner, _smallestPlatoonSize);
 
             _ghostUnits = ghostUnits;
             _ghostUnits.Add(_ghostPlatoonBehaviour);
@@ -42,8 +48,18 @@ namespace Assets.Ingame.UI {
 
         public void AddUnit()
         {
-            _ghostPlatoonBehaviour.AddSingleUnit();
-            _ghostPlatoonBehaviour.buildRealPlatoon();
+            if (_smallestPlatoonSize < MAX_PLATOON_SIZE) {
+
+                _ghostPlatoonBehaviour.AddSingleUnit();
+                _ghostPlatoonBehaviour.buildRealPlatoon();
+                _smallestPlatoonSize++;
+            } else {
+
+                // If all platoons in the transaction are max size, we add a new one and update the size counter:
+                _smallestPlatoonSize = MIN_PLATOON_SIZE;
+                _ghostPlatoonBehaviour = GhostPlatoonBehaviour.build(UnitType, Owner, _smallestPlatoonSize);
+                _ghostUnits.Add(_ghostPlatoonBehaviour);
+            }
         }
     }
 }
