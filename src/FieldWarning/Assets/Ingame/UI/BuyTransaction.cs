@@ -12,6 +12,7 @@
 */
 
 using System.Collections.Generic;
+using Pfw.Ingame.Prototype;
 
 namespace Assets.Ingame.UI {
     public class BuyTransaction {
@@ -25,13 +26,6 @@ namespace Assets.Ingame.UI {
         public UnitType UnitType { get; }
         public Player Owner { get; }
         public List<GhostPlatoonBehaviour> GhostUnits { get; }
-
-        //public event Action<GhostPlatoonBehaviour> Finished;
-
-        //public void OnFinished(GhostPlatoonBehaviour behaviour)
-        //{
-        //    Finished?.Invoke(behaviour);
-        //}
 
         public BuyTransaction(UnitType type, Player owner)
         {

@@ -33,7 +33,7 @@ public static class Extensions
             for (int i = 0; i < matchees.Count; i++)
             {
                 breaking = true;
-                var score = matcher.getScore(matchees[i]);
+                var score = matcher.GetScore(matchees[i]);
                 if (!matches.ContainsKey(matchees[i]))
                 {
                     matches.Add(matchees[i], new MatchStruct<T>());
@@ -60,7 +60,7 @@ public static class Extensions
         foreach (var p in matchees)
         {
             if (!matches.ContainsKey(p)) return;
-            matches[p].indivdual.setMatch(p);
+            matches[p].indivdual.SetMatch(p);
             
         }
         /*while (matchers.Count > 0 && matchees.Count > 0)
@@ -104,8 +104,8 @@ public static class Extensions
         {
             return -1;
         }
-        var score1 = m.getScore(candidate1);
-        var score2 = m.getScore(candidate2);
+        var score1 = m.GetScore(candidate1);
+        var score2 = m.GetScore(candidate2);
         if (score1 < score2)
         {
             return -1;
@@ -126,7 +126,7 @@ public static class Extensions
         var bestScore = Single.PositiveInfinity;
         foreach (var candidate in matchees)
         {
-            var score = m.getScore(candidate);
+            var score = m.GetScore(candidate);
             if (score < bestScore)
             {
                 favorite = candidate;
@@ -203,7 +203,7 @@ public static class Extensions
 }
 public interface Matchable<T>
 {
-    void setMatch(T match);
+    void SetMatch(T match);
 
-    float getScore(T matchees);
+    float GetScore(T matchees);
 }

@@ -63,7 +63,7 @@ public class IconBehaviour : SelectableBehavior
 
     public void setPlatoon(PlatoonBehaviour p) {
         platoon = p;
-        symbol.setIcon(p.type);
+        symbol.SetIcon(p.Type);
     }
 
     public void setLayer(int l) {

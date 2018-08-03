@@ -20,7 +20,7 @@ public class InfantryBehaviour : UnitBehaviour {
 
     TransporterBehaviour transporter;
     int menCount = 8;
-    bool gettingIntoFormation = false;
+    //bool gettingIntoFormation = false;
     bool ordersDone = false;
     bool init;
     int unloadIndex;
@@ -28,7 +28,7 @@ public class InfantryBehaviour : UnitBehaviour {
     float loadCooldown = .2f;
 	// Use this for initialization
     List<Man> men = new List<Man>();
-	void Start () {
+	public override void Start () {
         initialize();
         
 	}
@@ -54,7 +54,7 @@ public class InfantryBehaviour : UnitBehaviour {
         }
     }
 	// Update is called once per frame
-	void Update () {
+	public override void Update () {
         base.Update();
         switch (behaviour){
             case InfantryBehaviourState.Boarding:
@@ -150,7 +150,7 @@ public class InfantryBehaviour : UnitBehaviour {
         {
             loadCooldown = interval;
 
-            if(unloadIndex<menCount)men[unloadIndex++].setMatch(transporter.transform.position);
+            if(unloadIndex<menCount)men[unloadIndex++].SetMatch(transporter.transform.position);
             
             foreach (var man in men.Where((x, i) => i < unloadIndex))
             {
@@ -362,7 +362,7 @@ public class InfantryBehaviour : UnitBehaviour {
                 reachedDestination = true;
             }
         }
-        public void setMatch(Vector3 match)
+        public void SetMatch(Vector3 match)
         {
             destination = match;
             reachedDestination = false;
@@ -375,7 +375,7 @@ public class InfantryBehaviour : UnitBehaviour {
 
         }
 
-        public float getScore(Vector3 matchee)
+        public float GetScore(Vector3 matchee)
         {
             return (matchee - gameObject.transform.position).magnitude;
         }

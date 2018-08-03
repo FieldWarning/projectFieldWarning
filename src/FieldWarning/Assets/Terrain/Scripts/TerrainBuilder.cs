@@ -157,12 +157,12 @@ public class TerrainBuilder : MonoBehaviour
     {
         int n = 5;
         float edgePadding = 0.1f;
-        float padding = 0.1f;
+        //float padding = 0.1f;
         var size = terrain.terrainData.size;
-        var dx = size.x * (1 - 2 * edgePadding) / (n);
-        var dy = size.z * (1 - 2 * edgePadding) / (n);
-        var x0 = size.x * edgePadding;
-        var y0 = size.z * edgePadding;
+        //var dx = size.x * (1 - 2 * edgePadding) / (n);
+        //var dy = size.z * (1 - 2 * edgePadding) / (n);
+        //var x0 = size.x * edgePadding;
+        //var y0 = size.z * edgePadding;
         Vector3[,] nodes = new Vector3[n, n];
         List<Road> roads = new List<Road>();
         //for (int i = 0; i < n; i++)

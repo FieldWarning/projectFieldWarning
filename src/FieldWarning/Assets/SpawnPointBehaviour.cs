@@ -39,7 +39,7 @@ public class SpawnPointBehaviour : MonoBehaviour {
             spawnTime -= Time.deltaTime;
             if (spawnTime <= 0) {
                 var go=spawnQueue.Dequeue();
-                go.GetComponent<PlatoonBehaviour>().spawn(transform.position);
+                go.GetComponent<PlatoonBehaviour>().Spawn(transform.position);
 
                 if (spawnQueue.Count > 0) {
                     spawnTime += MIN_SPAWN_INTERVAL;

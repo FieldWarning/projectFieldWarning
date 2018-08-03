@@ -2,19 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MeshBuilder : MonoBehaviour {
+public class MeshBuilder : MonoBehaviour
+{
 
-	// Use this for initialization
+    // Use this for initialization
     float roadWidth = .5f;
     float roadStretch = .5f;
     float pointDensity = 1;
-	void Start () {
+    void Start()
+    {
         //buildRoadStretch(new Vector2(),new Vector3(30,0,30),new Vector3(30,0,0),new Vector3(30,0,30));
-	}
-    public void buildRoadStretch(Vector3 p1, Vector3 p1p, Vector3 p2, Vector3 p2p) {
+    }
+    public void buildRoadStretch(Vector3 p1, Vector3 p1p, Vector3 p2, Vector3 p2p)
+    {
         var stretch = getRoadStretch(p1, p1p, p2, p2p);
         //stretch.ForEach(x => Debug.Log(x));
-        var mesh=new Mesh();
+        var mesh = new Mesh();
         buildRoadMesh(ref mesh, stretch);
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
@@ -26,7 +29,7 @@ public class MeshBuilder : MonoBehaviour {
     private List<Vector3> getRoadStretch(Vector3 p1, Vector3 p1p, Vector3 p2, Vector3 p2p)
     {
 
- 
+
         //f=a*t^3+b*t^2+c*t+d
         var a = 2 * (p1 - p2) + p1p + p2p;
         var b = 3 * (p2 - p1) - 2 * p1p - p2p;
@@ -43,32 +46,31 @@ public class MeshBuilder : MonoBehaviour {
 
 
     }
-    public void buildRoads(List<List<Vector3>> list){
-        var i = 0;
+    public void buildRoads(List<List<Vector3>> list)
+    {
         foreach (var l in list)
         {
-            var go = GameObject.Instantiate(gameObject);
+            var go = Instantiate(gameObject);
             var mesh = new Mesh();
             buildRoadMesh(ref mesh, l);
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-            ;
+
             go.GetComponent<MeshFilter>().mesh = mesh;
             go.GetComponent<Renderer>().material.mainTexture.wrapMode = TextureWrapMode.Repeat;
             //go.transform.position += 3 * (i++) * Vector3.up;
         }
-        
     }
-    void buildRoadMesh(ref Mesh mesh,List<Vector3> points)
+    void buildRoadMesh(ref Mesh mesh, List<Vector3> points)
     {
-        
-        if(points.Count<2)return;
-        int vc=mesh.vertices.Length;
+
+        if (points.Count < 2) return;
+        int vc = mesh.vertices.Length;
         List<Vector3> verteces = new List<Vector3>(mesh.vertices);
         var r = right(points[0], points[1]);
         verteces.Add(points[0] + r);
         verteces.Add(points[0] - r);
-        for (int i = 1; i < points.Count-1; i++)
+        for (int i = 1; i < points.Count - 1; i++)
         {
             r = right(points[i - 1], points[i], points[i + 1]);
             verteces.Add(points[i] + r);
@@ -76,19 +78,19 @@ public class MeshBuilder : MonoBehaviour {
             verteces.Add(points[i] + r);
             verteces.Add(points[i] - r);
         }
-        r = right(points[points.Count - 2], points[points.Count-1]);
-        verteces.Add(points[points.Count-1] + r);
-        verteces.Add(points[points.Count-1] - r);
+        r = right(points[points.Count - 2], points[points.Count - 1]);
+        verteces.Add(points[points.Count - 1] + r);
+        verteces.Add(points[points.Count - 1] - r);
 
         List<int> triangles = new List<int>(mesh.triangles);
         for (int i = 0; i < points.Count - 1; i++)
         {
-            triangles.Add(vc+4 * i);
-            triangles.Add(vc+4 * i + 2);
-            triangles.Add(vc+4 * i + 1);
-            triangles.Add(vc+4 * i + 1);
-            triangles.Add(vc+4 * i + 2);
-            triangles.Add(vc+4 * i + 3);
+            triangles.Add(vc + 4 * i);
+            triangles.Add(vc + 4 * i + 2);
+            triangles.Add(vc + 4 * i + 1);
+            triangles.Add(vc + 4 * i + 1);
+            triangles.Add(vc + 4 * i + 2);
+            triangles.Add(vc + 4 * i + 3);
         }
         List<Vector2> uv = new List<Vector2>(mesh.uv);
         float distanceRight = 0;
@@ -96,7 +98,7 @@ public class MeshBuilder : MonoBehaviour {
         //Debug.Log(verteces.Count);
         uv.Add(new Vector2(1, 0));
         uv.Add(new Vector2(0, 0));
-        for (int i = 0; i < points.Count-1; i++)
+        for (int i = 0; i < points.Count - 1; i++)
         {
 
 
@@ -106,7 +108,7 @@ public class MeshBuilder : MonoBehaviour {
             uv.Add(new Vector2(0, distanceLeft));
             if (distanceRight > distanceLeft)
             {
-                distanceRight = 2*distanceLeft - distanceRight;
+                distanceRight = 2 * distanceLeft - distanceRight;
             }
             else
             {
@@ -117,7 +119,7 @@ public class MeshBuilder : MonoBehaviour {
                 uv.Add(new Vector2(1, distanceRight));
                 uv.Add(new Vector2(0, distanceLeft));
             }
-            
+
         }
         //Debug.Log(verteces.Count);
         //Debug.Log(uv.Count);
@@ -133,9 +135,9 @@ public class MeshBuilder : MonoBehaviour {
     }
     Vector3 right(Vector3 v1, Vector3 v2, Vector3 v3)
     {
-        
-        Vector3 first = (v2-v1).normalized;
-        Vector3 second = (v3-v2).normalized;
+
+        Vector3 first = (v2 - v1).normalized;
+        Vector3 second = (v3 - v2).normalized;
         Vector3 right = Vector3.Cross(Vector3.down, first);
         var candidate = (second - first).normalized;
         var scale = Vector3.Dot(right, candidate);
@@ -150,5 +152,5 @@ public class MeshBuilder : MonoBehaviour {
     }
 
 
-	
+
 }

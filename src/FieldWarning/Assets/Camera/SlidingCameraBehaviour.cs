@@ -133,9 +133,9 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(rotateX, rotateY, 0f), Time.deltaTime * rotLerpSpeed);
     }
 
-    /*
-     * When zooming in we gradually approach whatever the cursor is pointing at.
-     */
+    /// <summary>
+    /// When zooming in we gradually approach whatever the cursor is pointing at. 
+    /// </summary>
     private void AimedZoom() {
         var scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll == 0)
@@ -174,7 +174,10 @@ public class SlidingCameraBehaviour : MonoBehaviour {
         targetPosition -= rotateToCamFacing * zoomOutDirection * dzoom;
     }
 
-    // Camera looks down when high and up when low:
+    /// <summary>
+    /// Camera looks down when high and up when low:
+    /// </summary>
+    /// <param name="oldAltitude"></param>
     private void TiltCameraIfNearGround(float oldAltitude) {
         if (transform.position.y < tiltThreshold || targetPosition.y < tiltThreshold) {
 

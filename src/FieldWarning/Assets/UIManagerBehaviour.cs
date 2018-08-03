@@ -17,6 +17,7 @@ using System.Linq;
 using System;
 using Assets.Ingame.UI;
 using UnityEngine.EventSystems;
+using Pfw.Ingame.Prototype;
 
 public class UIManagerBehaviour : MonoBehaviour {
 
@@ -141,7 +142,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         RaycastHit hit;
         if (getTerrainClickLocation(out hit)) {
             Vector3 com = selected.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
-            List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll<GhostPlatoonBehaviour>(x => x.ghostPlatoon);
+            List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll<GhostPlatoonBehaviour>(x => x.GhostPlatoon);
             positionGhostUnits(hit.point, 2 * hit.point - com, ghosts);
             destination = hit.point;
         }
@@ -154,7 +155,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         RaycastHit hit;
         if (getTerrainClickLocation(out hit)) {
 
-            List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.ghostPlatoon);
+            List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.GhostPlatoon);
             ghosts.ForEach(x => x.setVisible(true));
             positionGhostUnits(destination, hit.point, ghosts);
         }
@@ -164,12 +165,12 @@ public class UIManagerBehaviour : MonoBehaviour {
     {
         var selected = selectionManager.selection;
 
-        var destinations = selected.ConvertAll(x => x.ghostPlatoon.transform.position);
+        var destinations = selected.ConvertAll(x => x.GhostPlatoon.transform.position);
         var shift = Input.GetKey(KeyCode.LeftShift);
-        selected.ForEach(x => x.movement.beginQueueing(shift));
-        selected.ConvertAll(x => x.movement as Matchable<Vector3>).Match(destinations);
-        selected.ForEach(x => x.movement.getHeadingFromGhost());
-        selected.ForEach(x => x.movement.endQueueing());
+        selected.ForEach(x => x.Movement.BeginQueueing(shift));
+        selected.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
+        selected.ForEach(x => x.Movement.GetHeadingFromGhost());
+        selected.ForEach(x => x.Movement.EndQueueing());
         //selected.ForEach(x => x.ghostPlatoon.setVisible(false));
         /*var destinations=selected.ConvertAll(x=>x.ghostPlatoon);
         foreach (var go in selected)
@@ -188,11 +189,11 @@ public class UIManagerBehaviour : MonoBehaviour {
         RaycastHit hit;
         if (getTerrainClickLocation(out hit)) {
             var shift = Input.GetKey(KeyCode.LeftShift);
-            selected.ForEach(x => x.movement.beginQueueing(shift));
-            var destinations = selected.ConvertAll(x => x.ghostPlatoon.transform.position);
-            selected.ConvertAll(x => x.movement as Matchable<Vector3>).Match(destinations);
-            selected.ForEach(x => x.movement.getHeadingFromGhost());
-            selected.ForEach(x => x.movement.endQueueing());
+            selected.ForEach(x => x.Movement.BeginQueueing(shift));
+            var destinations = selected.ConvertAll(x => x.GhostPlatoon.transform.position);
+            selected.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
+            selected.ForEach(x => x.Movement.GetHeadingFromGhost());
+            selected.ForEach(x => x.Movement.EndQueueing());
             /*foreach (var go in selected)
             {
                 go.GetComponent<SelectableBehavior>().getDestinationFromGhost();
@@ -253,7 +254,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     {
         Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
-        float unitDistance = 4 * PlatoonBehaviour.baseDistance;
+        float unitDistance = 4 * PlatoonBehaviour.BaseDistance;
         var right = Vector3.Cross(forward, Vector3.up);
         var pos = position + unitDistance * (formationWidth - 1) * right / 2f;
         for (var i = 0; i < formationWidth; i++)
@@ -296,20 +297,20 @@ public class UIManagerBehaviour : MonoBehaviour {
         var selected = selectionManager.selection;
 
         if (Commands.unload()) {
-            foreach (var t in selected.ConvertAll(x => x.transporter).Where((x, i) => x != null)) {
-                t.beginQueueing(Input.GetKey(KeyCode.LeftShift));
-                t.unload();
-                t.endQueueing();
+            foreach (var t in selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
+                t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
+                t.Unload();
+                t.EndQueueing();
             }
 
         } else if (Commands.load()) {
 
-            var transporters = selected.ConvertAll(x => x.transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
-            var infantry = selected.ConvertAll(x => x.transportable).Where((x, i) => x != null).ToList();
+            var transporters = selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
+            var infantry = selected.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
 
-            transporters.ForEach(x => x.beginQueueing(Input.GetKey(KeyCode.LeftShift)));
-            transporters.ConvertAll(x => x as Matchable<PlatoonBehaviour.TransportableModule>).Match(infantry);
-            transporters.ForEach(x => x.endQueueing());
+            transporters.ForEach(x => x.BeginQueueing(Input.GetKey(KeyCode.LeftShift)));
+            transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
+            transporters.ForEach(x => x.EndQueueing());
 
         } else if (Commands.firePos() && selected.Count != 0) {
             mouseMode = MouseMode.firePos;
@@ -378,7 +379,7 @@ public class UIManagerBehaviour : MonoBehaviour {
                 getTerrainClickLocation(out hit);
 
                 foreach (var platoon in selection) {
-                    platoon.sendFirePosOrder(hit.point);
+                    platoon.SendFirePosOrder(hit.point);
                 }
             }
         }
@@ -419,7 +420,7 @@ public class UIManagerBehaviour : MonoBehaviour {
                 var selectable = go.GetComponent<SelectableBehavior>();
 
                 if (selectable != null)
-                    selection.Add(selectable.getPlatoon());
+                    selection.Add(selectable.GetPlatoon());
             }
 
             setSelected(selection);
@@ -442,14 +443,14 @@ public class UIManagerBehaviour : MonoBehaviour {
         private bool isInside(PlatoonBehaviour obj)
         {
             var platoon = obj.GetComponent<PlatoonBehaviour>();
-            if (!platoon.initialized)
+            if (!platoon.IsInitialized)
                 return false;
 
             bool inside = false;
-            inside |= platoon.units.Any(x => isInside(x.transform.position));
+            inside |= platoon.Units.Any(x => isInside(x.transform.position));
 
             // TODO: This checks if the center of the icon is within the selection box. It should instead check if any of the four corners of the icon are within the box:
-            inside |= isInside(platoon.icon.transform.GetChild(0).position);
+            inside |= isInside(platoon.Icon.transform.GetChild(0).position);
             return inside;
         }
 
@@ -463,13 +464,13 @@ public class UIManagerBehaviour : MonoBehaviour {
 
         private void unselectAll(List<PlatoonBehaviour> l)
         {
-            l.ForEach(x => x.setSelected(false));
+            l.ForEach(x => x.SetSelected(false));
             l.Clear();
         }
 
         private void setSelected(List<PlatoonBehaviour> l)
         {
-            l.ForEach(x => x.setSelected(true));
+            l.ForEach(x => x.SetSelected(true));
         }
 
         // Responsible for drawing the selection rectangle

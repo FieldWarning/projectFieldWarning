@@ -64,7 +64,7 @@ public class VisibilityManager : MonoBehaviour
         var n = 100;
         foreach (var t in new Team[] { Team.Blue, Team.Red })
         {
-            Team o = Team.Red;
+            //Team o = Team.Red;
             var off = 50;
             if (t == Team.Red) off = -off;
             var offset = new Vector3(off, 0, 0);
@@ -225,5 +225,24 @@ public struct Point
     {
         return string.Format("[{0}, {1}]", x, y);
     }
-    
+
+    public override bool Equals(object obj)
+    {
+        if (!(obj is Point))
+        {
+            return false;
+        }
+
+        var point = (Point)obj;
+        return x == point.x &&
+               y == point.y;
+    }
+
+    public override int GetHashCode()
+    {
+        var hashCode = 1502939027;
+        hashCode = hashCode * -1521134295 + x.GetHashCode();
+        hashCode = hashCode * -1521134295 + y.GetHashCode();
+        return hashCode;
+    }
 }

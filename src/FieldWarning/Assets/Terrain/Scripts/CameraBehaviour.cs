@@ -1,33 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraBehaviour : MonoBehaviour {
+public class CameraBehaviour : MonoBehaviour
+{
+    Camera cam;
+    Vector3 camOffset;
+    Transform orbitPoint;
+    
     float baseMovementspeed = 1.5f;
     float scaleSpeed = 1;
     float zoomFactor = 1.6f;
-    Transform orbitPoint;
-    Camera cam;
-    Vector3 camOffset;
     float horizontalROtationSpeed = 5;
     float verticalROtationSpeed = .1f;
     float upperAngleLimit = 20;
     float lowerAngleLimit = 80;
     float maxZoom = 250;
     float minZoom = 10;
-	// Use this for initialization
-	void Start () {
 
+    // Use this for initialization
+    void Start()
+    {
         cam = GetComponent<Camera>();
-        orbitPoint=transform.parent;
+        orbitPoint = transform.parent;
         camOffset = transform.localPosition;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         Vector3 movement = Vector3.zero;
-        
-        
-        
+
+
+
         if (Input.GetKey(KeyCode.W))
         {
             movement += Vector3.forward;
@@ -50,8 +54,8 @@ public class CameraBehaviour : MonoBehaviour {
         if (camOffset.magnitude < minZoom) camOffset *= (minZoom / camOffset.magnitude);
         if (Input.GetMouseButton(2))
         {
-            var dy=-Input.GetAxis("Mouse Y");
-            if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit||dy<0)&&(Vector3.Angle(camOffset, Vector3.up)<lowerAngleLimit||dy>0))
+            var dy = -Input.GetAxis("Mouse Y");
+            if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit || dy < 0) && (Vector3.Angle(camOffset, Vector3.up) < lowerAngleLimit || dy > 0))
             {
                 camOffset = Vector3.RotateTowards(camOffset, Vector3.up, dy * verticalROtationSpeed, 0f);
             }
@@ -60,10 +64,9 @@ public class CameraBehaviour : MonoBehaviour {
         }
         var off = camOffset;
         off.y = 0;
-        movement =Quaternion.FromToRotation( Vector3.forward,off) * -movement;
+        movement = Quaternion.FromToRotation(Vector3.forward, off) * -movement;
         orbitPoint.position += Time.deltaTime * baseMovementspeed * movement * camOffset.magnitude;
         transform.localPosition = camOffset;
         transform.LookAt(orbitPoint, Vector3.up);
-
-	}
+    }
 }

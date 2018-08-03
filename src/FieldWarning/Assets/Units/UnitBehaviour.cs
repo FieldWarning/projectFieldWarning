@@ -42,7 +42,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
 
 	// Use this for initialization
-	public void Start ()
+	public virtual void Start ()
 	{		
 		destination = new Vector3 (100, 0, -100);
 		transform.position = 100 * Vector3.down;
@@ -60,7 +60,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 	}
 
 	// Update is called once per frame
-	public void Update ()
+	public virtual void Update ()
 	{
 		doMovement ();
 		updateMapOrientation ();
@@ -75,11 +75,11 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 		health -= receivedDamage; 
 		if (health <= 0) {
 			IsAlive = false;
-			platoon.units.Remove (this);
+			platoon.Units.Remove (this);
 		
 			Destroy (this.gameObject);
-            platoon.ghostPlatoon.handleRealUnitDestroyed ();
-			if (platoon.units.Count == 0) {
+            platoon.GhostPlatoon.handleRealUnitDestroyed ();
+			if (platoon.Units.Count == 0) {
 				Destroy (platoon.gameObject);
                 UIManagerBehaviour.registerPlatoonDeath(platoon);
             }
@@ -117,7 +117,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 		this.health = health;
 	}
 
-	public override PlatoonBehaviour getPlatoon ()
+	public override PlatoonBehaviour GetPlatoon ()
 	{
 		return platoon;
 	}
@@ -181,12 +181,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 	}
 
 
-	public void setMatch (Vector3 match)
+	public void SetMatch (Vector3 match)
 	{
 		setUnitDestination (match);
 	}
 
-	public float getScore (Vector3 matchee)
+	public float GetScore (Vector3 matchee)
 	{
 		return (matchee - transform.position).magnitude;
 	}
