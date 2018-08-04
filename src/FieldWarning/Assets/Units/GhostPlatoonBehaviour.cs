@@ -17,7 +17,6 @@ using Pfw.Ingame.Prototype;
 
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
-
     // Use this for initialization
     bool initIcon = false;
     bool raycastIgnore;
@@ -40,8 +39,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (raycastIgnoreChange)
-        {
+        if (raycastIgnoreChange) {
             raycastIgnoreChange = false;
             _setIgnoreRaycast(raycastIgnore);
         }
@@ -49,8 +47,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void initializeIcon()
     {
-        if (!initIcon)
-        {
+        if (!initIcon) {
 
             initIcon = true;
             icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
@@ -112,8 +109,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         var left = new Vector3(-v.z, 0, v.x);
 
         var pos = position + (units.Count - 1) * (PlatoonBehaviour.BaseDistance / 2) * left;
-        for (int i = 0; i < units.Count; i++)
-        {
+        for (int i = 0; i < units.Count; i++) {
 
             var localPosition = pos - PlatoonBehaviour.BaseDistance * i * left;
             var localRotation = Quaternion.Euler(new Vector3(0, -Mathf.Rad2Deg * (heading) + 90, 0));

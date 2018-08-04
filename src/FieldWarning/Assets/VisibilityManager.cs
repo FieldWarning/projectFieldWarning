@@ -37,10 +37,8 @@ public class VisibilityManager : MonoBehaviour
         teamMembersRed = new List<VisibleBehavior>();
         visionCellsBlue = new List<VisibleBehavior>[n, n];
         visionCellsRed = new List<VisibleBehavior>[n, n];
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
                 visionCellsBlue[i, j] = new List<VisibleBehavior>();
                 visionCellsRed[i, j] = new List<VisibleBehavior>();
             }
@@ -62,14 +60,12 @@ public class VisibilityManager : MonoBehaviour
         var friendBehaviour = friend.GetComponent<VisibleBehavior>();
         friendBehaviour.Initialize(Team.Red);
         var n = 100;
-        foreach (var t in new Team[] { Team.Blue, Team.Red })
-        {
+        foreach (var t in new Team[] { Team.Blue, Team.Red }) {
             //Team o = Team.Red;
             var off = 50;
             if (t == Team.Red) off = -off;
             var offset = new Vector3(off, 0, 0);
-            for (int i = -n; i <= n; i++)
-            {
+            for (int i = -n; i <= n; i++) {
 
                 var enemy = GameObject.Instantiate<GameObject>(go);
                 //enemy.transform.parent = friend.transform;
@@ -87,11 +83,11 @@ public class VisibilityManager : MonoBehaviour
     }
     public static void addVisibleBehaviour(VisibleBehavior b)
     {
-        var members=getTeamMembers(b.Team);
+        var members = getTeamMembers(b.Team);
         if (!members.Contains(b)) members.Add(b);
-        var t=Team.Blue;
+        var t = Team.Blue;
         if (t == b.Team) t = Team.Red;
-        getTeamMembers(t).ForEach(x=>x.AddHostile(b));
+        getTeamMembers(t).ForEach(x => x.AddHostile(b));
     }
     public void updateVision()
     {
@@ -99,34 +95,26 @@ public class VisibilityManager : MonoBehaviour
         //Debug.Log(teamMembersRed.Count);
         //detectedHostile.RemoveAll(x => detected(x));
         turn++;
-        foreach (var t in new Team[] { Team.Blue, Team.Red })
-        {
+        foreach (var t in new Team[] { Team.Blue, Team.Red }) {
             Team o = Team.Red;
             if (t == Team.Red) o = Team.Blue;
-            var team=getTeamMembers(t);
-            for (var k = turn % groups; k < team.Count;k+=groups )
-            {
+            var team = getTeamMembers(t);
+            for (var k = turn % groups; k < team.Count; k += groups) {
                 var unit = team[k];
                 var region = unit.GetRegion();
-                for (int i = -1; i < 2; i++)
-                {
-                    for (int j = -1; j < 2; j++)
-                    {
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
 
                         var x = region.x + i;
                         var y = region.y + j;
                         if (x < 0 || y < 0 || x >= n || y >= n) continue;
                         //Debug.Log(string.Format("searched: {0}, {1}", x,y));
                         //visionCells[x, y].RemoveAll(vis=> notDetected(vis, unit));
-                        foreach (var enemy in getVisionCells(o)[x, y])
-                        {
-                            if (TerrainData.visionScore(unit.transform, enemy.transform, maxViewDistance))
-                            {
+                        foreach (var enemy in getVisionCells(o)[x, y]) {
+                            if (TerrainData.visionScore(unit.transform, enemy.transform, maxViewDistance)) {
                                 unit.SetSpotting(enemy, true);
                                 enemy.SetSpottedBy(unit, true);
-                            }
-                            else
-                            {
+                            } else {
                                 unit.SetSpotting(enemy, false);
                                 enemy.SetSpottedBy(unit, false);
                             }
@@ -178,23 +166,17 @@ public class VisibilityManager : MonoBehaviour
     }
     public static List<VisibleBehavior> getTeamMembers(Team t)
     {
-        if (t == Team.Blue)
-        {
+        if (t == Team.Blue) {
             return teamMembersBlue;
-        }
-        else
-        {
+        } else {
             return teamMembersRed;
         }
     }
     private static List<VisibleBehavior>[,] getVisionCells(Team t)
     {
-        if (t == Team.Blue)
-        {
+        if (t == Team.Blue) {
             return visionCellsBlue;
-        }
-        else
-        {
+        } else {
             return visionCellsRed;
         }
     }
@@ -228,8 +210,7 @@ public struct Point
 
     public override bool Equals(object obj)
     {
-        if (!(obj is Point))
-        {
+        if (!(obj is Point)) {
             return false;
         }
 
