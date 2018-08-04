@@ -70,7 +70,7 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
 
     public void SetMatch(Vector3 match)
     {
-        Platoon.GhostPlatoon.setVisible(false);
+        Platoon.GhostPlatoon.SetVisible(false);
         SetDestination(match);
     }
 

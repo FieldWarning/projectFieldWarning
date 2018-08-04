@@ -16,22 +16,28 @@ using UnityEngine;
 /*
  * A billboard is a 2d texture that is always facing the camera.
  */
-public class BillboardBehavior : SelectableBehavior {
-    [SerializeField] private float ALTITUDE = 1f;
-    [SerializeField] private float SIZE = 0.1f;
+public class BillboardBehavior : SelectableBehavior
+{
+    [SerializeField]
+    private float ALTITUDE = 1f;
+    [SerializeField]
+    private float SIZE = 0.1f;
 
     // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         transform.localPosition = ALTITUDE * Camera.main.transform.up;
         faceCamera();
     }
 
-    private void faceCamera() {
+    private void faceCamera()
+    {
 
         transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
         var distance = (Camera.main.transform.position - transform.position).magnitude;

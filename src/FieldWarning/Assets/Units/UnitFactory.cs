@@ -21,24 +21,23 @@ namespace Pfw.Ingame.Prototype
         {
             GameObject unit;
 
-            switch (type)
-            {
-                case UnitType.Tank:
-                    unit = Resources.Load<GameObject>("Tank");
-                    //label.GetComponentInChildren<Text>().text = "M1A2 Abrams";
-                    break;
-                case UnitType.AFV:
-                    unit = Resources.Load<GameObject>("AFV");
-                    break;
-                case UnitType.Infantry:
-                    var obj = new GameObject();
-                    var b = obj.AddComponent<InfantryBehaviour>();
-                    b.enabled = false;
-                    unit = obj;
-                    break;
-                default:
-                    unit = null;
-                    break;
+            switch (type) {
+            case UnitType.Tank:
+                unit = Resources.Load<GameObject>("Tank");
+                //label.GetComponentInChildren<Text>().text = "M1A2 Abrams";
+                break;
+            case UnitType.AFV:
+                unit = Resources.Load<GameObject>("AFV");
+                break;
+            case UnitType.Infantry:
+                var obj = new GameObject();
+                var b = obj.AddComponent<InfantryBehaviour>();
+                b.enabled = false;
+                unit = obj;
+                break;
+            default:
+                unit = null;
+                break;
             }
 
             //unit.GetComponent<UnitLabelAttacher>().Label = label;

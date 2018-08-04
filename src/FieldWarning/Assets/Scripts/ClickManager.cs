@@ -14,7 +14,8 @@
 using UnityEngine;
 using System;
 
-public class ClickManager {
+public class ClickManager
+{
     private int button;
 
     private float dragThreshold;
@@ -26,8 +27,8 @@ public class ClickManager {
     private Action dragMouseRelease;
     private Action whileDraggingMouse;
 
-    public ClickManager(int button,  float dragThreshold, Action onMouseDown, Action nonDragMouseRelease, Action dragMouseRelease, Action whileDraggingMouse) {
-
+    public ClickManager(int button, float dragThreshold, Action onMouseDown, Action nonDragMouseRelease, Action dragMouseRelease, Action whileDraggingMouse)
+    {
         if (onMouseDown == null || nonDragMouseRelease == null || dragMouseRelease == null || whileDraggingMouse == null)
             throw new Exception("Tried to create a ClickManager with a missing callback!");
 
@@ -39,7 +40,8 @@ public class ClickManager {
         this.whileDraggingMouse = whileDraggingMouse;
     }
 
-    public void Update() {
+    public void Update()
+    {
         if (Input.GetMouseButtonDown(button)) {
             mouseDistanceTravelled = 0;
             lastMousePosition = Input.mousePosition;
@@ -51,7 +53,7 @@ public class ClickManager {
             lastMousePosition = Input.mousePosition;
         }
 
-        if (Input.GetMouseButton(button) && isDragClick()) 
+        if (Input.GetMouseButton(button) && isDragClick())
             whileDraggingMouse();
 
 
@@ -59,10 +61,11 @@ public class ClickManager {
             if (isDragClick())
                 dragMouseRelease();
             else
-                nonDragMouseRelease();        
+                nonDragMouseRelease();
     }
 
-    private bool isDragClick() {
+    private bool isDragClick()
+    {
         return mouseDistanceTravelled > dragThreshold;
     }
 }

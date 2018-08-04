@@ -13,21 +13,20 @@
 
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
     [SerializeField]
     private Team team;
 
     // Use this for initialization
-    void Start () {
+    void Start() { }
 
-    }
-    
     // Update is called once per frame
-    void Update () {
-    
-    }
+    void Update() { }
 
-    public Team getTeam() {
+    // TODO turn into property
+    public Team getTeam()
+    {
         return team;
     }
 }

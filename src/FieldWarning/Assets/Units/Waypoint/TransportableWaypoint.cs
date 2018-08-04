@@ -13,7 +13,8 @@
 
 using System.Linq;
 
-public class TransportableWaypoint : Waypoint {
+public class TransportableWaypoint : Waypoint
+{
     public TransporterWaypoint transporterWaypoint;
 
     public TransportableWaypoint(PlatoonBehaviour p)
@@ -30,7 +31,7 @@ public class TransportableWaypoint : Waypoint {
 
     }
 
-    public override bool orderComplete()
+    public override bool OrderComplete()
     {
         if (transporterWaypoint.interrupted) {
             platoon.Units.ForEach(x => (x as InfantryBehaviour).setTransportTarget(null));
@@ -46,7 +47,7 @@ public class TransportableWaypoint : Waypoint {
         //return transporterWaypoint.interrupted || platoon.units.All(x => !(x as InfantryBehaviour).interactsWithTransport(true));
     }
 
-    public override bool interrupt()
+    public override bool Interrupt()
     {
         if (!platoon.Units.Any(x => (x as InfantryBehaviour).interactsWithTransport(true))) {
 
