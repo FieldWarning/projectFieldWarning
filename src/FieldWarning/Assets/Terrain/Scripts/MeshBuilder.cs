@@ -1,5 +1,17 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿/**
+ * Copyright (c) 2017-present, PFW Contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+ 
+using UnityEngine;
 using System.Collections.Generic;
 
 public class MeshBuilder : MonoBehaviour
@@ -37,8 +49,7 @@ public class MeshBuilder : MonoBehaviour
         var d = p1;
         float dt = 1 / ((p1 - p2).magnitude * pointDensity);
         List<Vector3> output = new List<Vector3>();
-        for (float t = 0; t <= 1; t += dt)
-        {
+        for (float t = 0; t <= 1; t += dt) {
             Vector3 v = a * t * t * t + b * t * t + c * t + d;
             output.Add(v);
         }
@@ -48,8 +59,7 @@ public class MeshBuilder : MonoBehaviour
     }
     public void buildRoads(List<List<Vector3>> list)
     {
-        foreach (var l in list)
-        {
+        foreach (var l in list) {
             var go = Instantiate(gameObject);
             var mesh = new Mesh();
             buildRoadMesh(ref mesh, l);
@@ -70,8 +80,7 @@ public class MeshBuilder : MonoBehaviour
         var r = right(points[0], points[1]);
         verteces.Add(points[0] + r);
         verteces.Add(points[0] - r);
-        for (int i = 1; i < points.Count - 1; i++)
-        {
+        for (int i = 1; i < points.Count - 1; i++) {
             r = right(points[i - 1], points[i], points[i + 1]);
             verteces.Add(points[i] + r);
             verteces.Add(points[i] - r);
@@ -83,8 +92,7 @@ public class MeshBuilder : MonoBehaviour
         verteces.Add(points[points.Count - 1] - r);
 
         List<int> triangles = new List<int>(mesh.triangles);
-        for (int i = 0; i < points.Count - 1; i++)
-        {
+        for (int i = 0; i < points.Count - 1; i++) {
             triangles.Add(vc + 4 * i);
             triangles.Add(vc + 4 * i + 2);
             triangles.Add(vc + 4 * i + 1);
@@ -98,24 +106,19 @@ public class MeshBuilder : MonoBehaviour
         //Debug.Log(verteces.Count);
         uv.Add(new Vector2(1, 0));
         uv.Add(new Vector2(0, 0));
-        for (int i = 0; i < points.Count - 1; i++)
-        {
+        for (int i = 0; i < points.Count - 1; i++) {
 
 
             distanceRight += roadStretch * (verteces[4 * i] - verteces[4 * i + 2]).magnitude / roadWidth;
             distanceLeft += roadStretch * (verteces[4 * i + 1] - verteces[4 * i + 3]).magnitude / roadWidth;
             uv.Add(new Vector2(1, distanceRight));
             uv.Add(new Vector2(0, distanceLeft));
-            if (distanceRight > distanceLeft)
-            {
+            if (distanceRight > distanceLeft) {
                 distanceRight = 2 * distanceLeft - distanceRight;
-            }
-            else
-            {
+            } else {
                 distanceLeft = 2 * distanceRight - distanceLeft;
             }
-            if (i < points.Count - 2)
-            {
+            if (i < points.Count - 2) {
                 uv.Add(new Vector2(1, distanceRight));
                 uv.Add(new Vector2(0, distanceLeft));
             }
@@ -141,12 +144,9 @@ public class MeshBuilder : MonoBehaviour
         Vector3 right = Vector3.Cross(Vector3.down, first);
         var candidate = (second - first).normalized;
         var scale = Vector3.Dot(right, candidate);
-        if (scale == 0)
-        {
+        if (scale == 0) {
             return roadWidth * right;
-        }
-        else
-        {
+        } else {
             return roadWidth * candidate / scale;
         }
     }
