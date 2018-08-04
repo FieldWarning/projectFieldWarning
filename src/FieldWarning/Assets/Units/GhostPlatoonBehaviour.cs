@@ -18,17 +18,17 @@ using Pfw.Ingame.Prototype;
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
     // Use this for initialization
-    bool initIcon = false;
-    bool raycastIgnore;
-    bool raycastIgnoreChange = false;
-    public float finalHeading;
-    public GameObject icon;
-    GameObject baseUnit;
-    UnitType unitType;
-    GameObject realPlatoon;
+    private bool _initIcon = false;
+    private bool _raycastIgnore;
+    private bool _raycastIgnoreChange = false;
+    public float FinalHeading;
+    private GameObject _icon;
+    private GameObject _baseUnit;
+    private UnitType _unitType;
+    private GameObject _realPlatoon;
     private PlatoonBehaviour _platoonBehaviour;
-    Player owner;
-    List<GameObject> units = new List<GameObject>();
+    private Player _owner;
+    private List<GameObject> _units = new List<GameObject>();
 
 
     void Start()
@@ -39,22 +39,22 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (raycastIgnoreChange) {
-            raycastIgnoreChange = false;
-            _setIgnoreRaycast(raycastIgnore);
+        if (_raycastIgnoreChange) {
+            _raycastIgnoreChange = false;
+            _setIgnoreRaycast(_raycastIgnore);
         }
     }
 
     public void InitializeIcon()
     {
-        if (!initIcon) {
+        if (!_initIcon) {
 
-            initIcon = true;
-            icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
+            _initIcon = true;
+            _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
             //Debug.Log(platoonBehaviour.gameObject);
             //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
-            icon.GetComponent<IconBehaviour>().setTeam(owner.getTeam());
-            icon.transform.parent = transform;
+            _icon.GetComponent<IconBehaviour>().setTeam(_owner.getTeam());
+            _icon.transform.parent = transform;
         }
     }
 
@@ -68,20 +68,20 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void BuildRealPlatoon()
     {
-        realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
+        _realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
 
-        _platoonBehaviour = realPlatoon.GetComponent<PlatoonBehaviour>();
-        _platoonBehaviour.Initialize(unitType, owner, units.Count);
+        _platoonBehaviour = _realPlatoon.GetComponent<PlatoonBehaviour>();
+        _platoonBehaviour.Initialize(_unitType, _owner, _units.Count);
         //platoonBehaviour.setEnabled(false);
         _platoonBehaviour.SetGhostPlatoon(this);
-        realPlatoon.transform.position = transform.position + 100 * Vector3.down;
+        _realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
     public void Initialize(UnitType t, Player owner, int n)
     {
-        this.owner = owner;
-        unitType = t;
-        baseUnit = UnitFactory.GetUnit(unitType);
+        this._owner = owner;
+        _unitType = t;
+        _baseUnit = UnitFactory.GetUnit(_unitType);
         transform.position = 100 * Vector3.down;
 
         // Create units:
@@ -91,44 +91,43 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     private void AddSingleUnit()
     {
-        GameObject go = GameObject.Instantiate(baseUnit);
+        GameObject go = GameObject.Instantiate(_baseUnit);
         go.GetComponent<UnitBehaviour>().enabled = false;
         var shader = Resources.Load<Shader>("Ghost");
         go.ApplyShaderRecursively(shader);
         go.transform.position = 100 * Vector3.down;
-        units.Add(go);
+        _units.Add(go);
         //go.transform.parent = this.transform;
     }
 
     public void SetOrientation(Vector3 position, float heading)
     {
-
-        finalHeading = heading;
+        FinalHeading = heading;
         transform.position = position;
         Vector3 v = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         var left = new Vector3(-v.z, 0, v.x);
 
-        var pos = position + (units.Count - 1) * (PlatoonBehaviour.BaseDistance / 2) * left;
-        for (int i = 0; i < units.Count; i++) {
+        var pos = position + (_units.Count - 1) * (PlatoonBehaviour.BaseDistance / 2) * left;
+        for (int i = 0; i < _units.Count; i++) {
 
             var localPosition = pos - PlatoonBehaviour.BaseDistance * i * left;
             var localRotation = Quaternion.Euler(new Vector3(0, -Mathf.Rad2Deg * (heading) + 90, 0));
-            units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(localPosition, localRotation, false);
-            units[i].GetComponent<UnitBehaviour>().UpdateMapOrientation();
+            _units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(localPosition, localRotation, false);
+            _units[i].GetComponent<UnitBehaviour>().UpdateMapOrientation();
         }
     }
 
     public void SetVisible(bool vis)
     {
         InitializeIcon();
-        icon.GetComponent<IconBehaviour>().setVisible(vis);
-        units.ForEach(x => x.GetComponent<UnitBehaviour>().SetVisible(vis));
+        _icon.GetComponent<IconBehaviour>().setVisible(vis);
+        _units.ForEach(x => x.GetComponent<UnitBehaviour>().SetVisible(vis));
     }
 
     public void SetIgnoreRaycast(bool ignore)
     {
-        raycastIgnore = ignore;
-        raycastIgnoreChange = true;
+        _raycastIgnore = ignore;
+        _raycastIgnoreChange = true;
     }
 
     public void _setIgnoreRaycast(bool ignore)
@@ -139,8 +138,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
         Debug.Log(layer);
         gameObject.layer = layer;
-        icon.layer = layer;
-        foreach (var u in units)
+        _icon.layer = layer;
+        foreach (var u in _units)
             u.layer = layer;
     }
 
@@ -148,7 +147,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     {
         _platoonBehaviour.Destroy();
 
-        foreach (var u in units)
+        foreach (var u in _units)
             Destroy(u);
 
         Destroy(gameObject);
@@ -163,17 +162,17 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         behaviour.InitializeIcon();
 
         go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
-        behaviour.icon.GetComponent<IconBehaviour>().setGhost();
+        behaviour._icon.GetComponent<IconBehaviour>().setGhost();
 
         return behaviour;
     }
 
     public void HandleRealUnitDestroyed()
     {
-        GameObject u = units[0];
-        units.Remove(u);
+        GameObject u = _units[0];
+        _units.Remove(u);
         Destroy(u);
-        if (units.Count == 0)
+        if (_units.Count == 0)
             Destroy();
     }
 }

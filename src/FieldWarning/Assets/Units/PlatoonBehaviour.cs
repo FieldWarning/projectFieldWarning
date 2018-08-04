@@ -124,7 +124,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         enabled = true;
         transform.position = pos;
 
-        var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().finalHeading;
+        var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
         Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         float spawndistance = 2;
 
