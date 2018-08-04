@@ -46,9 +46,13 @@ namespace Assets.Ingame.UI
         {
             if (_smallestPlatoonSize < MAX_PLATOON_SIZE) {
 
-                _ghostPlatoonBehaviour.AddSingleUnit();
-                _ghostPlatoonBehaviour.BuildRealPlatoon();
+                GhostUnits.Remove(_ghostPlatoonBehaviour);
+                _ghostPlatoonBehaviour.Destroy();
+
                 _smallestPlatoonSize++;
+                _ghostPlatoonBehaviour =
+                    GhostPlatoonBehaviour.Build(UnitType, Owner, _smallestPlatoonSize);
+                GhostUnits.Add(_ghostPlatoonBehaviour);
             } else {
 
                 // If all platoons in the transaction are max size, we add a new one and update the size counter:
@@ -68,6 +72,13 @@ namespace Assets.Ingame.UI
                 clone.AddUnit();
 
             return clone;
+        }
+
+        public void Finish()
+        {
+            foreach (GhostPlatoonBehaviour g in GhostUnits) {
+                g.BuildRealPlatoon();
+            }
         }
     }
 }
