@@ -7,6 +7,7 @@ public class UnitLabelAttacher : MonoBehaviour
     public GameObject Label;
     private Canvas _canvas;
     private Collider _collider;
+    private Vector3 _paddingVector;
 
     // Use this for initialization
     void Start()
@@ -15,10 +16,12 @@ public class UnitLabelAttacher : MonoBehaviour
         _collider = GetComponentInChildren<Collider>();
 
         Label = Instantiate(Resources.Load<GameObject>("UnitLabel"), _canvas.transform);
+
+        _paddingVector = new Vector3(0, 2, 0);
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         Label.transform.position = GetScreenPosition(_canvas);
     }
@@ -28,9 +31,7 @@ public class UnitLabelAttacher : MonoBehaviour
         if (cam == null)
             cam = Camera.main;
 
-        var labelPos = cam.WorldToScreenPoint(transform.position);
-
-        labelPos.y += 40f;
+        var labelPos = cam.WorldToScreenPoint(transform.position + _paddingVector);
 
         return labelPos;
     }
