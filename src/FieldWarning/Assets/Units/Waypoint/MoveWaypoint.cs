@@ -15,13 +15,12 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveWaypoint : Waypoint {
+public class MoveWaypoint : Waypoint
+{
     public Vector3 destination;
     public float heading;
 
-    public MoveWaypoint(PlatoonBehaviour p) : base(p)
-    {
-    }
+    public MoveWaypoint(PlatoonBehaviour p) : base(p) { }
 
     public override void ProcessWaypoint()
     {
@@ -38,12 +37,12 @@ public class MoveWaypoint : Waypoint {
         platoon.Units.ForEach(x => x.SetUnitFinalHeading(heading));
     }
 
-    public override bool orderComplete()
+    public override bool OrderComplete()
     {
         return platoon.Units.All(x => x.OrdersComplete());
     }
 
-    public override bool interrupt()
+    public override bool Interrupt()
     {
         //platoon.units.ForEach (x => x.gotDestination = false);
         return true;

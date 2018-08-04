@@ -11,17 +11,19 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-public abstract class Waypoint {
+public abstract class Waypoint
+{
     public bool interrupted;
     public PlatoonBehaviour platoon;
 
-    public Waypoint(PlatoonBehaviour p) {
+    public Waypoint(PlatoonBehaviour p)
+    {
         platoon = p;
     }
 
     public abstract void ProcessWaypoint();
 
-    public abstract bool orderComplete();
+    public abstract bool OrderComplete();
 
-    public abstract bool interrupt();
+    public abstract bool Interrupt();
 }

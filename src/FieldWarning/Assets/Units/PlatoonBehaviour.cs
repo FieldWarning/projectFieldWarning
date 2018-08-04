@@ -46,7 +46,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         transform.position = pos / Units.Count;
         Modules.ForEach(x => x.Update());
 
-        if (ActiveWaypoint == null || ActiveWaypoint.orderComplete()) {
+        if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
             if (Waypoints.Any()) {
                 ActiveWaypoint = Waypoints.Dequeue();
                 ActiveWaypoint.ProcessWaypoint();

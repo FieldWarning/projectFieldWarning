@@ -14,7 +14,8 @@
 using System.Linq;
 using UnityEngine;
 
-public class TransporterWaypoint : Waypoint {
+public class TransporterWaypoint : Waypoint
+{
     public bool loading;
     TransporterModule module;
     public TransportableWaypoint transportableWaypoint;
@@ -41,14 +42,14 @@ public class TransporterWaypoint : Waypoint {
         }
     }
 
-    public override bool orderComplete()
+    public override bool OrderComplete()
     {
         if (transportableWaypoint != null && transportableWaypoint.interrupted) {
             platoon.Units.ForEach(x => x.GetComponent<TransporterBehaviour>().target = null);
             return true;
         }
         if (loading) {
-            if (transportableWaypoint.orderComplete()) {
+            if (transportableWaypoint.OrderComplete()) {
                 module.SetTransported(transportableWaypoint.platoon);
                 platoon.Units.ForEach(x => x.GetComponent<TransporterBehaviour>().target = null);
                 transportableWaypoint.platoon.SetEnabled(false);
@@ -67,9 +68,9 @@ public class TransporterWaypoint : Waypoint {
         }
     }
 
-    public override bool interrupt()
+    public override bool Interrupt()
     {
-        if (transportableWaypoint != null && transportableWaypoint.interrupt()) {
+        if (transportableWaypoint != null && transportableWaypoint.Interrupt()) {
             platoon.Units.ForEach(x => x.GetComponent<TransporterBehaviour>().target = null);
             Debug.Log("transport interupted");
             interrupted = true;
