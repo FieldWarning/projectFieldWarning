@@ -78,7 +78,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
     public void Initialize(UnitType t, Player owner, int n)
     {
-        UIManagerBehaviour.registerPlatoonBirth(this);
+        UIManagerBehaviour.RegisterPlatoonBirth(this);
 
         Type = t;
         Owner = owner;
@@ -163,7 +163,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         foreach (var p in Units)
             Destroy(p.gameObject);
 
-        UIManagerBehaviour.registerPlatoonDeath(this);
+        UIManagerBehaviour.RegisterPlatoonDeath(this);
         Destroy(gameObject);
     }
 }
