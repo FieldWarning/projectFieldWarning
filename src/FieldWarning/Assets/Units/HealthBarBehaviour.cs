@@ -13,44 +13,50 @@
 
 using UnityEngine;
 
-public class HealthBarBehaviour : SelectableBehavior {
-
+public class HealthBarBehaviour : SelectableBehavior
+{
     UnitBehaviour unit;
     GameObject bar;
-	void Start () {
+
+    void Start()
+    {
         bar = transform.GetChild(0).gameObject;
         bar.AddComponent<SelectableBehavior>();
-		setHealth(unit.data.maxHealth);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		setHealth(unit.getHealth() / unit.data.maxHealth);
-	}
-    public void setUnit(UnitBehaviour o)
-    {
-        
-        unit = o;
-        
+        SetHealth(unit.data.maxHealth);
     }
-	void setHealth(float h)
+
+    // Update is called once per frame
+    void Update()
+    {
+        SetHealth(unit.GetHealth() / unit.data.maxHealth);
+    }
+
+    public void SetUnit(UnitBehaviour o)
+    {
+        unit = o;
+    }
+
+    void SetHealth(float h)
     {
         float health = Mathf.Clamp01(h);
-
 
         //bar.transform.localScale = new Vector3(health, 1, 1);
         //var offset = bar.GetComponent<Renderer>().bounds.extents.x ;
         //bar.transform.localPosition = new Vector3(offset-0.5f, 0, -.01f);
-        bar.GetComponent<Renderer>().material.color = getColor(health);
+        bar.GetComponent<Renderer>().material.color = PickColor(health);
 
-		//Debug.Log("-- hp : " + (1f - health));
-		bar.GetComponent<Renderer>().material.SetFloat("_Cutoff", 1f - health);
+        //Debug.Log("-- hp : " + (1f - health));
+        bar.GetComponent<Renderer>().material.SetFloat("_Cutoff", 1f - health);
     }
-    private Color getColor(float h)
+
+    private Color PickColor(float h)
     {
-        Color c = Color.green;
-        if (h < 0.5f) c = Color.yellow;
-        if (h < 0.25f) c = Color.red;
-        return c;
+        if (h < 0.25f)
+            return Color.red;
+
+        if (h < 0.5f)
+            return Color.yellow;
+
+        return Color.green;
     }
 }

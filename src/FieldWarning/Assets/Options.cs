@@ -11,10 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using UnityEngine;
-using System.Collections;
-
-public class Options  {
+public class Options
+{
     public static bool StickySelection = true;
-	
 }

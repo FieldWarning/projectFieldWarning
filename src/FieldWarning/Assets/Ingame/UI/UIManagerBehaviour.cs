@@ -19,8 +19,8 @@ using Assets.Ingame.UI;
 using UnityEngine.EventSystems;
 using Pfw.Ingame.Prototype;
 
-public class UIManagerBehaviour : MonoBehaviour {
-
+public class UIManagerBehaviour : MonoBehaviour
+{
     [SerializeField]
     private float mouseDragThreshold = 10.0f;
     [SerializeField]
@@ -124,7 +124,7 @@ public class UIManagerBehaviour : MonoBehaviour {
     {
         if (Input.GetMouseButton(1)) {
             foreach (var g in _currentBuyTransaction.GhostUnits)
-                g.GetComponent<GhostPlatoonBehaviour>().destroy();
+                g.GetComponent<GhostPlatoonBehaviour>().Destroy();
 
             exitPurchasingMode();
         }
@@ -156,7 +156,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         if (getTerrainClickLocation(out hit)) {
 
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.GhostPlatoon);
-            ghosts.ForEach(x => x.setVisible(true));
+            ghosts.ForEach(x => x.SetVisible(true));
             positionGhostUnits(destination, hit.point, ghosts);
         }
     }
@@ -229,7 +229,7 @@ public class UIManagerBehaviour : MonoBehaviour {
 
     public void buildUnit(UnitType t)
     {
-        var behaviour = GhostPlatoonBehaviour.build(t, owner, 4);
+        var behaviour = GhostPlatoonBehaviour.Build(t, owner, 4);
         _currentBuyTransaction.GhostUnits.Add(behaviour);
     }
 
@@ -258,7 +258,7 @@ public class UIManagerBehaviour : MonoBehaviour {
         var right = Vector3.Cross(forward, Vector3.up);
         var pos = position + unitDistance * (formationWidth - 1) * right / 2f;
         for (var i = 0; i < formationWidth; i++)
-            units[i].GetComponent<GhostPlatoonBehaviour>().setOrientation(pos - i * unitDistance * right, heading);
+            units[i].GetComponent<GhostPlatoonBehaviour>().SetOrientation(pos - i * unitDistance * right, heading);
     }
 
     private void exitPurchasingMode()
@@ -336,7 +336,8 @@ public class UIManagerBehaviour : MonoBehaviour {
         return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
     }
 
-    private class SelectionManager {
+    private class SelectionManager
+    {
         public List<PlatoonBehaviour> allUnits = new List<PlatoonBehaviour>();
         public List<PlatoonBehaviour> selection { get; private set; }
 
@@ -499,7 +500,8 @@ public class UIManagerBehaviour : MonoBehaviour {
 
 }
 
-public class Commands {
+public class Commands
+{
     public static bool unload()
     {
         return Input.GetKeyDown(Hotkeys.Unload);
@@ -516,7 +518,8 @@ public class Commands {
     }
 }
 
-public class Hotkeys {
+public class Hotkeys
+{
     public static KeyCode Unload = KeyCode.U;
     public static KeyCode Load = KeyCode.L;
     public static KeyCode FirePos = KeyCode.T;

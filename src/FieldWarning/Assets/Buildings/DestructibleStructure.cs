@@ -13,25 +13,28 @@
 
 using UnityEngine;
 
-public class DestructibleStructure : MonoBehaviour {
-    public GameObject intactModel;
-    public GameObject ruinsModel;
+public class DestructibleStructure : MonoBehaviour
+{
+    [SerializeField]
+    private GameObject _intactModel;
+    [SerializeField]
+    private GameObject _ruinsModel;
 
-	// Use this for initialization
-	void Start () {
-        if (intactModel == null)
+    // Use this for initialization
+    void Start()
+    {
+        if (_intactModel == null)
             throw new System.Exception("Structure has no undamaged model!");
-        if (ruinsModel == null)
+        if (_ruinsModel == null)
             throw new System.Exception("Structure has no damaged model!");
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    void OnTriggerEnter(Collider other) {
-        intactModel.SetActive(false);
-        ruinsModel.SetActive(true);
+    // Update is called once per frame
+    void Update() { }
+
+    void OnTriggerEnter(Collider other)
+    {
+        _intactModel.SetActive(false);
+        _ruinsModel.SetActive(true);
     }
 }

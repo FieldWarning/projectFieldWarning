@@ -46,15 +46,11 @@ public partial class PlatoonBehaviour : SelectableBehavior
         transform.position = pos / Units.Count;
         Modules.ForEach(x => x.Update());
 
-        if (ActiveWaypoint == null || ActiveWaypoint.orderComplete())
-        {
-            if (Waypoints.Any())
-            {
+        if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
+            if (Waypoints.Any()) {
                 ActiveWaypoint = Waypoints.Dequeue();
                 ActiveWaypoint.ProcessWaypoint();
-            }
-            else
-            {
+            } else {
                 ActiveWaypoint = null;
                 //units.ForEach (x => x.gotDestination = false);
             }
@@ -67,14 +63,12 @@ public partial class PlatoonBehaviour : SelectableBehavior
         Movement = new MovementModule(this);
         Modules.Add(Movement);
 
-        if (t == UnitType.AFV)
-        {
+        if (t == UnitType.AFV) {
             Transporter = new TransporterModule(this);
             Modules.Add(Transporter);
         }
 
-        if (t == UnitType.Infantry)
-        {
+        if (t == UnitType.Infantry) {
             Transportable = new TransportableModule(this);
             Modules.Add(Transportable);
         }
@@ -94,11 +88,10 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
         var unitInstace = UnitFactory.GetUnit(t);
 
-        for (int i = 0; i < n; i++)
-        {
+        for (int i = 0; i < n; i++) {
             iconInstance = Instantiate(unitInstace);
             var unitBehaviour = iconInstance.GetComponent<UnitBehaviour>();
-            unitBehaviour.setPlatoon(this);
+            unitBehaviour.SetPlatoon(this);
             Units.Add(unitBehaviour);
 
             var collider = iconInstance.GetComponentInChildren<BoxCollider>();
@@ -107,12 +100,11 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
         BuildModules(t);
 
-        if (t == UnitType.AFV)
-        {
-            var ghost = GhostPlatoonBehaviour.build(UnitType.Infantry, owner, n);
-            Transporter.SetTransported(ghost.getRealPlatoon());
-            ghost.setOrientation(100 * Vector3.down, 0);
-            ghost.setVisible(false);
+        if (t == UnitType.AFV) {
+            var ghost = GhostPlatoonBehaviour.Build(UnitType.Infantry, owner, n);
+            Transporter.SetTransported(ghost.GetRealPlatoon());
+            ghost.SetOrientation(100 * Vector3.down, 0);
+            ghost.SetVisible(false);
         }
 
         Movement.SetDestination(Vector3.forward);
@@ -135,12 +127,12 @@ public partial class PlatoonBehaviour : SelectableBehavior
         float spawndistance = 2;
 
         for (int i = 0; i < Units.Count; i++)
-            Units[i].setOriginalOrientation(pos + i * spawndistance * forward, Quaternion.FromToRotation(Vector3.forward, forward));
-        
+            Units[i].SetOriginalOrientation(pos + i * spawndistance * forward, Quaternion.FromToRotation(Vector3.forward, forward));
+
         Movement.BeginQueueing(false);
         Movement.GetDestinationFromGhost();
         Movement.EndQueueing();
-        GhostPlatoon.setVisible(false);
+        GhostPlatoon.SetVisible(false);
     }
 
     public void SetSelected(bool selected)
@@ -156,8 +148,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
     public void SendFirePosOrder(Vector3 position)
     {
-        foreach (var unit in Units)
-        {
+        foreach (var unit in Units) {
             var weapons = unit.GetComponents<Weapon>();
 
             foreach (var weapon in weapons)

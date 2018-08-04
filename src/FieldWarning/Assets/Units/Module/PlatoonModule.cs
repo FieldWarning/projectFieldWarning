@@ -51,7 +51,7 @@ public abstract class PlatoonModule
 
     public void EndQueueing()
     {
-        if (_isQueueing || (Platoon.ActiveWaypoint != null && !Platoon.ActiveWaypoint.interrupt()))
+        if (_isQueueing || (Platoon.ActiveWaypoint != null && !Platoon.ActiveWaypoint.Interrupt()))
         {
             Platoon.Waypoints.Enqueue(newWaypoint);
         }
