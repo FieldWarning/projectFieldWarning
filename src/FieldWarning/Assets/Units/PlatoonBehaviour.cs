@@ -91,7 +91,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         for (int i = 0; i < n; i++) {
             iconInstance = Instantiate(unitInstace);
             var unitBehaviour = iconInstance.GetComponent<UnitBehaviour>();
-            unitBehaviour.setPlatoon(this);
+            unitBehaviour.SetPlatoon(this);
             Units.Add(unitBehaviour);
 
             var collider = iconInstance.GetComponentInChildren<BoxCollider>();
@@ -101,10 +101,10 @@ public partial class PlatoonBehaviour : SelectableBehavior
         BuildModules(t);
 
         if (t == UnitType.AFV) {
-            var ghost = GhostPlatoonBehaviour.build(UnitType.Infantry, owner, n);
-            Transporter.SetTransported(ghost.getRealPlatoon());
-            ghost.setOrientation(100 * Vector3.down, 0);
-            ghost.setVisible(false);
+            var ghost = GhostPlatoonBehaviour.Build(UnitType.Infantry, owner, n);
+            Transporter.SetTransported(ghost.GetRealPlatoon());
+            ghost.SetOrientation(100 * Vector3.down, 0);
+            ghost.SetVisible(false);
         }
 
         Movement.SetDestination(Vector3.forward);
@@ -127,12 +127,12 @@ public partial class PlatoonBehaviour : SelectableBehavior
         float spawndistance = 2;
 
         for (int i = 0; i < Units.Count; i++)
-            Units[i].setOriginalOrientation(pos + i * spawndistance * forward, Quaternion.FromToRotation(Vector3.forward, forward));
+            Units[i].SetOriginalOrientation(pos + i * spawndistance * forward, Quaternion.FromToRotation(Vector3.forward, forward));
 
         Movement.BeginQueueing(false);
         Movement.GetDestinationFromGhost();
         Movement.EndQueueing();
-        GhostPlatoon.setVisible(false);
+        GhostPlatoon.SetVisible(false);
     }
 
     public void SetSelected(bool selected)

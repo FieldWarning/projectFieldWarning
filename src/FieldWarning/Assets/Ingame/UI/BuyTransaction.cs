@@ -36,7 +36,7 @@ namespace Assets.Ingame.UI
 
             _smallestPlatoonSize = MIN_PLATOON_SIZE;
             _ghostPlatoonBehaviour =
-                GhostPlatoonBehaviour.build(type, owner, _smallestPlatoonSize);
+                GhostPlatoonBehaviour.Build(type, owner, _smallestPlatoonSize);
 
             GhostUnits = new List<GhostPlatoonBehaviour>();
             GhostUnits.Add(_ghostPlatoonBehaviour);
@@ -47,13 +47,13 @@ namespace Assets.Ingame.UI
             if (_smallestPlatoonSize < MAX_PLATOON_SIZE) {
 
                 _ghostPlatoonBehaviour.AddSingleUnit();
-                _ghostPlatoonBehaviour.buildRealPlatoon();
+                _ghostPlatoonBehaviour.BuildRealPlatoon();
                 _smallestPlatoonSize++;
             } else {
 
                 // If all platoons in the transaction are max size, we add a new one and update the size counter:
                 _smallestPlatoonSize = MIN_PLATOON_SIZE;
-                _ghostPlatoonBehaviour = GhostPlatoonBehaviour.build(UnitType, Owner, _smallestPlatoonSize);
+                _ghostPlatoonBehaviour = GhostPlatoonBehaviour.Build(UnitType, Owner, _smallestPlatoonSize);
                 GhostUnits.Add(_ghostPlatoonBehaviour);
             }
         }

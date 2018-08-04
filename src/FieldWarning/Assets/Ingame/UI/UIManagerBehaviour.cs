@@ -124,7 +124,7 @@ public class UIManagerBehaviour : MonoBehaviour
     {
         if (Input.GetMouseButton(1)) {
             foreach (var g in _currentBuyTransaction.GhostUnits)
-                g.GetComponent<GhostPlatoonBehaviour>().destroy();
+                g.GetComponent<GhostPlatoonBehaviour>().Destroy();
 
             exitPurchasingMode();
         }
@@ -156,7 +156,7 @@ public class UIManagerBehaviour : MonoBehaviour
         if (getTerrainClickLocation(out hit)) {
 
             List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.GhostPlatoon);
-            ghosts.ForEach(x => x.setVisible(true));
+            ghosts.ForEach(x => x.SetVisible(true));
             positionGhostUnits(destination, hit.point, ghosts);
         }
     }
@@ -229,7 +229,7 @@ public class UIManagerBehaviour : MonoBehaviour
 
     public void buildUnit(UnitType t)
     {
-        var behaviour = GhostPlatoonBehaviour.build(t, owner, 4);
+        var behaviour = GhostPlatoonBehaviour.Build(t, owner, 4);
         _currentBuyTransaction.GhostUnits.Add(behaviour);
     }
 
@@ -258,7 +258,7 @@ public class UIManagerBehaviour : MonoBehaviour
         var right = Vector3.Cross(forward, Vector3.up);
         var pos = position + unitDistance * (formationWidth - 1) * right / 2f;
         for (var i = 0; i < formationWidth; i++)
-            units[i].GetComponent<GhostPlatoonBehaviour>().setOrientation(pos - i * unitDistance * right, heading);
+            units[i].GetComponent<GhostPlatoonBehaviour>().SetOrientation(pos - i * unitDistance * right, heading);
     }
 
     private void exitPurchasingMode()

@@ -37,7 +37,7 @@ public class InfantryBehaviour : UnitBehaviour {
         if (!init)
         {
             data = UnitData.Infantry();
-			base.setHealth(data.maxHealth); //health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
+			base.SetHealth(data.maxHealth); //health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
             buildMen();
             init = true;
         }
@@ -199,13 +199,13 @@ public class InfantryBehaviour : UnitBehaviour {
         }
         
     }*/
-    protected override void doMovement()
+    protected override void DoMovement()
     {
         men.ForEach(x => x.doMovement());
     }
-    public override void setUnitFinalHeading(float heading)
+    public override void SetUnitFinalHeading(float heading)
     {
-        base.setUnitFinalHeading(heading);
+        base.SetUnitFinalHeading(heading);
         ordersDone = false;
         setFormation(Formation.Line);
     }
@@ -265,11 +265,11 @@ public class InfantryBehaviour : UnitBehaviour {
         behaviour = InfantryBehaviourState.Unloading;
     }
     
-    protected override Renderer[] getRenderers()
+    protected override Renderer[] GetRenderers()
     {
         return men.ConvertAll(x => x.gameObject.GetComponent<Renderer>()).ToArray();
     }
-    public override void setOriginalOrientation(Vector3 pos, Quaternion rotation,bool wake=true)
+    public override void SetOriginalOrientation(Vector3 pos, Quaternion rotation,bool wake=true)
     {
         if (wake) WakeUp();
         initialize();
@@ -286,11 +286,11 @@ public class InfantryBehaviour : UnitBehaviour {
         });
 
     }
-    public override bool ordersComplete()
+    public override bool OrdersComplete()
     {
         return ordersDone;
     }
-    public override void updateMapOrientation()
+    public override void UpdateMapOrientation()
     {
         
     }

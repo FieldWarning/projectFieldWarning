@@ -28,7 +28,7 @@ public class HealthBarBehaviour : SelectableBehavior
     // Update is called once per frame
     void Update()
     {
-        SetHealth(unit.getHealth() / unit.data.maxHealth);
+        SetHealth(unit.GetHealth() / unit.data.maxHealth);
     }
 
     public void SetUnit(UnitBehaviour o)

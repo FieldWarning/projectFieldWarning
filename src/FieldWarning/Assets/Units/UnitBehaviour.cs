@@ -50,7 +50,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         data = UnitData.GenericUnit();
         health = data.maxHealth; //set the health to 10 (from UnitData.cs)
         IsAlive = true;
-        setVisible(false);
+        SetVisible(false);
         this.tag = UNIT_TAG;
 
         source = GetComponent<AudioSource>();
@@ -62,8 +62,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Update is called once per frame
     public virtual void Update()
     {
-        doMovement();
-        updateMapOrientation();
+        DoMovement();
+        UpdateMapOrientation();
 
     }
 
@@ -78,7 +78,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
             platoon.Units.Remove(this);
 
             Destroy(this.gameObject);
-            platoon.GhostPlatoon.handleRealUnitDestroyed();
+            platoon.GhostPlatoon.HandleRealUnitDestroyed();
             if (platoon.Units.Count == 0) {
                 Destroy(platoon.gameObject);
                 UIManagerBehaviour.registerPlatoonDeath(platoon);
@@ -88,9 +88,9 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         }
     }
 
-    public abstract void updateMapOrientation();
+    public abstract void UpdateMapOrientation();
 
-    public void setPlatoon(PlatoonBehaviour p)
+    public void SetPlatoon(PlatoonBehaviour p)
     {
         platoon = p;
     }
@@ -108,12 +108,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         platoon.getDestinationFromGhost();
     }*/
 
-    public float getHealth()
+    public float GetHealth()
     {
         return health;
     }
 
-    public void setHealth(float health)
+    public void SetHealth(float health)
     {
         this.health = health;
     }
@@ -124,55 +124,55 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     }
 
     // Sets the unit's destination location, with a default heading value
-    public void setUnitDestination(Vector3 v)
+    public void SetUnitDestination(Vector3 v)
     {
 
         var diff = (v - transform.position).normalized;
-        setFinalOrientation(v, diff.getRadianAngle());
+        SetFinalOrientation(v, diff.getRadianAngle());
     }
 
     // Sets the unit's destination location, with a specific given heading value
-    public void setFinalOrientation(Vector3 d, float heading)
+    public void SetFinalOrientation(Vector3 d, float heading)
     {
         destination = d;
-        setUnitFinalHeading(heading);
+        SetUnitFinalHeading(heading);
         pathfinder.SetPath(destination, MoveCommandType.Fast);
     }
 
     // Updates the unit's final heading so that it faces the specified location
-    public void setUnitFinalFacing(Vector3 v)
+    public void SetUnitFinalFacing(Vector3 v)
     {
         var diff = (v - destination).normalized;
-        setUnitFinalHeading(diff.getRadianAngle());
+        SetUnitFinalHeading(diff.getRadianAngle());
     }
 
     // Updates the unit's final heading to the specified value 
-    public virtual void setUnitFinalHeading(float heading)
+    public virtual void SetUnitFinalHeading(float heading)
     {
         finalHeading = heading;
     }
 
-    protected abstract void doMovement();
+    protected abstract void DoMovement();
 
-    public void setLayer(int l)
+    public void SetLayer(int l)
     {
         gameObject.layer = l;
     }
 
-    protected abstract Renderer[] getRenderers();
+    protected abstract Renderer[] GetRenderers();
 
-    public void setVisible(bool vis)
+    public void SetVisible(bool vis)
     {
-        var renderers = getRenderers();
+        var renderers = GetRenderers();
         foreach (var r in renderers) {
             r.enabled = vis;
         }
 
         if (vis) {
-            setLayer(LayerMask.NameToLayer("Selectable"));
+            SetLayer(LayerMask.NameToLayer("Selectable"));
 
         } else {
-            setLayer(LayerMask.NameToLayer("Ignore Raycast"));
+            SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
         }
     }
 
@@ -184,7 +184,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public void SetMatch(Vector3 match)
     {
-        setUnitDestination(match);
+        SetUnitDestination(match);
     }
 
     public float GetScore(Vector3 matchee)
@@ -192,18 +192,18 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         return (matchee - transform.position).magnitude;
     }
 
-    public abstract void setOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true);
+    public abstract void SetOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true);
 
 
     protected void WakeUp()
     {
         enabled = true;
-        setVisible(true);
+        SetVisible(true);
         foreach (Weapon weapon in gameObject.GetComponents<Weapon>())
             weapon.WakeUp();
     }
 
-    public abstract bool ordersComplete();
+    public abstract bool OrdersComplete();
 
 }
 

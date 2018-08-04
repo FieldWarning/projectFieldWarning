@@ -35,12 +35,12 @@ public class MoveWaypoint : Waypoint {
         }
 
         platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
-        platoon.Units.ForEach(x => x.setUnitFinalHeading(heading));
+        platoon.Units.ForEach(x => x.SetUnitFinalHeading(heading));
     }
 
     public override bool orderComplete()
     {
-        return platoon.Units.All(x => x.ordersComplete());
+        return platoon.Units.All(x => x.OrdersComplete());
     }
 
     public override bool interrupt()

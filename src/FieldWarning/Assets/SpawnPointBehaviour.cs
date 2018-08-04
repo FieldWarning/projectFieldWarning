@@ -55,7 +55,7 @@ public class SpawnPointBehaviour : MonoBehaviour
 
     public void buyUnits(List<GhostPlatoonBehaviour> ghostUnits)
     {
-        var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
+        var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().GetRealPlatoon());
 
         realPlatoons.ForEach(x => spawnQueue.Enqueue(x));
     }
