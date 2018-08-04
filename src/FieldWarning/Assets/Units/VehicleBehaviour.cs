@@ -105,7 +105,12 @@ public class VehicleBehaviour : UnitBehaviour
     protected override Renderer[] GetRenderers()
     {
         // Child 0 is the collider
-        return transform.GetChild(1).GetComponentsInChildren<Renderer>();
+
+        var renderers = GetComponentsInChildren<Renderer>();
+
+        return renderers;
+
+        //return transform.GetChild(1).GetComponentsInChildren<Renderer>();
     }
 
     public override void SetOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true)
