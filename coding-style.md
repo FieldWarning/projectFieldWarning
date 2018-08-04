@@ -3,7 +3,7 @@ C# Coding Style
 
 For non code files (xml, etc), our current best guidance is consistency. When editing files, keep new code and changes consistent with the style in the files. For new files, it should conform to the style for that component. If there is a completely new component, anything that is reasonably broadly accepted is fine.
 
-1. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods. A single line statement block can go without braces but the block must be properly indented on its own line and must not be nested in other statement blocks that use braces. You are strongly encouraged to add an empty line between any opening brace and the statement following it if you find it improves readability, e.g.:
+1. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods and types. A single line statement block can go without braces but the block must be properly indented on its own line and must not be nested in other statement blocks that use braces. You are strongly encouraged to add an empty line between any opening brace and the statement following it if you find it improves readability, e.g.:
 ```C#
 public void Foo(int someArg, int someOtherArg, int someThirdArg) 
 {
