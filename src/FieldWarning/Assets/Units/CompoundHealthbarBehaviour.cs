@@ -35,7 +35,7 @@ public class CompoundHealthbarBehaviour : SelectableBehavior {
         for (int i = 0; i < o.Count; i++)
         {
             var obj = GameObject.Instantiate(Resources.Load<GameObject>("HealthbarContainer"));
-            obj.GetComponent<HealthBarBehaviour>().setUnit(o[i]);
+            obj.GetComponent<HealthBarBehaviour>().SetUnit(o[i]);
             obj.transform.parent = transform;
             
             obj.transform.localScale = new Vector3(scale, .08f, 1);
