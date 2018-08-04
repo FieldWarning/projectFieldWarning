@@ -19,8 +19,8 @@ using Assets.Ingame.UI;
 using UnityEngine.EventSystems;
 using Pfw.Ingame.Prototype;
 
-public class UIManagerBehaviour : MonoBehaviour {
-
+public class UIManagerBehaviour : MonoBehaviour
+{
     [SerializeField]
     private float mouseDragThreshold = 10.0f;
     [SerializeField]
@@ -336,7 +336,8 @@ public class UIManagerBehaviour : MonoBehaviour {
         return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
     }
 
-    private class SelectionManager {
+    private class SelectionManager
+    {
         public List<PlatoonBehaviour> allUnits = new List<PlatoonBehaviour>();
         public List<PlatoonBehaviour> selection { get; private set; }
 
@@ -499,7 +500,8 @@ public class UIManagerBehaviour : MonoBehaviour {
 
 }
 
-public class Commands {
+public class Commands
+{
     public static bool unload()
     {
         return Input.GetKeyDown(Hotkeys.Unload);
@@ -516,7 +518,8 @@ public class Commands {
     }
 }
 
-public class Hotkeys {
+public class Hotkeys
+{
     public static KeyCode Unload = KeyCode.U;
     public static KeyCode Load = KeyCode.L;
     public static KeyCode FirePos = KeyCode.T;
