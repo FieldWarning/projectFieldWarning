@@ -19,10 +19,10 @@ public class Player : MonoBehaviour
     private Team team;
 
     // Use this for initialization
-    void Start() {}
+    void Start() { }
 
     // Update is called once per frame
-    void Update() {}
+    void Update() { }
 
     // TODO turn into property
     public Team getTeam()

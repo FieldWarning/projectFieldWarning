@@ -19,9 +19,9 @@ public class SymbolBehaviour : MonoBehaviour
     public Material iconMaterial;
     public Material[] textures;
 
-    void Start() {}
+    void Start() { }
 
-    void Update() {}
+    void Update() { }
 
     public void SetIcon(UnitType t)
     {

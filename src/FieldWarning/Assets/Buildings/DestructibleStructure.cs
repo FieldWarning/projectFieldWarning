@@ -30,7 +30,7 @@ public class DestructibleStructure : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update() {}
+    void Update() { }
 
     void OnTriggerEnter(Collider other)
     {
