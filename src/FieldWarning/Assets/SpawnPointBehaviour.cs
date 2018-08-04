@@ -14,6 +14,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+using Assets.Ingame.UI;
+
 public class SpawnPointBehaviour : MonoBehaviour
 {
     Vector3 oldPosition;

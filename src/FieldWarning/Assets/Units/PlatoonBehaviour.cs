@@ -17,6 +17,8 @@ using System.Linq;
 using PFW.Weapons;
 using Pfw.Ingame.Prototype;
 
+using Assets.Ingame.UI;
+
 public partial class PlatoonBehaviour : SelectableBehavior
 {
     public UnitType Type;
