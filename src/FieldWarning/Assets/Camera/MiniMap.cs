@@ -16,7 +16,6 @@ public class MiniMap : MonoBehaviour
     {
         var size = Terrain.terrainData.bounds.size;
 
-        _camera.orthographicSize = size.x / 2f;
-        
+        _camera.orthographicSize = size.x / 2f;   
 	}
 }

@@ -20,21 +20,29 @@ public class UnitLabelAttacher : MonoBehaviour
     private Collider _collider;
     private Vector3 _paddingVector;
 
-    // Use this for initialization
-    void Start()
+    public void Start()
     {
         _canvas = GameObject.Find("UIWrapper").GetComponent<Canvas>();
         _collider = GetComponentInChildren<Collider>();
 
         Label = Instantiate(Resources.Load<GameObject>("UnitLabel"), _canvas.transform);
 
-        _paddingVector = new Vector3(0, 2, 0);
+        _paddingVector = new Vector3(0, 5, 0);
     }
 
-    // Update is called once per frame
-    void LateUpdate()
+    public void LateUpdate()
     {
         Label.transform.position = GetScreenPosition(_canvas);
+    }
+
+    public void Hide()
+    {
+        Label.SetActive(false);
+    }
+
+    public void Show()
+    {
+        Label.SetActive(true);
     }
 
     public Vector3 GetScreenPosition(Canvas canvas, Camera cam = null)
