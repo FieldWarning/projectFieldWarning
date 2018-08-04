@@ -48,7 +48,7 @@ namespace Assets.Ingame.UI
 
             _selectionManager = new SelectionManager(this, 0, _mouseDragThreshold);
 
-            _rightClickManager = new ClickManager(1, _mouseDragThreshold, onOrderStart, onOrderShortClick, onOrderLongClick, onOrderHold);
+            _rightClickManager = new ClickManager(1, _mouseDragThreshold, OnOrderStart, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
         }
 
         void Update()
@@ -58,28 +58,28 @@ namespace Assets.Ingame.UI
             case MouseMode.purchasing:
 
                 RaycastHit hit;
-                if (getTerrainClickLocation(out hit)
+                if (GetTerrainClickLocation(out hit)
                     && hit.transform.gameObject.name.Equals("Terrain")) {
 
-                    showGhostUnits(hit);
-                    maybePurchaseGhostUnits(hit);
+                    ShowGhostUnits(hit);
+                    MaybePurchaseGhostUnits(hit);
                 }
 
-                maybeExitPurchasingMode();
+                MaybeExitPurchasingMode();
                 break;
 
             case MouseMode.normal:
-                applyHotkeys();
+                ApplyHotkeys();
                 _selectionManager?.Update();
                 _rightClickManager.Update();
                 break;
 
             case MouseMode.firePos:
-                applyHotkeys();
+                ApplyHotkeys();
                 _selectionManager?.Update();
                 if (Input.GetMouseButtonDown(0)
                     || Input.GetMouseButtonDown(1))
-                    exitFirePosMode();
+                    ExitFirePosMode();
                 break;
 
             default:
@@ -87,17 +87,17 @@ namespace Assets.Ingame.UI
             }
         }
 
-        private void showGhostUnits(RaycastHit terrainHover)
+        private void ShowGhostUnits(RaycastHit terrainHover)
         {
             // Show ghost units under mouse:
-            SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);
-            positionGhostUnits(
+            SpawnPointBehaviour closestSpawn = GetClosestSpawn(terrainHover.point);
+            PositionGhostUnits(
                 terrainHover.point,
                 2 * terrainHover.point - closestSpawn.transform.position,
                 _currentBuyTransaction.GhostUnits);
         }
 
-        private void maybePurchaseGhostUnits(RaycastHit terrainHover)
+        private void MaybePurchaseGhostUnits(RaycastHit terrainHover)
         {
             if (Input.GetMouseButtonUp(0)) {
                 bool noUIcontrolsInUse = EventSystem.current.currentSelectedGameObject == null;
@@ -109,25 +109,25 @@ namespace Assets.Ingame.UI
                     return;
 
                 // TODO we already get closest spawn above, reuse it
-                SpawnPointBehaviour closestSpawn = getClosestSpawn(terrainHover.point);
+                SpawnPointBehaviour closestSpawn = GetClosestSpawn(terrainHover.point);
                 closestSpawn.buyUnits(_currentBuyTransaction.GhostUnits);
 
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     // We turned the current ghosts into real units, so:
                     _currentBuyTransaction = _currentBuyTransaction.Clone();
                 } else {
-                    exitPurchasingMode();
+                    ExitPurchasingMode();
                 }
             }
         }
 
-        private void maybeExitPurchasingMode()
+        private void MaybeExitPurchasingMode()
         {
             if (Input.GetMouseButton(1)) {
                 foreach (var g in _currentBuyTransaction.GhostUnits)
                     g.GetComponent<GhostPlatoonBehaviour>().Destroy();
 
-                exitPurchasingMode();
+                ExitPurchasingMode();
             }
         }
 
@@ -136,33 +136,33 @@ namespace Assets.Ingame.UI
             _selectionManager?.OnGui();
         }
 
-        void onOrderStart()
+        void OnOrderStart()
         {
             var selected = _selectionManager.Selection;
 
             RaycastHit hit;
-            if (getTerrainClickLocation(out hit)) {
+            if (GetTerrainClickLocation(out hit)) {
                 Vector3 com = selected.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
                 List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll<GhostPlatoonBehaviour>(x => x.GhostPlatoon);
-                positionGhostUnits(hit.point, 2 * hit.point - com, ghosts);
+                PositionGhostUnits(hit.point, 2 * hit.point - com, ghosts);
                 _destination = hit.point;
             }
         }
 
-        void onOrderHold()
+        void OnOrderHold()
         {
             var selected = _selectionManager.Selection;
 
             RaycastHit hit;
-            if (getTerrainClickLocation(out hit)) {
+            if (GetTerrainClickLocation(out hit)) {
 
                 List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.GhostPlatoon);
                 ghosts.ForEach(x => x.SetVisible(true));
-                positionGhostUnits(_destination, hit.point, ghosts);
+                PositionGhostUnits(_destination, hit.point, ghosts);
             }
         }
 
-        void onOrderShortClick()
+        void OnOrderShortClick()
         {
             var selected = _selectionManager.Selection;
 
@@ -180,15 +180,15 @@ namespace Assets.Ingame.UI
                 behaviour.getDestinationFromGhost();
             }*/
 
-            _selectionManager.changeSelectionAfterOrder();
+            _selectionManager.ChangeSelectionAfterOrder();
         }
 
-        void onOrderLongClick()
+        void OnOrderLongClick()
         {
             var selected = _selectionManager.Selection;
 
             RaycastHit hit;
-            if (getTerrainClickLocation(out hit)) {
+            if (GetTerrainClickLocation(out hit)) {
                 var shift = Input.GetKey(KeyCode.LeftShift);
                 selected.ForEach(x => x.Movement.BeginQueueing(shift));
                 var destinations = selected.ConvertAll(x => x.GhostPlatoon.transform.position);
@@ -201,11 +201,11 @@ namespace Assets.Ingame.UI
                     go.GetComponent<PlatoonBehaviour>().ghostPlatoon.GetComponent<GhostPlatoonBehaviour>().setVisible(false);
                 }*/
 
-                _selectionManager.changeSelectionAfterOrder();
+                _selectionManager.ChangeSelectionAfterOrder();
             }
         }
 
-        public void tankButtonCallback()
+        public void TankButtonCallback()
         {
             if (_currentBuyTransaction == null)
                 _currentBuyTransaction = new BuyTransaction(UnitType.Tank, Owner);
@@ -216,42 +216,42 @@ namespace Assets.Ingame.UI
             _mouseMode = MouseMode.purchasing;
         }
 
-        public void infantryButtonCallback()
+        public void InfantryButtonCallback()
         {
-            buildUnit(UnitType.Infantry);
+            BuildUnit(UnitType.Infantry);
             _mouseMode = MouseMode.purchasing;
         }
 
-        public void afvButtonCallback()
+        public void AFVButtonCallback()
         {
-            buildUnit(UnitType.AFV);
+            BuildUnit(UnitType.AFV);
             _mouseMode = MouseMode.purchasing;
         }
 
-        public void buildUnit(UnitType t)
+        public void BuildUnit(UnitType t)
         {
             var behaviour = GhostPlatoonBehaviour.Build(t, Owner, 4);
             _currentBuyTransaction.GhostUnits.Add(behaviour);
         }
 
-        public static void registerPlatoonBirth(PlatoonBehaviour platoon)
+        public static void RegisterPlatoonBirth(PlatoonBehaviour platoon)
         {
             _selectionManager.AllUnits.Add(platoon);
         }
 
-        public static void registerPlatoonDeath(PlatoonBehaviour platoon)
+        public static void RegisterPlatoonDeath(PlatoonBehaviour platoon)
         {
             _selectionManager.AllUnits.Remove(platoon);
             _selectionManager.Selection.Remove(platoon);
         }
 
-        private static void positionGhostUnits(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units)
+        private static void PositionGhostUnits(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units)
         {
             var diff = facingPoint - position;
-            positionGhostUnits(position, diff.getRadianAngle(), units);
+            PositionGhostUnits(position, diff.getRadianAngle(), units);
         }
 
-        private static void positionGhostUnits(Vector3 position, float heading, List<GhostPlatoonBehaviour> units)
+        private static void PositionGhostUnits(Vector3 position, float heading, List<GhostPlatoonBehaviour> units)
         {
             Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
             int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
@@ -262,7 +262,7 @@ namespace Assets.Ingame.UI
                 units[i].GetComponent<GhostPlatoonBehaviour>().SetOrientation(pos - i * unitDistance * right, heading);
         }
 
-        private void exitPurchasingMode()
+        private void ExitPurchasingMode()
         {
             _currentBuyTransaction.GhostUnits.Clear();
 
@@ -271,7 +271,7 @@ namespace Assets.Ingame.UI
             _mouseMode = MouseMode.normal;
         }
 
-        private SpawnPointBehaviour getClosestSpawn(Vector3 p)
+        private SpawnPointBehaviour GetClosestSpawn(Vector3 p)
         {
             var pointList = SpawnPointList[Owner.getTeam()];
             SpawnPointBehaviour go = pointList[0];
@@ -285,7 +285,7 @@ namespace Assets.Ingame.UI
             return go;
         }
 
-        public static void addSpawnPoint(SpawnPointBehaviour s)
+        public static void AddSpawnPoint(SpawnPointBehaviour s)
         {
             if (!SpawnPointList.ContainsKey(s.team)) {
                 SpawnPointList.Add(s.team, new List<SpawnPointBehaviour>());
@@ -293,18 +293,18 @@ namespace Assets.Ingame.UI
             SpawnPointList[s.team].Add(s);
         }
 
-        public void applyHotkeys()
+        public void ApplyHotkeys()
         {
             var selected = _selectionManager.Selection;
 
-            if (Commands.unload()) {
+            if (Commands.Unload()) {
                 foreach (var t in selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
                     t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
                     t.Unload();
                     t.EndQueueing();
                 }
 
-            } else if (Commands.load()) {
+            } else if (Commands.Load()) {
 
                 var transporters = selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
                 var infantry = selected.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
@@ -313,25 +313,25 @@ namespace Assets.Ingame.UI
                 transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
                 transporters.ForEach(x => x.EndQueueing());
 
-            } else if (Commands.firePos() && selected.Count != 0) {
+            } else if (Commands.FirePos() && selected.Count != 0) {
                 _mouseMode = MouseMode.firePos;
                 Cursor.SetCursor(_firePosReticle, Vector2.zero, CursorMode.Auto);
             }
         }
 
-        private void enterFirePosMode()
+        private void EnterFirePosMode()
         {
             _mouseMode = MouseMode.firePos;
             Cursor.SetCursor(_firePosReticle, Vector2.zero, CursorMode.Auto);
         }
 
-        private void exitFirePosMode()
+        private void ExitFirePosMode()
         {
             _mouseMode = MouseMode.normal;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 
-        static bool getTerrainClickLocation(out RaycastHit hit)
+        static bool GetTerrainClickLocation(out RaycastHit hit)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
@@ -356,7 +356,7 @@ namespace Assets.Ingame.UI
             {
                 _outer = outer;
                 Selection = new List<PlatoonBehaviour>();
-                _clickManager = new ClickManager(button, mouseDragThreshold, startBoxSelection, onSelectShortClick, endDrag, updateBoxSelection);
+                _clickManager = new ClickManager(button, mouseDragThreshold, StartBoxSelection, OnSelectShortClick, EndDrag, UpdateBoxSelection);
 
                 if (_texture == null) {
                     var areaTransparency = .95f;
@@ -378,7 +378,7 @@ namespace Assets.Ingame.UI
 
                 if (_outer._mouseMode == MouseMode.firePos && Input.GetMouseButtonDown(0)) {
                     RaycastHit hit;
-                    getTerrainClickLocation(out hit);
+                    GetTerrainClickLocation(out hit);
 
                     foreach (var platoon in Selection) {
                         platoon.SendFirePosOrder(hit.point);
@@ -386,34 +386,34 @@ namespace Assets.Ingame.UI
                 }
             }
 
-            public void changeSelectionAfterOrder()
+            public void ChangeSelectionAfterOrder()
             {
                 if (!Input.GetKey(KeyCode.LeftShift) && !Options.StickySelection)
-                    unselectAll(Selection);
+                    UnselectAll(Selection);
             }
 
-            private void startBoxSelection()
+            private void StartBoxSelection()
             {
                 _mouseStart = Input.mousePosition;
                 _active = false;
             }
 
-            private void updateBoxSelection()
+            private void UpdateBoxSelection()
             {
                 _mouseEnd = Input.mousePosition;
-                updateSelection();
+                UpdateSelection();
                 _active = true;
             }
 
-            private void endDrag()
+            private void EndDrag()
             {
                 _active = false;
-                updateSelection();
+                UpdateSelection();
             }
 
-            private void onSelectShortClick()
+            private void OnSelectShortClick()
             {
-                unselectAll(Selection);
+                UnselectAll(Selection);
 
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -425,38 +425,38 @@ namespace Assets.Ingame.UI
                         Selection.Add(selectable.GetPlatoon());
                 }
 
-                setSelected(Selection);
+                SetSelected(Selection);
             }
 
-            private void updateSelection()
+            private void UpdateSelection()
             {
                 if (_outer._mouseMode == MouseMode.firePos)
                     return;
 
-                List<PlatoonBehaviour> newSelection = AllUnits.Where(x => isInside(x)).ToList();
+                List<PlatoonBehaviour> newSelection = AllUnits.Where(x => IsInside(x)).ToList();
                 if (!Input.GetKey(KeyCode.LeftShift) && Selection != null) {
                     List<PlatoonBehaviour> old = Selection.Except(newSelection).ToList();
-                    unselectAll(old);
+                    UnselectAll(old);
                 }
-                setSelected(newSelection);
+                SetSelected(newSelection);
                 Selection = newSelection;
             }
 
-            private bool isInside(PlatoonBehaviour obj)
+            private bool IsInside(PlatoonBehaviour obj)
             {
                 var platoon = obj.GetComponent<PlatoonBehaviour>();
                 if (!platoon.IsInitialized)
                     return false;
 
                 bool inside = false;
-                inside |= platoon.Units.Any(x => isInside(x.transform.position));
+                inside |= platoon.Units.Any(x => IsInside(x.transform.position));
 
                 // TODO: This checks if the center of the icon is within the selection box. It should instead check if any of the four corners of the icon are within the box:
-                inside |= isInside(platoon.Icon.transform.GetChild(0).position);
+                inside |= IsInside(platoon.Icon.transform.GetChild(0).position);
                 return inside;
             }
 
-            private bool isInside(Vector3 t)
+            private bool IsInside(Vector3 t)
             {
                 Vector3 test = Camera.main.WorldToScreenPoint(t);
                 bool insideX = (test.x - _mouseStart.x) * (test.x - _mouseEnd.x) < 0;
@@ -464,13 +464,13 @@ namespace Assets.Ingame.UI
                 return insideX && insideY;
             }
 
-            private void unselectAll(List<PlatoonBehaviour> l)
+            private void UnselectAll(List<PlatoonBehaviour> l)
             {
                 l.ForEach(x => x.SetSelected(false));
                 l.Clear();
             }
 
-            private void setSelected(List<PlatoonBehaviour> l)
+            private void SetSelected(List<PlatoonBehaviour> l)
             {
                 l.ForEach(x => x.SetSelected(true));
             }
@@ -503,17 +503,17 @@ namespace Assets.Ingame.UI
 
     public class Commands
     {
-        public static bool unload()
+        public static bool Unload()
         {
             return Input.GetKeyDown(Hotkeys.Unload);
         }
 
-        public static bool load()
+        public static bool Load()
         {
             return Input.GetKeyDown(Hotkeys.Load);
         }
 
-        public static bool firePos()
+        public static bool FirePos()
         {
             return Input.GetKeyDown(Hotkeys.FirePos);
         }
