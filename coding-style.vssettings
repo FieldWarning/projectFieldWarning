@@ -55,7 +55,7 @@
         <PropertyValue name="Space_BeforeBasesColon">1</PropertyValue>
         <PropertyValue name="Space_AfterMethodDeclarationName">0</PropertyValue>
         <PropertyValue name="Space_AfterDot">0</PropertyValue>
-        <PropertyValue name="NewLines_Braces_Type">0</PropertyValue>
+        <PropertyValue name="NewLines_Braces_Type">1</PropertyValue>
         <PropertyValue name="EnterOutliningModeOnOpen">1</PropertyValue>
         <PropertyValue name="Space_WithinSquares">0</PropertyValue>
         <PropertyValue name="NewLines_Braces_Accessor">0</PropertyValue>

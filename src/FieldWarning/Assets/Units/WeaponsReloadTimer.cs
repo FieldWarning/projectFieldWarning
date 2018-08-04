@@ -11,18 +11,13 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
-
 namespace AssemblyCSharp
 {
-	public class WeaponsReloadTimer
-	{
- 
-		public int ReloadTimer;
+    public class WeaponsReloadTimer
+    {
+        public int ReloadTimer;
 
-		public WeaponsReloadTimer ()
-		{
-		}
-	}
+        public WeaponsReloadTimer() { }
+    }
 }
 

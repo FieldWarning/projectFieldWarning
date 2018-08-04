@@ -24,44 +24,38 @@ public static class Extensions
     public static void Match<T>(this List<Matchable<T>> matchers, List<T> matchees)
     {
         Dictionary<T, MatchStruct<T>> matches = new Dictionary<T, MatchStruct<T>>();
-        while (matchers.Count > 0 )
-        {
+        while (matchers.Count > 0) {
             bool breaking = false;
             var matcher = matchers[0];
             matchees.Sort((x, y) => matcher.Compare(x, y));
-            
-            for (int i = 0; i < matchees.Count; i++)
-            {
+
+            for (int i = 0; i < matchees.Count; i++) {
                 breaking = true;
-                var score = matcher.getScore(matchees[i]);
-                if (!matches.ContainsKey(matchees[i]))
-                {
+                var score = matcher.GetScore(matchees[i]);
+                if (!matches.ContainsKey(matchees[i])) {
                     matches.Add(matchees[i], new MatchStruct<T>());
                 }
-                
-                if (matches[matchees[i]].score > score)
-                {
-                    
+
+                if (matches[matchees[i]].score > score) {
+
                     matchers.RemoveAt(0);
-                    if(matches[matchees[i]].indivdual!=null)matchers.Add(matches[matchees[i]].indivdual);
-                    matches[matchees[i]] = new MatchStruct<T>(matcher,score);
+                    if (matches[matchees[i]].indivdual != null) matchers.Add(matches[matchees[i]].indivdual);
+                    matches[matchees[i]] = new MatchStruct<T>(matcher, score);
                     breaking = false;
                     break;
                 }
-                
+
             }
-            if (breaking)
-            {
+            if (breaking) {
                 break;
             }
-            
+
         }
 
-        foreach (var p in matchees)
-        {
+        foreach (var p in matchees) {
             if (!matches.ContainsKey(p)) return;
-            matches[p].indivdual.setMatch(p);
-            
+            matches[p].indivdual.SetMatch(p);
+
         }
         /*while (matchers.Count > 0 && matchees.Count > 0)
         {
@@ -96,26 +90,19 @@ public static class Extensions
     }
     public static int Compare<T>(this Matchable<T> m, T candidate1, T candidate2)
     {
-        if (candidate1 == null)
-        {
+        if (candidate1 == null) {
             return 1;
         }
-        if (candidate2 == null)
-        {
+        if (candidate2 == null) {
             return -1;
         }
-        var score1 = m.getScore(candidate1);
-        var score2 = m.getScore(candidate2);
-        if (score1 < score2)
-        {
+        var score1 = m.GetScore(candidate1);
+        var score2 = m.GetScore(candidate2);
+        if (score1 < score2) {
             return -1;
-        }
-        else if (score1 > score2)
-        {
+        } else if (score1 > score2) {
             return 1;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
@@ -124,11 +111,9 @@ public static class Extensions
 
         T favorite = matchees.First();
         var bestScore = Single.PositiveInfinity;
-        foreach (var candidate in matchees)
-        {
-            var score = m.getScore(candidate);
-            if (score < bestScore)
-            {
+        foreach (var candidate in matchees) {
+            var score = m.GetScore(candidate);
+            if (score < bestScore) {
                 favorite = candidate;
                 bestScore = score;
             }
@@ -137,15 +122,13 @@ public static class Extensions
     }
     public static void ApplyShaderRecursively(this GameObject obj, Shader s)
     {
-        foreach (var renderer in obj.GetComponents<Renderer>())
-        {
+        foreach (var renderer in obj.GetComponents<Renderer>()) {
             var mat = new Material(renderer.material);
             mat.shader = s;
             mat.color -= Color.black / 2;
             renderer.material = mat;
         }
-        for (var i = 0; i < obj.transform.childCount; i++)
-        {
+        for (var i = 0; i < obj.transform.childCount; i++) {
             obj.transform.GetChild(i).gameObject.ApplyShaderRecursively(s);
         }
     }
@@ -181,29 +164,26 @@ public static class Extensions
 
     }
 
-	public static List<GameObject> FindObjectsWithTag(this Transform parent, string tag)
-	{
-		List<GameObject> taggedGameObjects = new List<GameObject>();
+    public static List<GameObject> FindObjectsWithTag(this Transform parent, string tag)
+    {
+        List<GameObject> taggedGameObjects = new List<GameObject>();
 
-		for (int i = 0; i < parent.childCount; i++)
-		{
-			Transform child = parent.GetChild(i);
-			if (child.tag == tag)
-			{
-				taggedGameObjects.Add(child.gameObject);
-			}
-			if (child.childCount > 0)
-			{
-				taggedGameObjects.AddRange(FindObjectsWithTag(child, tag));
-			}
-		}
-		return taggedGameObjects;
-	}
+        for (int i = 0; i < parent.childCount; i++) {
+            Transform child = parent.GetChild(i);
+            if (child.tag == tag) {
+                taggedGameObjects.Add(child.gameObject);
+            }
+            if (child.childCount > 0) {
+                taggedGameObjects.AddRange(FindObjectsWithTag(child, tag));
+            }
+        }
+        return taggedGameObjects;
+    }
 
 }
 public interface Matchable<T>
 {
-    void setMatch(T match);
+    void SetMatch(T match);
 
-    float getScore(T matchees);
+    float GetScore(T matchees);
 }

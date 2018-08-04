@@ -14,7 +14,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class SpawnPointBehaviour : MonoBehaviour {
+public class SpawnPointBehaviour : MonoBehaviour
+{
     Vector3 oldPosition;
     private Queue<PlatoonBehaviour> spawnQueue = new Queue<PlatoonBehaviour>();
     public const float MIN_SPAWN_INTERVAL = 2f;
@@ -22,24 +23,26 @@ public class SpawnPointBehaviour : MonoBehaviour {
     float spawnTime = MIN_SPAWN_INTERVAL;
     public Team team;
 
-	// Use this for initialization
-	void Start() {
+    // Use this for initialization
+    void Start()
+    {
         UIManagerBehaviour.addSpawnPoint(this);
         if (team == Team.Blue) {
             GetComponentInChildren<Renderer>().material.color = Color.blue;
         } else {
             GetComponentInChildren<Renderer>().material.color = Color.red;
         }
-	}
-	
-	// Update is called once per frame
-	void Update() {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
 
         if (spawnQueue.Count > 0) {
             spawnTime -= Time.deltaTime;
             if (spawnTime <= 0) {
-                var go=spawnQueue.Dequeue();
-                go.GetComponent<PlatoonBehaviour>().spawn(transform.position);
+                var go = spawnQueue.Dequeue();
+                go.GetComponent<PlatoonBehaviour>().Spawn(transform.position);
 
                 if (spawnQueue.Count > 0) {
                     spawnTime += MIN_SPAWN_INTERVAL;
@@ -48,14 +51,15 @@ public class SpawnPointBehaviour : MonoBehaviour {
                 }
             }
         }
-	}
+    }
 
-    public void buyUnits(List<GhostPlatoonBehaviour> ghostUnits) {
-        var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().getRealPlatoon());
+    public void buyUnits(List<GhostPlatoonBehaviour> ghostUnits)
+    {
+        var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().GetRealPlatoon());
 
         realPlatoons.ForEach(x => spawnQueue.Enqueue(x));
     }
-    
 
-    
+
+
 }

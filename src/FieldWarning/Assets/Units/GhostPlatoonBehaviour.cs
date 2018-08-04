@@ -13,10 +13,11 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using Pfw.Ingame.Prototype;
 
-public class GhostPlatoonBehaviour : MonoBehaviour {
-
-	// Use this for initialization
+public class GhostPlatoonBehaviour : MonoBehaviour
+{
+    // Use this for initialization
     bool initIcon = false;
     bool raycastIgnore;
     bool raycastIgnoreChange = false;
@@ -30,20 +31,24 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
     List<GameObject> units = new List<GameObject>();
 
 
-	void Start() {
+    void Start()
+    {
 
-	}
-	
-	// Update is called once per frame
-	void Update() {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         if (raycastIgnoreChange) {
             raycastIgnoreChange = false;
             _setIgnoreRaycast(raycastIgnore);
         }
-	}
+    }
 
-    public void initializeIcon() {
+    public void InitializeIcon()
+    {
         if (!initIcon) {
+
             initIcon = true;
             icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
             //Debug.Log(platoonBehaviour.gameObject);
@@ -53,27 +58,30 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         }
     }
 
-    public PlatoonBehaviour getRealPlatoon() {
+    public PlatoonBehaviour GetRealPlatoon()
+    {
         if (platoonBehaviour == null)
-            buildRealPlatoon();
-        
+            BuildRealPlatoon();
+
         return platoonBehaviour;
     }
 
-    public void buildRealPlatoon() {
+    public void BuildRealPlatoon()
+    {
         realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
 
         platoonBehaviour = realPlatoon.GetComponent<PlatoonBehaviour>();
-        platoonBehaviour.initialize(unitType, owner, units.Count);
+        platoonBehaviour.Initialize(unitType, owner, units.Count);
         //platoonBehaviour.setEnabled(false);
-        platoonBehaviour.setGhostPlatoon(this);
+        platoonBehaviour.SetGhostPlatoon(this);
         realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
-    public void initialize(UnitType t, Player owner, int n) {
+    public void Initialize(UnitType t, Player owner, int n)
+    {
         this.owner = owner;
         unitType = t;
-        baseUnit = Units.getUnit(unitType);
+        baseUnit = UnitFactory.GetUnit(unitType);
         transform.position = 100 * Vector3.down;
 
         // Create units:
@@ -92,61 +100,67 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         //go.transform.parent = this.transform;
     }
 
-    public void setOrientation(Vector3 position, float heading) {
-        
+    public void SetOrientation(Vector3 position, float heading)
+    {
+
         finalHeading = heading;
         transform.position = position;
         Vector3 v = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         var left = new Vector3(-v.z, 0, v.x);
-        
-        var pos = position + (units.Count-1) * (PlatoonBehaviour.baseDistance / 2) * left;
+
+        var pos = position + (units.Count - 1) * (PlatoonBehaviour.BaseDistance / 2) * left;
         for (int i = 0; i < units.Count; i++) {
-            
-            var localPosition = pos - PlatoonBehaviour.baseDistance * i * left;
-            var localRotation = Quaternion.Euler(new Vector3(0, -Mathf.Rad2Deg*(heading)+90, 0));
-            units[i].GetComponent<UnitBehaviour>().setOriginalOrientation(localPosition, localRotation,false);
-            units[i].GetComponent<UnitBehaviour>().updateMapOrientation();          
+
+            var localPosition = pos - PlatoonBehaviour.BaseDistance * i * left;
+            var localRotation = Quaternion.Euler(new Vector3(0, -Mathf.Rad2Deg * (heading) + 90, 0));
+            units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(localPosition, localRotation, false);
+            units[i].GetComponent<UnitBehaviour>().UpdateMapOrientation();
         }
     }
 
-    public void setVisible(bool vis) {
-        initializeIcon();
+    public void SetVisible(bool vis)
+    {
+        InitializeIcon();
         icon.GetComponent<IconBehaviour>().setVisible(vis);
-        units.ForEach(x => x.GetComponent<UnitBehaviour>().setVisible(vis));
+        units.ForEach(x => x.GetComponent<UnitBehaviour>().SetVisible(vis));
     }
 
-    public void setIgnoreRaycast(bool ignore) {
+    public void SetIgnoreRaycast(bool ignore)
+    {
         raycastIgnore = ignore;
         raycastIgnoreChange = true;
     }
 
-    public void _setIgnoreRaycast(bool ignore) {
-        
-        var layer=0;
+    public void _setIgnoreRaycast(bool ignore)
+    {
+
+        var layer = 0;
         if (ignore)
-            layer=2;
-        
+            layer = 2;
+
         Debug.Log(layer);
         gameObject.layer = layer;
         icon.layer = layer;
-        foreach (var u in units)        
+        foreach (var u in units)
             u.layer = layer;
-        
+
     }
 
-    public void destroy() {
+    public void Destroy()
+    {
         foreach (var u in units)
             Destroy(u);
-        
+
         Destroy(gameObject);
     }
 
-    public static GhostPlatoonBehaviour build(UnitType t, Player owner, int count) {
+    public static GhostPlatoonBehaviour Build(UnitType t, Player owner, int count)
+    {
         GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
-        behaviour.initialize(t, owner, count);
-        behaviour.buildRealPlatoon();
-        behaviour.initializeIcon();
+        behaviour.Initialize(t, owner, count);
+        behaviour.BuildRealPlatoon();
+        behaviour.InitializeIcon();
 
         go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
         behaviour.icon.GetComponent<IconBehaviour>().setGhost();
@@ -154,11 +168,12 @@ public class GhostPlatoonBehaviour : MonoBehaviour {
         return behaviour;
     }
 
-    public void handleRealUnitDestroyed() {
+    public void HandleRealUnitDestroyed()
+    {
         GameObject u = units[0];
         units.Remove(u);
         Destroy(u);
         if (units.Count == 0)
-            destroy();
+            Destroy();
     }
 }

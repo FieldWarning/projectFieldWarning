@@ -11,34 +11,33 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using Pfw.Ingame.Prototype;
 using UnityEngine;
 
-public class SymbolBehaviour : MonoBehaviour {
+public class SymbolBehaviour : MonoBehaviour
+{
     public Material iconMaterial;
     public Material[] textures;
 
-	void Start () {
-	
-	}
-	
-	void Update () {
-	
-	}
+    void Start() { }
 
-    public void setIcon(UnitType t) {
+    void Update() { }
+
+    public void SetIcon(UnitType t)
+    {
         int i = 0;
         switch (t) {
-            case UnitType.Infantry:
-                i = 0;
-                break;
-            case UnitType.Tank:
-                i = 1;
-                break;
-            case UnitType.AFV:
-                i = 2;
-                break;
+        case UnitType.Infantry:
+            i = 0;
+            break;
+        case UnitType.Tank:
+            i = 1;
+            break;
+        case UnitType.AFV:
+            i = 2;
+            break;
         }
-        
+
         var mat = textures[i];
         GetComponent<Renderer>().material = mat;
     }

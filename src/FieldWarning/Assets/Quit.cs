@@ -13,15 +13,14 @@
 
 using UnityEngine;
 
-public class Quit : MonoBehaviour {
-
+public class Quit : MonoBehaviour
+{
     // Use this for initialization
-    void Start () {
-    
-    }
-    
+    void Start() { }
+
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         if (Input.GetKey(KeyCode.Escape)) {
             Application.Quit();
         }

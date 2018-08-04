@@ -12,22 +12,22 @@
  */
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
-public class VisibleBehavior : MonoBehaviour {
-    private Point currentRegion;
+public class VisibleBehavior : MonoBehaviour
+{
+    private Point _currentRegion;
     //List<VisibleBehavior> hostileTeam;
-    private Dictionary<VisibleBehavior, bool> spottedBy = new Dictionary<VisibleBehavior, bool>();
+    private Dictionary<VisibleBehavior, bool> _spottedBy = new Dictionary<VisibleBehavior, bool>();
     int spottedByCount;
-    private Dictionary<VisibleBehavior, bool> spotting = new Dictionary<VisibleBehavior, bool>();
-    private bool hostile;
-    public Team team;
-	// Use this for initialization
-	void Start () {
-        
+    private Dictionary<VisibleBehavior, bool> _spotting = new Dictionary<VisibleBehavior, bool>();
+    private bool _hostile;
+    public Team Team;
+
+    // Use this for initialization
+    void Start()
+    {
         /*if (hostile)
         {
             setDetected(false);
@@ -36,104 +36,92 @@ public class VisibleBehavior : MonoBehaviour {
         {
             GetComponent<Renderer>().material.color = Color.blue;
         }*/
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        var newRegion = VisibilityManager.getRegion(transform);
-        if (currentRegion != newRegion)
-        {
-                //Debug.Log("region updated");
-                VisibilityManager.updateUnitRegion(this, newRegion);
-                currentRegion = newRegion;
-        }
-	}
-    public void initialize(Team t)
-    {
-        
-        team = t;
-        var o = Team.Blue;
-        if(t==Team.Blue)o=Team.Red;
-        setHostileTeam(VisibilityManager.getTeamMembers(o));
-        VisibilityManager.addVisibleBehaviour(this);
-        if (team==Team.Red)
-        {
-            GetComponent<Renderer>().material.color = Color.red;
-        }
-        else
-        {
-            GetComponent<Renderer>().material.color = Color.blue;
-        }
-        updateTeamBelonging();
-        currentRegion = VisibilityManager.getRegion(transform);
-        VisibilityManager.updateUnitRegion(this, currentRegion);
     }
 
-    public void setDetected(bool detected)
+    // Update is called once per frame
+    void Update()
     {
-        if (!hostile) return;
-        if (detected)
-        {
+        var newRegion = VisibilityManager.getRegion(transform);
+        if (_currentRegion != newRegion) {
+            //Debug.Log("region updated");
+            VisibilityManager.updateUnitRegion(this, newRegion);
+            _currentRegion = newRegion;
+        }
+    }
+
+    public void Initialize(Team t)
+    {
+        Team = t;
+        var o = Team.Blue;
+        if (t == Team.Blue) o = Team.Red;
+        SetHostileTeam(VisibilityManager.getTeamMembers(o));
+        VisibilityManager.addVisibleBehaviour(this);
+        if (Team == Team.Red) {
+            GetComponent<Renderer>().material.color = Color.red;
+        } else {
+            GetComponent<Renderer>().material.color = Color.blue;
+        }
+        UpdateTeamBelonging();
+        _currentRegion = VisibilityManager.getRegion(transform);
+        VisibilityManager.updateUnitRegion(this, _currentRegion);
+    }
+
+    public void SetDetected(bool detected)
+    {
+        if (!_hostile) return;
+        if (detected) {
             GetComponent<Renderer>().enabled = true;
             //GetComponent<Renderer>().material.color = Color.red;
-        }
-        else
-        {
+        } else {
             GetComponent<Renderer>().enabled = false;
             //GetComponent<Renderer>().material.color = Color.black;
         }
     }
-    public Point getRegion()
+
+    public Point GetRegion()
     {
-        return currentRegion;
+        return _currentRegion;
     }
 
-    internal void setSpotting(VisibleBehavior enemy, bool p)
+    internal void SetSpotting(VisibleBehavior enemy, bool p)
     {
         if (enemy == this) Debug.LogError("error");
-        if (p && !spotting[enemy])
-        {
-            spotting[enemy] = true;
+        if (p && !_spotting[enemy]) {
+            _spotting[enemy] = true;
+        } else {
+            _spotting[enemy] = false;
         }
-        else
-        {
-            spotting[enemy] = false;
-        }
-        
+
     }
 
-    internal void setSpottedBy(VisibleBehavior unit, bool p)
+    internal void SetSpottedBy(VisibleBehavior unit, bool p)
     {
-        if (p && !spottedBy[unit])
-        {
-            if (spottedByCount == 0)
-            {
-                setDetected(true);
+        if (p && !_spottedBy[unit]) {
+            if (spottedByCount == 0) {
+                SetDetected(true);
             }
             spottedByCount += 1;
-            spottedBy[unit] = true; ;
-            
+            _spottedBy[unit] = true; ;
+
         }
-        if (!p && spottedBy[unit])
-        {
+        if (!p && _spottedBy[unit]) {
             spottedByCount -= 1;
-            if (spottedByCount == 0)
-            {
-                setDetected(false);
+            if (spottedByCount == 0) {
+                SetDetected(false);
             }
-            spottedBy[unit] = false;
+            _spottedBy[unit] = false;
         }
     }
 
-    internal void setHostileTeam(List<VisibleBehavior> hostileTeam)
+    internal void SetHostileTeam(List<VisibleBehavior> hostileTeam)
     {
-        foreach (var h in hostileTeam.Where(x=>!spotting.Keys.Contains(x)))
-        {
-            spotting.Add(h, false);
-            spottedBy.Add(h, false);
+        foreach (var h in hostileTeam.Where(x => !_spotting.Keys.Contains(x))) {
+            _spotting.Add(h, false);
+            _spottedBy.Add(h, false);
         }
-        
+
     }
+
     /*public override int GetHashCode()
     {
         return hashCode;
@@ -143,21 +131,17 @@ public class VisibleBehavior : MonoBehaviour {
         return obj != null && obj.hashCode == this.hashCode;
     }*/
 
-
-
-    internal void addHostile(VisibleBehavior b)
+    internal void AddHostile(VisibleBehavior b)
     {
-        if (!spottedBy.ContainsKey(b))
-        {
-            spottedBy.Add(b, false);
+        if (!_spottedBy.ContainsKey(b)) {
+            _spottedBy.Add(b, false);
         }
-        if (!spotting.ContainsKey(b))
-        {
-            spotting.Add(b, false);
+        if (!_spotting.ContainsKey(b)) {
+            _spotting.Add(b, false);
         }
     }
 
-    internal void updateTeamBelonging()
+    internal void UpdateTeamBelonging()
     {
         //hostile = team != UIManagerBehaviour.owner.team;
         //if (!hostile || spottedByCount > 0)

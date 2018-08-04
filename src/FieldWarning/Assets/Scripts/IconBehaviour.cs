@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 public class IconBehaviour : SelectableBehavior
 {
-    int layer=-1;
+    int layer = -1;
     public PlatoonBehaviour platoon;
 
     SymbolBehaviour _symbol;
@@ -33,21 +33,22 @@ public class IconBehaviour : SelectableBehavior
     Transform billboard {
         get {
             if (_billboard == null) {
-                _billboard=transform.GetChild(0);
+                _billboard = transform.GetChild(0);
             }
 
             return _billboard;
         }
     }
-   
+
     public bool isInitialized = false;
     private bool init = false;
     Color baseColor = Color.blue;
     bool visible = true;
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         billboard.GetComponent<Renderer>().material.color = baseColor;
         if (layer != -1)
             setLayer(layer);
@@ -55,30 +56,35 @@ public class IconBehaviour : SelectableBehavior
         setSelected(false);
         setVisible(visible);
     }
-	
-	// Update is called once per frame
-	void Update () {
 
-	}
+    // Update is called once per frame
+    void Update()
+    {
 
-    public void setPlatoon(PlatoonBehaviour p) {
-        platoon = p;
-        symbol.setIcon(p.type);
     }
 
-    public void setLayer(int l) {
+    public void setPlatoon(PlatoonBehaviour p)
+    {
+        platoon = p;
+        symbol.SetIcon(p.Type);
+    }
+
+    public void setLayer(int l)
+    {
         layer = l;
         if (billboard != null)
             billboard.gameObject.layer = l;
         gameObject.layer = l;
     }
 
-    public void setSource(List<UnitBehaviour> list) {
+    public void setSource(List<UnitBehaviour> list)
+    {
         isInitialized = true;
-        billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().setSource(list);
+        billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
     }
 
-    public void setVisible(bool vis) {
+    public void setVisible(bool vis)
+    {
 
         gameObject.SetActive(vis);
         if (_billboard != null) {
@@ -96,11 +102,12 @@ public class IconBehaviour : SelectableBehavior
         }
     }
 
-    public void setSelected(bool selected) {
+    public void setSelected(bool selected)
+    {
         Color color;
 
         if (selected) {
-            color = (baseColor + Color.white) / 2;            
+            color = (baseColor + Color.white) / 2;
         } else {
             color = baseColor;
         }
@@ -109,15 +116,17 @@ public class IconBehaviour : SelectableBehavior
         symbol.GetComponent<Renderer>().material.color = color;// (color + Color.white) / 2;
     }
 
-    public void setGhost() {
-        billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2*baseColor + Color.white) / 3);
+    public void setGhost()
+    {
+        billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2 * baseColor + Color.white) / 3);
         symbol.GetComponent<Renderer>().material.SetColor("_Emission", (2 * baseColor + Color.white) / 3);
         setVisible(true);
     }
 
-    public void setTeam(Team t) {
+    public void setTeam(Team t)
+    {
         if (t == Team.Blue) {
-            baseColor = Color.Lerp(Color.blue,Color.white,.1f);
+            baseColor = Color.Lerp(Color.blue, Color.white, .1f);
         } else {
             baseColor = Color.red;
         }

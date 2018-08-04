@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4da69dbd1d5c4dc45ac7c9f78982f24f
+timeCreated: 1463571508
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - firePosReticle: {instanceID: 0}
+  - owner: {instanceID: 0}
+  - _customSkin: {fileID: 11400000, guid: a2b723577b5b3d74d9722a824a6e7d3a, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

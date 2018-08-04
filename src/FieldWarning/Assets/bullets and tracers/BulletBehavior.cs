@@ -10,31 +10,23 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
- 
+
 using UnityEngine;
 
 public class BulletBehavior : MonoBehaviour
 {
+    private Vector3 _startPosition;
+    //staring position of the shell
+    private Vector3 _endPosition;
+    //end positin
+    private int _velocity;
+    private int _arc;
+    //will be used later so shells arent lasers
 
 
-	Vector3 start_position;
-	//staring position of the shell
-	Vector3 end_position;
-	//end positin
-	int Vellocity;
-	int arc;
-	//will be used later so shells arent lasers
+    // Use this for initialization
+    void Start() { }
 
-
-	// Use this for initialization
-	void Start ()
-	{
-		
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-		
-	}
+    // Update is called once per frame
+    void Update() { }
 }

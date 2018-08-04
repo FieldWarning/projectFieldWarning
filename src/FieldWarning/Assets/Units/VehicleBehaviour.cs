@@ -13,36 +13,40 @@
 
 using UnityEngine;
 
-public class VehicleBehaviour : UnitBehaviour {
+public class VehicleBehaviour : UnitBehaviour
+{
+    const float DECELERATION_FACTOR = 2.0f;
 
-	const float DECELERATION_FACTOR = 2.0f;
-    
-	float speed;
+    float speed;
 
     // Use this for initialization
-    new void Start() {
+    new void Start()
+    {
         base.Start();
-		data = UnitData.Tank();
-	}
-	
-	// Update is called once per frame
-	new void Update() {
-        base.Update();
-	}
-
-
-    protected override void doMovement() {
-        Vector3 waypoint = pathfinder.GetWaypoint();
-
-        float destinationHeading = calculateDestinationHeading(waypoint);
-        float remainingTurn = turnTowardDestination(destinationHeading);
-
-        float targetSpeed = calculateTargetSpeed(remainingTurn, waypoint);
-        updateRealSpeed(targetSpeed);
-		transform.Translate(speed * Time.deltaTime * Vector3.forward);
+        data = UnitData.Tank();
     }
 
-    private float calculateDestinationHeading(Vector3 waypoint) {
+    // Update is called once per frame
+    new void Update()
+    {
+        base.Update();
+    }
+
+
+    protected override void DoMovement()
+    {
+        Vector3 waypoint = pathfinder.GetWaypoint();
+
+        float destinationHeading = CalculateDestinationHeading(waypoint);
+        float remainingTurn = TurnTowardDestination(destinationHeading);
+
+        float targetSpeed = CalculateTargetSpeed(remainingTurn, waypoint);
+        UpdateRealSpeed(targetSpeed);
+        transform.Translate(speed * Time.deltaTime * Vector3.forward);
+    }
+
+    private float CalculateDestinationHeading(Vector3 waypoint)
+    {
         float destinationHeading;
 
         if (pathfinder.HasDestination()) {
@@ -55,7 +59,8 @@ public class VehicleBehaviour : UnitBehaviour {
         return destinationHeading;
     }
 
-    private float turnTowardDestination(float destinationHeading) {
+    private float TurnTowardDestination(float destinationHeading)
+    {
         destinationHeading = destinationHeading.unwrapRadian();
         var currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
         var remainingTurn = (destinationHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
@@ -68,7 +73,8 @@ public class VehicleBehaviour : UnitBehaviour {
         return remainingTurn;
     }
 
-    private float calculateTargetSpeed(float headingDiff, Vector3 waypoint) {
+    private float CalculateTargetSpeed(float headingDiff, Vector3 waypoint)
+    {
         float targetSpeed;
 
         if (!pathfinder.HasDestination()) {
@@ -87,7 +93,8 @@ public class VehicleBehaviour : UnitBehaviour {
         return targetSpeed;
     }
 
-    private void updateRealSpeed(float targetSpeed) {
+    private void UpdateRealSpeed(float targetSpeed)
+    {
         if (targetSpeed > speed) {
             speed = Mathf.Min(targetSpeed, speed + data.accelRate * Time.deltaTime);
         } else {
@@ -95,25 +102,29 @@ public class VehicleBehaviour : UnitBehaviour {
         }
     }
 
-    protected override Renderer[] getRenderers() {
-		// Child 0 is the collider
+    protected override Renderer[] GetRenderers()
+    {
+        // Child 0 is the collider
         return transform.GetChild(1).GetComponentsInChildren<Renderer>();
     }
 
-    public override void setOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true) {
+    public override void SetOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true)
+    {
         if (wake)
             WakeUp();
         transform.position = pos;
         transform.localRotation = rotation;
     }
 
-    public override void updateMapOrientation() {
+    public override void UpdateMapOrientation()
+    {
         var p = this.transform.position;
         var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
         this.transform.position = new Vector3(p.x, y, p.z);
     }
 
-    public override bool ordersComplete() {
-		return !pathfinder.HasDestination();
+    public override bool OrdersComplete()
+    {
+        return !pathfinder.HasDestination();
     }
 }
