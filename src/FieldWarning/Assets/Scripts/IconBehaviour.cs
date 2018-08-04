@@ -80,7 +80,7 @@ public class IconBehaviour : SelectableBehavior
     public void setSource(List<UnitBehaviour> list)
     {
         isInitialized = true;
-        billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().setSource(list);
+        billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
     }
 
     public void setVisible(bool vis)

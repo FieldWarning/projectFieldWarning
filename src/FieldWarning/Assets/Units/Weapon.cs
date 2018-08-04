@@ -80,8 +80,7 @@ namespace PFW.Weapons
 
             Vector3 pos = target.enemy == null ? target.position : target.enemy.transform.position;
 
-            if (pos != Vector3.zero)
-            {
+            if (pos != Vector3.zero) {
                 aimed = true;
                 shotEmitter.LookAt(pos);
 
@@ -89,15 +88,13 @@ namespace PFW.Weapons
                 Quaternion rotationToTarget = Quaternion.LookRotation(mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
-                if (Mathf.Abs(targetTurretAngle) > data.ArcHorizontal)
-                {
+                if (Mathf.Abs(targetTurretAngle) > data.ArcHorizontal) {
                     targetTurretAngle = 0f;
                     aimed = false;
                 }
 
                 targetBarrelAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
-                if (targetBarrelAngle < -data.ArcUp || targetBarrelAngle > data.ArcDown)
-                {
+                if (targetBarrelAngle < -data.ArcUp || targetBarrelAngle > data.ArcDown) {
                     targetBarrelAngle = 0f;
                     aimed = false;
                 }
@@ -109,24 +106,18 @@ namespace PFW.Weapons
             float deltaAngle;
 
             deltaAngle = (targetTurretAngle - turretAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn)
-            {
+            if (Mathf.Abs(deltaAngle) > turn) {
                 turretAngle += (deltaAngle > 0 ? 1 : -1) * turn;
                 aimed = false;
-            }
-            else
-            {
+            } else {
                 turretAngle = targetTurretAngle;
             }
 
             deltaAngle = (targetBarrelAngle - barrelAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn)
-            {
+            if (Mathf.Abs(deltaAngle) > turn) {
                 barrelAngle += (deltaAngle > 0 ? 1 : -1) * turn;
                 aimed = false;
-            }
-            else
-            {
+            } else {
                 barrelAngle = targetBarrelAngle;
             }
 
@@ -143,21 +134,17 @@ namespace PFW.Weapons
             // particle
             shotEffect.Play();
 
-            if (target.enemy != null)
-            {
+            if (target.enemy != null) {
                 System.Random rnd = new System.Random();
                 int roll = rnd.Next(1, 100);
 
                 // HIT
-                if (roll < data.Accuracy)
-                {
+                if (roll < data.Accuracy) {
                     target.enemy.GetComponent<UnitBehaviour>()
                         .HandleHit(data.Damage);
                     return true;
                 }
-            }
-            else
-            {
+            } else {
                 // ensure we only fire pos once
                 this.target = null;
             }
@@ -184,16 +171,14 @@ namespace PFW.Weapons
             GameObject Target = null;
             Team thisTeam = unit.platoon.Owner.getTeam();
 
-            for (int i = 0; i < (int)units.Length; i++)
-            {
+            for (int i = 0; i < (int)units.Length; i++) {
                 // Filter out friendlies:
                 if (units[i].GetComponent<UnitBehaviour>().platoon.Owner.getTeam() == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(units[i].transform.position, unit.transform.position);
-                if (distance < data.FireRange)
-                {
+                if (distance < data.FireRange) {
                     return units[i];
                 }
             }
