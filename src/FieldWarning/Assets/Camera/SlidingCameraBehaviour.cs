@@ -40,7 +40,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     [Header("Zoom Level")]
     [SerializeField] private float _zoomSpeed = 500f;
-    [SerializeField] private float _zoomTiltSpeed = 0.3f;
+    [SerializeField] private float _zoomTiltSpeed = 4f;
     [SerializeField] private float _minAltitude = 0.2f;
     [SerializeField] private float _tiltThreshold = 2f;
     [SerializeField] private float _maxAltitude = 2000;
@@ -192,7 +192,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         if (transform.position.y < _tiltThreshold || _targetPosition.y < _tiltThreshold) {
 
-            _rotateX += _targetPosition.y - oldAltitude * _zoomTiltSpeed;
+            _rotateX += (_targetPosition.y - oldAltitude) * _zoomTiltSpeed;
             _rotateX = Mathf.Clamp(_rotateX, _minCameraAngle, _maxCameraAngle);
         }
     }
