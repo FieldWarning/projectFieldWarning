@@ -133,7 +133,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void _setIgnoreRaycast(bool ignore)
     {
-
         var layer = 0;
         if (ignore)
             layer = 2;
@@ -143,7 +142,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         icon.layer = layer;
         foreach (var u in units)
             u.layer = layer;
-
     }
 
     public void Destroy()
