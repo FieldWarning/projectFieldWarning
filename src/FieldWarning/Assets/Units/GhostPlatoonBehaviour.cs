@@ -17,11 +17,10 @@ using Pfw.Ingame.Prototype;
 
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
-    // Use this for initialization
-    private bool _initIcon = false;
+    public float FinalHeading;
+    
     private bool _raycastIgnore;
     private bool _raycastIgnoreChange = false;
-    public float FinalHeading;
     private GameObject _icon;
     private GameObject _baseUnit;
     private UnitType _unitType;
@@ -29,14 +28,12 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private PlatoonBehaviour _platoonBehaviour;
     private Player _owner;
     private List<GameObject> _units = new List<GameObject>();
-
-
+    
     void Start()
     {
 
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         if (_raycastIgnoreChange) {
@@ -45,17 +42,14 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         }
     }
 
-    public void InitializeIcon()
+    private void InitializeIcon()
     {
-        if (!_initIcon) {
-
-            _initIcon = true;
-            _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
-            //Debug.Log(platoonBehaviour.gameObject);
-            //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
-            _icon.GetComponent<IconBehaviour>().setTeam(_owner.getTeam());
-            _icon.transform.parent = transform;
-        }
+        _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
+        //Debug.Log(platoonBehaviour.gameObject);
+        //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
+        _icon.GetComponent<IconBehaviour>().setTeam(_owner.getTeam());
+        _icon.transform.parent = transform;
+        
     }
 
     public PlatoonBehaviour GetRealPlatoon()
@@ -72,7 +66,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
         _platoonBehaviour = _realPlatoon.GetComponent<PlatoonBehaviour>();
         _platoonBehaviour.Initialize(_unitType, _owner, _units.Count);
-        //platoonBehaviour.setEnabled(false);
+
         _platoonBehaviour.SetGhostPlatoon(this);
         _realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
@@ -119,7 +113,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void SetVisible(bool vis)
     {
-        InitializeIcon();
         _icon.GetComponent<IconBehaviour>().setVisible(vis);
         _units.ForEach(x => x.GetComponent<UnitBehaviour>().SetVisible(vis));
     }
