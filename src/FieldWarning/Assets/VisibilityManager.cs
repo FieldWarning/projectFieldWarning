@@ -60,7 +60,7 @@ public class VisibilityManager : MonoBehaviour
         var go = Resources.Load<GameObject>("VisTest");
         var friend = GameObject.Instantiate<GameObject>(go);
         var friendBehaviour = friend.GetComponent<VisibleBehavior>();
-        friendBehaviour.initialize(Team.Red);
+        friendBehaviour.Initialize(Team.Red);
         var n = 100;
         foreach (var t in new Team[] { Team.Blue, Team.Red })
         {
@@ -74,7 +74,7 @@ public class VisibilityManager : MonoBehaviour
                 var enemy = GameObject.Instantiate<GameObject>(go);
                 //enemy.transform.parent = friend.transform;
                 var behaviour = enemy.GetComponent<VisibleBehavior>();
-                behaviour.initialize(t);
+                behaviour.Initialize(t);
                 //hostileTeam.Add(behaviour);
                 var pos = 200 * UnityEngine.Random.insideUnitCircle;
                 behaviour.transform.position = new Vector3(pos.x, 0, pos.y) + offset;
@@ -87,11 +87,11 @@ public class VisibilityManager : MonoBehaviour
     }
     public static void addVisibleBehaviour(VisibleBehavior b)
     {
-        var members=getTeamMembers(b.team);
+        var members=getTeamMembers(b.Team);
         if (!members.Contains(b)) members.Add(b);
         var t=Team.Blue;
-        if (t == b.team) t = Team.Red;
-        getTeamMembers(t).ForEach(x=>x.addHostile(b));
+        if (t == b.Team) t = Team.Red;
+        getTeamMembers(t).ForEach(x=>x.AddHostile(b));
     }
     public void updateVision()
     {
@@ -107,7 +107,7 @@ public class VisibilityManager : MonoBehaviour
             for (var k = turn % groups; k < team.Count;k+=groups )
             {
                 var unit = team[k];
-                var region = unit.getRegion();
+                var region = unit.GetRegion();
                 for (int i = -1; i < 2; i++)
                 {
                     for (int j = -1; j < 2; j++)
@@ -122,13 +122,13 @@ public class VisibilityManager : MonoBehaviour
                         {
                             if (TerrainData.visionScore(unit.transform, enemy.transform, maxViewDistance))
                             {
-                                unit.setSpotting(enemy, true);
-                                enemy.setSpottedBy(unit, true);
+                                unit.SetSpotting(enemy, true);
+                                enemy.SetSpottedBy(unit, true);
                             }
                             else
                             {
-                                unit.setSpotting(enemy, false);
-                                enemy.setSpottedBy(unit, false);
+                                unit.SetSpotting(enemy, false);
+                                enemy.SetSpottedBy(unit, false);
                             }
                         }
                     }
@@ -166,9 +166,9 @@ public class VisibilityManager : MonoBehaviour
     }*/
     public static void updateUnitRegion(VisibleBehavior unit, Point newRegion)
     {
-        var currentPoint = unit.getRegion();
-        getVisionCells(unit.team)[currentPoint.x, currentPoint.y].Remove(unit);
-        getVisionCells(unit.team)[newRegion.x, newRegion.y].Add(unit);
+        var currentPoint = unit.GetRegion();
+        getVisionCells(unit.Team)[currentPoint.x, currentPoint.y].Remove(unit);
+        getVisionCells(unit.Team)[newRegion.x, newRegion.y].Add(unit);
     }
     public static Point getRegion(Transform transform)
     {
@@ -200,8 +200,8 @@ public class VisibilityManager : MonoBehaviour
     }
     public static void updateTeamBelonging()
     {
-        teamMembersBlue.ForEach(x => x.updateTeamBelonging());
-        teamMembersRed.ForEach(x => x.updateTeamBelonging());
+        teamMembersBlue.ForEach(x => x.UpdateTeamBelonging());
+        teamMembersRed.ForEach(x => x.UpdateTeamBelonging());
     }
 }
 public struct Point
