@@ -158,12 +158,12 @@ public partial class PlatoonBehaviour : SelectableBehavior
         }
     }
 
-    /// <summary>
-    /// It's getting weird.
-    /// </summary>
-    /// <returns></returns>
-    public override PlatoonBehaviour GetPlatoon()
+    public void Destroy()
     {
-        return this;
+        foreach (var p in Units)
+            Destroy(p.gameObject);
+
+        UIManagerBehaviour.registerPlatoonDeath(this);
+        Destroy(gameObject);
     }
 }

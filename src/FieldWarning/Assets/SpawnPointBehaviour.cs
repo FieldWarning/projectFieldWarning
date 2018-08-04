@@ -39,7 +39,6 @@ public class SpawnPointBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (spawnQueue.Count > 0) {
             spawnTime -= Time.deltaTime;
             if (spawnTime <= 0) {

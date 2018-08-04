@@ -22,11 +22,11 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     bool raycastIgnore;
     bool raycastIgnoreChange = false;
     public float finalHeading;
-    GameObject icon;
+    public GameObject icon;
     GameObject baseUnit;
     UnitType unitType;
     GameObject realPlatoon;
-    PlatoonBehaviour platoonBehaviour;
+    private PlatoonBehaviour _platoonBehaviour;
     Player owner;
     List<GameObject> units = new List<GameObject>();
 
@@ -52,7 +52,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
             initIcon = true;
             icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
             //Debug.Log(platoonBehaviour.gameObject);
-            icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
+            //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
             icon.GetComponent<IconBehaviour>().setTeam(owner.getTeam());
             icon.transform.parent = transform;
         }
@@ -60,20 +60,20 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public PlatoonBehaviour GetRealPlatoon()
     {
-        if (platoonBehaviour == null)
+        if (_platoonBehaviour == null)
             BuildRealPlatoon();
 
-        return platoonBehaviour;
+        return _platoonBehaviour;
     }
 
     public void BuildRealPlatoon()
     {
         realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
 
-        platoonBehaviour = realPlatoon.GetComponent<PlatoonBehaviour>();
-        platoonBehaviour.Initialize(unitType, owner, units.Count);
+        _platoonBehaviour = realPlatoon.GetComponent<PlatoonBehaviour>();
+        _platoonBehaviour.Initialize(unitType, owner, units.Count);
         //platoonBehaviour.setEnabled(false);
-        platoonBehaviour.SetGhostPlatoon(this);
+        _platoonBehaviour.SetGhostPlatoon(this);
         realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
@@ -89,7 +89,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
             AddSingleUnit();
     }
 
-    public void AddSingleUnit()
+    private void AddSingleUnit()
     {
         GameObject go = GameObject.Instantiate(baseUnit);
         go.GetComponent<UnitBehaviour>().enabled = false;
@@ -148,6 +148,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void Destroy()
     {
+        _platoonBehaviour.Destroy();
+
         foreach (var u in units)
             Destroy(u);
 
