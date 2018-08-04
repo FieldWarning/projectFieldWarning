@@ -39,13 +39,13 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
 
     public void GetDestinationFromGhost()
     {
-        var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().finalHeading;
+        var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
         SetFinalOrientation(Platoon.GhostPlatoon.transform.position, heading);
     }
 
     public void GetHeadingFromGhost()
     {
-        var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().finalHeading;
+        var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
         SetFinalOrientation(Waypoint.destination, heading);
     }
 
