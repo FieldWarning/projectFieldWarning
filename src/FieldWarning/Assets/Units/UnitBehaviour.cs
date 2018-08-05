@@ -64,9 +64,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Update is called once per frame
     public virtual void Update()
     {
-        DoMovement();
         UpdateMapOrientation();
-
+        DoMovement();
     }
 
     public void HandleHit(float receivedDamage)

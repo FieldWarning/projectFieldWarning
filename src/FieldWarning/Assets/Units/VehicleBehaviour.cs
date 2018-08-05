@@ -42,6 +42,7 @@ public class VehicleBehaviour : UnitBehaviour
 
         float targetSpeed = CalculateTargetSpeed(remainingTurn, waypoint);
         UpdateRealSpeed(targetSpeed);
+
         transform.Translate(speed * Time.deltaTime * Vector3.forward);
     }
 
@@ -49,10 +50,13 @@ public class VehicleBehaviour : UnitBehaviour
     {
         float destinationHeading;
 
-        if (pathfinder.HasDestination()) {
+        if (pathfinder.HasDestination())
+        {
             var diff = waypoint - this.transform.position;
             destinationHeading = diff.getRadianAngle();
-        } else {
+        }
+        else
+        {
             destinationHeading = finalHeading;
         }
 
@@ -68,6 +72,19 @@ public class VehicleBehaviour : UnitBehaviour
         if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
             turn = remainingTurn;
 
+        //var normal = Terrain.activeTerrain.terrainData.GetInterpolatedNormal(transform.position.x / Terrain.activeTerrain.terrainData.bounds.size.x, transform.position.y / Terrain.activeTerrain.terrainData.bounds.size.y);
+
+        //var desiredForward = new Vector3(Mathf.Sin(currentHeading + turn), 0, Mathf.Cos(currentHeading + turn));
+        //var left = Vector3.Cross(Vector3.up, desiredForward);
+        //var actualForward = Vector3.Cross(left, normal);
+
+        //transform.up = normal;
+        //transform.forward = actualForward;
+
+
+        ////transform.Rotate(Vector3.up, -turn);
+        ////transform.Rotate(Vector3.right, transform.eulerAngles.y - normal);
+
         transform.Rotate(Vector3.up, -turn);
 
         return remainingTurn;
@@ -77,9 +94,12 @@ public class VehicleBehaviour : UnitBehaviour
     {
         float targetSpeed;
 
-        if (!pathfinder.HasDestination()) {
+        if (!pathfinder.HasDestination())
+        {
             targetSpeed = 0f;
-        } else {
+        }
+        else
+        {
             float destDist = (destination - transform.localPosition).magnitude;
             targetSpeed = Mathf.Min(data.movementSpeed, Mathf.Sqrt(2 * destDist * data.accelRate * DECELERATION_FACTOR));
 
@@ -95,9 +115,12 @@ public class VehicleBehaviour : UnitBehaviour
 
     private void UpdateRealSpeed(float targetSpeed)
     {
-        if (targetSpeed > speed) {
+        if (targetSpeed > speed)
+        {
             speed = Mathf.Min(targetSpeed, speed + data.accelRate * Time.deltaTime);
-        } else {
+        }
+        else
+        {
             speed = Mathf.Max(targetSpeed, speed - DECELERATION_FACTOR * data.accelRate * Time.deltaTime);
         }
     }
@@ -105,12 +128,12 @@ public class VehicleBehaviour : UnitBehaviour
     protected override Renderer[] GetRenderers()
     {
         // Child 0 is the collider
+        //return transform.GetChild(1).GetComponentsInChildren<Renderer>();
 
+        // More generic fix..
         var renderers = GetComponentsInChildren<Renderer>();
 
         return renderers;
-
-        //return transform.GetChild(1).GetComponentsInChildren<Renderer>();
     }
 
     public override void SetOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true)
@@ -123,9 +146,12 @@ public class VehicleBehaviour : UnitBehaviour
 
     public override void UpdateMapOrientation()
     {
-        var p = this.transform.position;
-        var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
-        this.transform.position = new Vector3(p.x, y, p.z);
+        var terrainHeight = Terrain.activeTerrain.SampleHeight(transform.position);
+
+        transform.position = new Vector3(transform.position.x, terrainHeight, transform.position.z);
+        //var p = this.transform.position;
+        //var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
+        //this.transform.position = new Vector3(p.x, y, p.z);
     }
 
     public override bool OrdersComplete()
