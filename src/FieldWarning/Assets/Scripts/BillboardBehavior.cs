@@ -38,7 +38,6 @@ public class BillboardBehavior : SelectableBehavior
 
     private void faceCamera()
     {
-
         transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
         var distance = (Camera.main.transform.position - transform.position).magnitude;
         transform.localScale = SIZE * distance * Vector3.one;

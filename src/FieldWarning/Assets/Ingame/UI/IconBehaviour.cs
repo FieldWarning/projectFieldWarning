@@ -87,7 +87,6 @@ namespace Assets.Ingame.UI
 
         public void setVisible(bool vis)
         {
-
             gameObject.SetActive(vis);
             if (_billboard != null) {
                 billboard.GetComponent<Renderer>().enabled = vis;

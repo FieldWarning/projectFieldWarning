@@ -49,8 +49,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         //Debug.Log(platoonBehaviour.gameObject);
         //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
         _icon.GetComponent<IconBehaviour>().setTeam(_owner.getTeam());
-        _icon.transform.parent = transform;
-        
+        _icon.transform.parent = transform;        
     }
 
     public PlatoonBehaviour GetRealPlatoon()
@@ -74,7 +73,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void Initialize(UnitType t, Player owner, int n)
     {
-        this._owner = owner;
+        _owner = owner;
         _unitType = t;
         _baseUnit = UnitFactory.GetUnit(_unitType);
         transform.position = 100 * Vector3.down;
