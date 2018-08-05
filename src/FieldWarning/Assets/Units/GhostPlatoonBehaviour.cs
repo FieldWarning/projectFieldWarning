@@ -14,6 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Pfw.Ingame.Prototype;
+using Assets.Ingame.UI;
 
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
