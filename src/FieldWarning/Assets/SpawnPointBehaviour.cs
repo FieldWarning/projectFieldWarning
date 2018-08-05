@@ -28,7 +28,7 @@ public class SpawnPointBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        UIManagerBehaviour.addSpawnPoint(this);
+        UIManagerBehaviour.AddSpawnPoint(this);
         if (team == Team.Blue) {
             GetComponentInChildren<Renderer>().material.color = Color.blue;
         } else {

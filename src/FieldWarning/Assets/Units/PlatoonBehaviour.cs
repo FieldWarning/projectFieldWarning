@@ -78,7 +78,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
     public void Initialize(UnitType t, Player owner, int n)
     {
-        UIManagerBehaviour.registerPlatoonBirth(this);
+        UIManagerBehaviour.RegisterPlatoonBirth(this);
 
         Type = t;
         Owner = owner;
@@ -124,7 +124,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         enabled = true;
         transform.position = pos;
 
-        var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().finalHeading;
+        var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
         Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         float spawndistance = 2;
 
@@ -163,7 +163,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         foreach (var p in Units)
             Destroy(p.gameObject);
 
-        UIManagerBehaviour.registerPlatoonDeath(this);
+        UIManagerBehaviour.RegisterPlatoonDeath(this);
         Destroy(gameObject);
     }
 }

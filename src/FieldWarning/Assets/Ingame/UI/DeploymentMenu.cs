@@ -69,7 +69,7 @@ namespace Assets.Ingame.UI
 
                 // this is very hacky and WIP just to keep the current spawning system working
                 var managers = GameObject.Find("Managers");
-                card.GetComponentInChildren<Button>().onClick.AddListener(managers.GetComponent<UIManagerBehaviour>().tankButtonCallback);
+                card.GetComponentInChildren<Button>().onClick.AddListener(managers.GetComponent<UIManagerBehaviour>().TankButtonCallback);
 
                 // TODO Set picture too
                 // TODO Transports?

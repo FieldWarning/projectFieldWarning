@@ -82,7 +82,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
             platoon.GhostPlatoon.HandleRealUnitDestroyed();
             if (platoon.Units.Count == 0) {
                 Destroy(platoon.gameObject);
-                UIManagerBehaviour.registerPlatoonDeath(platoon);
+                UIManagerBehaviour.RegisterPlatoonDeath(platoon);
             }
 
             return;
