@@ -50,13 +50,11 @@ public class VehicleBehaviour : UnitBehaviour
     {
         float destinationHeading;
 
-        if (pathfinder.HasDestination())
-        {
+        if (pathfinder.HasDestination()) {
             var diff = waypoint - this.transform.position;
             destinationHeading = diff.getRadianAngle();
-        }
-        else
-        {
+
+        } else {
             destinationHeading = finalHeading;
         }
 
@@ -94,12 +92,10 @@ public class VehicleBehaviour : UnitBehaviour
     {
         float targetSpeed;
 
-        if (!pathfinder.HasDestination())
-        {
+        if (!pathfinder.HasDestination()) {
             targetSpeed = 0f;
-        }
-        else
-        {
+
+        } else {
             float destDist = (destination - transform.localPosition).magnitude;
             targetSpeed = Mathf.Min(data.movementSpeed, Mathf.Sqrt(2 * destDist * data.accelRate * DECELERATION_FACTOR));
 
@@ -115,12 +111,10 @@ public class VehicleBehaviour : UnitBehaviour
 
     private void UpdateRealSpeed(float targetSpeed)
     {
-        if (targetSpeed > speed)
-        {
+        if (targetSpeed > speed) {
             speed = Mathf.Min(targetSpeed, speed + data.accelRate * Time.deltaTime);
-        }
-        else
-        {
+
+        } else {
             speed = Mathf.Max(targetSpeed, speed - DECELERATION_FACTOR * data.accelRate * Time.deltaTime);
         }
     }
