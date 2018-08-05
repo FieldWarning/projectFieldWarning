@@ -15,9 +15,9 @@ using UnityEngine;
 
 public class VehicleBehaviour : UnitBehaviour
 {
-    const float DECELERATION_FACTOR = 2.0f;
+    private const float DECELERATION_FACTOR = 2.0f;
 
-    float speed;
+    private float _speed;
 
     // Use this for initialization
     new void Start()
@@ -43,7 +43,7 @@ public class VehicleBehaviour : UnitBehaviour
         float targetSpeed = CalculateTargetSpeed(remainingTurn, waypoint);
         UpdateRealSpeed(targetSpeed);
 
-        transform.Translate(speed * Time.deltaTime * Vector3.forward);
+        transform.Translate(_speed * Time.deltaTime * Vector3.forward);
     }
 
     private float CalculateDestinationHeading(Vector3 waypoint)
@@ -111,11 +111,11 @@ public class VehicleBehaviour : UnitBehaviour
 
     private void UpdateRealSpeed(float targetSpeed)
     {
-        if (targetSpeed > speed) {
-            speed = Mathf.Min(targetSpeed, speed + data.accelRate * Time.deltaTime);
+        if (targetSpeed > _speed) {
+            _speed = Mathf.Min(targetSpeed, _speed + data.accelRate * Time.deltaTime);
 
         } else {
-            speed = Mathf.Max(targetSpeed, speed - DECELERATION_FACTOR * data.accelRate * Time.deltaTime);
+            _speed = Mathf.Max(targetSpeed, _speed - DECELERATION_FACTOR * data.accelRate * Time.deltaTime);
         }
     }
 
