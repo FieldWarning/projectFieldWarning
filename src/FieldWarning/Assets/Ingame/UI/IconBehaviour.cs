@@ -42,8 +42,6 @@ namespace Assets.Ingame.UI
             }
         }
 
-        public bool isInitialized = false;
-
         private bool _init = false;
         private Color _baseColor = Color.blue;
         private bool _visible = true;
@@ -82,7 +80,6 @@ namespace Assets.Ingame.UI
 
         public void SetSource(List<UnitBehaviour> list)
         {
-            isInitialized = true;
             billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
         }
 

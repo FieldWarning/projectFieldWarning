@@ -39,9 +39,6 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
     public void Update()
     {
-        if (!Icon.isInitialized)
-            Icon.SetSource(Units);
-
         var pos = new Vector3();
 
         Units.ForEach(x => pos += x.transform.position);
@@ -110,6 +107,8 @@ public partial class PlatoonBehaviour : SelectableBehavior
         }
 
         Movement.SetDestination(Vector3.forward);
+
+        Icon.SetSource(Units);
 
         IsInitialized = true;
     }
