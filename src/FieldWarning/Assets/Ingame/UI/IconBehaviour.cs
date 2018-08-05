@@ -18,10 +18,10 @@ namespace Assets.Ingame.UI
 {
     public class IconBehaviour : SelectableBehavior
     {
-        int layer = -1;
-        public PlatoonBehaviour platoon;
+        private int _layer = -1;
+        private PlatoonBehaviour _platoon;
 
-        SymbolBehaviour _symbol;
+        private SymbolBehaviour _symbol;
         SymbolBehaviour symbol {
             get {
                 if (_symbol == null)
@@ -31,7 +31,7 @@ namespace Assets.Ingame.UI
             }
         }
 
-        Transform _billboard;
+        private Transform _billboard;
         Transform billboard {
             get {
                 if (_billboard == null) {
@@ -43,20 +43,21 @@ namespace Assets.Ingame.UI
         }
 
         public bool isInitialized = false;
-        private bool init = false;
-        Color baseColor = Color.blue;
-        bool visible = true;
+
+        private bool _init = false;
+        private Color _baseColor = Color.blue;
+        private bool _visible = true;
 
 
         // Use this for initialization
         void Start()
         {
-            billboard.GetComponent<Renderer>().material.color = baseColor;
-            if (layer != -1)
-                setLayer(layer);
+            billboard.GetComponent<Renderer>().material.color = _baseColor;
+            if (_layer != -1)
+                SetLayer(_layer);
 
-            setSelected(false);
-            setVisible(visible);
+            SetSelected(false);
+            SetVisible(_visible);
         }
 
         // Update is called once per frame
@@ -65,27 +66,27 @@ namespace Assets.Ingame.UI
 
         }
 
-        public void setPlatoon(PlatoonBehaviour p)
+        public void SetPlatoon(PlatoonBehaviour p)
         {
-            platoon = p;
+            _platoon = p;
             symbol.SetIcon(p.Type);
         }
 
-        public void setLayer(int l)
+        public void SetLayer(int l)
         {
-            layer = l;
+            _layer = l;
             if (billboard != null)
                 billboard.gameObject.layer = l;
             gameObject.layer = l;
         }
 
-        public void setSource(List<UnitBehaviour> list)
+        public void SetSource(List<UnitBehaviour> list)
         {
             isInitialized = true;
             billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
         }
 
-        public void setVisible(bool vis)
+        public void SetVisible(bool vis)
         {
             gameObject.SetActive(vis);
             if (_billboard != null) {
@@ -93,43 +94,43 @@ namespace Assets.Ingame.UI
                 symbol.GetComponent<Renderer>().enabled = vis;
 
             } else {
-                visible = vis;
+                _visible = vis;
             }
 
             if (vis) {
-                setLayer(LayerMask.NameToLayer("Selectable"));
+                SetLayer(LayerMask.NameToLayer("Selectable"));
             } else {
-                setLayer(LayerMask.NameToLayer("Ignore Raycast"));
+                SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
             }
         }
 
-        public void setSelected(bool selected)
+        public void SetSelected(bool selected)
         {
             Color color;
 
             if (selected) {
-                color = (baseColor + Color.white) / 2;
+                color = (_baseColor + Color.white) / 2;
             } else {
-                color = baseColor;
+                color = _baseColor;
             }
 
             billboard.GetComponent<Renderer>().material.color = color;
             symbol.GetComponent<Renderer>().material.color = color;// (color + Color.white) / 2;
         }
 
-        public void setGhost()
+        public void SetGhost()
         {
-            billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2 * baseColor + Color.white) / 3);
-            symbol.GetComponent<Renderer>().material.SetColor("_Emission", (2 * baseColor + Color.white) / 3);
-            setVisible(true);
+            billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
+            symbol.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
+            SetVisible(true);
         }
 
-        public void setTeam(Team t)
+        public void SetTeam(Team t)
         {
             if (t == Team.Blue) {
-                baseColor = Color.Lerp(Color.blue, Color.white, .1f);
+                _baseColor = Color.Lerp(Color.blue, Color.white, .1f);
             } else {
-                baseColor = Color.red;
+                _baseColor = Color.red;
             }
         }
     }
