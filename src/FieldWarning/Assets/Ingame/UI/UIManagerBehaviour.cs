@@ -31,7 +31,7 @@ namespace Assets.Ingame.UI
         public Player Owner;
         private Vector3 _destination;
         private Vector3 _boxSelectStart;
-        public static Dictionary<Team, List<SpawnPointBehaviour>> SpawnPointList = new Dictionary<Team, List<SpawnPointBehaviour>>();
+        public static List<SpawnPointBehaviour> SpawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
         private static SelectionManager _selectionManager;
 
@@ -110,7 +110,7 @@ namespace Assets.Ingame.UI
 
                 // TODO we already get closest spawn above, reuse it
                 SpawnPointBehaviour closestSpawn = GetClosestSpawn(terrainHover.point);
-                closestSpawn.buyUnits(_currentBuyTransaction.GhostUnits);
+                closestSpawn.BuyUnits(_currentBuyTransaction.GhostUnits);
 
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     // We turned the current ghosts into real units, so:
@@ -273,9 +273,11 @@ namespace Assets.Ingame.UI
 
         private SpawnPointBehaviour GetClosestSpawn(Vector3 p)
         {
-            var pointList = SpawnPointList[Owner.getTeam()];
-            SpawnPointBehaviour go = pointList[0];
+            var pointList = SpawnPointList.Where(x => x.Team == Owner.Team).ToList();
+
+            SpawnPointBehaviour go = pointList.First();
             float distance = Single.PositiveInfinity;
+
             foreach (var s in pointList) {
                 if (Vector3.Distance(p, s.transform.position) < distance) {
                     distance = Vector3.Distance(p, s.transform.position);
@@ -287,10 +289,8 @@ namespace Assets.Ingame.UI
 
         public static void AddSpawnPoint(SpawnPointBehaviour s)
         {
-            if (!SpawnPointList.ContainsKey(s.team)) {
-                SpawnPointList.Add(s.team, new List<SpawnPointBehaviour>());
-            }
-            SpawnPointList[s.team].Add(s);
+            if (!SpawnPointList.Contains(s)) 
+                SpawnPointList.Add(s);
         }
 
         public void ApplyHotkeys()

@@ -83,7 +83,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.SetPlatoon(this);
-        Icon.SetTeam(owner.getTeam());
+        Icon.SetTeam(owner.Team);
 
         var unitInstance = UnitFactory.GetUnit(t);
 

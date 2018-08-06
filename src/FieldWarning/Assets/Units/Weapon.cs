@@ -166,14 +166,13 @@ namespace PFW.Weapons
 
         public GameObject FindClosestEnemy()
         {
-
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             GameObject Target = null;
-            Team thisTeam = unit.platoon.Owner.getTeam();
+            var thisTeam = unit.platoon.Owner.Team;
 
             for (int i = 0; i < (int)units.Length; i++) {
                 // Filter out friendlies:
-                if (units[i].GetComponent<UnitBehaviour>().platoon.Owner.getTeam() == thisTeam)
+                if (units[i].GetComponent<UnitBehaviour>().platoon.Owner.Team == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:

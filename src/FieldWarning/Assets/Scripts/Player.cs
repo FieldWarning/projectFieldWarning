@@ -15,18 +15,5 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    private Team team;
-
-    // Use this for initialization
-    void Start() { }
-
-    // Update is called once per frame
-    void Update() { }
-
-    // TODO turn into property
-    public Team getTeam()
-    {
-        return team;
-    }
+    public Assets.Model.Game.Team Team;
 }

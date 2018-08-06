@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Model.Game
 {
-    public class GameSession
+    public class GameSession : MonoBehaviour
     {
         public Settings Settings { get; }
+        public ICollection<Team> Teams { get; private set; }
+        public ICollection<UnitBehaviour> AllUnitsIngame { get; private set; }
 
-        public ICollection<Team> Teams { get; }
-
-        public GameSession(Settings settings)
+        public void Awake()
         {
-            Settings = settings;
+            //Settings = settings;
             Teams = new List<Team>();
+
+            AllUnitsIngame = new List<UnitBehaviour>();
         }
     }
 }

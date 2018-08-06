@@ -13,54 +13,54 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.Linq;
 using Assets.Ingame.UI;
 
 public class SpawnPointBehaviour : MonoBehaviour
 {
-    Vector3 oldPosition;
-    private Queue<PlatoonBehaviour> spawnQueue = new Queue<PlatoonBehaviour>();
+    public Assets.Model.Game.Team Team;
+
     public const float MIN_SPAWN_INTERVAL = 2f;
     public const float QUEUE_DELAY = 1f;
-    float spawnTime = MIN_SPAWN_INTERVAL;
-    public Team team;
 
-    // Use this for initialization
-    void Start()
+    private Vector3 oldPosition;
+    private Queue<PlatoonBehaviour> spawnQueue = new Queue<PlatoonBehaviour>();
+    private float spawnTime = MIN_SPAWN_INTERVAL;
+
+    public void Awake()
     {
-        UIManagerBehaviour.AddSpawnPoint(this);
-        if (team == Team.Blue) {
-            GetComponentInChildren<Renderer>().material.color = Color.blue;
-        } else {
-            GetComponentInChildren<Renderer>().material.color = Color.red;
-        }
+        Team = GetComponentInParent<Assets.Model.Game.Team>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Start()
     {
-        if (spawnQueue.Count > 0) {
+        GetComponentInChildren<Renderer>().material.color = Team.Color;
+
+        UIManagerBehaviour.AddSpawnPoint(this);
+    }
+
+    public void Update()
+    {
+        if (spawnQueue.Any())
+        {
             spawnTime -= Time.deltaTime;
-            if (spawnTime <= 0) {
+            if (spawnTime <= 0)
+            {
                 var go = spawnQueue.Dequeue();
                 go.GetComponent<PlatoonBehaviour>().Spawn(transform.position);
 
-                if (spawnQueue.Count > 0) {
+                if (spawnQueue.Count > 0)
                     spawnTime += MIN_SPAWN_INTERVAL;
-                } else {
+                else
                     spawnTime = QUEUE_DELAY;
-                }
             }
         }
     }
 
-    public void buyUnits(List<GhostPlatoonBehaviour> ghostUnits)
+    public void BuyUnits(List<GhostPlatoonBehaviour> ghostUnits)
     {
         var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().GetRealPlatoon());
 
         realPlatoons.ForEach(x => spawnQueue.Enqueue(x));
     }
-
-
-
 }

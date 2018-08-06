@@ -122,13 +122,9 @@ namespace Assets.Ingame.UI
             SetVisible(true);
         }
 
-        public void SetTeam(Team t)
+        public void SetTeam(Assets.Model.Game.Team t)
         {
-            if (t == Team.Blue) {
-                _baseColor = Color.Lerp(Color.blue, Color.white, .1f);
-            } else {
-                _baseColor = Color.red;
-            }
+            _baseColor = t.Color;
         }
     }
 }
