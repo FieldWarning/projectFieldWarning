@@ -36,8 +36,8 @@ public class InfantryBehaviour : UnitBehaviour {
     {
         if (!init)
         {
-            data = UnitData.Infantry();
-			base.SetHealth(data.maxHealth); //health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
+            Data = UnitData.Infantry();
+			base.SetHealth(Data.maxHealth); //health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
             buildMen();
             init = true;
         }
@@ -50,7 +50,7 @@ public class InfantryBehaviour : UnitBehaviour {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.transform.localScale = new Vector3(.1f,.2f,.1f);
             //go.transform.parent = transform;
-            men.Add(new Man(go,data));
+            men.Add(new Man(go,Data));
         }
     }
 	// Update is called once per frame

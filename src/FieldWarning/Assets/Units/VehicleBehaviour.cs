@@ -23,7 +23,7 @@ public class VehicleBehaviour : UnitBehaviour
     new void Start()
     {
         base.Start();
-        data = UnitData.Tank();
+        Data = UnitData.Tank();
     }
 
     // Update is called once per frame
@@ -66,7 +66,7 @@ public class VehicleBehaviour : UnitBehaviour
         destinationHeading = destinationHeading.unwrapRadian();
         var currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
         var remainingTurn = (destinationHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
-        var turn = Mathf.Sign(remainingTurn) * data.rotationSpeed * Time.deltaTime;
+        var turn = Mathf.Sign(remainingTurn) * Data.rotationSpeed * Time.deltaTime;
         if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
             turn = remainingTurn;
 
@@ -97,11 +97,11 @@ public class VehicleBehaviour : UnitBehaviour
 
         } else {
             float destDist = (destination - transform.localPosition).magnitude;
-            targetSpeed = Mathf.Min(data.movementSpeed, Mathf.Sqrt(2 * destDist * data.accelRate * DECELERATION_FACTOR));
+            targetSpeed = Mathf.Min(Data.movementSpeed, Mathf.Sqrt(2 * destDist * Data.accelRate * DECELERATION_FACTOR));
 
             float waypointDist = (waypoint - transform.localPosition).magnitude;
             var turnradius = waypointDist / (1000 * Mathf.Abs(headingDiff));
-            float turnFactor = data.rotationSpeed * turnradius;
+            float turnFactor = Data.rotationSpeed * turnradius;
             if (turnFactor < 1)
                 targetSpeed *= turnFactor;
         }
@@ -112,10 +112,10 @@ public class VehicleBehaviour : UnitBehaviour
     private void UpdateRealSpeed(float targetSpeed)
     {
         if (targetSpeed > _speed) {
-            _speed = Mathf.Min(targetSpeed, _speed + data.accelRate * Time.deltaTime);
+            _speed = Mathf.Min(targetSpeed, _speed + Data.accelRate * Time.deltaTime);
 
         } else {
-            _speed = Mathf.Max(targetSpeed, _speed - DECELERATION_FACTOR * data.accelRate * Time.deltaTime);
+            _speed = Mathf.Max(targetSpeed, _speed - DECELERATION_FACTOR * Data.accelRate * Time.deltaTime);
         }
     }
 

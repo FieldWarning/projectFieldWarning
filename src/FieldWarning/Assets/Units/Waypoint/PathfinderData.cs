@@ -139,7 +139,7 @@ public class PathfinderData
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             foreach (GameObject unit in units) {
                 float dist = Vector3.Distance(location, unit.transform.position);
-                if (dist < radius + unit.GetComponent<UnitBehaviour>().data.radius)
+                if (dist < radius + unit.GetComponent<UnitBehaviour>().Data.radius)
                     return 0f;
             }
         }

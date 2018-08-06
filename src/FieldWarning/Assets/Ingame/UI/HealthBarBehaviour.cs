@@ -17,25 +17,26 @@ namespace Assets.Ingame.UI
 {
     public class HealthBarBehaviour : SelectableBehavior
     {
-        UnitBehaviour unit;
-        GameObject bar;
+        private UnitBehaviour _unit;
+        private GameObject _bar;
 
-        void Start()
+        void Awake()
         {
-            bar = transform.GetChild(0).gameObject;
-            bar.AddComponent<SelectableBehavior>();
-            SetHealth(unit.data.maxHealth);
+            _bar = transform.GetChild(0).gameObject;
+            _bar.AddComponent<SelectableBehavior>();
         }
 
-        // Update is called once per frame
+        void Start() { }
+        
         void Update()
         {
-            SetHealth(unit.GetHealth() / unit.data.maxHealth);
+            SetHealth(_unit.GetHealth() / _unit.Data.maxHealth);
         }
 
         public void SetUnit(UnitBehaviour o)
         {
-            unit = o;
+            _unit = o;
+            SetHealth(_unit.Data.maxHealth);
         }
 
         void SetHealth(float h)
@@ -45,10 +46,12 @@ namespace Assets.Ingame.UI
             //bar.transform.localScale = new Vector3(health, 1, 1);
             //var offset = bar.GetComponent<Renderer>().bounds.extents.x ;
             //bar.transform.localPosition = new Vector3(offset-0.5f, 0, -.01f);
-            bar.GetComponent<Renderer>().material.color = PickColor(health);
+            _bar.GetComponent<Renderer>()
+                .material
+                .color = PickColor(health);
 
             //Debug.Log("-- hp : " + (1f - health));
-            bar.GetComponent<Renderer>().material.SetFloat("_Cutoff", 1f - health);
+            _bar.GetComponent<Renderer>().material.SetFloat("_Cutoff", 1f - health);
         }
 
         private Color PickColor(float h)

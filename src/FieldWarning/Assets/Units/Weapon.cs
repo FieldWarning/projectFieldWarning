@@ -67,7 +67,7 @@ namespace PFW.Weapons
 
         public void WakeUp()
         {
-            data = unit.data.weaponData[dataIndex];
+            data = unit.Data.weaponData[dataIndex];
             reloadTimeLeft = data.ReloadTime;
             enabled = true;
         }

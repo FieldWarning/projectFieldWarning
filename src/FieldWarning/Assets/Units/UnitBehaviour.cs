@@ -20,7 +20,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
     public const string UNIT_TAG = "Unit";
 
-    public UnitData data;
+    public UnitData Data = UnitData.GenericUnit();
     public Vector3 destination;
     public PlatoonBehaviour platoon { get; private set; }
     public bool IsAlive { get; private set; }
@@ -38,30 +38,26 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     protected float finalHeading;
 
-    private Terrain terrain;
+    private Terrain _terrain;
     private TerrainCollider _Ground;
-    private float health;
-
-
-    // Use this for initialization
+    private float _health;
+    
     public virtual void Start()
     {
         destination = new Vector3(100, 0, -100);
         transform.position = 100 * Vector3.down;
         enabled = false;
-        data = UnitData.GenericUnit();
-        health = data.maxHealth; //set the health to 10 (from UnitData.cs)
+        _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
         IsAlive = true;
         SetVisible(false);
-        this.tag = UNIT_TAG;
+        tag = UNIT_TAG;
 
         source = GetComponent<AudioSource>();
 
         pathfinder = new Pathfinder(this, PathfinderData.singleton);
 
     }
-
-    // Update is called once per frame
+    
     public virtual void Update()
     {
         UpdateMapOrientation();
@@ -70,11 +66,11 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public void HandleHit(float receivedDamage)
     {
-        if (health <= 0)
+        if (_health <= 0)
             return;
 
-        health -= receivedDamage;
-        if (health <= 0) {
+        _health -= receivedDamage;
+        if (_health <= 0) {
             IsAlive = false;
             platoon.Units.Remove(this);
 
@@ -96,27 +92,14 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         platoon = p;
     }
 
-    /*public override void setDestination(Vector3 v)
-    {
-        platoon.setDestination(v);
-    }
-    public override void setFinalHeading(Vector3 v)
-    {
-        platoon.setFinalHeading(v);
-    }
-    public override void getDestinationFromGhost()
-    {
-        platoon.getDestinationFromGhost();
-    }*/
-
     public float GetHealth()
     {
-        return health;
+        return _health;
     }
 
     public void SetHealth(float health)
     {
-        this.health = health;
+        this._health = health;
     }
 
     public override PlatoonBehaviour GetPlatoon()

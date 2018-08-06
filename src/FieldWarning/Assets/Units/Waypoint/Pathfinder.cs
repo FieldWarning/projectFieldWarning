@@ -52,7 +52,7 @@ public class Pathfinder
 
         //float pathTime = FindLocalPath (data, unit.transform.position, destination, unit.data.mobility, unit.data.radius);
         //path.Add (new PathNode (destination));
-        float pathTime = data.FindPath(path, unit.transform.position, destination, unit.data.mobility, 0f, command);
+        float pathTime = data.FindPath(path, unit.transform.position, destination, unit.Data.mobility, 0f, command);
         return pathTime;
     }
 
@@ -83,7 +83,7 @@ public class Pathfinder
             }
 
             Vector3 newWaypoint = TakeStep(
-                data, unit.transform.position, targetNode.position, unit.data.mobility, unit.data.radius);
+                data, unit.transform.position, targetNode.position, unit.Data.mobility, unit.Data.radius);
 
             if (newWaypoint != null) {
                 waypoint = newWaypoint;
@@ -91,7 +91,7 @@ public class Pathfinder
 
                 // The unit has gotten stuck when following the previously computed path.
                 // Now recompute a new path to the destination using the global graph, this time using finite radius
-                float pathTime = data.FindPath(path, unit.transform.position, path[0].position, unit.data.mobility, unit.data.radius, command);
+                float pathTime = data.FindPath(path, unit.transform.position, path[0].position, unit.Data.mobility, unit.Data.radius, command);
                 //float pathTime = SetPath (path[0].position, command);
 
                 if (pathTime == Forever) {  // The unit has somehow gotten itself trapped
