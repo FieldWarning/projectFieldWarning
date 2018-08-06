@@ -36,7 +36,7 @@ namespace Assets.Ingame.UI
         public void SetSource(List<UnitBehaviour> o)
         {
             float FIRST_BAR_POSITION = -0.16f;
-            float TOTAL_LENGTH = 1f;
+            float TOTAL_LENGTH = 1.05f;
 
             DestroyChilden();
 
@@ -52,7 +52,25 @@ namespace Assets.Ingame.UI
 
                 // Scale affects the magnitude of translations, e.g.
                 // an object positioned at X=2 will show as if it is at X=1 if it has scale 0.5. So we move the starting point:
-                float scaledFirstBarPosition = FIRST_BAR_POSITION / scale;
+                float scaledFirstBarPosition;
+                switch (o.Count) { // TODO should really figure out the mistake in the formula instead of hardcoding like this:
+                case 1:
+                    scaledFirstBarPosition = -0.16f;
+                    break;
+                case 2:
+                    scaledFirstBarPosition = -0.4f;
+                    break;
+                case 3:
+                    scaledFirstBarPosition = -0.5f;
+                    break;
+                case 4:
+                    scaledFirstBarPosition = -0.53f;
+                    break;
+                default:
+                    scaledFirstBarPosition = FIRST_BAR_POSITION / scale;
+                    break;
+                }
+
                 float barEnd = scaledFirstBarPosition + ((o.Count - i) * (TOTAL_LENGTH / o.Count));
                 float barStart = barEnd - barLength;
 
