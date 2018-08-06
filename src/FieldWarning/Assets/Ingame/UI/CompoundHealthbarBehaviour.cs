@@ -35,16 +35,28 @@ namespace Assets.Ingame.UI
 
         public void SetSource(List<UnitBehaviour> o)
         {
+            float FIRST_BAR_POSITION = -0.16f;
+            float TOTAL_LENGTH = 1f;
+
             DestroyChilden();
-            float scale = 1f / o.Count;
+
+            float barLength = TOTAL_LENGTH / o.Count;
+            float scale = barLength;
+
             for (int i = 0; i < o.Count; i++) {
                 var obj = GameObject.Instantiate(Resources.Load<GameObject>("HealthbarContainer"));
                 obj.GetComponent<HealthBarBehaviour>().SetUnit(o[i]);
                 obj.transform.parent = transform;
 
                 obj.transform.localScale = new Vector3(scale, .08f, 1);
-                float offset = scale * (1 / 2 + i) - 0.5f;
-                obj.transform.localPosition = new Vector3(offset, 0, -.01f);
+
+                // Scale affects the magnitude of translations, e.g.
+                // an object positioned at X=2 will show as if it is at X=1 if it has scale 0.5. So we move the starting point:
+                float scaledFirstBarPosition = FIRST_BAR_POSITION / scale;
+                float barEnd = scaledFirstBarPosition + ((o.Count - i) * (TOTAL_LENGTH / o.Count));
+                float barStart = barEnd - barLength;
+
+                obj.transform.localPosition = new Vector3(barStart, 0, -.01f);
             }
         }
 
