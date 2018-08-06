@@ -39,9 +39,6 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
     public void Update()
     {
-        if (!Icon.isInitialized)
-            Icon.setSource(Units);
-
         var pos = new Vector3();
 
         Units.ForEach(x => pos += x.transform.position);
@@ -85,13 +82,13 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
-        Icon.setPlatoon(this);
-        Icon.setTeam(owner.getTeam());
+        Icon.SetPlatoon(this);
+        Icon.SetTeam(owner.getTeam());
 
-        var unitInstace = UnitFactory.GetUnit(t);
+        var unitInstance = UnitFactory.GetUnit(t);
 
         for (int i = 0; i < n; i++) {
-            iconInstance = Instantiate(unitInstace);
+            iconInstance = Instantiate(unitInstance);
             var unitBehaviour = iconInstance.GetComponent<UnitBehaviour>();
             unitBehaviour.SetPlatoon(this);
             Units.Add(unitBehaviour);
@@ -110,6 +107,8 @@ public partial class PlatoonBehaviour : SelectableBehavior
         }
 
         Movement.SetDestination(Vector3.forward);
+
+        Icon.SetSource(Units);
 
         IsInitialized = true;
     }
@@ -139,13 +138,13 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
     public void SetSelected(bool selected)
     {
-        Icon?.setSelected(selected);
+        Icon?.SetSelected(selected);
     }
 
     public void SetEnabled(bool enabled)
     {
         this.enabled = enabled;
-        Icon?.setVisible(enabled);
+        Icon?.SetVisible(enabled);
     }
 
     public void SendFirePosOrder(Vector3 position)

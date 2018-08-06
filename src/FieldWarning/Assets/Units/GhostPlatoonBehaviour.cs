@@ -14,6 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Pfw.Ingame.Prototype;
+using Assets.Ingame.UI;
 
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
@@ -47,9 +48,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
         //Debug.Log(platoonBehaviour.gameObject);
         //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
-        _icon.GetComponent<IconBehaviour>().setTeam(_owner.getTeam());
-        _icon.transform.parent = transform;
-        
+        _icon.GetComponent<IconBehaviour>().SetTeam(_owner.getTeam());
+        _icon.transform.parent = transform;        
     }
 
     public PlatoonBehaviour GetRealPlatoon()
@@ -71,15 +71,15 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
-    public void Initialize(UnitType t, Player owner, int n)
+    public void Initialize(UnitType t, Player owner, int unitCount)
     {
-        this._owner = owner;
+        _owner = owner;
         _unitType = t;
         _baseUnit = UnitFactory.GetUnit(_unitType);
         transform.position = 100 * Vector3.down;
 
         // Create units:
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < unitCount; i++)
             AddSingleUnit();
     }
 
@@ -113,7 +113,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void SetVisible(bool vis)
     {
-        _icon.GetComponent<IconBehaviour>().setVisible(vis);
+        _icon.GetComponent<IconBehaviour>().SetVisible(vis);
         _units.ForEach(x => x.GetComponent<UnitBehaviour>().SetVisible(vis));
     }
 
@@ -155,7 +155,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         behaviour.InitializeIcon();
 
         go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
-        behaviour._icon.GetComponent<IconBehaviour>().setGhost();
+        behaviour._icon.GetComponent<IconBehaviour>().SetGhost();
 
         return behaviour;
     }
