@@ -1,5 +1,5 @@
 # projectFieldWarning
-Project: Field Warning is a community-game RTS game centered around lethal regiment- and division-scale warfare.
+Project: Field Warning is a community-made RTS game centered around lethal regiment- and division-scale warfare.
 
 Please use "Unity version 2017.3.1f1".
 
