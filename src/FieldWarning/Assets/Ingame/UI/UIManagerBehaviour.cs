@@ -314,15 +314,15 @@ namespace Assets.Ingame.UI
                 transporters.ForEach(x => x.EndQueueing());
 
             } else if (Commands.FirePos() && selected.Count != 0) {
-                _mouseMode = MouseMode.firePos;
-                Cursor.SetCursor(_firePosReticle, Vector2.zero, CursorMode.Auto);
+                EnterFirePosMode();
             }
         }
 
         private void EnterFirePosMode()
         {
             _mouseMode = MouseMode.firePos;
-            Cursor.SetCursor(_firePosReticle, Vector2.zero, CursorMode.Auto);
+            Vector2 hotspot = new Vector2 (_firePosReticle.width / 2, _firePosReticle.height / 2);
+            Cursor.SetCursor(_firePosReticle, hotspot, CursorMode.Auto);
         }
 
         private void ExitFirePosMode()
