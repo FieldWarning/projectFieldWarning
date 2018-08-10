@@ -30,19 +30,12 @@ public class VisibilityManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Application.targetFrameRate = -1;
         n = Mathf.CeilToInt(mapSize / maxViewDistance);
 
         teamMembersBlue = new List<VisibleBehavior>();
         teamMembersRed = new List<VisibleBehavior>();
         visionCellsBlue = new List<VisibleBehavior>[n, n];
         visionCellsRed = new List<VisibleBehavior>[n, n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                visionCellsBlue[i, j] = new List<VisibleBehavior>();
-                visionCellsRed[i, j] = new List<VisibleBehavior>();
-            }
-        }
 
         //Debug.Log(getVisionCells(Team.Blue));
     }
