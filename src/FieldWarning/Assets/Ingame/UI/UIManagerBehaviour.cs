@@ -19,7 +19,6 @@ using UnityEngine.EventSystems;
 using Pfw.Ingame.Prototype;
 
 using Assets.Model.Game;
-using static Assets.Ingame.UI.Constants;
 
 namespace Assets.Ingame.UI
 {
@@ -58,7 +57,7 @@ namespace Assets.Ingame.UI
             if (_firePosReticle == null)
                 throw new Exception("No fire pos reticle specified!");
 
-            _rightClickManager = new ClickManager(1, MOUSE_DRAG_THRESHOLD, OnOrderStart, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
+            _rightClickManager = new ClickManager(1, OnOrderStart, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
         }
 
         void Update()

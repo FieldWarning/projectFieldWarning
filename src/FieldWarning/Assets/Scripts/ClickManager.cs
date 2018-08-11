@@ -14,58 +14,64 @@
 using UnityEngine;
 using System;
 
+using static Assets.Ingame.UI.Constants;
+
+/*
+ * The purpose of this class is to distinguish between short clicks
+ * and dragging movements with the mouse held down. Once a mouse action is
+ * completed, the appropriate callback is called - in this, the class works
+ * as a "trampoline".
+ */
 public class ClickManager
 {
-    private int button;
+    private int _button;
+    
+    private Vector3 _lastMousePosition;
+    private float _mouseDistanceTravelled = 0;
 
-    private float dragThreshold;
-    private Vector3 lastMousePosition;
-    private float mouseDistanceTravelled = 0;
+    private Action _onMouseDown;
+    private Action _nonDragMouseRelease;
+    private Action _dragMouseRelease;
+    private Action _whileDraggingMouse;
 
-    private Action onMouseDown;
-    private Action nonDragMouseRelease;
-    private Action dragMouseRelease;
-    private Action whileDraggingMouse;
-
-    public ClickManager(int button, float dragThreshold, Action onMouseDown, Action nonDragMouseRelease, Action dragMouseRelease, Action whileDraggingMouse)
+    public ClickManager(int button, Action onMouseDown, Action nonDragMouseRelease, Action dragMouseRelease, Action whileDraggingMouse)
     {
         if (onMouseDown == null || nonDragMouseRelease == null || dragMouseRelease == null || whileDraggingMouse == null)
             throw new Exception("Tried to create a ClickManager with a missing callback!");
 
-        this.button = button;
-        this.dragThreshold = dragThreshold;
-        this.onMouseDown = onMouseDown;
-        this.nonDragMouseRelease = nonDragMouseRelease;
-        this.dragMouseRelease = dragMouseRelease;
-        this.whileDraggingMouse = whileDraggingMouse;
+        _button = button;
+        _onMouseDown = onMouseDown;
+        _nonDragMouseRelease = nonDragMouseRelease;
+        _dragMouseRelease = dragMouseRelease;
+        _whileDraggingMouse = whileDraggingMouse;
     }
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(button)) {
-            mouseDistanceTravelled = 0;
-            lastMousePosition = Input.mousePosition;
-            onMouseDown();
+        if (Input.GetMouseButtonDown(_button)) {
+            _mouseDistanceTravelled = 0;
+            _lastMousePosition = Input.mousePosition;
+            _onMouseDown();
         }
 
-        if (Input.GetMouseButton(button) && !isDragClick()) {
-            mouseDistanceTravelled += Vector3.Distance(Input.mousePosition, lastMousePosition);
-            lastMousePosition = Input.mousePosition;
+        if (Input.GetMouseButton(_button) && !isDragClick()) {
+            _mouseDistanceTravelled += Vector3.Distance(Input.mousePosition, _lastMousePosition);
+            _lastMousePosition = Input.mousePosition;
         }
 
-        if (Input.GetMouseButton(button) && isDragClick())
-            whileDraggingMouse();
+        if (Input.GetMouseButton(_button) && isDragClick())
+            _whileDraggingMouse();
 
 
-        if (Input.GetMouseButtonUp(button))
+        if (Input.GetMouseButtonUp(_button))
             if (isDragClick())
-                dragMouseRelease();
+                _dragMouseRelease();
             else
-                nonDragMouseRelease();
+                _nonDragMouseRelease();
     }
 
     private bool isDragClick()
     {
-        return mouseDistanceTravelled > dragThreshold;
+        return _mouseDistanceTravelled > MOUSE_DRAG_THRESHOLD;
     }
 }

@@ -18,8 +18,6 @@ using Assets.Model.Game;
 using static Assets.Ingame.UI.UIManagerBehaviour;
 using System.Linq;
 
-using static Assets.Ingame.UI.Constants;
-
 namespace Assets.Ingame.UI
 {
     public class SelectionManager : MonoBehaviour
@@ -50,7 +48,7 @@ namespace Assets.Ingame.UI
         public void Awake()
         {
             Selection = new List<PlatoonBehaviour>();
-            _clickManager = new ClickManager(0, MOUSE_DRAG_THRESHOLD, StartBoxSelection, OnSelectShortClick, EndDrag, UpdateBoxSelection);
+            _clickManager = new ClickManager(0, StartBoxSelection, OnSelectShortClick, EndDrag, UpdateBoxSelection);
 
             if (_texture == null) {
                 var areaTransparency = .95f;
