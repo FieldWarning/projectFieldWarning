@@ -14,11 +14,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Ingame.UI;
+using PFW.Ingame.UI;
 
 public class SpawnPointBehaviour : MonoBehaviour
 {
-    public Assets.Model.Game.Team Team;
+    public PFW.Model.Game.Team Team;
 
     public const float MIN_SPAWN_INTERVAL = 2f;
     public const float QUEUE_DELAY = 1f;
@@ -29,7 +29,7 @@ public class SpawnPointBehaviour : MonoBehaviour
 
     public void Awake()
     {
-        Team = GetComponentInParent<Assets.Model.Game.Team>();
+        Team = GetComponentInParent<PFW.Model.Game.Team>();
     }
 
     public void Start()

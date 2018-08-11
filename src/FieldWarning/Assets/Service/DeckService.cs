@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Assets.Model.Profile;
+using PFW.Model.Profile;
 using UnityEngine;
 
-namespace Assets.Service
+namespace PFW.Service
 {
     public class DeckService : MonoBehaviour, IDeckService
     {

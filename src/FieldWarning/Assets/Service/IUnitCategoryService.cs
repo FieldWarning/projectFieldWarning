@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Assets.Model.Armory;
+using PFW.Model.Armory;
 
-namespace Assets.Service
+namespace PFW.Service
 {
     public interface IUnitCategoryService : IService<UnitCategory>
     {

@@ -13,11 +13,11 @@
 
 using UnityEngine;
 
-using Assets.Model.Game;
+using PFW.Model.Game;
 
 public class Player : MonoBehaviour
 {
-    public Assets.Model.Game.Team Team;
+    public PFW.Model.Game.Team Team;
 
     [SerializeField]
     private GameSession _session;

@@ -15,10 +15,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Assets.Model.Armory;
-using Assets.Service;
+using PFW.Model.Armory;
+using PFW.Service;
 
-namespace Assets.Ingame.UI
+namespace PFW.Ingame.UI
 {
     public class DeploymentMenu : MonoBehaviour
     {

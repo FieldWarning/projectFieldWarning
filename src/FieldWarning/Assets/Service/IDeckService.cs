@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Assets.Model.Profile;
+using PFW.Model.Profile;
 
-namespace Assets.Service
+namespace PFW.Service
 {
     public interface IDeckService : IService<Deck>
     {

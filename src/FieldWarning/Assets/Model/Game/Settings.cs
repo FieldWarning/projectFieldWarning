@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Model.Game
+namespace PFW.Model.Game
 {
     public class Settings
     {

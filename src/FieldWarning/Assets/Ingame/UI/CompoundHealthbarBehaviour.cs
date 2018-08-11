@@ -14,7 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Assets.Ingame.UI
+namespace PFW.Ingame.UI
 {
     public class CompoundHealthbarBehaviour : SelectableBehavior
     {

@@ -14,7 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Assets.Ingame.UI
+namespace PFW.Ingame.UI
 {
     public class IconBehaviour : SelectableBehavior
     {
@@ -122,7 +122,7 @@ namespace Assets.Ingame.UI
             SetVisible(true);
         }
 
-        public void SetTeam(Assets.Model.Game.Team t)
+        public void SetTeam(PFW.Model.Game.Team t)
         {
             _baseColor = t.Color;
         }

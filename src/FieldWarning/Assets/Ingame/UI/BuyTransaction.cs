@@ -14,7 +14,7 @@
 using System.Collections.Generic;
 using Pfw.Ingame.Prototype;
 
-namespace Assets.Ingame.UI
+namespace PFW.Ingame.UI
 {
     public class BuyTransaction
     {

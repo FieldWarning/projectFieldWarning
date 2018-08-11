@@ -13,7 +13,7 @@
 
 using UnityEngine;
 
-namespace Assets
+namespace PFW
 {
     public static class Util
     {

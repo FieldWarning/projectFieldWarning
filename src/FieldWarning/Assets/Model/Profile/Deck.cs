@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Assets.Model.Armory;
+using PFW.Model.Armory;
 
-namespace Assets.Model.Profile
+namespace PFW.Model.Profile
 {
     public class Deck
     {

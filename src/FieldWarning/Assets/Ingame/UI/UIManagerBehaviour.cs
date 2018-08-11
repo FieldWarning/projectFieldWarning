@@ -18,9 +18,9 @@ using System;
 using UnityEngine.EventSystems;
 using Pfw.Ingame.Prototype;
 
-using Assets.Model.Game;
+using PFW.Model.Game;
 
-namespace Assets.Ingame.UI
+namespace PFW.Ingame.UI
 {
     public class UIManagerBehaviour : MonoBehaviour
     {

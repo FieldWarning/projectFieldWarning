@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Assets.Model.Armory;
+using PFW.Model.Armory;
 using UnityEngine;
 
-namespace Assets.Service
+namespace PFW.Service
 {
     public class UnitCategoryService : MonoBehaviour, IUnitCategoryService
     {

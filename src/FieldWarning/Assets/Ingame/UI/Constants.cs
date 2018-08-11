@@ -11,7 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-namespace Assets.Ingame.UI
+namespace PFW.Ingame.UI
 {
     public static class Constants
     {

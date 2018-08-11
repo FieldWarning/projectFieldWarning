@@ -14,11 +14,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Assets.Model.Game;
-using static Assets.Ingame.UI.UIManagerBehaviour;
+using PFW.Model.Game;
+using static PFW.Ingame.UI.UIManagerBehaviour;
 using System.Linq;
 
-namespace Assets.Ingame.UI
+namespace PFW.Ingame.UI
 {
     public class SelectionManager : MonoBehaviour
     {

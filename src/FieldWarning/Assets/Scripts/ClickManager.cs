@@ -14,7 +14,7 @@
 using UnityEngine;
 using System;
 
-using static Assets.Ingame.UI.Constants;
+using static PFW.Ingame.UI.Constants;
 
 /*
  * The purpose of this class is to distinguish between short clicks
@@ -24,15 +24,15 @@ using static Assets.Ingame.UI.Constants;
  */
 public class ClickManager
 {
-    private int _button;
+    private readonly int _button;
     
     private Vector3 _lastMousePosition;
     private float _mouseDistanceTravelled = 0;
 
-    private Action _onMouseDown;
-    private Action _nonDragMouseRelease;
-    private Action _dragMouseRelease;
-    private Action _whileDraggingMouse;
+    private readonly Action _onMouseDown;
+    private readonly Action _nonDragMouseRelease;
+    private readonly Action _dragMouseRelease;
+    private readonly Action _whileDraggingMouse;
 
     public ClickManager(int button, Action onMouseDown, Action nonDragMouseRelease, Action dragMouseRelease, Action whileDraggingMouse)
     {

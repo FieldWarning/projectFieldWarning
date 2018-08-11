@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Model.Game
+namespace PFW.Model.Game
 {
     public class Team : MonoBehaviour
     {

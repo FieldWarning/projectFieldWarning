@@ -14,9 +14,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Ingame.UI;
+using PFW.Ingame.UI;
 
-namespace Assets.Model.Game
+namespace PFW.Model.Game
 {
     public class GameSession : MonoBehaviour
     {

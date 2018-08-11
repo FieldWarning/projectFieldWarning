@@ -14,7 +14,7 @@
 using UnityEngine;
 using PFW.Weapons;
 
-using Assets.Ingame.UI;
+using PFW.Ingame.UI;
 
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
