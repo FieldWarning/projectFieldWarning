@@ -32,7 +32,7 @@ public class UnitLabelAttacher : MonoBehaviour
 
     public void LateUpdate()
     {
-        Label.transform.position = GetScreenPosition(_canvas);
+        Label.transform.position = GetScreenPosition(_canvas, Camera.main);
     }
 
     public void Hide()
@@ -43,6 +43,14 @@ public class UnitLabelAttacher : MonoBehaviour
     public void Show()
     {
         Label.SetActive(true);
+    }
+
+    public void SetVisibility(bool visible)
+    {
+        if (visible)
+            Show();
+        else
+            Hide();
     }
 
     public Vector3 GetScreenPosition(Canvas canvas, Camera cam = null)

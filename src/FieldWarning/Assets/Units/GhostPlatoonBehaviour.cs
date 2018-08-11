@@ -115,6 +115,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     {
         _icon.GetComponent<IconBehaviour>().SetVisible(vis);
         _units.ForEach(x => x.GetComponent<UnitBehaviour>().SetVisible(vis));
+
+        _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
     }
 
     public void SetIgnoreRaycast(bool ignore)
