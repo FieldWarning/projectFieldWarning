@@ -91,7 +91,6 @@ public class VisibleBehavior : MonoBehaviour
         } else {
             _spotting[enemy] = false;
         }
-
     }
 
     internal void SetSpottedBy(VisibleBehavior unit, bool p)
@@ -119,7 +118,6 @@ public class VisibleBehavior : MonoBehaviour
             _spotting.Add(h, false);
             _spottedBy.Add(h, false);
         }
-
     }
 
     /*public override int GetHashCode()
@@ -133,12 +131,11 @@ public class VisibleBehavior : MonoBehaviour
 
     internal void AddHostile(VisibleBehavior b)
     {
-        if (!_spottedBy.ContainsKey(b)) {
+        if (!_spottedBy.ContainsKey(b)) 
             _spottedBy.Add(b, false);
-        }
-        if (!_spotting.ContainsKey(b)) {
-            _spotting.Add(b, false);
-        }
+        
+        if (!_spotting.ContainsKey(b)) 
+            _spotting.Add(b, false);        
     }
 
     internal void UpdateTeamBelonging()

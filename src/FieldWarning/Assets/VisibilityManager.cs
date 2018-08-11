@@ -30,22 +30,14 @@ public class VisibilityManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Application.targetFrameRate = -1;
         n = Mathf.CeilToInt(mapSize / maxViewDistance);
 
         teamMembersBlue = new List<VisibleBehavior>();
         teamMembersRed = new List<VisibleBehavior>();
         visionCellsBlue = new List<VisibleBehavior>[n, n];
         visionCellsRed = new List<VisibleBehavior>[n, n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                visionCellsBlue[i, j] = new List<VisibleBehavior>();
-                visionCellsRed[i, j] = new List<VisibleBehavior>();
-            }
-        }
 
         //Debug.Log(getVisionCells(Team.Blue));
-        visTest();
     }
 
     // Update is called once per frame
@@ -53,34 +45,7 @@ public class VisibilityManager : MonoBehaviour
     {
         updateVision();
     }
-    private void visTest()
-    {
-        var go = Resources.Load<GameObject>("VisTest");
-        var friend = GameObject.Instantiate<GameObject>(go);
-        var friendBehaviour = friend.GetComponent<VisibleBehavior>();
-        friendBehaviour.Initialize(Team.Red);
-        var n = 100;
-        foreach (var t in new Team[] { Team.Blue, Team.Red }) {
-            //Team o = Team.Red;
-            var off = 50;
-            if (t == Team.Red) off = -off;
-            var offset = new Vector3(off, 0, 0);
-            for (int i = -n; i <= n; i++) {
 
-                var enemy = GameObject.Instantiate<GameObject>(go);
-                //enemy.transform.parent = friend.transform;
-                var behaviour = enemy.GetComponent<VisibleBehavior>();
-                behaviour.Initialize(t);
-                //hostileTeam.Add(behaviour);
-                var pos = 200 * UnityEngine.Random.insideUnitCircle;
-                behaviour.transform.position = new Vector3(pos.x, 0, pos.y) + offset;
-                //getTeamMembers(t).Add(behaviour);
-
-            }
-        }
-        //teamMembersBlue.ForEach(x => x.setHostileTeam(teamMembersRed));
-        //teamMembersRed.ForEach(x => x.setHostileTeam(teamMembersBlue));
-    }
     public static void addVisibleBehaviour(VisibleBehavior b)
     {
         var members = getTeamMembers(b.Team);
@@ -89,6 +54,7 @@ public class VisibilityManager : MonoBehaviour
         if (t == b.Team) t = Team.Red;
         getTeamMembers(t).ForEach(x => x.AddHostile(b));
     }
+
     public void updateVision()
     {
         //Debug.Log(teamMembersBlue.Count );
