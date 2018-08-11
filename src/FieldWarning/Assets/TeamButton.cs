@@ -18,19 +18,22 @@ using Assets.Ingame.UI;
 public class TeamButton : MonoBehaviour
 {
     [SerializeField]
-    private Player p;
-    [SerializeField]
-    private UIManagerBehaviour uiManager;
+    private Player _player;
+    private UIManagerBehaviour _uiManager;
 
-    // Use this for initialization
-    void Start() { }
+    void Start()
+    {
+        // TODO fix this hack
+        var session = GameObject.Find("GameSession");
+        _uiManager = session.GetComponent<UIManagerBehaviour>();
+    }
 
     // Update is called once per frame
     void Update() { }
 
     public void onClick()
     {
-        uiManager.Owner = p;
+        _uiManager.Owner = _player;
         VisibilityManager.updateTeamBelonging();
     }
 }

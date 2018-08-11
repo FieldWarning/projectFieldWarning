@@ -75,10 +75,10 @@ public partial class PlatoonBehaviour : SelectableBehavior
 
     public void Initialize(UnitType t, Player owner, int n)
     {
-        UIManagerBehaviour.RegisterPlatoonBirth(this);
-
         Type = t;
         Owner = owner;
+
+        Owner.Session.RegisterPlatoonBirth(this);
 
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
@@ -162,7 +162,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
         foreach (var p in Units)
             Destroy(p.gameObject);
 
-        UIManagerBehaviour.RegisterPlatoonDeath(this);
+        Owner.Session.RegisterPlatoonDeath(this);
         Destroy(gameObject);
     }
 }

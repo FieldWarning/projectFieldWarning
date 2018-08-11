@@ -68,8 +68,8 @@ namespace Assets.Ingame.UI
                 card.GetComponentInChildren<Text>().text = unit.Name;
 
                 // this is very hacky and WIP just to keep the current spawning system working
-                var managers = GameObject.Find("Managers");
-                card.GetComponentInChildren<Button>().onClick.AddListener(managers.GetComponent<UIManagerBehaviour>().TankButtonCallback);
+                var session = GameObject.Find("GameSession");
+                card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<UIManagerBehaviour>().TankButtonCallback);
 
                 // TODO Set picture too
                 // TODO Transports?

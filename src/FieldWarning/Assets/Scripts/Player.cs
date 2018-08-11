@@ -13,7 +13,22 @@
 
 using UnityEngine;
 
+using Assets.Model.Game;
+
 public class Player : MonoBehaviour
 {
     public Assets.Model.Game.Team Team;
+
+    [SerializeField]
+    private GameSession _session;
+    public GameSession Session {
+        get {
+            return _session;
+        }
+
+        set {
+            if (_session == null)
+                _session = value;
+        }
+    }
 }
