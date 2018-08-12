@@ -19,7 +19,7 @@ using Pfw.Ingame.Prototype;
 
 using PFW.Ingame.UI;
 
-public partial class PlatoonBehaviour : SelectableBehavior
+public partial class PlatoonBehaviour : MonoBehaviour
 {
     public UnitType Type;
     public IconBehaviour Icon;
