@@ -18,7 +18,7 @@ using PFW.Ingame.UI;
 
 namespace PFW.Model.Game
 {
-    public class GameSession : MonoBehaviour
+    public class MatchSession : MonoBehaviour
     {
         public Settings Settings { get; } = new Settings();
         public ICollection<Team> Teams { get; private set; }

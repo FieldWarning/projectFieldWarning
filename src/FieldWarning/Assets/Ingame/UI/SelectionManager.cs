@@ -38,8 +38,8 @@ namespace PFW.Ingame.UI
 
         private ClickManager _clickManager;
 
-        private GameSession _session;
-        public GameSession Session {
+        private MatchSession _session;
+        public MatchSession Session {
             get {
                 return _session;
             }
