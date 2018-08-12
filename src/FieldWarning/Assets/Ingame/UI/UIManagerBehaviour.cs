@@ -250,11 +250,11 @@ namespace PFW.Ingame.UI
         {
             Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
             int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
-            float unitDistance = 4 * PlatoonBehaviour.BaseDistance;
+            float platoonDistance = 4 * PlatoonBehaviour.UNIT_DISTANCE;
             var right = Vector3.Cross(forward, Vector3.up);
-            var pos = position + unitDistance * (formationWidth - 1) * right / 2f;
+            var pos = position + platoonDistance * (formationWidth - 1) * right / 2f;
             for (var i = 0; i < formationWidth; i++)
-                units[i].GetComponent<GhostPlatoonBehaviour>().SetOrientation(pos - i * unitDistance * right, heading);
+                units[i].GetComponent<GhostPlatoonBehaviour>().SetOrientation(pos - i * platoonDistance * right, heading);
         }
 
         private void ExitPurchasingMode()

@@ -33,7 +33,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public List<PlatoonModule> Modules = new List<PlatoonModule>();
     public bool IsInitialized = false;
 
-    public static float BaseDistance = 4;
+    public static readonly float UNIT_DISTANCE = 4;
 
     public Player Owner { get; private set; }
 
