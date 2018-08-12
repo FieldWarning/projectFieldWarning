@@ -24,7 +24,7 @@ public class PathfinderData
     private const float GraphRadius = 0f;
     private const float SparseGridSpacing = 150f;
 
-    public UnityEngine.Terrain terrain;
+    public Terrain terrain;
     public List<PathNode> graph;
     FastPriorityQueue<PathNode> openSet;
 
@@ -79,14 +79,14 @@ public class PathfinderData
                     continue;
 
                 bool necessary = false;
-                foreach (MobilityType mobility in MobilityType.mobilityTypes) {
-                    if (arc.time[mobility.index] == Pathfinder.Forever)
+                foreach (MobilityType mobility in MobilityType.MobilityTypes) {
+                    if (arc.time[mobility.Index] == Pathfinder.Forever)
                         continue;
 
                     float time = FindPath(path,
                         graph[i].position, graph[j].position,
                         mobility, GraphRadius, MoveCommandType.Fast);
-                    if (arc.time[mobility.index] < 1.1 * time) {
+                    if (arc.time[mobility.Index] < 1.1 * time) {
                         necessary = true;
                         break;
                     }
@@ -115,8 +115,8 @@ public class PathfinderData
         node2.arcs.Add(arc);
 
         // Compute the arc's traversal time for each MobilityType
-        foreach (MobilityType mobility in MobilityType.mobilityTypes) {
-            arc.time[mobility.index] = Pathfinder.FindLocalPath(
+        foreach (MobilityType mobility in MobilityType.MobilityTypes) {
+            arc.time[mobility.Index] = Pathfinder.FindLocalPath(
                 this, node1.position, node2.position, mobility, GraphRadius);
         }
     }
@@ -135,6 +135,8 @@ public class PathfinderData
     {
         // This is a slow way to do it, and we will probably need a fast, generic method to find units within a given distance of a location
         if (radius > 0f) {
+            // TODO use unit list from game/match session
+            // TODO maybe move this logic into its own method?
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             foreach (GameObject unit in units) {
                 float dist = Vector3.Distance(location, unit.transform.position);
@@ -160,8 +162,8 @@ public class PathfinderData
 
         //if (Time.frameCount%100 == 50) Debug.Log(terrain.terrainData.GetInterpolatedNormal(location.x, location.y));
 
-        float overallSlopeFactor = mobility.slopeSensitivity * slopeSquared;
-        float directionalSlopeFactor = mobility.slopeSensitivity * mobility.directionalSlopeSensitivity * forwardSlope;
+        float overallSlopeFactor = mobility.SlopeSensitivity * slopeSquared;
+        float directionalSlopeFactor = mobility.SlopeSensitivity * mobility.DirectionalSlopeSensitivity * forwardSlope;
         float speed = 1.0f / (1.0f + overallSlopeFactor + directionalSlopeFactor);
         speed = Mathf.Max(speed - 0.1f, 0f);
 
@@ -216,7 +218,7 @@ public class PathfinderData
                 if (neighbor.isClosed)
                     continue;
 
-                float arcTime = arc.time[mobility.index];
+                float arcTime = arc.time[mobility.Index];
                 if (arcTime >= Pathfinder.Forever)
                     continue;
 
@@ -288,7 +290,7 @@ public struct PathArc
 
     public PathArc(PathNode node1, PathNode node2)
     {
-        time = new float[MobilityType.mobilityTypes.Count];
+        time = new float[MobilityType.MobilityTypes.Count];
         this.node1 = node1;
         this.node2 = node2;
     }

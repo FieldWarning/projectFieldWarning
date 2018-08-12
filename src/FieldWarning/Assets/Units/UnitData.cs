@@ -32,7 +32,7 @@ public class UnitData
     {
         weaponData = new List<WeaponData>();
         radius = Mathf.Sqrt(length * width) / 2;
-        mobility = MobilityType.mobilityTypes[0];
+        mobility = MobilityType.MobilityTypes[0];
     }
 
     public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP

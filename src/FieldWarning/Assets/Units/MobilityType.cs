@@ -11,8 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 
 // The purpose of having MobilityType as a separate class from UnitData is
@@ -21,22 +19,22 @@ using System.Collections.Generic;
 public class MobilityType
 {
     // This list needs to be instantiated before the PathfinderData
-    public static List<MobilityType> mobilityTypes = new List<MobilityType>();
+    public static readonly List<MobilityType> MobilityTypes = new List<MobilityType>();
 
-    public int index { get; private set; }
+    public readonly int Index;
 
     // More all-terrain units like infantry should have reduced slope sensitivity
-    public float slopeSensitivity { get; private set; }
+    public readonly float SlopeSensitivity;
 
     // A value of 0.5 means the unit will go the same speed on flat terrain as it does on a 30 degree downhill incline
-    public float directionalSlopeSensitivity { get; private set; }
+    public readonly float DirectionalSlopeSensitivity;
 
     public MobilityType()
     {
-        slopeSensitivity = 1.5f;
-        directionalSlopeSensitivity = 0.5f;
+        SlopeSensitivity = 1.5f;
+        DirectionalSlopeSensitivity = 0.5f;
 
-        index = mobilityTypes.Count;
-        mobilityTypes.Insert(index, this);
+        Index = MobilityTypes.Count;
+        MobilityTypes.Insert(Index, this);
     }
 }
