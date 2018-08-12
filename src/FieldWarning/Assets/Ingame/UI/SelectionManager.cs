@@ -72,15 +72,16 @@ namespace PFW.Ingame.UI
                 return;
 
             _clickManager.Update();
+        }
 
-            if (Session.UIManager.CurMouseMode == MouseMode.firePos && Input.GetMouseButtonDown(0)) {
-                RaycastHit hit;
-                Util.GetTerrainClickLocation(out hit);
+        public void DispatchFirePosCommand()
+        {
+            RaycastHit hit;
+            if (!Util.GetTerrainClickLocation(out hit))
+                return;
 
-                foreach (var platoon in Selection) {
-                    platoon.SendFirePosOrder(hit.point);
-                }
-            }
+            foreach (var platoon in Selection) 
+                platoon.SendFirePosOrder(hit.point);            
         }
 
         public void ChangeSelectionAfterOrder()

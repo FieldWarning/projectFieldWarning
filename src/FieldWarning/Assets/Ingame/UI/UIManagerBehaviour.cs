@@ -84,9 +84,13 @@ namespace PFW.Ingame.UI
 
             case MouseMode.firePos:
                 ApplyHotkeys();
-                if (Input.GetMouseButtonDown(0)
-                    || Input.GetMouseButtonDown(1))
+
+                if (Input.GetMouseButtonDown(0))
+                    Session.SelectionManager.DispatchFirePosCommand();
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) 
                     ExitFirePosMode();
+
                 break;
 
             default:
