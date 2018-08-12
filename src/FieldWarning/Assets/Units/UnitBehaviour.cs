@@ -60,7 +60,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     
     public virtual void Update()
     {
-        UpdateMapOrientation();
+        if (IsMoving())
+            UpdateMapOrientation();
         DoMovement();
     }
 
@@ -138,6 +139,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     protected abstract void DoMovement();
 
+    protected abstract bool IsMoving();
+
     public void SetLayer(int l)
     {
         gameObject.layer = l;
@@ -188,6 +191,14 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     }
 
     public abstract bool OrdersComplete();
+
+    // Returns the unit's speed on the current terrain
+    public float GetTerrainSpeed()
+    {
+        float terrainSpeed = pathfinder.data.GetUnitSpeed(Data.mobility, transform.position, 0f, -transform.forward);
+        terrainSpeed = Mathf.Max(terrainSpeed, 0.05f); // Never let the speed to go exactly 0, just so units don't get stuck
+        return Data.movementSpeed * terrainSpeed;
+    }
 
 }
 

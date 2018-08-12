@@ -264,7 +264,13 @@ public class InfantryBehaviour : UnitBehaviour {
         unloadIndex = 0;
         behaviour = InfantryBehaviourState.Unloading;
     }
-    
+
+    protected override bool IsMoving()
+    {
+        // TODO: Implement this
+        return true;
+    }
+
     protected override Renderer[] GetRenderers()
     {
         return men.ConvertAll(x => x.gameObject.GetComponent<Renderer>()).ToArray();
