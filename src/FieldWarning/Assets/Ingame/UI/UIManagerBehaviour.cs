@@ -290,25 +290,13 @@ namespace PFW.Ingame.UI
 
         public void ApplyHotkeys()
         {
-            var selected = Session.SelectionManager.Selection;
-
             if (Commands.Unload()) {
-                foreach (var t in selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
-                    t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
-                    t.Unload();
-                    t.EndQueueing();
-                }
+                Session.SelectionManager.DispatchUnloadCommand();
 
             } else if (Commands.Load()) {
+                Session.SelectionManager.DispatchLoadCommand();
 
-                var transporters = selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
-                var infantry = selected.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
-
-                transporters.ForEach(x => x.BeginQueueing(Input.GetKey(KeyCode.LeftShift)));
-                transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
-                transporters.ForEach(x => x.EndQueueing());
-
-            } else if (Commands.FirePos() && selected.Count != 0) {
+            } else if (Commands.FirePos() && !Session.SelectionManager.Empty) {
                 EnterFirePosMode();
             }
         }

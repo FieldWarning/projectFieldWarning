@@ -23,6 +23,11 @@ namespace PFW.Ingame.UI
     public class SelectionManager : MonoBehaviour
     {
         public List<PlatoonBehaviour> Selection { get; private set; }
+        public bool Empty {
+            get {
+                return Selection.Count == 0;
+            }
+        }
 
         private Vector3 _mouseStart;
         private Vector3 _mouseEnd;
@@ -80,8 +85,27 @@ namespace PFW.Ingame.UI
             if (!Util.GetTerrainClickLocation(out hit))
                 return;
 
-            foreach (var platoon in Selection) 
-                platoon.SendFirePosOrder(hit.point);            
+            foreach (var platoon in Selection)
+                platoon.SendFirePosOrder(hit.point);
+        }
+
+        public void DispatchUnloadCommand()
+        {
+            foreach (var t in Selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
+                t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
+                t.Unload();
+                t.EndQueueing();
+            }
+        }
+
+        public void DispatchLoadCommand()
+        {
+            var transporters = Selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
+            var infantry = Selection.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
+
+            transporters.ForEach(x => x.BeginQueueing(Input.GetKey(KeyCode.LeftShift)));
+            transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
+            transporters.ForEach(x => x.EndQueueing());
         }
 
         public void ChangeSelectionAfterOrder()
