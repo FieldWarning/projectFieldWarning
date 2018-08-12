@@ -45,7 +45,9 @@ public class TerrainBuilder : MonoBehaviour
         TerrainData.initialize(alphaMap);
         RoadNetwork.BuildNetwork();
 
-        PathfinderData.singleton = new PathfinderData(new TerrainData());
+        new MobilityType(); // This obvously needs to be removed once a way to read in the data is finalized
+
+        PathfinderData.singleton = new PathfinderData(terrain);
 
     }
 

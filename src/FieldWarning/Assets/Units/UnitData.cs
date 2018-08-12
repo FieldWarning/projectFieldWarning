@@ -13,6 +13,7 @@
 
 using System.Collections.Generic;
 using PFW.Weapons;
+using UnityEngine;
 
 public class UnitData
 {
@@ -22,12 +23,16 @@ public class UnitData
     public float rotationSpeed = 50f;
     public float maxHealth = 10f;
     public List<WeaponData> weaponData;
-    public float radius = 0.5f;  // Used for pathfinding and collisions
-    public MobilityType mobility = MobilityType.Track;
+    public float length = 0.85f; // length and width are used for pivoting on terrain, and to define radius
+    public float width = 0.5f;
+    public float radius;  // Used for pathfinding and collisions
+    public MobilityType mobility;
 
     public UnitData()
     {
         weaponData = new List<WeaponData>();
+        radius = Mathf.Sqrt(length * width) / 2;
+        mobility = MobilityType.MobilityTypes[0];
     }
 
     public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP
@@ -60,7 +65,7 @@ public class UnitData
     }
 }
 
-public enum MobilityType
+/*public enum MobilityType
 {
     Inf,
     InfAmphib,
@@ -68,4 +73,5 @@ public enum MobilityType
     WheelAmphib,
     Track,
     TrackAmphib
-};
+};*/
+

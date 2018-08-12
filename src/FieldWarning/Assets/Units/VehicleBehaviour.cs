@@ -18,6 +18,7 @@ public class VehicleBehaviour : UnitBehaviour
     private const float DECELERATION_FACTOR = 2.0f;
 
     private float _speed;
+    private bool _isTurning;
 
     // Use this for initialization
     new void Start()
@@ -66,7 +67,13 @@ public class VehicleBehaviour : UnitBehaviour
         destinationHeading = destinationHeading.unwrapRadian();
         var currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
         var remainingTurn = (destinationHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
+
+        _isTurning = Mathf.Abs(remainingTurn) > 0.001f;
+        if (!_isTurning)
+            return 0f;
+
         var turn = Mathf.Sign(remainingTurn) * Data.rotationSpeed * Time.deltaTime;
+
         if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
             turn = remainingTurn;
 
@@ -97,7 +104,8 @@ public class VehicleBehaviour : UnitBehaviour
 
         } else {
             float destDist = (destination - transform.localPosition).magnitude;
-            targetSpeed = Mathf.Min(Data.movementSpeed, Mathf.Sqrt(2 * destDist * Data.accelRate * DECELERATION_FACTOR));
+            float terrainSpeed = GetTerrainSpeed();
+            targetSpeed = Mathf.Min(terrainSpeed, Mathf.Sqrt(2 * destDist * Data.accelRate * DECELERATION_FACTOR));
 
             float waypointDist = (waypoint - transform.localPosition).magnitude;
             var turnradius = waypointDist / (1000 * Mathf.Abs(headingDiff));
@@ -140,12 +148,38 @@ public class VehicleBehaviour : UnitBehaviour
 
     public override void UpdateMapOrientation()
     {
-        var terrainHeight = Terrain.activeTerrain.SampleHeight(transform.position);
+        // This way of doing the rotation should look nice because the unit won't sink into the ground
+        //      much assuming length and width are set correctly, but it is not very fast
 
-        transform.position = new Vector3(transform.position.x, terrainHeight, transform.position.z);
+        transform.localEulerAngles = new Vector3(0f, transform.localEulerAngles.y, 0f);
+
+        // Apparently our forward and backward are opposite of the Unity convention
+        float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position - transform.forward * Data.length/2);
+        float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position + transform.forward * Data.length/2);
+        float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - transform.right * Data.width/2);
+        float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + transform.right * Data.width/2);
+        float height = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
+
+        //float height = Terrain.activeTerrain.SampleHeight (transform.position);
+
+        Vector3 pos = transform.position;
+        pos.y = height;
+
+        Vector3 rot = transform.localEulerAngles;
+        rot.x = Mathf.Rad2Deg * Mathf.Atan((frontHeight - rearHeight) / Data.length);
+        rot.z = Mathf.Rad2Deg * Mathf.Atan((rightHeight - leftHeight) / Data.width);
+
+        transform.position = pos;
+        transform.localEulerAngles = rot;
+
         //var p = this.transform.position;
         //var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
         //this.transform.position = new Vector3(p.x, y, p.z);
+    }
+
+    protected override bool IsMoving()
+    {
+        return _speed > 0f || _isTurning;
     }
 
     public override bool OrdersComplete()
