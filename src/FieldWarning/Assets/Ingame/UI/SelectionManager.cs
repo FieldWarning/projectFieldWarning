@@ -118,8 +118,11 @@ namespace PFW.Ingame.UI
                 var go = hit.transform.gameObject;
                 var selectable = go.GetComponent<SelectableBehavior>();
 
-                if (selectable != null)
-                    Selection.Add(selectable.GetPlatoon());
+                if (selectable != null) {
+                    var p = selectable.GetPlatoon();
+                    if (p != null)
+                        Selection.Add(selectable.GetPlatoon());
+                }
             }
 
             SetSelected(Selection);
