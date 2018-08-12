@@ -19,19 +19,17 @@ using Priority_Queue;
 public class PathfinderData
 {
     public static PathfinderData singleton;
-
-    public static int NumMobilityTypes;
+    
     private static PathArc InvalidArc = new PathArc(null, null);
     private const float GraphRadius = 0f;
     private const float SparseGridSpacing = 150f;
 
-    public TerrainData terrain;
+    public UnityEngine.Terrain terrain;
     public List<PathNode> graph;
     FastPriorityQueue<PathNode> openSet;
 
-    public PathfinderData(TerrainData terrain)
+    public PathfinderData(Terrain terrain)
     {
-        NumMobilityTypes = Enum.GetNames(typeof(MobilityType)).Length;
         this.terrain = terrain;
         graph = new List<PathNode>();
         BuildGraph();
@@ -81,14 +79,14 @@ public class PathfinderData
                     continue;
 
                 bool necessary = false;
-                for (int k = 0; k < NumMobilityTypes; k++) {
-                    if (arc.time[k] == Pathfinder.Forever)
+                foreach (MobilityType mobility in MobilityType.mobilityTypes) {
+                    if (arc.time[mobility.index] == Pathfinder.Forever)
                         continue;
 
                     float time = FindPath(path,
                         graph[i].position, graph[j].position,
-                        (MobilityType)k, GraphRadius, MoveCommandType.Fast);
-                    if (arc.time[k] < 1.1 * time) {
+                        mobility, GraphRadius, MoveCommandType.Fast);
+                    if (arc.time[mobility.index] < 1.1 * time) {
                         necessary = true;
                         break;
                     }
@@ -117,9 +115,9 @@ public class PathfinderData
         node2.arcs.Add(arc);
 
         // Compute the arc's traversal time for each MobilityType
-        for (int i = 0; i < NumMobilityTypes; i++) {
-            arc.time[i] = Pathfinder.FindLocalPath(
-                this, node1.position, node2.position, (MobilityType)i, GraphRadius);
+        foreach (MobilityType mobility in MobilityType.mobilityTypes) {
+            arc.time[mobility.index] = Pathfinder.FindLocalPath(
+                this, node1.position, node2.position, mobility, GraphRadius);
         }
     }
 
@@ -133,8 +131,9 @@ public class PathfinderData
     // Gives the relative speed of a unit with the given MobilityType at the given location
     // Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
     // If radius > 0, check for units in the way, otherwise just look at terrain
-    public float GetUnitSpeed(MobilityType mobility, Vector3 location, float radius)
+    public float GetUnitSpeed(MobilityType mobility, Vector3 location, float radius, Vector3 direction)
     {
+        // This is a slow way to do it, and we will probably need a fast, generic method to find units within a given distance of a location
         if (radius > 0f) {
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             foreach (GameObject unit in units) {
@@ -144,8 +143,29 @@ public class PathfinderData
             }
         }
 
-        // TODO: find unit speed on terrain
-        return 0.5f;
+        // Find unit speed on terrain
+        // TODO: Make this also depend on the terrain type, not just elevation
+
+        direction.y = 0f;
+        direction.Normalize();
+        Vector3 perpendicular = new Vector3(-direction.z, 0f, direction.x);
+
+        float height = terrain.SampleHeight(location);
+        float forwardHeight = terrain.SampleHeight(location - direction);
+        float sideHeight = terrain.SampleHeight(location + perpendicular);
+
+        float forwardSlope = forwardHeight - height;
+        float sideSlope = sideHeight - height;
+        float slopeSquared = forwardSlope*forwardSlope + sideSlope*sideSlope;
+
+        //if (Time.frameCount%100 == 50) Debug.Log(terrain.terrainData.GetInterpolatedNormal(location.x, location.y));
+
+        float overallSlopeFactor = mobility.slopeSensitivity * slopeSquared;
+        float directionalSlopeFactor = mobility.slopeSensitivity * mobility.directionalSlopeSensitivity * forwardSlope;
+        float speed = 1.0f / (1.0f + overallSlopeFactor + directionalSlopeFactor);
+        speed = Mathf.Max(speed - 0.1f, 0f);
+
+        return speed;
     }
 
     // Run the A* algorithm and put the result in path
@@ -196,7 +216,7 @@ public class PathfinderData
                 if (neighbor.isClosed)
                     continue;
 
-                float arcTime = arc.time[(int)mobility];
+                float arcTime = arc.time[mobility.index];
                 if (arcTime >= Pathfinder.Forever)
                     continue;
 
@@ -268,7 +288,7 @@ public struct PathArc
 
     public PathArc(PathNode node1, PathNode node2)
     {
-        time = new float[PathfinderData.NumMobilityTypes];
+        time = new float[MobilityType.mobilityTypes.Count];
         this.node1 = node1;
         this.node2 = node2;
     }
