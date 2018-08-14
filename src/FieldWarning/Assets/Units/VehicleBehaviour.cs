@@ -15,10 +15,11 @@ using UnityEngine;
 
 public class VehicleBehaviour : UnitBehaviour
 {
-    private const float DECELERATION_FACTOR = 2.0f;
+    private const float DECELERATION_FACTOR = 2.5f;
+    private const float HEADING_THRESHOLD = 3f * Mathf.Deg2Rad;
 
-    private float _speed;
-    private bool _isTurning;
+    private float _linVelocity;
+    private float _rotVelocity;
 
     // Use this for initialization
     new void Start()
@@ -36,105 +37,114 @@ public class VehicleBehaviour : UnitBehaviour
 
     protected override void DoMovement()
     {
-        Vector3 waypoint = pathfinder.GetWaypoint();
+        float targetHeading = getTargetHeading();
+        float remainingTurn = CalculateRemainingTurn(targetHeading);
+        float rotationSpeed = CalculateRotationSpeed(_linVelocity);
+        
+        float distanceToWaypoint = 0f;
+        if (pathfinder.HasDestination()) {
+            Vector3 waypoint = pathfinder.GetWaypoint();
+            distanceToWaypoint = (waypoint - transform.localPosition).magnitude;
+        }
+        
+        float targetSpeed = CalculateTargetSpeed(distanceToWaypoint, remainingTurn, _linVelocity, rotationSpeed);
+        //if (Time.frameCount % 100 == 50) Debug.Log(targetSpeed);
 
-        float destinationHeading = CalculateDestinationHeading(waypoint);
-        float remainingTurn = TurnTowardDestination(destinationHeading);
-
-        float targetSpeed = CalculateTargetSpeed(remainingTurn, waypoint);
-        UpdateRealSpeed(targetSpeed);
-
-        transform.Translate(_speed * Time.deltaTime * Vector3.forward);
+        DoLinearMotion(targetSpeed);
+        DoRotationalMotion(remainingTurn, rotationSpeed);
     }
 
-    private float CalculateDestinationHeading(Vector3 waypoint)
+    // Target heading currently only depends on the waypoint and final heading, but units will also need to face armor and weapons
+    private float getTargetHeading()
     {
-        float destinationHeading;
+        float destinationHeading = finalHeading;
 
         if (pathfinder.HasDestination()) {
-            var diff = waypoint - this.transform.position;
-            destinationHeading = diff.getRadianAngle();
-
-        } else {
-            destinationHeading = finalHeading;
+            var diff = pathfinder.GetWaypoint() - this.transform.position;
+            if (diff.magnitude > pathfinder.finalCompletionDist)
+                destinationHeading = diff.getRadianAngle();
         }
 
         return destinationHeading;
     }
 
-    private float TurnTowardDestination(float destinationHeading)
+    // Calculate the unit's maximum rotational speed in rads/sec at the given linear speed.
+    // All angles need to have units of radians
+    private float CalculateRotationSpeed(float linearSpeed)
     {
-        destinationHeading = destinationHeading.unwrapRadian();
-        var currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
-        var remainingTurn = (destinationHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
+        float turnRadius = Mathf.Max(Data.minTurnRadius, linearSpeed * linearSpeed / Data.maxLateralAccel);
 
-        _isTurning = Mathf.Abs(remainingTurn) > 0.001f;
-        if (!_isTurning)
-            return 0f;
+        float rotSpeed = Mathf.Deg2Rad * Data.maxRotationSpeed;
+        if (turnRadius > 0f)
+            rotSpeed = Mathf.Min(rotSpeed, linearSpeed / turnRadius);
 
-        var turn = Mathf.Sign(remainingTurn) * Data.rotationSpeed * Time.deltaTime;
-
-        if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
-            turn = remainingTurn;
-
-        //var normal = Terrain.activeTerrain.terrainData.GetInterpolatedNormal(transform.position.x / Terrain.activeTerrain.terrainData.bounds.size.x, transform.position.y / Terrain.activeTerrain.terrainData.bounds.size.y);
-
-        //var desiredForward = new Vector3(Mathf.Sin(currentHeading + turn), 0, Mathf.Cos(currentHeading + turn));
-        //var left = Vector3.Cross(Vector3.up, desiredForward);
-        //var actualForward = Vector3.Cross(left, normal);
-
-        //transform.up = normal;
-        //transform.forward = actualForward;
-
-
-        ////transform.Rotate(Vector3.up, -turn);
-        ////transform.Rotate(Vector3.right, transform.eulerAngles.y - normal);
-
-        transform.Rotate(Vector3.up, -turn);
-
-        return remainingTurn;
+        return rotSpeed;
+    }
+    
+    private float CalculateRemainingTurn(float targetHeading)
+    {
+        targetHeading = targetHeading.unwrapRadian();
+        float currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
+        return (targetHeading + currentHeading - Mathf.PI / 2).unwrapRadian();
     }
 
-    private float CalculateTargetSpeed(float headingDiff, Vector3 waypoint)
+    // Finds the linear speed that gets the unit to the desired distance/angle the fastest.
+    // All angles in units of radians
+    private float CalculateTargetSpeed(float linDist, float remainingTurn, float linSpeed, float rotSpeed)
     {
-        float targetSpeed;
 
-        if (!pathfinder.HasDestination()) {
-            targetSpeed = 0f;
+        // Need to face approximately the right direction before speeding up
+        float angDist = Mathf.Max(0f, Mathf.Abs(remainingTurn) - HEADING_THRESHOLD);
+        if (angDist > Mathf.PI / 3)
+            return Data.optimumTurnSpeed;
 
-        } else {
-            float destDist = (destination - transform.localPosition).magnitude;
-            float terrainSpeed = GetTerrainSpeed();
-            targetSpeed = Mathf.Min(terrainSpeed, Mathf.Sqrt(2 * destDist * Data.accelRate * DECELERATION_FACTOR));
+        //// Arrived at destination, now only need to face the right direction
+        //if (linDist < pathfinder.finalCompletionDist)
+        //    return Data.optimumTurnSpeed;
 
-            float waypointDist = (waypoint - transform.localPosition).magnitude;
-            var turnradius = waypointDist / (1000 * Mathf.Abs(headingDiff));
-            float turnFactor = Data.rotationSpeed * turnradius;
-            if (turnFactor < 1)
-                targetSpeed *= turnFactor;
-        }
+        // Want to go just fast enough to cover the linear and angular distance if the unit starts slowing down now
+        float longestDist = Mathf.Max(linDist - pathfinder.finalCompletionDist/2, Data.minTurnRadius * angDist);
+        float targetSpeed = Mathf.Sqrt(2 * longestDist * Data.accelRate * DECELERATION_FACTOR);
+
+        // But not so fast that it cannot make the turn
+        if (linSpeed > Data.optimumTurnSpeed && angDist > 0f)
+            targetSpeed = Mathf.Min(targetSpeed, 0.6f * linDist * rotSpeed / angDist);
 
         return targetSpeed;
     }
 
-    private void UpdateRealSpeed(float targetSpeed)
+    private void DoLinearMotion(float targetSpeed)
     {
-        if (targetSpeed > _speed) {
-            _speed = Mathf.Min(targetSpeed, _speed + Data.accelRate * Time.deltaTime);
+        targetSpeed = Mathf.Min(targetSpeed, GetTerrainSpeed());
 
+        if (targetSpeed > _linVelocity) {
+            _linVelocity = Mathf.Min(targetSpeed, _linVelocity + Data.accelRate * Time.deltaTime);
         } else {
-            _speed = Mathf.Max(targetSpeed, _speed - DECELERATION_FACTOR * Data.accelRate * Time.deltaTime);
+            _linVelocity = Mathf.Max(targetSpeed, _linVelocity - DECELERATION_FACTOR * Data.accelRate * Time.deltaTime);
         }
+        
+        transform.Translate(_linVelocity * Time.deltaTime * Vector3.forward);
+    }
+
+    private void DoRotationalMotion(float remainingTurn, float rotationSpeed)
+    {
+        if (Mathf.Abs(remainingTurn) < HEADING_THRESHOLD) {
+            _rotVelocity = 0f;
+            return;
+        } else {
+            _rotVelocity = Mathf.Sign(remainingTurn) * rotationSpeed;
+        }
+
+        var turn = _rotVelocity * Time.deltaTime;
+        if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
+            turn = remainingTurn;
+
+        transform.Rotate(Vector3.down, Mathf.Rad2Deg * turn);
     }
 
     protected override Renderer[] GetRenderers()
     {
-        // Child 0 is the collider
-        //return transform.GetChild(1).GetComponentsInChildren<Renderer>();
-
-        // More generic fix..
         var renderers = GetComponentsInChildren<Renderer>();
-
         return renderers;
     }
 
@@ -179,7 +189,7 @@ public class VehicleBehaviour : UnitBehaviour
 
     protected override bool IsMoving()
     {
-        return _speed > 0f || _isTurning;
+        return _linVelocity > 0f || _rotVelocity > 0f;
     }
 
     public override bool OrdersComplete()

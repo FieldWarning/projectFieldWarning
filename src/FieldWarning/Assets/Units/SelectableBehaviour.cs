@@ -17,6 +17,8 @@ public class SelectableBehavior : MonoBehaviour
 {
     public virtual PlatoonBehaviour GetPlatoon()
     {
-        return transform.parent.GetComponent<SelectableBehavior>().GetPlatoon();
+        return transform
+            .parent
+            .GetComponent<PlatoonBehaviour>();
     }
 }

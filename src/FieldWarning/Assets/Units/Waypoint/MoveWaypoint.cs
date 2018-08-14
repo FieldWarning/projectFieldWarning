@@ -27,10 +27,10 @@ public class MoveWaypoint : Waypoint
         Vector3 v = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         var left = new Vector3(-v.z, 0, v.x);
 
-        var pos = destination + (platoon.Units.Count - 1) * (PlatoonBehaviour.BaseDistance / 2) * left;
+        var pos = destination + (platoon.Units.Count - 1) * (PlatoonBehaviour.UNIT_DISTANCE / 2) * left;
         var destinations = new List<Vector3>();
         for (int i = 0; i < platoon.Units.Count; i++) {
-            destinations.Add(pos - PlatoonBehaviour.BaseDistance * i * left);
+            destinations.Add(pos - PlatoonBehaviour.UNIT_DISTANCE * i * left);
         }
 
         platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);

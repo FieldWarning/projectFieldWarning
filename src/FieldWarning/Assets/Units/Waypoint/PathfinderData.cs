@@ -12,7 +12,6 @@
  */
 
 using UnityEngine;
-using System;
 using System.Collections.Generic;
 using Priority_Queue;
 
@@ -22,7 +21,7 @@ public class PathfinderData
     
     private static PathArc InvalidArc = new PathArc(null, null);
     private const float GraphRadius = 0f;
-    private const float SparseGridSpacing = 150f;
+    private const float SparseGridSpacing = 100f;
 
     public Terrain terrain;
     public List<PathNode> graph;

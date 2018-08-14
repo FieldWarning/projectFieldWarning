@@ -30,11 +30,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private Player _owner;
     private List<GameObject> _units = new List<GameObject>();
     
-    void Start()
-    {
-
-    }
-    
     void Update()
     {
         if (_raycastIgnoreChange) {
@@ -101,10 +96,10 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         Vector3 v = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
         var left = new Vector3(-v.z, 0, v.x);
 
-        var pos = position + (_units.Count - 1) * (PlatoonBehaviour.BaseDistance / 2) * left;
+        var pos = position + (_units.Count - 1) * (PlatoonBehaviour.UNIT_DISTANCE / 2) * left;
         for (int i = 0; i < _units.Count; i++) {
 
-            var localPosition = pos - PlatoonBehaviour.BaseDistance * i * left;
+            var localPosition = pos - PlatoonBehaviour.UNIT_DISTANCE * i * left;
             var localRotation = Quaternion.Euler(new Vector3(0, -Mathf.Rad2Deg * (heading) + 90, 0));
             _units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(localPosition, localRotation, false);
             _units[i].GetComponent<UnitBehaviour>().UpdateMapOrientation();

@@ -21,7 +21,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public const string UNIT_TAG = "Unit";
 
     public UnitData Data = UnitData.GenericUnit();
-    public Vector3 destination;
     public PlatoonBehaviour platoon { get; private set; }
     public bool IsAlive { get; private set; }
     public Pathfinder pathfinder { get; private set; }
@@ -44,7 +43,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     
     public virtual void Start()
     {
-        destination = new Vector3(100, 0, -100);
         transform.position = 100 * Vector3.down;
         enabled = false;
         _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
@@ -111,23 +109,27 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Sets the unit's destination location, with a default heading value
     public void SetUnitDestination(Vector3 v)
     {
-
-        var diff = (v - transform.position).normalized;
+        var diff = (v - transform.position);
         SetFinalOrientation(v, diff.getRadianAngle());
     }
 
     // Sets the unit's destination location, with a specific given heading value
     public void SetFinalOrientation(Vector3 d, float heading)
     {
-        destination = d;
-        SetUnitFinalHeading(heading);
-        pathfinder.SetPath(destination, MoveCommandType.Fast);
+        if (pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever) {
+            SetUnitFinalHeading(heading);
+        }
     }
 
     // Updates the unit's final heading so that it faces the specified location
     public void SetUnitFinalFacing(Vector3 v)
     {
-        var diff = (v - destination).normalized;
+        Vector3 diff;
+        if (pathfinder.HasDestination()) {
+            diff = v - pathfinder.GetDestination();
+        } else {
+            diff = v - transform.position;
+        }
         SetUnitFinalHeading(diff.getRadianAngle());
     }
 
@@ -165,7 +167,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     protected float getHeading()
     {
-        return (destination - transform.position).getDegreeAngle();
+        return (pathfinder.GetDestination() - transform.position).getDegreeAngle();
     }
 
 
