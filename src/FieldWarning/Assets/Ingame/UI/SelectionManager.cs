@@ -22,10 +22,10 @@ namespace PFW.Ingame.UI
 {
     public class SelectionManager : MonoBehaviour
     {
-        public List<PlatoonBehaviour> Selection { get; private set; }
+        private List<PlatoonBehaviour> _selection;
         public bool Empty {
             get {
-                return Selection.Count == 0;
+                return _selection.Count == 0;
             }
         }
 
@@ -50,9 +50,14 @@ namespace PFW.Ingame.UI
             }
         }
 
+        // State for managing move order previews:
+        private Vector3 _previewPosition;
+        private bool _makePreviewVisible;
+        // END state for managing move order previews:
+
         public void Awake()
         {
-            Selection = new List<PlatoonBehaviour>();
+            _selection = new List<PlatoonBehaviour>();
             _clickManager = new ClickManager(0, StartBoxSelection, OnSelectShortClick, EndDrag, UpdateBoxSelection);
 
             if (_texture == null) {
@@ -85,13 +90,13 @@ namespace PFW.Ingame.UI
             if (!Util.GetTerrainClickLocation(out hit))
                 return;
 
-            foreach (var platoon in Selection)
+            foreach (var platoon in _selection)
                 platoon.SendFirePosOrder(hit.point);
         }
 
         public void DispatchUnloadCommand()
         {
-            foreach (var t in Selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
+            foreach (var t in _selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
                 t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
                 t.Unload();
                 t.EndQueueing();
@@ -100,18 +105,30 @@ namespace PFW.Ingame.UI
 
         public void DispatchLoadCommand()
         {
-            var transporters = Selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
-            var infantry = Selection.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
+            var transporters = _selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
+            var infantry = _selection.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
 
             transporters.ForEach(x => x.BeginQueueing(Input.GetKey(KeyCode.LeftShift)));
             transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
             transporters.ForEach(x => x.EndQueueing());
         }
 
-        public void ChangeSelectionAfterOrder()
+        public void DispatchMoveCommand()
+        {
+            var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);
+            bool shift = Input.GetKey(KeyCode.LeftShift);
+            _selection.ForEach(x => x.Movement.BeginQueueing(shift));
+            _selection.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
+            _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
+            _selection.ForEach(x => x.Movement.EndQueueing());
+
+            MaybeDropSelectionAfterOrder();
+        }
+
+        public void MaybeDropSelectionAfterOrder()
         {
             if (!Input.GetKey(KeyCode.LeftShift) && !Options.StickySelection)
-                UnselectAll(Selection);
+                UnselectAll(_selection);
         }
 
         private void StartBoxSelection()
@@ -135,7 +152,7 @@ namespace PFW.Ingame.UI
 
         private void OnSelectShortClick()
         {
-            UnselectAll(Selection);
+            UnselectAll(_selection);
 
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -146,11 +163,11 @@ namespace PFW.Ingame.UI
                 if (selectable != null) {
                     var p = selectable.GetPlatoon();
                     if (p != null)
-                        Selection.Add(selectable.GetPlatoon());
+                        _selection.Add(selectable.GetPlatoon());
                 }
             }
 
-            SetSelected(Selection);
+            SetSelected(_selection);
         }
 
         private void UpdateSelection()
@@ -159,12 +176,12 @@ namespace PFW.Ingame.UI
                 return;
 
             List<PlatoonBehaviour> newSelection = Session.AllPlatoons.Where(x => IsInside(x)).ToList();
-            if (!Input.GetKey(KeyCode.LeftShift) && Selection != null) {
-                List<PlatoonBehaviour> old = Selection.Except(newSelection).ToList();
+            if (!Input.GetKey(KeyCode.LeftShift) && _selection != null) {
+                List<PlatoonBehaviour> old = _selection.Except(newSelection).ToList();
                 UnselectAll(old);
             }
             SetSelected(newSelection);
-            Selection = newSelection;
+            _selection = newSelection;
         }
 
         private bool IsInside(PlatoonBehaviour obj)
@@ -221,6 +238,50 @@ namespace PFW.Ingame.UI
                 GUI.DrawTexture(topEdge, _borderTexture, ScaleMode.StretchToFill, true);
                 GUI.DrawTexture(bottomEdge, _borderTexture, ScaleMode.StretchToFill, true);
             }
+        }
+
+        public void PrepareMoveOrderPreview(Vector3 position)
+        {            
+            Vector3 centerMass = _selection.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
+            _previewPosition = position;
+            PositionGhostUnits(2 * _previewPosition - centerMass, false);
+
+            // Prevent short clicks from displaying preview by only showing it on the first call to RotateMoveOrderPreview call. Should maybe move the logic to UIManager, since it should be responsible for recognizing hold clicks, not this code.
+            _makePreviewVisible = true;
+        }
+        
+        public void RotateMoveOrderPreview(Vector3 facingPoint)
+        {
+            PositionGhostUnits(facingPoint, _makePreviewVisible);
+
+            if (_makePreviewVisible)
+                _makePreviewVisible = false;
+        }
+
+        private void PositionGhostUnits(Vector3 facingPoint, bool makeVisible)
+        {
+            Vector3 diff = facingPoint - _previewPosition;
+            float heading = diff.getRadianAngle();
+
+            Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
+            int formationWidth = _selection.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
+            float platoonDistance = 4 * PlatoonBehaviour.UNIT_DISTANCE;
+            var right = Vector3.Cross(forward, Vector3.up);
+            var pos = _previewPosition + platoonDistance * (formationWidth - 1) * right / 2f;
+
+            List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(x => x.GhostPlatoon);
+
+            for (var i = 0; i < formationWidth; i++) {
+                ghosts[i].SetOrientation(pos - i * platoonDistance * right, heading);
+            }
+
+            if (makeVisible) {
+                ghosts.ForEach(x => x.SetVisible(true));
+            }
+        }
+
+        public void RegisterPlatoonDeath(PlatoonBehaviour platoon) {
+            _selection.Remove(platoon);
         }
     }
 }

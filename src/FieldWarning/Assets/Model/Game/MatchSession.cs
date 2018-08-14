@@ -11,7 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using PFW.Ingame.UI;
@@ -63,7 +62,7 @@ namespace PFW.Model.Game
         public void RegisterPlatoonDeath(PlatoonBehaviour platoon)
         {
             AllPlatoons.Remove(platoon);
-            SelectionManager.Selection.Remove(platoon);
+            SelectionManager.RegisterPlatoonDeath(platoon);
         }
     }
 }
