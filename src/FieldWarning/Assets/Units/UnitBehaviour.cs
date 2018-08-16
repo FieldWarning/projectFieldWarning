@@ -19,12 +19,26 @@ using PFW.Ingame.UI;
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
     public const string UNIT_TAG = "Unit";
+    private const float ORIENTATION_RATE = 5.0f;
+    private const float TRANSLATION_RATE = 10.0f;
 
     public UnitData Data = UnitData.GenericUnit();
     public PlatoonBehaviour platoon { get; private set; }
     public bool IsAlive { get; private set; }
     public Pathfinder pathfinder { get; private set; }
     public AudioSource source { get; private set; }
+
+    // These are set by the subclass in DoMovement()
+    protected Vector3 position;
+    protected Vector3 rotation;
+
+    // Forward and right directions on the horizontal plane
+    protected Vector3 forward { get; private set; }
+    protected Vector3 right { get; private set; }
+
+    // This is redundant with transform.rotation.localEulerAngles, but it is necessary because
+    // the localEulerAngles will sometimes automatically change to some new equivalent angles
+    private Vector3 instantaneousRotation;
 
     protected TerrainCollider Ground {
         get {
@@ -58,9 +72,33 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     
     public virtual void Update()
     {
+        DoMovement();
+
         if (IsMoving())
             UpdateMapOrientation();
-        DoMovement();
+
+        UpdateInstantaneousRotation();
+        UpdateInstantaneousPosition();
+    }
+
+    private void UpdateInstantaneousPosition()
+    {
+        Vector3 diff = position - transform.position;
+        transform.Translate(TRANSLATION_RATE * Time.deltaTime * diff);
+        transform.position = position;
+    }
+
+    private void UpdateInstantaneousRotation()
+    {
+        Vector3 diff = rotation - instantaneousRotation;
+        if (diff.sqrMagnitude > 1) {
+            instantaneousRotation = rotation;
+        } else {
+            instantaneousRotation += ORIENTATION_RATE * Time.deltaTime * diff;
+        }
+        transform.localEulerAngles = Mathf.Rad2Deg * new Vector3(-instantaneousRotation.x, -instantaneousRotation.y, instantaneousRotation.z);
+        forward = new Vector3(-Mathf.Sin(instantaneousRotation.y), 0f, Mathf.Cos(instantaneousRotation.y));
+        right = new Vector3(forward.z, 0f, -forward.x);
     }
 
     public void HandleHit(float receivedDamage)
