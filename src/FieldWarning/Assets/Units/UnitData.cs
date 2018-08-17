@@ -23,15 +23,17 @@ public class UnitData
     public float maxRotationSpeed = 50f;  // Units of degrees per second
     public float minTurnRadius = 0f;
     public float maxLateralAccel = 1.5f;
+    public float suspension = 0.1f;
     public float maxHealth = 10f;
     public List<WeaponData> weaponData;
     public float length = 1.2f; // length and width are used for pivoting on terrain, and to define radius
-    public float width = 0.75f;
+    public float width = 0.7f;
     public MobilityType mobility;
 
     // These variables are not read in from an external file
     public float radius;  // Used for pathfinding and collisions
     public float optimumTurnSpeed; // The linear speed which allows for the highest turn rate
+    public float suspensionForward, suspensionSide;
 
     public UnitData()
     {
@@ -40,6 +42,9 @@ public class UnitData
 
         radius = Mathf.Sqrt(length * width) / 2;
         optimumTurnSpeed = Mathf.Sqrt(maxLateralAccel*minTurnRadius);
+        
+        suspensionForward = suspension * radius / length;
+        suspensionSide = suspension * radius / width;
     }
 
     public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP

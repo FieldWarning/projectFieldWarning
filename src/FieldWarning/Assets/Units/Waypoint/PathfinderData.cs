@@ -20,7 +20,6 @@ public class PathfinderData
     public static PathfinderData singleton;
     
     private static PathArc InvalidArc = new PathArc(null, null);
-    private const float GraphRadius = 0f;
     private const float SparseGridSpacing = 100f;
 
     public Terrain terrain;
@@ -84,7 +83,7 @@ public class PathfinderData
 
                     float time = FindPath(path,
                         graph[i].position, graph[j].position,
-                        mobility, GraphRadius, MoveCommandType.Fast);
+                        mobility, 0f, MoveCommandType.Fast);
                     if (arc.time[mobility.Index] < 1.1 * time) {
                         necessary = true;
                         break;
@@ -116,7 +115,7 @@ public class PathfinderData
         // Compute the arc's traversal time for each MobilityType
         foreach (MobilityType mobility in MobilityType.MobilityTypes) {
             arc.time[mobility.Index] = Pathfinder.FindLocalPath(
-                this, node1.position, node2.position, mobility, GraphRadius);
+                this, node1.position, node2.position, mobility, 0f);
         }
     }
 
@@ -130,16 +129,16 @@ public class PathfinderData
     // Gives the relative speed of a unit with the given MobilityType at the given location
     // Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
     // If radius > 0, check for units in the way, otherwise just look at terrain
-    public float GetUnitSpeed(MobilityType mobility, Vector3 location, float radius, Vector3 direction)
+    public float GetUnitSpeed(MobilityType mobility, Vector3 location, float unitRadius, Vector3 direction)
     {
         // This is a slow way to do it, and we will probably need a fast, generic method to find units within a given distance of a location
-        if (radius > 0f) {
+        if (unitRadius > 0f) {
             // TODO use unit list from game/match session
             // TODO maybe move this logic into its own method?
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             foreach (GameObject unit in units) {
                 float dist = Vector3.Distance(location, unit.transform.position);
-                if (dist < radius + unit.GetComponent<UnitBehaviour>().Data.radius)
+                if (dist < unitRadius + unit.GetComponent<UnitBehaviour>().Data.radius)
                     return 0f;
             }
         }
@@ -175,14 +174,14 @@ public class PathfinderData
     public float FindPath(
         List<PathNode> path,
         Vector3 start, Vector3 destination,
-        MobilityType mobility, float radius,
+        MobilityType mobility, float unitRadius,
         MoveCommandType command)
     {
         path.Clear();
         path.Add(new PathNode(destination));
 
         PathNode cameFromDest = null;
-        float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, radius);
+        float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, unitRadius);
 
         if (command == MoveCommandType.Slow && gScoreDest < Pathfinder.Forever)
             return gScoreDest;
@@ -195,7 +194,7 @@ public class PathfinderData
             neighbor.cameFrom = null;
             neighbor.gScore = Pathfinder.Forever;
 
-            float gScoreNew = Pathfinder.FindLocalPath(this, start, neighbor.position, mobility, radius);
+            float gScoreNew = Pathfinder.FindLocalPath(this, start, neighbor.position, mobility, unitRadius);
             if (gScoreNew < Pathfinder.Forever) {
                 neighbor.gScore = gScoreNew;
                 float fScoreNew = gScoreNew + TimeHeuristic(neighbor.position, destination, mobility);
@@ -236,7 +235,7 @@ public class PathfinderData
                 }
             }
 
-            float arcTimeDest = Pathfinder.FindLocalPath(this, current.position, destination, mobility, radius);
+            float arcTimeDest = Pathfinder.FindLocalPath(this, current.position, destination, mobility, unitRadius);
             if (arcTimeDest >= Pathfinder.Forever)
                 continue;
             if (arcTimeDest < Pathfinder.Forever && command == MoveCommandType.Slow)

@@ -31,7 +31,7 @@ public class MobilityType
 
     public MobilityType()
     {
-        SlopeSensitivity = 1.5f;
+        SlopeSensitivity = 2.0f;
         DirectionalSlopeSensitivity = 0.6f;
 
         Index = MobilityTypes.Count;
