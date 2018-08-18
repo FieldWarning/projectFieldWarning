@@ -28,7 +28,6 @@ namespace PFW.Ingame.UI
 
         // Use this for initialization
         public Player Owner;
-        private Vector3 _destination;
         private Vector3 _boxSelectStart;
         public static List<SpawnPointBehaviour> SpawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
@@ -38,8 +37,8 @@ namespace PFW.Ingame.UI
 
         private BuyTransaction _currentBuyTransaction;
 
-        private GameSession _session;
-        public GameSession Session {
+        private MatchSession _session;
+        public MatchSession Session {
             get {
                 return _session;
             }
@@ -70,8 +69,7 @@ namespace PFW.Ingame.UI
                 if (Util.GetTerrainClickLocation(out hit)
                     && hit.transform.gameObject.name.Equals("Terrain")) {
 
-                    ShowGhostUnits(hit);
-                    MaybePurchaseGhostUnits(hit);
+                    ShowGhostUnitsAndMaybePurchase(hit);
                 }
 
                 MaybeExitPurchasingMode();
@@ -84,9 +82,13 @@ namespace PFW.Ingame.UI
 
             case MouseMode.firePos:
                 ApplyHotkeys();
-                if (Input.GetMouseButtonDown(0)
-                    || Input.GetMouseButtonDown(1))
+
+                if (Input.GetMouseButtonDown(0))
+                    Session.SelectionManager.DispatchFirePosCommand();
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                     ExitFirePosMode();
+
                 break;
 
             default:
@@ -94,17 +96,18 @@ namespace PFW.Ingame.UI
             }
         }
 
-        private void ShowGhostUnits(RaycastHit terrainHover)
+        private void ShowGhostUnitsAndMaybePurchase(RaycastHit terrainHover)
         {
             // Show ghost units under mouse:
             SpawnPointBehaviour closestSpawn = GetClosestSpawn(terrainHover.point);
-            PositionGhostUnits(
+            _currentBuyTransaction.PreviewPurchase(
                 terrainHover.point,
-                2 * terrainHover.point - closestSpawn.transform.position,
-                _currentBuyTransaction.GhostUnits);
+                2 * terrainHover.point - closestSpawn.transform.position);
+
+            MaybePurchaseGhostUnits(closestSpawn);
         }
 
-        private void MaybePurchaseGhostUnits(RaycastHit terrainHover)
+        private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
             if (Input.GetMouseButtonUp(0)) {
                 bool noUIcontrolsInUse = EventSystem.current.currentSelectedGameObject == null;
@@ -114,10 +117,8 @@ namespace PFW.Ingame.UI
 
                 if (_currentBuyTransaction == null)
                     return;
-
-                // TODO we already get closest spawn above, reuse it
-                SpawnPointBehaviour closestSpawn = GetClosestSpawn(terrainHover.point);
-                closestSpawn.BuyUnits(_currentBuyTransaction.GhostUnits);
+                
+                closestSpawn.BuyUnits(_currentBuyTransaction.GhostPlatoons);
 
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     // We turned the current ghosts into real units, so:
@@ -131,7 +132,7 @@ namespace PFW.Ingame.UI
         private void MaybeExitPurchasingMode()
         {
             if (Input.GetMouseButton(1)) {
-                foreach (var g in _currentBuyTransaction.GhostUnits)
+                foreach (var g in _currentBuyTransaction.GhostPlatoons)
                     g.GetComponent<GhostPlatoonBehaviour>().Destroy();
 
                 ExitPurchasingMode();
@@ -140,71 +141,26 @@ namespace PFW.Ingame.UI
 
         void OnOrderStart()
         {
-            var selected = Session.SelectionManager.Selection;
-
             RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit)) {
-                Vector3 com = selected.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
-                List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll<GhostPlatoonBehaviour>(x => x.GhostPlatoon);
-                PositionGhostUnits(hit.point, 2 * hit.point - com, ghosts);
-                _destination = hit.point;
-            }
+            if (Util.GetTerrainClickLocation(out hit)) 
+                Session.SelectionManager.PrepareMoveOrderPreview(hit.point);            
         }
 
         void OnOrderHold()
         {
-            var selected = Session.SelectionManager.Selection;
-
             RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit)) {
-
-                List<GhostPlatoonBehaviour> ghosts = selected.ConvertAll(x => x.GhostPlatoon);
-                ghosts.ForEach(x => x.SetVisible(true));
-                PositionGhostUnits(_destination, hit.point, ghosts);
-            }
+            if (Util.GetTerrainClickLocation(out hit)) 
+                Session.SelectionManager.RotateMoveOrderPreview(hit.point);
         }
 
         void OnOrderShortClick()
         {
-            var selected = Session.SelectionManager.Selection;
-
-            var destinations = selected.ConvertAll(x => x.GhostPlatoon.transform.position);
-            var shift = Input.GetKey(KeyCode.LeftShift);
-            selected.ForEach(x => x.Movement.BeginQueueing(shift));
-            selected.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
-            selected.ForEach(x => x.Movement.GetHeadingFromGhost());
-            selected.ForEach(x => x.Movement.EndQueueing());
-            //selected.ForEach(x => x.ghostPlatoon.setVisible(false));
-            /*var destinations=selected.ConvertAll(x=>x.ghostPlatoon);
-            foreach (var go in selected)
-            {
-                var behaviour = go.GetComponent<SelectableBehavior>().getPlatoon();
-                behaviour.getDestinationFromGhost();
-            }*/
-
-            Session.SelectionManager.ChangeSelectionAfterOrder();
+            Session.SelectionManager.DispatchMoveCommand();
         }
 
         void OnOrderLongClick()
         {
-            var selected = Session.SelectionManager.Selection;
-
-            RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit)) {
-                var shift = Input.GetKey(KeyCode.LeftShift);
-                selected.ForEach(x => x.Movement.BeginQueueing(shift));
-                var destinations = selected.ConvertAll(x => x.GhostPlatoon.transform.position);
-                selected.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
-                selected.ForEach(x => x.Movement.GetHeadingFromGhost());
-                selected.ForEach(x => x.Movement.EndQueueing());
-                /*foreach (var go in selected)
-                {
-                    go.GetComponent<SelectableBehavior>().getDestinationFromGhost();
-                    go.GetComponent<PlatoonBehaviour>().ghostPlatoon.GetComponent<GhostPlatoonBehaviour>().setVisible(false);
-                }*/
-
-                Session.SelectionManager.ChangeSelectionAfterOrder();
-            }
+            Session.SelectionManager.DispatchMoveCommand();
         }
 
         public void TankButtonCallback()
@@ -233,29 +189,12 @@ namespace PFW.Ingame.UI
         public void BuildUnit(UnitType t)
         {
             var behaviour = GhostPlatoonBehaviour.Build(t, Owner, 4);
-            _currentBuyTransaction.GhostUnits.Add(behaviour);
-        }
-
-        private static void PositionGhostUnits(Vector3 position, Vector3 facingPoint, List<GhostPlatoonBehaviour> units)
-        {
-            var diff = facingPoint - position;
-            PositionGhostUnits(position, diff.getRadianAngle(), units);
-        }
-
-        private static void PositionGhostUnits(Vector3 position, float heading, List<GhostPlatoonBehaviour> units)
-        {
-            Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
-            int formationWidth = units.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
-            float unitDistance = 4 * PlatoonBehaviour.BaseDistance;
-            var right = Vector3.Cross(forward, Vector3.up);
-            var pos = position + unitDistance * (formationWidth - 1) * right / 2f;
-            for (var i = 0; i < formationWidth; i++)
-                units[i].GetComponent<GhostPlatoonBehaviour>().SetOrientation(pos - i * unitDistance * right, heading);
+            _currentBuyTransaction.GhostPlatoons.Add(behaviour);
         }
 
         private void ExitPurchasingMode()
         {
-            _currentBuyTransaction.GhostUnits.Clear();
+            _currentBuyTransaction.GhostPlatoons.Clear();
 
             _currentBuyTransaction = null;
 
@@ -286,25 +225,13 @@ namespace PFW.Ingame.UI
 
         public void ApplyHotkeys()
         {
-            var selected = Session.SelectionManager.Selection;
+            if (Commands.Unload) {
+                Session.SelectionManager.DispatchUnloadCommand();
 
-            if (Commands.Unload()) {
-                foreach (var t in selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
-                    t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
-                    t.Unload();
-                    t.EndQueueing();
-                }
+            } else if (Commands.Load) {
+                Session.SelectionManager.DispatchLoadCommand();
 
-            } else if (Commands.Load()) {
-
-                var transporters = selected.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
-                var infantry = selected.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
-
-                transporters.ForEach(x => x.BeginQueueing(Input.GetKey(KeyCode.LeftShift)));
-                transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
-                transporters.ForEach(x => x.EndQueueing());
-
-            } else if (Commands.FirePos() && selected.Count != 0) {
+            } else if (Commands.FirePos && !Session.SelectionManager.Empty) {
                 EnterFirePosMode();
             }
         }
@@ -325,19 +252,22 @@ namespace PFW.Ingame.UI
 
     public class Commands
     {
-        public static bool Unload()
-        {
-            return Input.GetKeyDown(Hotkeys.Unload);
+        public static bool Unload {
+            get {
+                return Input.GetKeyDown(Hotkeys.Unload);
+            }
         }
 
-        public static bool Load()
-        {
-            return Input.GetKeyDown(Hotkeys.Load);
+        public static bool Load {
+            get {
+                return Input.GetKeyDown(Hotkeys.Load);
+            }
         }
 
-        public static bool FirePos()
-        {
-            return Input.GetKeyDown(Hotkeys.FirePos);
+        public static bool FirePos {
+            get {
+                return Input.GetKeyDown(Hotkeys.FirePos);
+            }
         }
     }
 }

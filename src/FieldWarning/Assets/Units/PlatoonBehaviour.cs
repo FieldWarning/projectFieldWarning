@@ -19,7 +19,7 @@ using Pfw.Ingame.Prototype;
 
 using PFW.Ingame.UI;
 
-public partial class PlatoonBehaviour : SelectableBehavior
+public partial class PlatoonBehaviour : MonoBehaviour
 {
     public UnitType Type;
     public IconBehaviour Icon;
@@ -33,7 +33,7 @@ public partial class PlatoonBehaviour : SelectableBehavior
     public List<PlatoonModule> Modules = new List<PlatoonModule>();
     public bool IsInitialized = false;
 
-    public static float BaseDistance = 4;
+    public static readonly float UNIT_DISTANCE = 4;
 
     public Player Owner { get; private set; }
 

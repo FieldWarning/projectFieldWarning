@@ -1,7 +1,7 @@
 # projectFieldWarning
 Project: Field Warning is a community-made RTS game centered around lethal regiment- and division-scale warfare.
 
-Please use "Unity version 2017.3.1f1".
+Please use "Unity version 2018.2.3(f1)".
 
 If you run into some errors just after initially opening the project into Unity, try to do "Assets >> Reimport All".
 

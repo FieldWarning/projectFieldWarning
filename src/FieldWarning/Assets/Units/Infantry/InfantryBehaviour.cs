@@ -62,14 +62,14 @@ public class InfantryBehaviour : UnitBehaviour {
                 break;
             case InfantryBehaviourState.WalkToTransport:
                 updatePosition();
-                destination = transporter.getRallyPoint();
+                pathfinder.SetPath(transporter.getRallyPoint(), MoveCommandType.Fast);
                 if (reachedDestination())
                 {
                     behaviour = InfantryBehaviourState.Boarding;
                 }
                 else
                 {
-                    men.ForEach(x => x.setDestination(destination));
+                    men.ForEach(x => x.setDestination(pathfinder.GetDestination()));
                 }   
                 break;
             case InfantryBehaviourState.Unloading:
@@ -126,7 +126,7 @@ public class InfantryBehaviour : UnitBehaviour {
         }
     }
     private void moveToDestination(){
-        men.ForEach(x => x.setDestination(destination));
+        men.ForEach(x => x.setDestination(pathfinder.GetDestination()));
         behaviour = InfantryBehaviourState.MoveToWaypoint;
     }
     private void unloading()
@@ -169,15 +169,15 @@ public class InfantryBehaviour : UnitBehaviour {
     {
         if (transport == null)
         {
-            destination = transform.position;
+            pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Fast);
             setRingFormation();
         }
         else
         {
             transporter = transport;
-            destination = transporter.getRallyPoint();
+            pathfinder.SetPath(transporter.getRallyPoint(), MoveCommandType.Fast);
             men.ForEach(x => x.fixFormationOffset(transform.position));
-            men.ForEach(x => x.setDestination(destination));
+            men.ForEach(x => x.setDestination(pathfinder.GetDestination()));
             //gotDestination = false;
             behaviour = InfantryBehaviourState.WalkToTransport;
         }
@@ -228,7 +228,7 @@ public class InfantryBehaviour : UnitBehaviour {
         List<Vector3> destinations = new List<Vector3>();
         for (int i = 0; i < menCount; i++)
         {
-            var offset=Quaternion.AngleAxis(360 * i / (menCount), Vector3.up) * (radius*Vector3.forward)+destination;
+            var offset=Quaternion.AngleAxis(360 * i / (menCount), Vector3.up) * (radius*Vector3.forward)+pathfinder.GetDestination();
             destinations.Add(offset);
         }
         men.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
@@ -254,8 +254,8 @@ public class InfantryBehaviour : UnitBehaviour {
 
         enabled = true;
         initialize();
-        transform.position = rally;
-        destination=rally;
+        transform.position = pos;
+        pathfinder.SetPath(rally, MoveCommandType.Slow);
         foreach(var man in men){
             man.gameObject.transform.position = pos;
             man.gameObject.SetActive(false);
@@ -283,7 +283,7 @@ public class InfantryBehaviour : UnitBehaviour {
         var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
         pos = new Vector3(p.x, y, p.z);
         transform.position = pos;
-        destination = pos;
+        pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Slow);
         setRingFormation();
         men.ForEach(x =>
         {

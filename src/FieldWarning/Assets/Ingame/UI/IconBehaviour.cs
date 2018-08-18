@@ -22,35 +22,21 @@ namespace PFW.Ingame.UI
         private PlatoonBehaviour _platoon;
 
         private SymbolBehaviour _symbol;
-        SymbolBehaviour symbol {
-            get {
-                if (_symbol == null)
-                    _symbol = transform.GetChild(1).GetComponent<SymbolBehaviour>();
-
-                return _symbol;
-            }
-        }
-
         private Transform _billboard;
-        Transform billboard {
-            get {
-                if (_billboard == null) {
-                    _billboard = transform.GetChild(0);
-                }
-
-                return _billboard;
-            }
-        }
 
         private bool _init = false;
         private Color _baseColor = Color.blue;
         private bool _visible = true;
 
+        void Awake()
+        {
+            _symbol = transform.GetChild(1).GetComponent<SymbolBehaviour>();
+            _billboard = transform.GetChild(0);
+        }
 
-        // Use this for initialization
         void Start()
         {
-            billboard.GetComponent<Renderer>().material.color = _baseColor;
+            _billboard.GetComponent<Renderer>().material.color = _baseColor;
             if (_layer != -1)
                 SetLayer(_layer);
 
@@ -58,7 +44,6 @@ namespace PFW.Ingame.UI
             SetVisible(_visible);
         }
 
-        // Update is called once per frame
         void Update()
         {
 
@@ -67,28 +52,28 @@ namespace PFW.Ingame.UI
         public void SetPlatoon(PlatoonBehaviour p)
         {
             _platoon = p;
-            symbol.SetIcon(p.Type);
+            _symbol.SetIcon(p.Type);
         }
 
         public void SetLayer(int l)
         {
             _layer = l;
-            if (billboard != null)
-                billboard.gameObject.layer = l;
+            if (_billboard != null)
+                _billboard.gameObject.layer = l;
             gameObject.layer = l;
         }
 
         public void SetSource(List<UnitBehaviour> list)
         {
-            billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
+            _billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
         }
 
         public void SetVisible(bool vis)
         {
             gameObject.SetActive(vis);
             if (_billboard != null) {
-                billboard.GetComponent<Renderer>().enabled = vis;
-                symbol.GetComponent<Renderer>().enabled = vis;
+                _billboard.GetComponent<Renderer>().enabled = vis;
+                _symbol.GetComponent<Renderer>().enabled = vis;
 
             } else {
                 _visible = vis;
@@ -111,14 +96,14 @@ namespace PFW.Ingame.UI
                 color = _baseColor;
             }
 
-            billboard.GetComponent<Renderer>().material.color = color;
-            symbol.GetComponent<Renderer>().material.color = color;// (color + Color.white) / 2;
+            _billboard.GetComponent<Renderer>().material.color = color;
+            _symbol.GetComponent<Renderer>().material.color = color;// (color + Color.white) / 2;
         }
 
         public void SetGhost()
         {
-            billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
-            symbol.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
+            _billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
+            _symbol.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
             SetVisible(true);
         }
 

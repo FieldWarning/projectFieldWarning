@@ -13,6 +13,7 @@
 
 using System.Collections.Generic;
 using Pfw.Ingame.Prototype;
+using UnityEngine;
 
 namespace PFW.Ingame.UI
 {
@@ -27,7 +28,7 @@ namespace PFW.Ingame.UI
 
         public UnitType UnitType { get; }
         public Player Owner { get; }
-        public List<GhostPlatoonBehaviour> GhostUnits { get; }
+        public List<GhostPlatoonBehaviour> GhostPlatoons { get; }
 
         public BuyTransaction(UnitType type, Player owner)
         {
@@ -38,27 +39,27 @@ namespace PFW.Ingame.UI
             _ghostPlatoonBehaviour =
                 GhostPlatoonBehaviour.Build(type, owner, _smallestPlatoonSize);
 
-            GhostUnits = new List<GhostPlatoonBehaviour>();
-            GhostUnits.Add(_ghostPlatoonBehaviour);
+            GhostPlatoons = new List<GhostPlatoonBehaviour>();
+            GhostPlatoons.Add(_ghostPlatoonBehaviour);
         }
 
         public void AddUnit()
         {
             if (_smallestPlatoonSize < MAX_PLATOON_SIZE) {
 
-                GhostUnits.Remove(_ghostPlatoonBehaviour);
+                GhostPlatoons.Remove(_ghostPlatoonBehaviour);
                 _ghostPlatoonBehaviour.Destroy();
 
                 _smallestPlatoonSize++;
                 _ghostPlatoonBehaviour =
                     GhostPlatoonBehaviour.Build(UnitType, Owner, _smallestPlatoonSize);
-                GhostUnits.Add(_ghostPlatoonBehaviour);
+                GhostPlatoons.Add(_ghostPlatoonBehaviour);
             } else {
 
                 // If all platoons in the transaction are max size, we add a new one and update the size counter:
                 _smallestPlatoonSize = MIN_PLATOON_SIZE;
                 _ghostPlatoonBehaviour = GhostPlatoonBehaviour.Build(UnitType, Owner, _smallestPlatoonSize);
-                GhostUnits.Add(_ghostPlatoonBehaviour);
+                GhostPlatoons.Add(_ghostPlatoonBehaviour);
             }
         }
 
@@ -66,7 +67,7 @@ namespace PFW.Ingame.UI
         {
             BuyTransaction clone = new BuyTransaction(UnitType, Owner);
 
-            int unitCount = (GhostUnits.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
+            int unitCount = (GhostPlatoons.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
 
             while (unitCount-- > 1)
                 clone.AddUnit();
@@ -76,9 +77,24 @@ namespace PFW.Ingame.UI
 
         public void Finish()
         {
-            foreach (GhostPlatoonBehaviour g in GhostUnits) {
+            foreach (GhostPlatoonBehaviour g in GhostPlatoons) {
                 g.BuildRealPlatoon();
             }
+        }
+
+        // Places the ghost units (unit silhouettes) in view of the player:
+        public void PreviewPurchase(Vector3 position, Vector3 facingPoint)
+        {
+            Vector3 diff = facingPoint - position;
+            float heading = diff.getRadianAngle();
+
+            Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
+            int formationWidth = GhostPlatoons.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
+            float platoonDistance = 4 * PlatoonBehaviour.UNIT_DISTANCE;
+            var right = Vector3.Cross(forward, Vector3.up);
+            var pos = position + platoonDistance * (formationWidth - 1) * right / 2f;
+            for (var i = 0; i < formationWidth; i++)
+                GhostPlatoons[i].SetOrientation(pos - i * platoonDistance * right, heading);
         }
     }
 }

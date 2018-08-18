@@ -13,21 +13,20 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using Priority_Queue;
 
 public class Pathfinder
 {
     public const float Forever = float.MaxValue;
-    public static Vector3 NoPosition = new Vector3(float.NaN, float.NaN, float.NaN);
+    public static Vector3 NoPosition = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
     private const float StepSize = 1.2f; // Any object that the pathfinder is able to navigate around must have at least this radius
-    private const float CompletionDist = 1.1f * StepSize; // Good enough if we can get within this distance of the target destination
     private const float AngSearchInc = 12f; // Angluar search increment for local path finding
     private const float MaxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
+    private const float CompletionDist = 1.5f * StepSize; // Good enough if we can get within this distance of the target destination
 
     public PathfinderData data { get; private set; }
-
-    private static FastPriorityQueue<PathNode> fScore;
+    
+    private static bool straightStep; // Tells if the most recent call to TakeStep gave a stright forward step
 
     private UnitBehaviour unit;
     private List<PathNode> path;  // path[0] is the final destination
@@ -35,25 +34,32 @@ public class Pathfinder
     private MoveCommandType command;
     private Vector3 waypoint;
     private int timeToUpdate;
+    public readonly float finalCompletionDist;
 
     public Pathfinder(UnitBehaviour unit, PathfinderData data)
     {
         this.unit = unit;
         this.data = data;
         path = new List<PathNode>();
+        finalCompletionDist = 0.5f + unit.Data.minTurnRadius;
     }
 
     // Generate and store the sequence of nodes leading to the destination using the global graph
     // Returns the total normalized path time
-    // If no path was found, return 'forever' and set the path directly to the destination
+    // If no path was found, return 'forever' and set no destination
     public float SetPath(Vector3 destination, MoveCommandType command)
     {
         this.command = command;
         previousNode = null;
 
-        //float pathTime = FindLocalPath (data, unit.transform.position, destination, unit.data.mobility, unit.data.radius);
-        //path.Add (new PathNode (destination));
+        if (destination == NoPosition) {
+            path.Clear();
+            return Forever;
+        }
+        
         float pathTime = data.FindPath(path, unit.transform.position, destination, unit.Data.mobility, 0f, command);
+        if (pathTime == Forever)
+            path.Clear();
         return pathTime;
     }
 
@@ -72,7 +78,7 @@ public class Pathfinder
             PathNode targetNode = path[path.Count - 1];
 
             float distance = Vector3.Distance(unit.transform.position, targetNode.position);
-            if (distance < CompletionDist) { // Unit arrived at the next path node
+            if (distance < (path.Count > 1 ? CompletionDist : finalCompletionDist)) { // Unit arrived at the next path node
                 path.RemoveAt(path.Count - 1);
                 if (!HasDestination()) { // Unit arrived at the destination
                     waypoint = NoPosition;
@@ -86,8 +92,8 @@ public class Pathfinder
             Vector3 newWaypoint = TakeStep(
                 data, unit.transform.position, targetNode.position, unit.Data.mobility, unit.Data.radius);
 
-            if (newWaypoint != null) {
-                waypoint = newWaypoint;
+            if (newWaypoint != NoPosition) {
+                waypoint = straightStep ? targetNode.position : newWaypoint;
             } else {
 
                 // The unit has gotten stuck when following the previously computed path.
@@ -117,6 +123,11 @@ public class Pathfinder
     public bool HasDestination()
     {
         return path.Count > 0;
+    }
+
+    public Vector3 GetDestination()
+    {
+        return path.Count > 0 ? path[0].position : NoPosition;
     }
 
     // Build a path in an approximately straight line from start to destination by stringing together steps
@@ -153,6 +164,7 @@ public class Pathfinder
         float radius)
     {
         Vector3 straight = (destination - start).normalized;
+        straightStep = false;
 
         // Fan out in a two-point horizontal pattern to find a way forward
         for (float ang1 = 0f; ang1 <= MaxAngle; ang1 += AngSearchInc) {
@@ -170,8 +182,10 @@ public class Pathfinder
                         Vector3 endpoint = midpoint + straight * StepSize;
                         float endspeed = data.GetUnitSpeed(mobility, endpoint, radius, direction2);
 
-                        if (endspeed > 0f)
-                            return ang1 > 0f ? midpoint : endpoint;
+                        if (endspeed > 0f) {
+                            straightStep = ang1 == 0f && ang2 == 0f;
+                            return straightStep ? endpoint : midpoint;
+                        }
                     }
                 }
 

@@ -20,8 +20,8 @@ public class Player : MonoBehaviour
     public PFW.Model.Game.Team Team;
 
     [SerializeField]
-    private GameSession _session;
-    public GameSession Session {
+    private MatchSession _session;
+    public MatchSession Session {
         get {
             return _session;
         }
