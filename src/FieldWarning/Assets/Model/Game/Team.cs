@@ -22,20 +22,18 @@ namespace PFW.Model.Game
         public string Name;
         public Color Color;
 
-        public List<Player> Players { get; private set; }
-
-        public void Awake()
-        {
-            Players = new List<Player>();
-        }
-
+        public List<Player> Players { get; } = new List<Player>();
+        
         public bool IsEnemy(Team t)
         {
             return Color != t.Color;
         }
 
-        public void AddPlayer() {
-            Player p = new Player();
+        public void AddPlayer(MatchSession session) {
+            Player p = gameObject.AddComponent<Player>();
+            p.Session = session;
+            p.Team = this;
+            Players.Add(p);
         }
     }
 }

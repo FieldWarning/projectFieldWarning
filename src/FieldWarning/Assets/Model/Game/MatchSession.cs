@@ -32,15 +32,29 @@ namespace PFW.Model.Game
 
         public void Awake()
         {
+            // TODO: I don't think we will want to customize the 
+            // team colors etc to be map-specific. So it makes more sense
+            // to have MatchSession create the team objects instead of 
+            // dragging them into the scene like it works now.
+            Teams = new List<Team>();
+            Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
+            Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
+
+            blueTeam.AddPlayer(this);
+            redTeam.AddPlayer(this);
+
+            Teams.Add(blueTeam);
+            Teams.Add(redTeam);
+
+
             UIManager = FindObjectOfType<UIManagerBehaviour>();
             if (UIManager == null)
                 UIManager = gameObject.AddComponent<UIManagerBehaviour>();
 
             if (UIManager.Session == null)
                 UIManager.Session = this;
-
-            // TODO lazy hack, fix:
-            UIManager.Owner = GameObject.Find("RedPlayer1").GetComponent<Player>();
+            
+            UIManager.Owner = redTeam.Players[0];
 
 
             SelectionManager = FindObjectOfType<SelectionManager>();
@@ -57,9 +71,6 @@ namespace PFW.Model.Game
 
             if (_visibilityManager.Session == null)
                 _visibilityManager.Session = this;
-
-
-            Teams = new List<Team>();
 
             AllUnits = new List<UnitBehaviour>();
             AllPlatoons = new List<PlatoonBehaviour>();

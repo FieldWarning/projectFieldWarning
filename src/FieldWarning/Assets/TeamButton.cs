@@ -19,7 +19,7 @@ using PFW.Model.Game;
 public class TeamButton : MonoBehaviour
 {
     [SerializeField]
-    private Player _player;
+    private Team _team;
     private UIManagerBehaviour _uiManager;
 
     void Start()
@@ -34,7 +34,7 @@ public class TeamButton : MonoBehaviour
 
     public void onClick()
     {
-        _uiManager.Owner = _player;
+        _uiManager.Owner = _team.Players[0];
         VisibilityManager.updateTeamBelonging();
     }
 }
