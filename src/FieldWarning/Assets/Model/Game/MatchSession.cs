@@ -24,9 +24,9 @@ namespace PFW.Model.Game
         public Player LocalPlayer;
 
         public Settings Settings { get; } = new Settings();
-        public ICollection<Team> Teams { get; private set; }
-        public ICollection<UnitBehaviour> AllUnits { get; private set; }
-        public ICollection<PlatoonBehaviour> AllPlatoons { get; private set; }
+        public ICollection<Team> Teams { get; } = new List<Team>();
+        public ICollection<UnitBehaviour> AllUnits { get; } = new List<UnitBehaviour>();
+        public ICollection<PlatoonBehaviour> AllPlatoons { get; } = new List<PlatoonBehaviour>();
 
         // rip encapsulation:
         public UIManagerBehaviour UIManager;
@@ -40,7 +40,6 @@ namespace PFW.Model.Game
             // team colors etc to be map-specific. So it makes more sense
             // to have MatchSession create the team objects instead of 
             // dragging them into the scene like it works now.
-            Teams = new List<Team>();
             Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
             Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
@@ -76,9 +75,6 @@ namespace PFW.Model.Game
 
             if (_visibilityManager.Session == null)
                 _visibilityManager.Session = this;
-
-            AllUnits = new List<UnitBehaviour>();
-            AllPlatoons = new List<PlatoonBehaviour>();
         }
 
 
