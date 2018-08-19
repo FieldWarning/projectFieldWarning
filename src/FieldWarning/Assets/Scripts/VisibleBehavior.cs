@@ -15,6 +15,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+using PFW.Model.Game;
+
 public class VisibleBehavior : MonoBehaviour
 {
     private Point _currentRegion;
@@ -51,19 +53,19 @@ public class VisibleBehavior : MonoBehaviour
 
     public void Initialize(Team t)
     {
-        Team = t;
-        var o = Team.Blue;
-        if (t == Team.Blue) o = Team.Red;
-        SetHostileTeam(VisibilityManager.getTeamMembers(o));
-        VisibilityManager.addVisibleBehaviour(this);
-        if (Team == Team.Red) {
-            GetComponent<Renderer>().material.color = Color.red;
-        } else {
-            GetComponent<Renderer>().material.color = Color.blue;
-        }
-        UpdateTeamBelonging();
-        _currentRegion = VisibilityManager.getRegion(transform);
-        VisibilityManager.updateUnitRegion(this, _currentRegion);
+        //Team = t;
+        //var o = Team.Blue;
+        //if (t == Team.Blue) o = Team.Red;
+        //SetHostileTeam(VisibilityManager.getTeamMembers(o));
+        //VisibilityManager.addVisibleBehaviour(this);
+        //if (Team == Team.Red) {
+        //    GetComponent<Renderer>().material.color = Color.red;
+        //} else {
+        //    GetComponent<Renderer>().material.color = Color.blue;
+        //}
+        //UpdateTeamBelonging();
+        //_currentRegion = VisibilityManager.getRegion(transform);
+        //VisibilityManager.updateUnitRegion(this, _currentRegion);
     }
 
     public void SetDetected(bool detected)

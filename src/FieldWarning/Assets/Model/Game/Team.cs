@@ -28,5 +28,10 @@ namespace PFW.Model.Game
         {
             Players = new List<Player>();
         }
+
+        public bool IsEnemy(Team t)
+        {
+            return Color != t.Color;
+        }
     }
 }

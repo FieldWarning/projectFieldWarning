@@ -28,6 +28,8 @@ namespace PFW.Model.Game
         public UIManagerBehaviour UIManager;
         public SelectionManager SelectionManager;
 
+        private VisibilityManager _visibilityManager;
+
         public void Awake()
         {
             UIManager = FindObjectOfType<UIManagerBehaviour>();
@@ -40,12 +42,22 @@ namespace PFW.Model.Game
             // TODO lazy hack, fix:
             UIManager.Owner = GameObject.Find("RedPlayer1").GetComponent<Player>();
 
+
             SelectionManager = FindObjectOfType<SelectionManager>();
             if (SelectionManager == null)
                 SelectionManager = gameObject.AddComponent<SelectionManager>();
 
             if (SelectionManager.Session == null)
                 SelectionManager.Session = this;
+
+
+            _visibilityManager = FindObjectOfType<VisibilityManager>();
+            if (_visibilityManager == null)
+                _visibilityManager = gameObject.AddComponent<VisibilityManager>();
+
+            if (_visibilityManager.Session == null)
+                _visibilityManager.Session = this;
+
 
             Teams = new List<Team>();
 
