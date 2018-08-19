@@ -22,7 +22,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public UnitData Data = UnitData.GenericUnit();
     public PlatoonBehaviour Platoon { get; private set; }
-    public bool IsAlive { get; private set; }
     public Pathfinder Pathfinder { get; private set; }
     public AudioSource Source { get; private set; }
 
@@ -61,10 +60,11 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public virtual void Start()
     {
         _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
-        IsAlive = true;
         tag = UNIT_TAG;
 
         Source = GetComponent<AudioSource>();
+
+        Platoon.Owner.Session.RegisterUnitBirth(this);
     }
 
     public virtual void Update()
@@ -105,16 +105,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
         _health -= receivedDamage;
         if (_health <= 0) {
-            IsAlive = false;
-            Platoon.Units.Remove(this);
-            Destroy(this.gameObject);
-
-            Platoon.GhostPlatoon.HandleRealUnitDestroyed();
-
-            if (Platoon.Units.Count == 0) {
-                Destroy(Platoon.gameObject);
-                Platoon.Owner.Session.RegisterPlatoonDeath(Platoon);
-            }
+            Destroy();
         }
     }
 
@@ -236,6 +227,20 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         return Data.movementSpeed * terrainSpeed;
     }
 
+    public void Destroy()
+    {
+        Platoon.Owner.Session.RegisterUnitDeath(this);
+        
+        Platoon.Units.Remove(this);
+        Destroy(this.gameObject);
+
+        Platoon.GhostPlatoon.HandleRealUnitDestroyed();
+
+        if (Platoon.Units.Count == 0) {
+            Destroy(Platoon.gameObject);
+            Platoon.Owner.Session.RegisterPlatoonDeath(Platoon);
+        }
+    }
 }
 
 public enum MoveCommandType

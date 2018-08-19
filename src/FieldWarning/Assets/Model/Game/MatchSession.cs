@@ -58,7 +58,7 @@ namespace PFW.Model.Game
 
             if (UIManager.Session == null)
                 UIManager.Session = this;
-            
+
 
 
             SelectionManager = FindObjectOfType<SelectionManager>();
@@ -87,6 +87,16 @@ namespace PFW.Model.Game
         {
             AllPlatoons.Remove(platoon);
             SelectionManager.RegisterPlatoonDeath(platoon);
+        }
+
+        public void RegisterUnitBirth(UnitBehaviour unit)
+        {
+            AllUnits.Add(unit);
+        }
+
+        public void RegisterUnitDeath(UnitBehaviour unit)
+        {
+            AllUnits.Remove(unit);
         }
     }
 }

@@ -79,8 +79,6 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Type = t;
         Owner = owner;
 
-        Owner.Session.RegisterPlatoonBirth(this);
-
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
@@ -133,6 +131,8 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Movement.GetDestinationFromGhost();
         Movement.EndQueueing();
         GhostPlatoon.SetVisible(false);
+
+        Owner.Session.RegisterPlatoonBirth(this);
     }
 
     public void SetSelected(bool selected)

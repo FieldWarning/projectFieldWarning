@@ -131,8 +131,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void Destroy()
     {
-        _platoonBehaviour?.Destroy();
-
         foreach (var u in _units)
             Destroy(u);
 
