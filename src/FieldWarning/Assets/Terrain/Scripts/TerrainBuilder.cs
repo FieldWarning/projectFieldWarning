@@ -10,7 +10,7 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
- 
+
 using UnityEngine;
 using System.Collections.Generic;
 using System;
@@ -45,10 +45,7 @@ public class TerrainBuilder : MonoBehaviour
         TerrainData.initialize(alphaMap);
         RoadNetwork.BuildNetwork();
 
-        new MobilityType(); // This obvously needs to be removed once a way to read in the data is finalized
-
         PathfinderData.singleton = new PathfinderData(terrain);
-
     }
 
     private static void InitializeAlphamap()
@@ -64,6 +61,7 @@ public class TerrainBuilder : MonoBehaviour
             }
         }
     }
+
     void BuildHedges()
     {
         float width = terrain.terrainData.alphamapWidth;
@@ -149,7 +147,6 @@ public class TerrainBuilder : MonoBehaviour
                 }
             }
         }
-
     }
 
 
@@ -186,13 +183,14 @@ public class TerrainBuilder : MonoBehaviour
                 }
             }
         }
-
     }
+
     void BuildTownTextures(FractalOptions options)
     {
         int[,] fracMap = GetMapFromFractal(options, new float[] { 10, 1 });
         ApplyTextureFromFracMap(fracMap, TerrainType.Town);
     }
+
     void BuildTerrainTextures(FractalOptions options)
     {
         int[,] fracMap = GetMapFromFractal(options, new float[] { 5, 3 });
@@ -200,9 +198,8 @@ public class TerrainBuilder : MonoBehaviour
         //float[, ,] map = new float[t.terrainData.alphamapWidth, t.terrainData.alphamapHeight, 2];
         // For each point on the alphamap...
         ApplyTextureFromFracMap(fracMap, 0);
-
-
     }
+
     private void BuildTrees()
     {
         float width = terrain.terrainData.alphamapWidth;
@@ -224,6 +221,7 @@ public class TerrainBuilder : MonoBehaviour
             }
         }
     }
+
     private void ApplyTextureFromFracMap(int[,] fracMap, int texture)
     {
         Terrain t = terrain;
@@ -323,12 +321,6 @@ public class TerrainBuilder : MonoBehaviour
             }
         }
         return true;
-    }
-
-    // not used
-    void Update()
-    {
-
     }
 
     void BuildTerrainVolume(Vector3 pos)

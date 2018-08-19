@@ -16,10 +16,12 @@ using System.Collections.Generic;
 // The purpose of having MobilityType as a separate class from UnitData is
 //     so that only a few pathfinding graphs are needed, instead of having a separate
 //     one for each type of unit.
-public class MobilityType
+public sealed class MobilityType
 {
     // This list needs to be instantiated before the PathfinderData
-    public static readonly List<MobilityType> MobilityTypes = new List<MobilityType>();
+    public static readonly List<MobilityType> MobilityTypes = new List<MobilityType> {
+        // This obvously needs to be removed once a way to read in the data is finalized:
+        new MobilityType() };
 
     public readonly int Index;
 
