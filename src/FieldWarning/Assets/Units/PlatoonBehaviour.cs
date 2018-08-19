@@ -18,6 +18,7 @@ using PFW.Weapons;
 using Pfw.Ingame.Prototype;
 
 using PFW.Ingame.UI;
+using PFW.Model.Game;
 
 public partial class PlatoonBehaviour : MonoBehaviour
 {

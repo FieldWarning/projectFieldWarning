@@ -33,5 +33,9 @@ namespace PFW.Model.Game
         {
             return Color != t.Color;
         }
+
+        public void AddPlayer() {
+            Player p = new Player();
+        }
     }
 }

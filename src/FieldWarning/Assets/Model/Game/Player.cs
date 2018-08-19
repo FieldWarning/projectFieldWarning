@@ -13,22 +13,23 @@
 
 using UnityEngine;
 
-using PFW.Model.Game;
-
-public class Player : MonoBehaviour
+namespace PFW.Model.Game
 {
-    public PFW.Model.Game.Team Team;
+    public class Player : MonoBehaviour
+    {
+        public Team Team;
 
-    [SerializeField]
-    private MatchSession _session;
-    public MatchSession Session {
-        get {
-            return _session;
-        }
+        [SerializeField]
+        private MatchSession _session;
+        public MatchSession Session {
+            get {
+                return _session;
+            }
 
-        set {
-            if (_session == null)
-                _session = value;
+            set {
+                if (_session == null)
+                    _session = value;
+            }
         }
     }
 }

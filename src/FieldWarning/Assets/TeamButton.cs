@@ -14,6 +14,7 @@
 using UnityEngine;
 
 using PFW.Ingame.UI;
+using PFW.Model.Game;
 
 public class TeamButton : MonoBehaviour
 {

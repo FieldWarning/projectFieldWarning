@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using Pfw.Ingame.Prototype;
 using PFW.Ingame.UI;
 
+using PFW.Model.Game;
+
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
     public float FinalHeading;
