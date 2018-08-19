@@ -124,7 +124,7 @@ namespace PFW.Ingame.UI
                 if (_currentBuyTransaction == null)
                     return;
                 
-                closestSpawn.BuyUnits(_currentBuyTransaction.GhostPlatoons);
+                closestSpawn.BuyPlatoons(_currentBuyTransaction.GhostPlatoons);
 
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     // We turned the current ghosts into real units, so:

@@ -24,7 +24,7 @@ public class SpawnPointBehaviour : MonoBehaviour
     public const float QUEUE_DELAY = 1f;
 
     private Vector3 oldPosition;
-    private Queue<PlatoonBehaviour> spawnQueue = new Queue<PlatoonBehaviour>();
+    private Queue<GhostPlatoonBehaviour> spawnQueue = new Queue<GhostPlatoonBehaviour>();
     private float spawnTime = MIN_SPAWN_INTERVAL;
 
     public void Awake()
@@ -41,26 +41,26 @@ public class SpawnPointBehaviour : MonoBehaviour
 
     public void Update()
     {
-        if (spawnQueue.Any())
-        {
-            spawnTime -= Time.deltaTime;
-            if (spawnTime <= 0)
-            {
-                var go = spawnQueue.Dequeue();
-                go.GetComponent<PlatoonBehaviour>().Spawn(transform.position);
+        if (!spawnQueue.Any())
+            return;
+        
+        spawnTime -= Time.deltaTime;
+        if (spawnTime > 0)
+            return;
 
-                if (spawnQueue.Count > 0)
-                    spawnTime += MIN_SPAWN_INTERVAL;
-                else
-                    spawnTime = QUEUE_DELAY;
-            }
-        }
+            
+        GhostPlatoonBehaviour ghostPlatoon = spawnQueue.Dequeue();
+        ghostPlatoon.Spawn(transform.position);
+
+        if (spawnQueue.Count > 0)
+            spawnTime += MIN_SPAWN_INTERVAL;
+        else
+            spawnTime = QUEUE_DELAY;
+        
     }
 
-    public void BuyUnits(List<GhostPlatoonBehaviour> ghostUnits)
+    public void BuyPlatoons(List<GhostPlatoonBehaviour> ghostPlatoons)
     {
-        var realPlatoons = ghostUnits.ConvertAll(x => x.GetComponent<GhostPlatoonBehaviour>().GetRealPlatoon());
-
-        realPlatoons.ForEach(x => spawnQueue.Enqueue(x));
+        ghostPlatoons.ForEach(x => spawnQueue.Enqueue(x));
     }
 }

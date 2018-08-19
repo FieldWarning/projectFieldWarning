@@ -157,6 +157,11 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         return behaviour;
     }
 
+    public void Spawn(Vector3 pos)
+    {
+        _platoonBehaviour.Spawn(pos);
+    }
+
     public void HandleRealUnitDestroyed()
     {
         GameObject u = _units[0];
