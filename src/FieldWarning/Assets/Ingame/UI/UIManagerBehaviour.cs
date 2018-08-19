@@ -24,11 +24,11 @@ namespace PFW.Ingame.UI
 {
     public class UIManagerBehaviour : MonoBehaviour
     {
-        private Texture2D _firePosReticle;
 
-        // Use this for initialization
-        public Player Owner;
+        private Texture2D _firePosReticle;        
+
         private Vector3 _boxSelectStart;
+
         public static List<SpawnPointBehaviour> SpawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
@@ -46,6 +46,12 @@ namespace PFW.Ingame.UI
             set {
                 if (_session == null)
                     _session = value;
+            }
+        }
+
+        public Player LocalPlayer {
+            get {
+                return Session.LocalPlayer;
             }
         }
 
@@ -166,7 +172,7 @@ namespace PFW.Ingame.UI
         public void TankButtonCallback()
         {
             if (_currentBuyTransaction == null)
-                _currentBuyTransaction = new BuyTransaction(UnitType.Tank, Owner);
+                _currentBuyTransaction = new BuyTransaction(UnitType.Tank, LocalPlayer);
             else
                 _currentBuyTransaction.AddUnit();
 
@@ -188,7 +194,7 @@ namespace PFW.Ingame.UI
 
         public void BuildUnit(UnitType t)
         {
-            var behaviour = GhostPlatoonBehaviour.Build(t, Owner, 4);
+            var behaviour = GhostPlatoonBehaviour.Build(t, LocalPlayer, 4);
             _currentBuyTransaction.GhostPlatoons.Add(behaviour);
         }
 
@@ -203,7 +209,7 @@ namespace PFW.Ingame.UI
 
         private SpawnPointBehaviour GetClosestSpawn(Vector3 p)
         {
-            var pointList = SpawnPointList.Where(x => x.Team == Owner.Team).ToList();
+            var pointList = SpawnPointList.Where(x => x.Team == LocalPlayer.Team).ToList();
 
             SpawnPointBehaviour go = pointList.First();
             float distance = Single.PositiveInfinity;

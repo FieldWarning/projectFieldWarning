@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using PFW.Ingame.UI;
@@ -19,6 +20,9 @@ namespace PFW.Model.Game
 {
     public class MatchSession : MonoBehaviour
     {
+        [NonSerialized]
+        public Player LocalPlayer;
+
         public Settings Settings { get; } = new Settings();
         public ICollection<Team> Teams { get; private set; }
         public ICollection<UnitBehaviour> AllUnits { get; private set; }
@@ -46,6 +50,8 @@ namespace PFW.Model.Game
             Teams.Add(blueTeam);
             Teams.Add(redTeam);
 
+            LocalPlayer = redTeam.Players[0];
+
 
             UIManager = FindObjectOfType<UIManagerBehaviour>();
             if (UIManager == null)
@@ -54,7 +60,6 @@ namespace PFW.Model.Game
             if (UIManager.Session == null)
                 UIManager.Session = this;
             
-            UIManager.Owner = redTeam.Players[0];
 
 
             SelectionManager = FindObjectOfType<SelectionManager>();
