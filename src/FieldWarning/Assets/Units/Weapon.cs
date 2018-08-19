@@ -130,7 +130,7 @@ namespace PFW.Weapons
         private bool FireWeapon(TargetTuple target)
         {
             // sound
-            unit.source.PlayOneShot(shotSound, shotVolume);
+            unit.Source.PlayOneShot(shotSound, shotVolume);
             // particle
             shotEffect.Play();
 
@@ -168,11 +168,11 @@ namespace PFW.Weapons
         {
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             GameObject Target = null;
-            var thisTeam = unit.platoon.Owner.Team;
+            var thisTeam = unit.Platoon.Owner.Team;
 
             for (int i = 0; i < (int)units.Length; i++) {
                 // Filter out friendlies:
-                if (units[i].GetComponent<UnitBehaviour>().platoon.Owner.Team == thisTeam)
+                if (units[i].GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:

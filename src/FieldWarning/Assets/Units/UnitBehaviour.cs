@@ -21,22 +21,22 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     private const float TRANSLATION_RATE = 10.0f;
 
     public UnitData Data = UnitData.GenericUnit();
-    public PlatoonBehaviour platoon { get; private set; }
+    public PlatoonBehaviour Platoon { get; private set; }
     public bool IsAlive { get; private set; }
-    public Pathfinder pathfinder { get; private set; }
-    public AudioSource source { get; private set; }
+    public Pathfinder Pathfinder { get; private set; }
+    public AudioSource Source { get; private set; }
 
     // These are set by the subclass in DoMovement()
-    protected Vector3 position;
-    protected Vector3 rotation;
+    protected Vector3 _position;
+    protected Vector3 _rotation;
 
     // Forward and right directions on the horizontal plane
-    protected Vector3 forward { get; private set; }
-    protected Vector3 right { get; private set; }
+    protected Vector3 _forward { get; private set; }
+    protected Vector3 _right { get; private set; }
 
     // This is redundant with transform.rotation.localEulerAngles, but it is necessary because
     // the localEulerAngles will sometimes automatically change to some new equivalent angles
-    private Vector3 instantaneousRotation;
+    private Vector3 _currentRotation;
 
     protected TerrainCollider Ground {
         get {
@@ -47,7 +47,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         }
     }
 
-    protected float finalHeading;
+    protected float _finalHeading;
 
     private Terrain _terrain;
     private TerrainCollider _Ground;
@@ -62,9 +62,9 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         SetVisible(false);
         tag = UNIT_TAG;
 
-        source = GetComponent<AudioSource>();
+        Source = GetComponent<AudioSource>();
 
-        pathfinder = new Pathfinder(this, PathfinderData.singleton);
+        Pathfinder = new Pathfinder(this, PathfinderData.singleton);
 
     }
     
@@ -81,22 +81,22 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     private void UpdateInstantaneousPosition()
     {
-        Vector3 diff = position - transform.position;
+        Vector3 diff = _position - transform.position;
         transform.Translate(TRANSLATION_RATE * Time.deltaTime * diff);
-        transform.position = position;
+        transform.position = _position;
     }
 
     private void UpdateInstantaneousRotation()
     {
-        Vector3 diff = rotation - instantaneousRotation;
+        Vector3 diff = _rotation - _currentRotation;
         if (diff.sqrMagnitude > 1) {
-            instantaneousRotation = rotation;
+            _currentRotation = _rotation;
         } else {
-            instantaneousRotation += ORIENTATION_RATE * Time.deltaTime * diff;
+            _currentRotation += ORIENTATION_RATE * Time.deltaTime * diff;
         }
-        transform.localEulerAngles = Mathf.Rad2Deg * new Vector3(-instantaneousRotation.x, -instantaneousRotation.y, instantaneousRotation.z);
-        forward = new Vector3(-Mathf.Sin(instantaneousRotation.y), 0f, Mathf.Cos(instantaneousRotation.y));
-        right = new Vector3(forward.z, 0f, -forward.x);
+        transform.localEulerAngles = Mathf.Rad2Deg * new Vector3(-_currentRotation.x, -_currentRotation.y, _currentRotation.z);
+        _forward = new Vector3(-Mathf.Sin(_currentRotation.y), 0f, Mathf.Cos(_currentRotation.y));
+        _right = new Vector3(_forward.z, 0f, -_forward.x);
     }
 
     public void HandleHit(float receivedDamage)
@@ -107,13 +107,13 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         _health -= receivedDamage;
         if (_health <= 0) {
             IsAlive = false;
-            platoon.Units.Remove(this);
+            Platoon.Units.Remove(this);
 
             Destroy(this.gameObject);
-            platoon.GhostPlatoon.HandleRealUnitDestroyed();
-            if (platoon.Units.Count == 0) {
-                Destroy(platoon.gameObject);
-                platoon.Owner.Session.RegisterPlatoonDeath(platoon);
+            Platoon.GhostPlatoon.HandleRealUnitDestroyed();
+            if (Platoon.Units.Count == 0) {
+                Destroy(Platoon.gameObject);
+                Platoon.Owner.Session.RegisterPlatoonDeath(Platoon);
             }
 
             return;
@@ -124,7 +124,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public void SetPlatoon(PlatoonBehaviour p)
     {
-        platoon = p;
+        Platoon = p;
     }
 
     public float GetHealth()
@@ -134,12 +134,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public void SetHealth(float health)
     {
-        this._health = health;
+        _health = health;
     }
 
     public override PlatoonBehaviour GetPlatoon()
     {
-        return platoon;
+        return Platoon;
     }
 
     // Sets the unit's destination location, with a default heading value
@@ -152,7 +152,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Sets the unit's destination location, with a specific given heading value
     public void SetFinalOrientation(Vector3 d, float heading)
     {
-        if (pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever) {
+        if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever) {
             SetUnitFinalHeading(heading);
         }
     }
@@ -161,8 +161,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetUnitFinalFacing(Vector3 v)
     {
         Vector3 diff;
-        if (pathfinder.HasDestination()) {
-            diff = v - pathfinder.GetDestination();
+        if (Pathfinder.HasDestination()) {
+            diff = v - Pathfinder.GetDestination();
         } else {
             diff = v - transform.position;
         }
@@ -172,7 +172,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Updates the unit's final heading to the specified value 
     public virtual void SetUnitFinalHeading(float heading)
     {
-        finalHeading = heading;
+        _finalHeading = heading;
     }
 
     protected abstract void DoMovement();
@@ -203,7 +203,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     protected float getHeading()
     {
-        return (pathfinder.GetDestination() - transform.position).getDegreeAngle();
+        return (Pathfinder.GetDestination() - transform.position).getDegreeAngle();
     }
 
 
@@ -233,7 +233,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Returns the unit's speed on the current terrain
     public float GetTerrainSpeed()
     {
-        float terrainSpeed = pathfinder.data.GetUnitSpeed(Data.mobility, transform.position, 0f, -transform.forward);
+        float terrainSpeed = Pathfinder.data.GetUnitSpeed(Data.mobility, transform.position, 0f, -transform.forward);
         terrainSpeed = Mathf.Max(terrainSpeed, 0.05f); // Never let the speed to go exactly 0, just so units don't get stuck
         return Data.movementSpeed * terrainSpeed;
     }

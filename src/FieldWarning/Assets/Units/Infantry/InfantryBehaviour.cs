@@ -62,14 +62,14 @@ public class InfantryBehaviour : UnitBehaviour {
                 break;
             case InfantryBehaviourState.WalkToTransport:
                 updatePosition();
-                pathfinder.SetPath(transporter.getRallyPoint(), MoveCommandType.Fast);
+                Pathfinder.SetPath(transporter.getRallyPoint(), MoveCommandType.Fast);
                 if (reachedDestination())
                 {
                     behaviour = InfantryBehaviourState.Boarding;
                 }
                 else
                 {
-                    men.ForEach(x => x.setDestination(pathfinder.GetDestination()));
+                    men.ForEach(x => x.setDestination(Pathfinder.GetDestination()));
                 }   
                 break;
             case InfantryBehaviourState.Unloading:
@@ -114,7 +114,7 @@ public class InfantryBehaviour : UnitBehaviour {
         if (reachedDestination())
         {
             men.ForEach(x => x.fixFormationOffset(transform.position));
-			if (pathfinder.HasDestination())
+			if (Pathfinder.HasDestination())
             {
                 moveToDestination();
             }
@@ -126,7 +126,7 @@ public class InfantryBehaviour : UnitBehaviour {
         }
     }
     private void moveToDestination(){
-        men.ForEach(x => x.setDestination(pathfinder.GetDestination()));
+        men.ForEach(x => x.setDestination(Pathfinder.GetDestination()));
         behaviour = InfantryBehaviourState.MoveToWaypoint;
     }
     private void unloading()
@@ -169,15 +169,15 @@ public class InfantryBehaviour : UnitBehaviour {
     {
         if (transport == null)
         {
-            pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Fast);
+            Pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Fast);
             setRingFormation();
         }
         else
         {
             transporter = transport;
-            pathfinder.SetPath(transporter.getRallyPoint(), MoveCommandType.Fast);
+            Pathfinder.SetPath(transporter.getRallyPoint(), MoveCommandType.Fast);
             men.ForEach(x => x.fixFormationOffset(transform.position));
-            men.ForEach(x => x.setDestination(pathfinder.GetDestination()));
+            men.ForEach(x => x.setDestination(Pathfinder.GetDestination()));
             //gotDestination = false;
             behaviour = InfantryBehaviourState.WalkToTransport;
         }
@@ -228,7 +228,7 @@ public class InfantryBehaviour : UnitBehaviour {
         List<Vector3> destinations = new List<Vector3>();
         for (int i = 0; i < menCount; i++)
         {
-            var offset=Quaternion.AngleAxis(360 * i / (menCount), Vector3.up) * (radius*Vector3.forward)+pathfinder.GetDestination();
+            var offset=Quaternion.AngleAxis(360 * i / (menCount), Vector3.up) * (radius*Vector3.forward)+Pathfinder.GetDestination();
             destinations.Add(offset);
         }
         men.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
@@ -240,7 +240,7 @@ public class InfantryBehaviour : UnitBehaviour {
         List<Vector3> destinations = new List<Vector3>();
 
         
-        var left = Quaternion.AngleAxis(-Mathf.Rad2Deg*finalHeading, Vector3.up) * (seperation*Vector3.forward);
+        var left = Quaternion.AngleAxis(-Mathf.Rad2Deg*_finalHeading, Vector3.up) * (seperation*Vector3.forward);
         for (int i = 0; i < menCount; i++)
         {
             var offset = transform.position+left*(i-(menCount-1)/2f);
@@ -255,7 +255,7 @@ public class InfantryBehaviour : UnitBehaviour {
         enabled = true;
         initialize();
         transform.position = pos;
-        pathfinder.SetPath(rally, MoveCommandType.Slow);
+        Pathfinder.SetPath(rally, MoveCommandType.Slow);
         foreach(var man in men){
             man.gameObject.transform.position = pos;
             man.gameObject.SetActive(false);
@@ -283,7 +283,7 @@ public class InfantryBehaviour : UnitBehaviour {
         var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
         pos = new Vector3(p.x, y, p.z);
         transform.position = pos;
-        pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Slow);
+        Pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Slow);
         setRingFormation();
         men.ForEach(x =>
         {

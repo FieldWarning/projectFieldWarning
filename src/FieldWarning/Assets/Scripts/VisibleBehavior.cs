@@ -43,10 +43,10 @@ public class VisibleBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var newRegion = VisibilityManager.getRegion(transform);
+        var newRegion = VisibilityManager.GetRegion(transform);
         if (_currentRegion != newRegion) {
             //Debug.Log("region updated");
-            VisibilityManager.updateUnitRegion(this, newRegion);
+            VisibilityManager.UpdateUnitRegion(this, newRegion);
             _currentRegion = newRegion;
         }
     }

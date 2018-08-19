@@ -25,6 +25,6 @@ public class TeamButton : MonoBehaviour
     public void onClick()
     {
         _session.LocalPlayer = _team.Players[0];
-        VisibilityManager.updateTeamBelonging();
+        VisibilityManager.UpdateTeamBelonging();
     }
 }
