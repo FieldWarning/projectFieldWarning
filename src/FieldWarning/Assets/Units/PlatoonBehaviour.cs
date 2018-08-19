@@ -120,7 +120,6 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
     public void Spawn(Vector3 pos)
     {
-        enabled = true;
         transform.position = pos;
 
         var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;

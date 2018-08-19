@@ -60,11 +60,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public virtual void Start()
     {
-        transform.position = 100 * Vector3.down;
-        enabled = false;
         _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
         IsAlive = true;
-        SetVisible(false);
         tag = UNIT_TAG;
 
         Source = GetComponent<AudioSource>();

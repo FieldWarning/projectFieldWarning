@@ -49,9 +49,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public PlatoonBehaviour GetRealPlatoon()
     {
-        if (_platoonBehaviour == null)
-            BuildRealPlatoon();
-
         return _platoonBehaviour;
     }
 
@@ -63,7 +60,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _platoonBehaviour.Initialize(_unitType, _owner, _units.Count);
 
         _platoonBehaviour.SetGhostPlatoon(this);
-        _realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
     public void Initialize(UnitType t, Player owner, int unitCount)
@@ -135,7 +131,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void Destroy()
     {
-        _platoonBehaviour.Destroy();
+        _platoonBehaviour?.Destroy();
 
         foreach (var u in _units)
             Destroy(u);
@@ -148,7 +144,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
         behaviour.Initialize(t, owner, count);
-        behaviour.BuildRealPlatoon();
         behaviour.InitializeIcon();
 
         go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
@@ -159,6 +154,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void Spawn(Vector3 pos)
     {
+        BuildRealPlatoon();
         _platoonBehaviour.Spawn(pos);
     }
 
