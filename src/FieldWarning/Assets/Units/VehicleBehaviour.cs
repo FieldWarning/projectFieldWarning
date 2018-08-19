@@ -26,11 +26,16 @@ public class VehicleBehaviour : UnitBehaviour
     private float _terrainTiltForward, _terrainTiltRight;
     private float _terrainHeight;
 
+    new void Awake()
+    {
+        base.Awake();
+        Data = UnitData.Tank();
+    }
+
     // Use this for initialization
     new void Start()
     {
         base.Start();
-        Data = UnitData.Tank();
     }
 
     // Update is called once per frame
@@ -45,13 +50,13 @@ public class VehicleBehaviour : UnitBehaviour
         float targetHeading = getTargetHeading();
         float remainingTurn = CalculateRemainingTurn(targetHeading);
         float rotationSpeed = CalculateRotationSpeed(_linVelocity);
-        
+
         float distanceToWaypoint = 0f;
         if (Pathfinder.HasDestination()) {
             Vector3 waypoint = Pathfinder.GetWaypoint();
             distanceToWaypoint = (waypoint - transform.localPosition).magnitude;
         }
-        
+
         float targetSpeed = CalculateTargetSpeed(distanceToWaypoint, remainingTurn, _linVelocity, rotationSpeed);
 
         DoRotationalMotion(remainingTurn, rotationSpeed);
@@ -84,7 +89,7 @@ public class VehicleBehaviour : UnitBehaviour
 
         return rotSpeed;
     }
-    
+
     private float CalculateRemainingTurn(float targetHeading)
     {
         targetHeading = targetHeading.unwrapRadian();
@@ -103,7 +108,7 @@ public class VehicleBehaviour : UnitBehaviour
             return Data.optimumTurnSpeed;
 
         // Want to go just fast enough to cover the linear and angular distance if the unit starts slowing down now
-        float longestDist = Mathf.Max(linDist - Pathfinder.finalCompletionDist/2, Data.minTurnRadius * angDist);
+        float longestDist = Mathf.Max(linDist - Pathfinder.finalCompletionDist / 2, Data.minTurnRadius * angDist);
         float targetSpeed = Mathf.Sqrt(2 * longestDist * Data.accelRate * DECELERATION_FACTOR);
 
         // But not so fast that it cannot make the turn
@@ -128,7 +133,7 @@ public class VehicleBehaviour : UnitBehaviour
         if (Mathf.Abs(_forwardAccel) > 0) {
             float accelTime = (targetSpeed - _linVelocity) / _forwardAccel;
             if (accelTime < ACCEL_DAMP_TIME)
-                _forwardAccel = _forwardAccel * 0.5f * (1 + accelTime/ACCEL_DAMP_TIME);
+                _forwardAccel = _forwardAccel * 0.5f * (1 + accelTime / ACCEL_DAMP_TIME);
 
             if (_forwardAccel > 0) {
                 _linVelocity = Mathf.Min(targetSpeed, _linVelocity + _forwardAccel * Time.deltaTime);
@@ -148,12 +153,12 @@ public class VehicleBehaviour : UnitBehaviour
         } else {
             _rotVelocity = Mathf.Sign(remainingTurn) * rotationSpeed;
         }
-        
+
         var turn = _rotVelocity * Time.deltaTime;
         if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
             turn = remainingTurn;
         _rotation.y += turn;
-        
+
         float accelTiltForward = Data.suspensionForward * _forwardAccel;
         float accelTiltRight = Data.suspensionSide * _linVelocity * _rotVelocity;
 
@@ -183,10 +188,10 @@ public class VehicleBehaviour : UnitBehaviour
         //      much assuming length and width are set correctly, but it is not very fast
 
         // Apparently our forward and backward are opposite of the Unity convention
-        float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + _forward * Data.length/2);
-        float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - _forward * Data.length/2);
-        float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - _right * Data.width/2);
-        float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + _right * Data.width/2);
+        float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + _forward * Data.length / 2);
+        float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - _forward * Data.length / 2);
+        float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - _right * Data.width / 2);
+        float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + _right * Data.width / 2);
 
         _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
         _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.length);

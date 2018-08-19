@@ -50,7 +50,7 @@ namespace PFW.Weapons
         private float shotVolume = 1.0F;
         // ---------------- END PREFAB -----------------
 
-        public void Start()
+        public void Awake()
         {
             unit = gameObject.GetComponent<UnitBehaviour>();
             enabled = false;

@@ -52,7 +52,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     private Terrain _terrain;
     private TerrainCollider _Ground;
     private float _health;
-    
+
+    public virtual void Awake()
+    {
+        Pathfinder = new Pathfinder(this, PathfinderData.singleton);
+    }
+
     public virtual void Start()
     {
         transform.position = 100 * Vector3.down;
@@ -63,11 +68,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         tag = UNIT_TAG;
 
         Source = GetComponent<AudioSource>();
-
-        Pathfinder = new Pathfinder(this, PathfinderData.singleton);
-
     }
-    
+
     public virtual void Update()
     {
         DoMovement();
