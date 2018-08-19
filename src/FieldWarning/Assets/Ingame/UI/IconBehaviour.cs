@@ -14,20 +14,26 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using PFW.Model.Game;
-
 namespace PFW.Ingame.UI
 {
     public class IconBehaviour : SelectableBehavior
     {
+        private static Color DEFAULT_COLOR = Color.cyan;
+
         private int _layer = -1;
-        private PlatoonBehaviour _platoon;
 
         private SymbolBehaviour _symbol;
         private Transform _billboard;
+        
+        private Color _baseColor = DEFAULT_COLOR;
+        public Color BaseColor {
+            set {
+                if (_baseColor == DEFAULT_COLOR) {
+                    _baseColor = value;
+                }
+            }
+        }
 
-        private bool _init = false;
-        private Color _baseColor = Color.blue;
         private bool _visible = true;
 
         void Awake()
@@ -44,17 +50,6 @@ namespace PFW.Ingame.UI
 
             SetSelected(false);
             SetVisible(_visible);
-        }
-
-        void Update()
-        {
-
-        }
-
-        public void SetPlatoon(PlatoonBehaviour p)
-        {
-            _platoon = p;
-            _symbol.SetIcon(p.Type);
         }
 
         public void SetLayer(int l)
@@ -107,11 +102,6 @@ namespace PFW.Ingame.UI
             _billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
             _symbol.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
             SetVisible(true);
-        }
-
-        public void SetTeam(Team t)
-        {
-            _baseColor = t.Color;
         }
     }
 }

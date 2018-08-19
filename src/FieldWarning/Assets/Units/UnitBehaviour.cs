@@ -14,8 +14,6 @@
 using UnityEngine;
 using PFW.Weapons;
 
-using PFW.Ingame.UI;
-
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
     public const string UNIT_TAG = "Unit";

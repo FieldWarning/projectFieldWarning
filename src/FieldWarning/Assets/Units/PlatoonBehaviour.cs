@@ -83,8 +83,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
-        Icon.SetPlatoon(this);
-        Icon.SetTeam(owner.Team);
+        Icon.BaseColor = Owner.Team.Color;
 
         var unitInstance = UnitFactory.GetUnit(t);
 

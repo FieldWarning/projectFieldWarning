@@ -43,9 +43,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private void InitializeIcon()
     {
         _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
-        //Debug.Log(platoonBehaviour.gameObject);
-        //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
-        _icon.GetComponent<IconBehaviour>().SetTeam(_owner.Team);
+        _icon.GetComponent<IconBehaviour>().BaseColor = _owner.Team.Color;
         _icon.transform.parent = transform;        
     }
 
