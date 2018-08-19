@@ -77,18 +77,18 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         if (IsMoving())
             UpdateMapOrientation();
 
-        UpdateInstantaneousRotation();
-        UpdateInstantaneousPosition();
+        UpdateCurrentRotation();
+        UpdateCurrentPosition();
     }
 
-    private void UpdateInstantaneousPosition()
+    private void UpdateCurrentPosition()
     {
         Vector3 diff = _position - transform.position;
         transform.Translate(TRANSLATION_RATE * Time.deltaTime * diff);
         transform.position = _position;
     }
 
-    private void UpdateInstantaneousRotation()
+    private void UpdateCurrentRotation()
     {
         Vector3 diff = _rotation - _currentRotation;
         if (diff.sqrMagnitude > 1) {
@@ -110,15 +110,14 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         if (_health <= 0) {
             IsAlive = false;
             Platoon.Units.Remove(this);
-
             Destroy(this.gameObject);
+
             Platoon.GhostPlatoon.HandleRealUnitDestroyed();
+
             if (Platoon.Units.Count == 0) {
                 Destroy(Platoon.gameObject);
                 Platoon.Owner.Session.RegisterPlatoonDeath(Platoon);
             }
-
-            return;
         }
     }
 
