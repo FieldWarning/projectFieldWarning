@@ -11,8 +11,25 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-public enum Team : int
+using UnityEngine;
+
+namespace PFW.Model.Game
 {
-    Red,
-    Blue
+    public class Player : MonoBehaviour
+    {
+        public Team Team;
+
+        [SerializeField]
+        private MatchSession _session;
+        public MatchSession Session {
+            get {
+                return _session;
+            }
+
+            set {
+                if (_session == null)
+                    _session = value;
+            }
+        }
+    }
 }

@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using Pfw.Ingame.Prototype;
 using PFW.Ingame.UI;
 
+using PFW.Model.Game;
+
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
     public float FinalHeading;
@@ -41,17 +43,12 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private void InitializeIcon()
     {
         _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
-        //Debug.Log(platoonBehaviour.gameObject);
-        //icon.GetComponent<IconBehaviour>().setPlatoon(platoonBehaviour);
-        _icon.GetComponent<IconBehaviour>().SetTeam(_owner.Team);
+        _icon.GetComponent<IconBehaviour>().BaseColor = _owner.Team.Color;
         _icon.transform.parent = transform;        
     }
 
     public PlatoonBehaviour GetRealPlatoon()
     {
-        if (_platoonBehaviour == null)
-            BuildRealPlatoon();
-
         return _platoonBehaviour;
     }
 
@@ -63,7 +60,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _platoonBehaviour.Initialize(_unitType, _owner, _units.Count);
 
         _platoonBehaviour.SetGhostPlatoon(this);
-        _realPlatoon.transform.position = transform.position + 100 * Vector3.down;
     }
 
     public void Initialize(UnitType t, Player owner, int unitCount)
@@ -135,8 +131,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     public void Destroy()
     {
-        _platoonBehaviour.Destroy();
-
         foreach (var u in _units)
             Destroy(u);
 
@@ -148,13 +142,18 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
         behaviour.Initialize(t, owner, count);
-        behaviour.BuildRealPlatoon();
         behaviour.InitializeIcon();
 
         go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
         behaviour._icon.GetComponent<IconBehaviour>().SetGhost();
 
         return behaviour;
+    }
+
+    public void Spawn(Vector3 pos)
+    {
+        BuildRealPlatoon();
+        _platoonBehaviour.Spawn(pos);
     }
 
     public void HandleRealUnitDestroyed()

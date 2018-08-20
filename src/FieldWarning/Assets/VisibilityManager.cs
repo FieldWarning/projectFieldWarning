@@ -13,11 +13,17 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+
+using PFW.Model.Game;
+
 public class VisibilityManager : MonoBehaviour
 {
-    int turn = 0;
-    int groups = 10;
-    //public static Team currentTeam = Team.Red;
+    public MatchSession Session;
+
+    public Team t;
+
+    // Old code:
+    
     static List<VisibleBehavior> teamMembersBlue = new List<VisibleBehavior>();
     static List<VisibleBehavior> teamMembersRed = new List<VisibleBehavior>();
     static List<VisibleBehavior>[,] visionCellsBlue;
@@ -43,30 +49,10 @@ public class VisibilityManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        updateVision();
-    }
+        return;
+        foreach (Team team in Session.Teams) {
+            foreach (var unit in GetTeamMembers(team)) {
 
-    public static void addVisibleBehaviour(VisibleBehavior b)
-    {
-        var members = getTeamMembers(b.Team);
-        if (!members.Contains(b)) members.Add(b);
-        var t = Team.Blue;
-        if (t == b.Team) t = Team.Red;
-        getTeamMembers(t).ForEach(x => x.AddHostile(b));
-    }
-
-    public void updateVision()
-    {
-        //Debug.Log(teamMembersBlue.Count );
-        //Debug.Log(teamMembersRed.Count);
-        //detectedHostile.RemoveAll(x => detected(x));
-        turn++;
-        foreach (var t in new Team[] { Team.Blue, Team.Red }) {
-            Team o = Team.Red;
-            if (t == Team.Red) o = Team.Blue;
-            var team = getTeamMembers(t);
-            for (var k = turn % groups; k < team.Count; k += groups) {
-                var unit = team[k];
                 var region = unit.GetRegion();
                 for (int i = -1; i < 2; i++) {
                     for (int j = -1; j < 2; j++) {
@@ -74,9 +60,8 @@ public class VisibilityManager : MonoBehaviour
                         var x = region.x + i;
                         var y = region.y + j;
                         if (x < 0 || y < 0 || x >= n || y >= n) continue;
-                        //Debug.Log(string.Format("searched: {0}, {1}", x,y));
-                        //visionCells[x, y].RemoveAll(vis=> notDetected(vis, unit));
-                        foreach (var enemy in getVisionCells(o)[x, y]) {
+
+                        foreach (var enemy in teamMembersRed) {
                             if (TerrainData.visionScore(unit.transform, enemy.transform, maxViewDistance)) {
                                 unit.SetSpotting(enemy, true);
                                 enemy.SetSpottedBy(unit, true);
@@ -90,6 +75,16 @@ public class VisibilityManager : MonoBehaviour
             }
         }
     }
+
+    public void AddVisibleBehaviour(VisibleBehavior b)
+    {
+        //var members = getTeamMembers(b.Team);
+        //if (!members.Contains(b)) members.Add(b);
+        //var t = Team.Blue;
+        //if (t == b.Team) t = Team.Red;
+        //getTeamMembers(t).ForEach(x => x.AddHostile(b));
+    }
+
     /*private bool notDetected(VisibleBehavior enemy, VisibleBehavior unit)
     {
         
@@ -118,35 +113,24 @@ public class VisibilityManager : MonoBehaviour
             return true;
         }
     }*/
-    public static void updateUnitRegion(VisibleBehavior unit, Point newRegion)
+    public static void UpdateUnitRegion(VisibleBehavior unit, Point newRegion)
     {
         var currentPoint = unit.GetRegion();
-        getVisionCells(unit.Team)[currentPoint.x, currentPoint.y].Remove(unit);
-        getVisionCells(unit.Team)[newRegion.x, newRegion.y].Add(unit);
+        //getVisionCells(unit.Team)[currentPoint.x, currentPoint.y].Remove(unit);
+        //getVisionCells(unit.Team)[newRegion.x, newRegion.y].Add(unit);
     }
-    public static Point getRegion(Transform transform)
+    public static Point GetRegion(Transform transform)
     {
         var x = Mathf.FloorToInt((mapSize / 2 + transform.position.x) / maxViewDistance);
         var y = Mathf.FloorToInt((mapSize / 2 + transform.position.z) / maxViewDistance);
         return new Point(x, y);
     }
-    public static List<VisibleBehavior> getTeamMembers(Team t)
+    public List<VisibleBehavior> GetTeamMembers(Team t)
     {
-        if (t == Team.Blue) {
-            return teamMembersBlue;
-        } else {
-            return teamMembersRed;
-        }
+        //return Session.AllUnits.
+        return null;
     }
-    private static List<VisibleBehavior>[,] getVisionCells(Team t)
-    {
-        if (t == Team.Blue) {
-            return visionCellsBlue;
-        } else {
-            return visionCellsRed;
-        }
-    }
-    public static void updateTeamBelonging()
+    public static void UpdateTeamBelonging()
     {
         teamMembersBlue.ForEach(x => x.UpdateTeamBelonging());
         teamMembersRed.ForEach(x => x.UpdateTeamBelonging());

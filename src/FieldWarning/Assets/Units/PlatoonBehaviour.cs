@@ -18,6 +18,7 @@ using PFW.Weapons;
 using Pfw.Ingame.Prototype;
 
 using PFW.Ingame.UI;
+using PFW.Model.Game;
 
 public partial class PlatoonBehaviour : MonoBehaviour
 {
@@ -78,12 +79,9 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Type = t;
         Owner = owner;
 
-        Owner.Session.RegisterPlatoonBirth(this);
-
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
-        Icon.SetPlatoon(this);
-        Icon.SetTeam(owner.Team);
+        Icon.BaseColor = Owner.Team.Color;
 
         var unitInstance = UnitFactory.GetUnit(t);
 
@@ -120,7 +118,6 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
     public void Spawn(Vector3 pos)
     {
-        enabled = true;
         transform.position = pos;
 
         var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
@@ -134,6 +131,8 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Movement.GetDestinationFromGhost();
         Movement.EndQueueing();
         GhostPlatoon.SetVisible(false);
+
+        Owner.Session.RegisterPlatoonBirth(this);
     }
 
     public void SetSelected(bool selected)

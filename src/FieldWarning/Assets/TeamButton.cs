@@ -13,27 +13,18 @@
 
 using UnityEngine;
 
-using PFW.Ingame.UI;
+using PFW.Model.Game;
 
 public class TeamButton : MonoBehaviour
 {
     [SerializeField]
-    private Player _player;
-    private UIManagerBehaviour _uiManager;
-
-    void Start()
-    {
-        // TODO fix this hack
-        var session = GameObject.Find("GameSession");
-        _uiManager = session.GetComponent<UIManagerBehaviour>();
-    }
-
-    // Update is called once per frame
-    void Update() { }
+    private Team _team;
+    [SerializeField]
+    private MatchSession _session;
 
     public void onClick()
     {
-        _uiManager.Owner = _player;
-        VisibilityManager.updateTeamBelonging();
+        _session.LocalPlayer = _team.Players[0];
+        VisibilityManager.UpdateTeamBelonging();
     }
 }

@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using Pfw.Ingame.Prototype;
 using UnityEngine;
 
+using PFW.Model.Game;
+
 namespace PFW.Ingame.UI
 {
     public class BuyTransaction

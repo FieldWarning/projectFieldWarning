@@ -50,7 +50,7 @@ namespace PFW.Weapons
         private float shotVolume = 1.0F;
         // ---------------- END PREFAB -----------------
 
-        public void Start()
+        public void Awake()
         {
             unit = gameObject.GetComponent<UnitBehaviour>();
             enabled = false;
@@ -130,7 +130,7 @@ namespace PFW.Weapons
         private bool FireWeapon(TargetTuple target)
         {
             // sound
-            unit.source.PlayOneShot(shotSound, shotVolume);
+            unit.Source.PlayOneShot(shotSound, shotVolume);
             // particle
             shotEffect.Play();
 
@@ -166,19 +166,20 @@ namespace PFW.Weapons
 
         public GameObject FindClosestEnemy()
         {
+            // TODO utilize precomputed distance lists from session
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             GameObject Target = null;
-            var thisTeam = unit.platoon.Owner.Team;
+            var thisTeam = unit.Platoon.Owner.Team;
 
-            for (int i = 0; i < (int)units.Length; i++) {
+            foreach (GameObject unit in units) {
                 // Filter out friendlies:
-                if (units[i].GetComponent<UnitBehaviour>().platoon.Owner.Team == thisTeam)
+                if (unit.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance(units[i].transform.position, unit.transform.position);
+                var distance = Vector3.Distance(unit.transform.position, unit.transform.position);
                 if (distance < data.FireRange) {
-                    return units[i];
+                    return unit;
                 }
             }
             return Target;

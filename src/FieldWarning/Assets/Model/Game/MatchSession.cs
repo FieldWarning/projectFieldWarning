@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using PFW.Ingame.UI;
@@ -19,17 +20,38 @@ namespace PFW.Model.Game
 {
     public class MatchSession : MonoBehaviour
     {
+        [NonSerialized]
+        public Player LocalPlayer;
+
         public Settings Settings { get; } = new Settings();
-        public ICollection<Team> Teams { get; private set; }
-        public ICollection<UnitBehaviour> AllUnits { get; private set; }
-        public ICollection<PlatoonBehaviour> AllPlatoons { get; private set; }
+        public ICollection<Team> Teams { get; } = new List<Team>();
+        public ICollection<UnitBehaviour> AllUnits { get; } = new List<UnitBehaviour>();
+        public ICollection<PlatoonBehaviour> AllPlatoons { get; } = new List<PlatoonBehaviour>();
 
         // rip encapsulation:
         public UIManagerBehaviour UIManager;
         public SelectionManager SelectionManager;
 
+        private VisibilityManager _visibilityManager;
+
         public void Awake()
         {
+            // TODO: I don't think we will want to customize the 
+            // team colors etc to be map-specific. So it makes more sense
+            // to have MatchSession create the team objects instead of 
+            // dragging them into the scene like it works now.
+            Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
+            Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
+
+            blueTeam.AddPlayer(this);
+            redTeam.AddPlayer(this);
+
+            Teams.Add(blueTeam);
+            Teams.Add(redTeam);
+
+            LocalPlayer = redTeam.Players[0];
+
+
             UIManager = FindObjectOfType<UIManagerBehaviour>();
             if (UIManager == null)
                 UIManager = gameObject.AddComponent<UIManagerBehaviour>();
@@ -37,8 +59,7 @@ namespace PFW.Model.Game
             if (UIManager.Session == null)
                 UIManager.Session = this;
 
-            // TODO lazy hack, fix:
-            UIManager.Owner = GameObject.Find("RedPlayer1").GetComponent<Player>();
+
 
             SelectionManager = FindObjectOfType<SelectionManager>();
             if (SelectionManager == null)
@@ -47,10 +68,13 @@ namespace PFW.Model.Game
             if (SelectionManager.Session == null)
                 SelectionManager.Session = this;
 
-            Teams = new List<Team>();
 
-            AllUnits = new List<UnitBehaviour>();
-            AllPlatoons = new List<PlatoonBehaviour>();
+            _visibilityManager = FindObjectOfType<VisibilityManager>();
+            if (_visibilityManager == null)
+                _visibilityManager = gameObject.AddComponent<VisibilityManager>();
+
+            if (_visibilityManager.Session == null)
+                _visibilityManager.Session = this;
         }
 
 
@@ -63,6 +87,16 @@ namespace PFW.Model.Game
         {
             AllPlatoons.Remove(platoon);
             SelectionManager.RegisterPlatoonDeath(platoon);
+        }
+
+        public void RegisterUnitBirth(UnitBehaviour unit)
+        {
+            AllUnits.Add(unit);
+        }
+
+        public void RegisterUnitDeath(UnitBehaviour unit)
+        {
+            AllUnits.Remove(unit);
         }
     }
 }

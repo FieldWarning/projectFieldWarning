@@ -32,7 +32,7 @@ public class TransporterBehaviour : MonoBehaviour
                 GetComponent<UnitBehaviour>().SetUnitDestination(transform.position);
             }
             //target.setRally(getRallyPoint(), transform.position);//???????
-            else if (GetComponent<UnitBehaviour>().pathfinder.HasDestination()) {
+            else if (GetComponent<UnitBehaviour>().Pathfinder.HasDestination()) {
                 GetComponent<UnitBehaviour>().SetUnitDestination(target.transform.position);
             }
         }
