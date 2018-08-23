@@ -19,6 +19,7 @@ public class UnitData
 {
     //create from xml file or something
     public float movementSpeed = 6f;
+    public float reverseSpeed = 1f;
     public float accelRate = 1.0f;
     public float maxRotationSpeed = 50f;  // Units of degrees per second
     public float minTurnRadius = 0f;
@@ -34,6 +35,7 @@ public class UnitData
     public float radius;  // Used for pathfinding and collisions
     public float optimumTurnSpeed; // The linear speed which allows for the highest turn rate
     public float suspensionForward, suspensionSide;
+    public float accelDampTime;
 
     public UnitData()
     {
@@ -45,6 +47,8 @@ public class UnitData
         
         suspensionForward = suspension * radius / length;
         suspensionSide = suspension * radius / width;
+
+        accelDampTime = 0.15f * movementSpeed / accelRate;
     }
 
     public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP

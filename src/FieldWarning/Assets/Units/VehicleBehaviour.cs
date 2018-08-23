@@ -16,8 +16,8 @@ using UnityEngine;
 public class VehicleBehaviour : UnitBehaviour
 {
     private const float DECELERATION_FACTOR = 2.5f;
-    private const float ACCEL_DAMP_TIME = 0.5f;
     private const float HEADING_THRESHOLD = 3f * Mathf.Deg2Rad;
+    private const float FORWARD_BIAS = 0.5f;
 
     private float _linVelocity;
     private float _rotVelocity;
@@ -47,29 +47,32 @@ public class VehicleBehaviour : UnitBehaviour
 
     protected override void DoMovement()
     {
-        float targetHeading = getTargetHeading();
-        float remainingTurn = CalculateRemainingTurn(targetHeading);
-        float rotationSpeed = CalculateRotationSpeed(_linVelocity);
+        float distanceToWaypoint = Pathfinder.HasDestination() ? (Pathfinder.GetWaypoint() - _position).magnitude : 0f;
+        float linSpeed = Mathf.Abs(_linVelocity);
+        float targetHeading = GetTargetHeading();
+        float rotationSpeed = CalculateRotationSpeed(linSpeed);
 
-        float distanceToWaypoint = 0f;
-        if (Pathfinder.HasDestination()) {
-            Vector3 waypoint = Pathfinder.GetWaypoint();
-            distanceToWaypoint = (waypoint - transform.localPosition).magnitude;
-        }
-
-        float targetSpeed = CalculateTargetSpeed(distanceToWaypoint, remainingTurn, _linVelocity, rotationSpeed);
+        //float remainingTurn = CalculateRemainingTurn(targetHeading);
+        float turnForward = (targetHeading - _rotation.y - Mathf.PI / 2).unwrapRadian();
+        float turnReverse = (targetHeading - _rotation.y + Mathf.PI / 2).unwrapRadian();
+        bool isReverse = GetReverse(_linVelocity, distanceToWaypoint, rotationSpeed, turnForward, turnReverse);
+        float remainingTurn = isReverse ? turnReverse : turnForward;
+        
+        float targetSpeed = CalculateTargetSpeed(distanceToWaypoint, remainingTurn, linSpeed, rotationSpeed);
+        if (isReverse)
+            targetSpeed = -targetSpeed;
 
         DoRotationalMotion(remainingTurn, rotationSpeed);
         DoLinearMotion(targetSpeed);
     }
 
     // Target heading currently only depends on the waypoint and final heading, but units will also need to face armor and weapons
-    private float getTargetHeading()
+    private float GetTargetHeading()
     {
         float destinationHeading = _finalHeading;
 
         if (Pathfinder.HasDestination()) {
-            var diff = Pathfinder.GetWaypoint() - this.transform.position;
+            var diff = Pathfinder.GetWaypoint() - _position;
             if (diff.magnitude > Pathfinder.finalCompletionDist)
                 destinationHeading = diff.getRadianAngle();
         }
@@ -79,22 +82,37 @@ public class VehicleBehaviour : UnitBehaviour
 
     // Calculate the unit's maximum rotational speed in rads/sec at the given linear speed.
     // All angles need to have units of radians
-    private float CalculateRotationSpeed(float linearSpeed)
+    private float CalculateRotationSpeed(float linSpeed)
     {
-        float turnRadius = Mathf.Max(Data.minTurnRadius, linearSpeed * linearSpeed / Data.maxLateralAccel);
+        float turnRadius = Mathf.Max(Data.minTurnRadius, linSpeed * linSpeed / Data.maxLateralAccel);
 
         float rotSpeed = Mathf.Deg2Rad * Data.maxRotationSpeed;
         if (turnRadius > 0f)
-            rotSpeed = Mathf.Min(rotSpeed, linearSpeed / turnRadius);
+            rotSpeed = Mathf.Min(rotSpeed, linSpeed / turnRadius);
 
         return rotSpeed;
     }
 
-    private float CalculateRemainingTurn(float targetHeading)
+    // Returns true if the unit should be moving in reverse
+    private bool GetReverse(float linVelocity, float linDist, float rotationSpeed, float turnForward, float turnReverse)
     {
-        targetHeading = targetHeading.unwrapRadian();
-        //float currentHeading = Mathf.Deg2Rad * transform.localEulerAngles.y;
-        return (targetHeading - _rotation.y - Mathf.PI / 2).unwrapRadian();
+        if (linDist < Pathfinder.finalCompletionDist)
+            return false;
+
+        if (Pathfinder.command == MoveCommandType.Reverse)
+            return true;
+
+        float timeForward = Mathf.Abs(turnForward) / rotationSpeed + linDist / Data.movementSpeed;
+        float timeReverse = Mathf.Abs(turnReverse) / rotationSpeed + linDist / Data.reverseSpeed;
+
+        float accelTime = 2 * Mathf.Abs(linVelocity) / (Data.accelRate * (1 + DECELERATION_FACTOR));
+        if (linVelocity > 0) {
+            timeReverse += accelTime;
+        } else {
+            timeForward += accelTime;
+        }
+
+        return timeReverse + FORWARD_BIAS < timeForward;
     }
 
     // Finds the linear speed that gets the unit to the desired distance/angle the fastest.
@@ -108,32 +126,28 @@ public class VehicleBehaviour : UnitBehaviour
             return Data.optimumTurnSpeed;
 
         // Want to go just fast enough to cover the linear and angular distance if the unit starts slowing down now
-        float longestDist = Mathf.Max(linDist - Pathfinder.finalCompletionDist / 2, Data.minTurnRadius * angDist);
+        float longestDist = Mathf.Max(linDist - 0.7f * Data.accelDampTime * linSpeed, Data.minTurnRadius * angDist);
         float targetSpeed = Mathf.Sqrt(2 * longestDist * Data.accelRate * DECELERATION_FACTOR);
 
         // But not so fast that it cannot make the turn
         if (linSpeed > Data.optimumTurnSpeed && angDist > 0f)
-            targetSpeed = Mathf.Min(targetSpeed, 0.4f * linDist * rotSpeed / angDist);
+            targetSpeed = Mathf.Min(targetSpeed, 0.3f * linDist * rotSpeed / angDist);
 
         return targetSpeed;
     }
 
     private void DoLinearMotion(float targetSpeed)
     {
-        targetSpeed = Mathf.Min(targetSpeed, GetTerrainSpeed());
+        targetSpeed = GetTerrainSpeedMultiplier() * Mathf.Clamp(targetSpeed, -Data.reverseSpeed, Data.movementSpeed);
 
-        if (targetSpeed > _linVelocity) {
-            _forwardAccel = Data.accelRate;
-        } else if (targetSpeed < _linVelocity) {
-            _forwardAccel = -DECELERATION_FACTOR * Data.accelRate;
-        } else {
-            _forwardAccel = 0f;
-        }
+        _forwardAccel = Mathf.Sign(targetSpeed - _linVelocity) * Data.accelRate;
+        if (Mathf.Sign(_forwardAccel) != Mathf.Sign(_linVelocity))
+            _forwardAccel *= DECELERATION_FACTOR;
 
         if (Mathf.Abs(_forwardAccel) > 0) {
             float accelTime = (targetSpeed - _linVelocity) / _forwardAccel;
-            if (accelTime < ACCEL_DAMP_TIME)
-                _forwardAccel = _forwardAccel * 0.5f * (1 + accelTime / ACCEL_DAMP_TIME);
+            if (accelTime < Data.accelDampTime)
+                _forwardAccel = _forwardAccel * (0.25f + 0.75f * accelTime / Data.accelDampTime);
 
             if (_forwardAccel > 0) {
                 _linVelocity = Mathf.Min(targetSpeed, _linVelocity + _forwardAccel * Time.deltaTime);
@@ -188,10 +202,10 @@ public class VehicleBehaviour : UnitBehaviour
         //      much assuming length and width are set correctly, but it is not very fast
 
         // Apparently our forward and backward are opposite of the Unity convention
-        float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + _forward * Data.length / 2);
-        float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - _forward * Data.length / 2);
-        float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - _right * Data.width / 2);
-        float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + _right * Data.width / 2);
+        float frontHeight = Terrain.activeTerrain.SampleHeight(_position + _forward * Data.length / 2);
+        float rearHeight = Terrain.activeTerrain.SampleHeight(_position - _forward * Data.length / 2);
+        float leftHeight = Terrain.activeTerrain.SampleHeight(_position - _right * Data.width / 2);
+        float rightHeight = Terrain.activeTerrain.SampleHeight(_position + _right * Data.width / 2);
 
         _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
         _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.length);

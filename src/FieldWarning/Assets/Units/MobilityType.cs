@@ -19,9 +19,10 @@ using System.Collections.Generic;
 public sealed class MobilityType
 {
     // This list needs to be instantiated before the PathfinderData
-    public static readonly List<MobilityType> MobilityTypes = new List<MobilityType> {
-        // This obvously needs to be removed once a way to read in the data is finalized:
-        new MobilityType() };
+    public static readonly List<MobilityType> MobilityTypes = new List<MobilityType>();
+
+    // This obvously needs to be removed once a way to read in the data is finalized:
+    public static MobilityType temp = new MobilityType();
 
     public readonly int Index;
 

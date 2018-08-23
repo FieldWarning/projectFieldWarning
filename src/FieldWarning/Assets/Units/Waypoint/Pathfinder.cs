@@ -23,18 +23,19 @@ public class Pathfinder
     private const float AngSearchInc = 12f; // Angluar search increment for local path finding
     private const float MaxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
     private const float CompletionDist = 1.5f * StepSize; // Good enough if we can get within this distance of the target destination
+    private const float UpdateInterval = 0.5f;
+
+    private static bool straightStep; // Tells if the most recent call to TakeStep gave a stright forward step
 
     public PathfinderData data { get; private set; }
-    
-    private static bool straightStep; // Tells if the most recent call to TakeStep gave a stright forward step
+    public MoveCommandType command { get; private set; }
+    public readonly float finalCompletionDist;
 
     private UnitBehaviour unit;
     private List<PathNode> path;  // path[0] is the final destination
     private PathNode previousNode;
-    private MoveCommandType command;
     private Vector3 waypoint;
-    private int timeToUpdate;
-    public readonly float finalCompletionDist;
+    private float nextUpdateTime;
 
     public Pathfinder(UnitBehaviour unit, PathfinderData data)
     {
@@ -42,6 +43,7 @@ public class Pathfinder
         this.data = data;
         path = new List<PathNode>();
         finalCompletionDist = 0.5f + unit.Data.minTurnRadius;
+        nextUpdateTime = 0f;
     }
 
     // Generate and store the sequence of nodes leading to the destination using the global graph
@@ -49,14 +51,16 @@ public class Pathfinder
     // If no path was found, return 'forever' and set no destination
     public float SetPath(Vector3 destination, MoveCommandType command)
     {
-        this.command = command;
         previousNode = null;
+        nextUpdateTime = 0f;
 
         if (destination == NoPosition) {
             path.Clear();
             return Forever;
         }
-        
+
+        this.command = command;
+
         float pathTime = data.FindPath(path, unit.transform.position, destination, unit.Data.mobility, 0f, command);
         if (pathTime == Forever)
             path.Clear();
@@ -72,15 +76,16 @@ public class Pathfinder
             waypoint = NoPosition;
             return waypoint;
         }
-
-        timeToUpdate--;
-        if (timeToUpdate <= 0) {
+        
+        if (Time.time > nextUpdateTime) {
+            nextUpdateTime = Time.time + UpdateInterval;
             PathNode targetNode = path[path.Count - 1];
 
             float distance = Vector3.Distance(unit.transform.position, targetNode.position);
             if (distance < (path.Count > 1 ? CompletionDist : finalCompletionDist)) { // Unit arrived at the next path node
                 path.RemoveAt(path.Count - 1);
                 if (!HasDestination()) { // Unit arrived at the destination
+                    command = MoveCommandType.Slow;
                     waypoint = NoPosition;
                     return waypoint;
                 } else {
@@ -113,8 +118,6 @@ public class Pathfinder
                     }
                 }
             }
-
-            timeToUpdate = 4; // (int)(StepSize / unit.data.movementSpeed);
         }
 
         return waypoint;

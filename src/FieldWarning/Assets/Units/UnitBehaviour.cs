@@ -18,7 +18,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
     public const string UNIT_TAG = "Unit";
     private const float ORIENTATION_RATE = 5.0f;
-    private const float TRANSLATION_RATE = 10.0f;
+    private const float TRANSLATION_RATE = 5.0f;
 
     public UnitData Data = UnitData.GenericUnit();
     public PlatoonBehaviour Platoon { get; private set; }
@@ -80,9 +80,13 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     private void UpdateCurrentPosition()
     {
-        Vector3 diff = _position - transform.position;
-        transform.Translate(TRANSLATION_RATE * Time.deltaTime * diff);
-        transform.position = _position;
+        Vector3 diff = (_position - transform.position) * Time.deltaTime;
+        Vector3 newPosition = transform.position;
+        newPosition.x += TRANSLATION_RATE * diff.x;
+        newPosition.y = _position.y;
+        newPosition.z += TRANSLATION_RATE * diff.z;
+
+        transform.position = newPosition;
     }
 
     private void UpdateCurrentRotation()
@@ -220,11 +224,11 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public abstract bool OrdersComplete();
 
     // Returns the unit's speed on the current terrain
-    public float GetTerrainSpeed()
+    public float GetTerrainSpeedMultiplier()
     {
         float terrainSpeed = Pathfinder.data.GetUnitSpeed(Data.mobility, transform.position, 0f, -transform.forward);
         terrainSpeed = Mathf.Max(terrainSpeed, 0.05f); // Never let the speed to go exactly 0, just so units don't get stuck
-        return Data.movementSpeed * terrainSpeed;
+        return terrainSpeed;
     }
 
     public void Destroy()
@@ -246,6 +250,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 public enum MoveCommandType
 {
     Fast,
-    Slow
+    Slow,
+    Reverse
 }
 
