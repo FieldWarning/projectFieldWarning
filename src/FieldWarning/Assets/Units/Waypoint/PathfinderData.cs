@@ -183,8 +183,10 @@ public class PathfinderData
         PathNode cameFromDest = null;
         float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, unitRadius);
 
-        if (command == MoveCommandType.Slow && gScoreDest < Pathfinder.Forever)
-            return gScoreDest;
+        if (gScoreDest < Pathfinder.Forever) {
+            if (command == MoveCommandType.Slow || command == MoveCommandType.Reverse)
+                return gScoreDest;
+        }
 
         // Initialize with all nodes accessible from the starting point
         // (this can be optimized later by throwing out some from the start)
