@@ -22,12 +22,9 @@ using PFW.Model.Game;
 
 namespace PFW.Ingame.UI
 {
-    public class UIManagerBehaviour : MonoBehaviour
+    public class InputManager : MonoBehaviour
     {
-
-        private Texture2D _firePosReticle;        
-
-        private Vector3 _boxSelectStart;
+        private Texture2D _firePosReticle;
 
         public static List<SpawnPointBehaviour> SpawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
@@ -54,6 +51,8 @@ namespace PFW.Ingame.UI
                 return Session.LocalPlayer;
             }
         }
+
+        private Vector3 _boxSelectStart;
 
         void Start()
         {

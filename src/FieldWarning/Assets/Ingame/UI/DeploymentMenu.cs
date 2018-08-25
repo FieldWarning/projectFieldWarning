@@ -69,7 +69,7 @@ namespace PFW.Ingame.UI
 
                 // this is very hacky and WIP just to keep the current spawning system working
                 var session = GameObject.Find("GameSession");
-                card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<UIManagerBehaviour>().TankButtonCallback);
+                card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().TankButtonCallback);
 
                 // TODO Set picture too
                 // TODO Transports?
