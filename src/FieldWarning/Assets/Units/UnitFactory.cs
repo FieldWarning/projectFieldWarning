@@ -17,7 +17,7 @@ namespace Pfw.Ingame.Prototype
 {
     public static class UnitFactory
     {
-        public static GameObject GetUnit(UnitType type)
+        public static GameObject FindPrefab(UnitType type)
         {
             GameObject unit;
 
@@ -43,6 +43,34 @@ namespace Pfw.Ingame.Prototype
             //unit.GetComponent<UnitLabelAttacher>().Label = label;
 
             return unit;
+        }
+
+        public static GameObject MakeUnit(GameObject prefab, Color minimapColor)
+        {
+            GameObject unit = Object.Instantiate(prefab);
+            AddMinimapIcon(unit, minimapColor);
+
+            return unit;
+        }
+
+        public static GameObject MakeGhostUnit(GameObject prefab)
+        {
+            GameObject unit = Object.Instantiate(prefab);
+            unit.GetComponent<UnitBehaviour>().enabled = false;
+
+            Shader shader = Resources.Load<Shader>("Ghost");
+            unit.ApplyShaderRecursively(shader);
+            unit.transform.position = 100 * Vector3.down;
+
+            return unit;
+        }
+
+        private static void AddMinimapIcon(GameObject unit, Color minimapColor)
+        {
+            var minimapIcon = GameObject.Instantiate(Resources.Load<GameObject>("MiniMapIcon"));
+            minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
+            minimapIcon.transform.parent = unit.transform;
+            minimapIcon.transform.localPosition = Vector3.zero;
         }
     }
 

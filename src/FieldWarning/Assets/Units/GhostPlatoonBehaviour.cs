@@ -66,7 +66,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     {
         _owner = owner;
         _unitType = t;
-        _baseUnit = UnitFactory.GetUnit(_unitType);
+        _baseUnit = UnitFactory.FindPrefab(_unitType);
         transform.position = 100 * Vector3.down;
 
         // Create units:
@@ -76,13 +76,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     private void AddSingleUnit()
     {
-        GameObject go = GameObject.Instantiate(_baseUnit);
-        go.GetComponent<UnitBehaviour>().enabled = false;
-        var shader = Resources.Load<Shader>("Ghost");
-        go.ApplyShaderRecursively(shader);
-        go.transform.position = 100 * Vector3.down;
-        _units.Add(go);
-        //go.transform.parent = this.transform;
+        GameObject unit = UnitFactory.MakeGhostUnit(_baseUnit);        
+        _units.Add(unit);
     }
 
     public void SetOrientation(Vector3 position, float heading)
