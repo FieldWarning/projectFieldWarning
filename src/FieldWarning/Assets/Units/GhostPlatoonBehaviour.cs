@@ -25,7 +25,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private bool _raycastIgnore;
     private bool _raycastIgnoreChange = false;
     private GameObject _icon;
-    private GameObject _baseUnit;
     private UnitType _unitType;
     private GameObject _realPlatoon;
     private PlatoonBehaviour _platoonBehaviour;
@@ -66,7 +65,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     {
         _owner = owner;
         _unitType = t;
-        _baseUnit = UnitFactory.FindPrefab(_unitType);
         transform.position = 100 * Vector3.down;
 
         // Create units:
@@ -76,7 +74,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     private void AddSingleUnit()
     {
-        GameObject unit = UnitFactory.MakeGhostUnit(_baseUnit);        
+        GameObject _unitPrefab = UnitFactory.FindPrefab(_unitType);
+        GameObject unit = UnitFactory.MakeGhostUnit(_unitPrefab);        
         _units.Add(unit);
     }
 
