@@ -24,15 +24,19 @@ public class MoveWaypoint : Waypoint
 
     public override void ProcessWaypoint()
     {
-        Vector3 v = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
-        var left = new Vector3(-v.z, 0, v.x);
+
+        Vector3 left = Vector3.forward;
+        if (heading != UnitBehaviour.NO_HEADING) {
+            Vector3 v = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
+            left = new Vector3(-v.z, 0, v.x);
+        }
 
         var pos = destination + (platoon.Units.Count - 1) * (PlatoonBehaviour.UNIT_DISTANCE / 2) * left;
         var destinations = new List<Vector3>();
         for (int i = 0; i < platoon.Units.Count; i++) {
             destinations.Add(pos - PlatoonBehaviour.UNIT_DISTANCE * i * left);
         }
-
+        
         platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
         platoon.Units.ForEach(x => x.SetUnitFinalHeading(heading));
     }
