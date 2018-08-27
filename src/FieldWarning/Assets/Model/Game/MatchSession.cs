@@ -29,7 +29,7 @@ namespace PFW.Model.Game
         public ICollection<PlatoonBehaviour> AllPlatoons { get; } = new List<PlatoonBehaviour>();
 
         // rip encapsulation:
-        public UIManagerBehaviour UIManager;
+        public InputManager UIManager;
         public SelectionManager SelectionManager;
 
         private VisibilityManager _visibilityManager;
@@ -52,9 +52,9 @@ namespace PFW.Model.Game
             LocalPlayer = redTeam.Players[0];
 
 
-            UIManager = FindObjectOfType<UIManagerBehaviour>();
+            UIManager = FindObjectOfType<InputManager>();
             if (UIManager == null)
-                UIManager = gameObject.AddComponent<UIManagerBehaviour>();
+                UIManager = gameObject.AddComponent<InputManager>();
 
             if (UIManager.Session == null)
                 UIManager.Session = this;

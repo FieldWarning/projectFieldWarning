@@ -83,15 +83,16 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
 
-        var unitInstance = UnitFactory.GetUnit(t);
+        var unitPrefab = UnitFactory.FindPrefab(t);
 
         for (int i = 0; i < n; i++) {
-            iconInstance = Instantiate(unitInstance);
-            var unitBehaviour = iconInstance.GetComponent<UnitBehaviour>();
+            var unitInstance = 
+                UnitFactory.MakeUnit(unitPrefab, Owner.Team.Color);
+            var unitBehaviour = unitInstance.GetComponent<UnitBehaviour>();
             unitBehaviour.SetPlatoon(this);
             Units.Add(unitBehaviour);
 
-            var collider = iconInstance.GetComponentInChildren<BoxCollider>();
+            var collider = unitInstance.GetComponentInChildren<BoxCollider>();
             collider.enabled = true;
         }
 
