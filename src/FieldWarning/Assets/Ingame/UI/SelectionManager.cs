@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using PFW.Model.Game;
-using static PFW.Ingame.UI.UIManagerBehaviour;
+using static PFW.Ingame.UI.InputManager;
 using System.Linq;
 
 namespace PFW.Ingame.UI

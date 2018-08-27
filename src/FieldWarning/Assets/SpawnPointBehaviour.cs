@@ -36,7 +36,7 @@ public class SpawnPointBehaviour : MonoBehaviour
     {
         GetComponentInChildren<Renderer>().material.color = Team.Color;
 
-        UIManagerBehaviour.AddSpawnPoint(this);
+        InputManager.AddSpawnPoint(this);
     }
 
     public void Update()
