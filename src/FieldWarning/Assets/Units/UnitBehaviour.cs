@@ -212,7 +212,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         return (matchee - transform.position).magnitude;
     }
 
-    public abstract void SetOriginalOrientation(Vector3 pos, Vector3 rotation, bool wake = true);
+    public abstract void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true);
 
 
     protected void WakeUp()

@@ -190,14 +190,18 @@ public class VehicleBehaviour : UnitBehaviour
         return renderers;
     }
 
-    public override void SetOriginalOrientation(Vector3 pos, Vector3 rotation, bool wake = true)
+    // Heading given in radians
+    public override void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true)
     {
         if (wake)
             WakeUp();
+
         _position = pos;
         transform.position = pos;
-        transform.eulerAngles = Mathf.Rad2Deg * rotation;
-        base._rotation = rotation;
+
+        base._rotation = new Vector3(0f, heading, 0f);
+        transform.eulerAngles = Mathf.Rad2Deg * base._rotation;
+        UpdateMapOrientation();
     }
 
     public override void UpdateMapOrientation()

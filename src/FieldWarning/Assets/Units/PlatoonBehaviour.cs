@@ -117,17 +117,14 @@ public partial class PlatoonBehaviour : MonoBehaviour
         GhostPlatoon = obj;
     }
 
-    public void Spawn(Vector3 pos)
+    public void Spawn(Vector3 center)
     {
-        transform.position = pos;
-
+        transform.position = center;
         var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-        Vector3 right = new Vector3(Mathf.Sin(heading), 0, -Mathf.Cos(heading));
-        float spawndistance = 2;
 
-        Vector3 rotation = new Vector3(0, heading - Mathf.PI / 2, 0);
+        var positions = Formations.GetLineFormation(center, heading, Units.Count);
         for (int i = 0; i < Units.Count; i++)
-            Units[i].SetOriginalOrientation(pos + i * spawndistance * right, rotation);
+            Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI/2);
 
         Movement.BeginQueueing(false);
         Movement.GetDestinationFromGhost();
@@ -136,7 +133,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         Owner.Session.RegisterPlatoonBirth(this);
     }
-
+    
     public void SetSelected(bool selected)
     {
         Icon?.SetSelected(selected);

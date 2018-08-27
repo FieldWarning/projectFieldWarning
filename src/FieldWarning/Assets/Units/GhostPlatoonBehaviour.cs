@@ -79,20 +79,14 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _units.Add(unit);
     }
 
-    public void SetOrientation(Vector3 position, float heading)
+    public void SetOrientation(Vector3 center, float heading)
     {
         FinalHeading = heading;
-        transform.position = position;
-        Vector3 v = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
-        var left = new Vector3(-v.z, 0, v.x);
+        transform.position = center;
 
-        var pos = position + (_units.Count - 1) * (PlatoonBehaviour.UNIT_DISTANCE / 2) * left;
+        var positions = Formations.GetLineFormation(center, heading, _units.Count);
         for (int i = 0; i < _units.Count; i++) {
-
-            var localPosition = pos - PlatoonBehaviour.UNIT_DISTANCE * i * left;
-            var localRotation = new Vector3(0, -heading + Mathf.PI/2, 0);
-            _units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(localPosition, localRotation, false);
-            _units[i].GetComponent<UnitBehaviour>().UpdateMapOrientation();
+            _units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading, false);
         }
     }
 

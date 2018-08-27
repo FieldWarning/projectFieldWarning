@@ -85,18 +85,15 @@ namespace PFW.Ingame.UI
         }
 
         // Places the ghost units (unit silhouettes) in view of the player:
-        public void PreviewPurchase(Vector3 position, Vector3 facingPoint)
+        public void PreviewPurchase(Vector3 center, Vector3 facingPoint)
         {
-            Vector3 diff = facingPoint - position;
+            Vector3 diff = facingPoint - center;
             float heading = diff.getRadianAngle();
 
-            Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
-            int formationWidth = GhostPlatoons.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
-            float platoonDistance = 4 * PlatoonBehaviour.UNIT_DISTANCE;
-            var right = Vector3.Cross(forward, Vector3.up);
-            var pos = position + platoonDistance * (formationWidth - 1) * right / 2f;
-            for (var i = 0; i < formationWidth; i++)
-                GhostPlatoons[i].SetOrientation(pos - i * platoonDistance * right, heading);
+            var positions = Formations.GetLineFormation(center, heading + Mathf.PI / 2, GhostPlatoons.Count);
+            for (var i = 0; i < GhostPlatoons.Count; i++)
+                GhostPlatoons[i].SetOrientation(positions[i], heading);
+            
         }
     }
 }

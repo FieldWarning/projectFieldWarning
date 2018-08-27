@@ -267,16 +267,16 @@ namespace PFW.Ingame.UI
             Vector3 diff = facingPoint - _previewPosition;
             float heading = diff.getRadianAngle();
 
-            Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
+            /*Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
             int formationWidth = _selection.Count;// Mathf.CeilToInt(2 * Mathf.Sqrt(spawnList.Count));
             float platoonDistance = 4 * PlatoonBehaviour.UNIT_DISTANCE;
             var right = Vector3.Cross(forward, Vector3.up);
-            var pos = _previewPosition + platoonDistance * (formationWidth - 1) * right / 2f;
+            var pos = _previewPosition + platoonDistance * (formationWidth - 1) * right / 2f;*/
 
+            var positions = Formations.GetLineFormation(_previewPosition, heading + Mathf.PI / 2, _selection.Count);
             List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(x => x.GhostPlatoon);
-
-            for (var i = 0; i < formationWidth; i++) {
-                ghosts[i].SetOrientation(pos - i * platoonDistance * right, heading);
+            for (var i = 0; i < _selection.Count; i++) {
+                ghosts[i].SetOrientation(positions[i], heading);
             }
 
             if (makeVisible) {
