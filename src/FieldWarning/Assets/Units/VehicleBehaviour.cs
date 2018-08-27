@@ -49,13 +49,17 @@ public class VehicleBehaviour : UnitBehaviour
     {
         float distanceToWaypoint = Pathfinder.HasDestination() ? (Pathfinder.GetWaypoint() - _position).magnitude : 0f;
         float linSpeed = Mathf.Abs(_linVelocity);
-        float targetHeading = GetTargetHeading();
         float rotationSpeed = CalculateRotationSpeed(linSpeed);
 
         //float remainingTurn = CalculateRemainingTurn(targetHeading);
-        float turnForward = (targetHeading - _rotation.y - Mathf.PI / 2).unwrapRadian();
-        float turnReverse = (targetHeading - _rotation.y + Mathf.PI / 2).unwrapRadian();
-        bool isReverse = GetReverse(_linVelocity, distanceToWaypoint, rotationSpeed, turnForward, turnReverse);
+        float targetHeading = GetTargetHeading();
+        float turnForward = 0f;
+        float turnReverse = 0f;
+        if (targetHeading != NO_HEADING) {
+            turnForward = (targetHeading - _rotation.y - Mathf.PI / 2).unwrapRadian();
+            turnReverse = (targetHeading - _rotation.y + Mathf.PI / 2).unwrapRadian();
+        }
+        bool isReverse = ShouldReverse(_linVelocity, distanceToWaypoint, rotationSpeed, turnForward, turnReverse);
         float remainingTurn = isReverse ? turnReverse : turnForward;
         
         float targetSpeed = CalculateTargetSpeed(distanceToWaypoint, remainingTurn, linSpeed, rotationSpeed);
@@ -94,7 +98,7 @@ public class VehicleBehaviour : UnitBehaviour
     }
 
     // Returns true if the unit should be moving in reverse
-    private bool GetReverse(float linVelocity, float linDist, float rotationSpeed, float turnForward, float turnReverse)
+    private bool ShouldReverse(float linVelocity, float linDist, float rotationSpeed, float turnForward, float turnReverse)
     {
         if (linDist < Pathfinder.finalCompletionDist)
             return false;
@@ -186,14 +190,14 @@ public class VehicleBehaviour : UnitBehaviour
         return renderers;
     }
 
-    public override void SetOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true)
+    public override void SetOriginalOrientation(Vector3 pos, Vector3 rotation, bool wake = true)
     {
         if (wake)
             WakeUp();
         _position = pos;
         transform.position = pos;
-        transform.localRotation = rotation;
-        base._rotation = rotation.eulerAngles;
+        transform.eulerAngles = Mathf.Rad2Deg * rotation;
+        base._rotation = rotation;
     }
 
     public override void UpdateMapOrientation()
@@ -202,10 +206,10 @@ public class VehicleBehaviour : UnitBehaviour
         //      much assuming length and width are set correctly, but it is not very fast
 
         // Apparently our forward and backward are opposite of the Unity convention
-        float frontHeight = Terrain.activeTerrain.SampleHeight(_position + _forward * Data.length / 2);
-        float rearHeight = Terrain.activeTerrain.SampleHeight(_position - _forward * Data.length / 2);
-        float leftHeight = Terrain.activeTerrain.SampleHeight(_position - _right * Data.width / 2);
-        float rightHeight = Terrain.activeTerrain.SampleHeight(_position + _right * Data.width / 2);
+        float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + _forward * Data.length / 2);
+        float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - _forward * Data.length / 2);
+        float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - _right * Data.width / 2);
+        float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + _right * Data.width / 2);
 
         _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
         _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.length);

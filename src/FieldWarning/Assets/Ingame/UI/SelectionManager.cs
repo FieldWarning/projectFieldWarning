@@ -113,13 +113,17 @@ namespace PFW.Ingame.UI
             transporters.ForEach(x => x.EndQueueing());
         }
 
-        public void DispatchMoveCommand()
+        public void DispatchMoveCommand(bool useGhostHeading)
         {
             var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);
             bool shift = Input.GetKey(KeyCode.LeftShift);
             _selection.ForEach(x => x.Movement.BeginQueueing(shift));
             _selection.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
-            _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
+            if (useGhostHeading) {
+                _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
+            } else {
+                _selection.ForEach(x => x.Movement.UseDefaultHeading());
+            }
             _selection.ForEach(x => x.Movement.EndQueueing());
 
             MaybeDropSelectionAfterOrder();

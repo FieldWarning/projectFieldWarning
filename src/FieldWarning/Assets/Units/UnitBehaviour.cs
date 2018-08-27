@@ -17,6 +17,7 @@ using PFW.Weapons;
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
     public const string UNIT_TAG = "Unit";
+    public const float NO_HEADING = float.MaxValue;
     private const float ORIENTATION_RATE = 5.0f;
     private const float TRANSLATION_RATE = 5.0f;
 
@@ -138,8 +139,9 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Sets the unit's destination location, with a default heading value
     public void SetUnitDestination(Vector3 v)
     {
-        var diff = (v - transform.position);
-        SetFinalOrientation(v, diff.getRadianAngle());
+        //var diff = (v - transform.position);
+        //SetFinalOrientation(v, diff.getRadianAngle());
+        SetFinalOrientation(v, NO_HEADING);
     }
 
     // Sets the unit's destination location, with a specific given heading value
@@ -210,7 +212,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         return (matchee - transform.position).magnitude;
     }
 
-    public abstract void SetOriginalOrientation(Vector3 pos, Quaternion rotation, bool wake = true);
+    public abstract void SetOriginalOrientation(Vector3 pos, Vector3 rotation, bool wake = true);
 
 
     protected void WakeUp()

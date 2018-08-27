@@ -96,7 +96,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         for (int i = 0; i < _units.Count; i++) {
 
             var localPosition = pos - PlatoonBehaviour.UNIT_DISTANCE * i * left;
-            var localRotation = Quaternion.Euler(new Vector3(0, -Mathf.Rad2Deg * (heading) + 90, 0));
+            var localRotation = new Vector3(0, -heading + Mathf.PI/2, 0);
             _units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(localPosition, localRotation, false);
             _units[i].GetComponent<UnitBehaviour>().UpdateMapOrientation();
         }

@@ -121,11 +121,12 @@ public partial class PlatoonBehaviour : MonoBehaviour
         transform.position = pos;
 
         var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-        Vector3 forward = new Vector3(Mathf.Cos(heading), 0, Mathf.Sin(heading));
+        Vector3 right = new Vector3(Mathf.Sin(heading), 0, -Mathf.Cos(heading));
         float spawndistance = 2;
 
+        Vector3 rotation = new Vector3(0, heading - Mathf.PI / 2, 0);
         for (int i = 0; i < Units.Count; i++)
-            Units[i].SetOriginalOrientation(pos + i * spawndistance * forward, Quaternion.FromToRotation(Vector3.forward, forward));
+            Units[i].SetOriginalOrientation(pos + i * spawndistance * right, rotation);
 
         Movement.BeginQueueing(false);
         Movement.GetDestinationFromGhost();
