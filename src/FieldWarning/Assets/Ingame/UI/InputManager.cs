@@ -160,12 +160,12 @@ namespace PFW.Ingame.UI
 
         void OnOrderShortClick()
         {
-            Session.SelectionManager.DispatchMoveCommand();
+            Session.SelectionManager.DispatchMoveCommand(false);
         }
 
         void OnOrderLongClick()
         {
-            Session.SelectionManager.DispatchMoveCommand();
+            Session.SelectionManager.DispatchMoveCommand(true);
         }
 
         public void TankButtonCallback()

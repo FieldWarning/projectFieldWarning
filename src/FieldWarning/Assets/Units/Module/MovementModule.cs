@@ -35,6 +35,7 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
     {
         var finalHeading = v - GetFunctionalPosition();
         SetFinalOrientation(v, finalHeading.getRadianAngle());
+        //SetFinalOrientation(v, UnitBehaviour.NO_HEADING);
     }
 
     public void GetDestinationFromGhost()
@@ -47,6 +48,11 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
     {
         var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
         SetFinalOrientation(Waypoint.destination, heading);
+    }
+
+    public void UseDefaultHeading()
+    {
+        SetFinalOrientation(Waypoint.destination, UnitBehaviour.NO_HEADING);
     }
 
     private Vector3 GetFunctionalPosition()

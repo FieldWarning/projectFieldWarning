@@ -275,7 +275,7 @@ public class InfantryBehaviour : UnitBehaviour {
     {
         return men.ConvertAll(x => x.gameObject.GetComponent<Renderer>()).ToArray();
     }
-    public override void SetOriginalOrientation(Vector3 pos, Quaternion rotation,bool wake=true)
+    public override void SetOriginalOrientation(Vector3 pos, float heading, bool wake=true)
     {
         if (wake) WakeUp();
         initialize();
