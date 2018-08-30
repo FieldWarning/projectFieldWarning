@@ -25,6 +25,11 @@ namespace PFW.Model.Game
 
         public Settings Settings { get; } = new Settings();
         public ICollection<Team> Teams { get; } = new List<Team>();
+
+        // TODO: I think all entities that need a global list should keep one
+        // of their own, to minimize shared state. Instead of using these 
+        // lists, supply a unit registration call and have MatchSession call
+        // that in RegisterUnitBirth() (see VisibilityManager for an example):
         public ICollection<UnitBehaviour> AllUnits { get; } = new List<UnitBehaviour>();
         public ICollection<PlatoonBehaviour> AllPlatoons { get; } = new List<PlatoonBehaviour>();
 
@@ -75,6 +80,8 @@ namespace PFW.Model.Game
 
             if (_visibilityManager.Session == null)
                 _visibilityManager.Session = this;
+            if (_visibilityManager.LocalTeam == null)
+                _visibilityManager.LocalTeam = LocalPlayer.Team;
         }
 
 
@@ -92,11 +99,13 @@ namespace PFW.Model.Game
         public void RegisterUnitBirth(UnitBehaviour unit)
         {
             AllUnits.Add(unit);
+            _visibilityManager.RegisterUnitBirth(unit);
         }
 
         public void RegisterUnitDeath(UnitBehaviour unit)
         {
             AllUnits.Remove(unit);
+            _visibilityManager.RegisterUnitDeath(unit);
         }
     }
 }

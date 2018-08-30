@@ -20,122 +20,77 @@ public class VisibilityManager : MonoBehaviour
 {
     public MatchSession Session;
 
-    public Team t;
+    public Team LocalTeam;
+
+    private List<VisibleBehavior> AllyUnits = new List<VisibleBehavior>();
+    private List<VisibleBehavior> EnemyUnits = new List<VisibleBehavior>();
 
     // Old code:
-    
-    static List<VisibleBehavior> teamMembersBlue = new List<VisibleBehavior>();
-    static List<VisibleBehavior> teamMembersRed = new List<VisibleBehavior>();
-    static List<VisibleBehavior>[,] visionCellsBlue;
-    static List<VisibleBehavior>[,] visionCellsRed;
 
-    int n;
-    static float mapSize = 1000;
-    static float maxViewDistance = 50;
-    public static float minViewDistance = 10;
-    // Use this for initialization
-    void Start()
-    {
-        n = Mathf.CeilToInt(mapSize / maxViewDistance);
+    private static readonly float MAP_SIZE = 1000;
+    private static readonly float MAX_VIEW_DISTANCE = 50;
+    private static readonly int REGIONS_COUNT = Mathf.CeilToInt(MAP_SIZE / MAX_VIEW_DISTANCE);
+    public static readonly float MIN_VIEW_DISTANCE = 10;
 
-        teamMembersBlue = new List<VisibleBehavior>();
-        teamMembersRed = new List<VisibleBehavior>();
-        visionCellsBlue = new List<VisibleBehavior>[n, n];
-        visionCellsRed = new List<VisibleBehavior>[n, n];
-
-        //Debug.Log(getVisionCells(Team.Blue));
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        return;
-        foreach (Team team in Session.Teams) {
-            foreach (var unit in GetTeamMembers(team)) {
+        // Potential optimizations:
+        // - Keep a table of distances and only update on moving units
+        // - Keep a table of regions and only update when units enter/leave regions
+        foreach (var unit in AllyUnits) {
+            foreach (var enemy in EnemyUnits) {
 
-                var region = unit.GetRegion();
-                for (int i = -1; i < 2; i++) {
-                    for (int j = -1; j < 2; j++) {
-
-                        var x = region.x + i;
-                        var y = region.y + j;
-                        if (x < 0 || y < 0 || x >= n || y >= n) continue;
-
-                        foreach (var enemy in teamMembersRed) {
-                            if (TerrainData.visionScore(unit.transform, enemy.transform, maxViewDistance)) {
-                                unit.SetSpotting(enemy, true);
-                                enemy.SetSpottedBy(unit, true);
-                            } else {
-                                unit.SetSpotting(enemy, false);
-                                enemy.SetSpottedBy(unit, false);
-                            }
-                        }
-                    }
+                if (TerrainData.visionScore(unit.transform, enemy.transform, MAX_VIEW_DISTANCE)) {
+                    unit.SetSpotting(enemy, true);
+                    enemy.SetSpottedBy(unit, true);
+                } else {
+                    unit.SetSpotting(enemy, false);
+                    enemy.SetSpottedBy(unit, false);
                 }
             }
         }
     }
 
-    public void AddVisibleBehaviour(VisibleBehavior b)
+    public void RegisterUnitBirth(UnitBehaviour unit)
     {
-        //var members = getTeamMembers(b.Team);
-        //if (!members.Contains(b)) members.Add(b);
-        //var t = Team.Blue;
-        //if (t == b.Team) t = Team.Red;
+        VisibleBehavior visibleBehavior = unit.GetComponent<VisibleBehavior>();
+        if (visibleBehavior == null)
+            return;
+
+        if (unit.Platoon.Owner.Team == LocalTeam)
+            AllyUnits.Add(visibleBehavior);
+        else
+            EnemyUnits.Add(visibleBehavior);
+
         //getTeamMembers(t).ForEach(x => x.AddHostile(b));
     }
 
-    /*private bool notDetected(VisibleBehavior enemy, VisibleBehavior unit)
+    public void RegisterUnitDeath(UnitBehaviour unit)
     {
-        
-        if (TerrainBuilder.visionScore(unit.transform, enemy.transform,maxViewDistance))
-        {
-            detectedHostile.Add(enemy);
-            enemy.setDetected(unit);
-            return true;
-        }
+        VisibleBehavior visibleBehavior = unit.GetComponent<VisibleBehavior>();
+        if (visibleBehavior == null)
+            return;
+
+
+        if (unit.Platoon.Owner.Team == LocalTeam)
+            AllyUnits.Remove(visibleBehavior);
         else
-        {
-            enemy.setDetected(null);
-            return false;
-        }
-    }*/
-    /*private bool detected(VisibleBehavior vis)
-    {
-        if (TerrainBuilder.visionScore(vis.getDetectedBy().transform, vis.transform, maxViewDistance))
-        {
-            return false;
-        }
-        else
-        {
-            var region=vis.getRegion();
-            visionCells[region.x, region.y].Add(vis);
-            return true;
-        }
-    }*/
+            EnemyUnits.Remove(visibleBehavior);
+    }
+
     public static void UpdateUnitRegion(VisibleBehavior unit, Point newRegion)
     {
         var currentPoint = unit.GetRegion();
-        //getVisionCells(unit.Team)[currentPoint.x, currentPoint.y].Remove(unit);
-        //getVisionCells(unit.Team)[newRegion.x, newRegion.y].Add(unit);
     }
+
     public static Point GetRegion(Transform transform)
     {
-        var x = Mathf.FloorToInt((mapSize / 2 + transform.position.x) / maxViewDistance);
-        var y = Mathf.FloorToInt((mapSize / 2 + transform.position.z) / maxViewDistance);
+        var x = Mathf.FloorToInt((MAP_SIZE / 2 + transform.position.x) / MAX_VIEW_DISTANCE);
+        var y = Mathf.FloorToInt((MAP_SIZE / 2 + transform.position.z) / MAX_VIEW_DISTANCE);
         return new Point(x, y);
     }
-    public List<VisibleBehavior> GetTeamMembers(Team t)
-    {
-        //return Session.AllUnits.
-        return null;
-    }
-    public static void UpdateTeamBelonging()
-    {
-        teamMembersBlue.ForEach(x => x.UpdateTeamBelonging());
-        teamMembersRed.ForEach(x => x.UpdateTeamBelonging());
-    }
 }
+
 public struct Point
 {
     public int x;

@@ -19,26 +19,19 @@ using PFW.Model.Game;
 
 public class VisibleBehavior : MonoBehaviour
 {
+    [SerializeField]
+    private float max_spot_range = 400f;
+    [SerializeField]
+    private float stealth_pen_factor = 1f;
+    [SerializeField]
+    private float stealth_factor = 10f;
+
+
     private Point _currentRegion;
-    //List<VisibleBehavior> hostileTeam;
     private Dictionary<VisibleBehavior, bool> _spottedBy = new Dictionary<VisibleBehavior, bool>();
-    int spottedByCount;
+    private int _spottedByCount;
     private Dictionary<VisibleBehavior, bool> _spotting = new Dictionary<VisibleBehavior, bool>();
     private bool _hostile;
-    public Team Team;
-
-    // Use this for initialization
-    void Start()
-    {
-        /*if (hostile)
-        {
-            setDetected(false);
-        }
-        else
-        {
-            GetComponent<Renderer>().material.color = Color.blue;
-        }*/
-    }
 
     // Update is called once per frame
     void Update()
@@ -85,9 +78,8 @@ public class VisibleBehavior : MonoBehaviour
         return _currentRegion;
     }
 
-    internal void SetSpotting(VisibleBehavior enemy, bool p)
+    public void SetSpotting(VisibleBehavior enemy, bool p)
     {
-        if (enemy == this) Debug.LogError("error");
         if (p && !_spotting[enemy]) {
             _spotting[enemy] = true;
         } else {
@@ -95,26 +87,26 @@ public class VisibleBehavior : MonoBehaviour
         }
     }
 
-    internal void SetSpottedBy(VisibleBehavior unit, bool p)
+    public void SetSpottedBy(VisibleBehavior unit, bool p)
     {
         if (p && !_spottedBy[unit]) {
-            if (spottedByCount == 0) {
+            if (_spottedByCount == 0) {
                 SetDetected(true);
             }
-            spottedByCount += 1;
+            _spottedByCount += 1;
             _spottedBy[unit] = true; ;
 
         }
         if (!p && _spottedBy[unit]) {
-            spottedByCount -= 1;
-            if (spottedByCount == 0) {
+            _spottedByCount -= 1;
+            if (_spottedByCount == 0) {
                 SetDetected(false);
             }
             _spottedBy[unit] = false;
         }
     }
 
-    internal void SetHostileTeam(List<VisibleBehavior> hostileTeam)
+    public void SetHostileTeam(List<VisibleBehavior> hostileTeam)
     {
         foreach (var h in hostileTeam.Where(x => !_spotting.Keys.Contains(x))) {
             _spotting.Add(h, false);
@@ -122,34 +114,12 @@ public class VisibleBehavior : MonoBehaviour
         }
     }
 
-    /*public override int GetHashCode()
-    {
-        return hashCode;
-    }
-    public bool Equals(VisibleBehavior obj)
-    {
-        return obj != null && obj.hashCode == this.hashCode;
-    }*/
-
-    internal void AddHostile(VisibleBehavior b)
+    public void AddHostile(VisibleBehavior b)
     {
         if (!_spottedBy.ContainsKey(b)) 
             _spottedBy.Add(b, false);
         
         if (!_spotting.ContainsKey(b)) 
             _spotting.Add(b, false);        
-    }
-
-    internal void UpdateTeamBelonging()
-    {
-        //hostile = team != UIManagerBehaviour.owner.team;
-        //if (!hostile || spottedByCount > 0)
-        //{
-        //    GetComponent<Renderer>().enabled = true;
-        //}
-        //else
-        //{
-        //    GetComponent<Renderer>().enabled = false;
-        //}
     }
 }
