@@ -49,6 +49,7 @@ namespace Pfw.Ingame.Prototype
         {
             GameObject unit = Object.Instantiate(prefab);
             AddMinimapIcon(unit, minimapColor);
+            AddVisibleBehaviour(unit);
 
             return unit;
         }
@@ -71,6 +72,12 @@ namespace Pfw.Ingame.Prototype
             minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
             minimapIcon.transform.parent = unit.transform;
             minimapIcon.transform.localPosition = Vector3.zero;
+        }
+
+        private static void AddVisibleBehaviour(GameObject unit)
+        {
+            VisibleBehavior vis = unit.AddComponent<VisibleBehavior>();
+            vis.UnitBehaviour = unit.GetComponent<UnitBehaviour>();
         }
     }
 

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 
 using PFW.Model.Game;
 
+// This class currently does not do anything.
 public class VisibilityManager : MonoBehaviour
 {
     public MatchSession Session;
@@ -37,18 +38,20 @@ public class VisibilityManager : MonoBehaviour
         // Potential optimizations:
         // - Keep a table of distances and only update on moving units
         // - Keep a table of regions and only update when units enter/leave regions
-        foreach (var unit in AllyUnits) {
-            foreach (var enemy in EnemyUnits) {
 
-                if (TerrainData.visionScore(unit.transform, enemy.transform, MAX_VIEW_DISTANCE)) {
-                    unit.SetSpotting(enemy, true);
-                    enemy.SetSpottedBy(unit, true);
-                } else {
-                    unit.SetSpotting(enemy, false);
-                    enemy.SetSpottedBy(unit, false);
-                }
-            }
-        }
+        // TODO get this legacy code to work:
+        //foreach (var unit in AllyUnits) {
+        //    foreach (var enemy in EnemyUnits) {
+
+        //        if (TerrainData.visionScore(unit.transform, enemy.transform, MAX_VIEW_DISTANCE)) {
+        //            unit.SetSpotting(enemy, true);
+        //            enemy.SetSpottedBy(unit, true);
+        //        } else {
+        //            unit.SetSpotting(enemy, false);
+        //            enemy.SetSpottedBy(unit, false);
+        //        }
+        //    }
+        //}
     }
 
     public void RegisterUnitBirth(UnitBehaviour unit)
@@ -61,8 +64,6 @@ public class VisibilityManager : MonoBehaviour
             AllyUnits.Add(visibleBehavior);
         else
             EnemyUnits.Add(visibleBehavior);
-
-        //getTeamMembers(t).ForEach(x => x.AddHostile(b));
     }
 
     public void RegisterUnitDeath(UnitBehaviour unit)
@@ -80,7 +81,7 @@ public class VisibilityManager : MonoBehaviour
 
     public static void UpdateUnitRegion(VisibleBehavior unit, Point newRegion)
     {
-        var currentPoint = unit.GetRegion();
+        //var currentPoint = unit.GetRegion();
     }
 
     public static Point GetRegion(Transform transform)
