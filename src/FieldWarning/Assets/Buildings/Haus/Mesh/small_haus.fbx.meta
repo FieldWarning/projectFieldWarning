@@ -69,7 +69,7 @@ ModelImporter:
     - 0.125
     - 0.0625
     - 0.01
-    globalScale: 50
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     importVisibility: 1
