@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class TerrainData{
-    public static Vector3 size;
-    static float[, ,] alphaMap;
+public class TerrainData
+{
+    public static Vector3 Size;
+    static float[,,] alphaMap;
     static int width, height;
-    public static void initialize(float[, ,] alphaMap)
+
+    public static void initialize(float[,,] alphaMap)
     {
         /*TerrainData.alphaMap = alphaMap;
         width = alphaMap.GetLength(0);
@@ -14,9 +15,10 @@ public class TerrainData{
         
         size = data.size;*/
     }
+
     public static bool visionScore(Transform t1, Transform t2, float detLimit)
     {
-        var d0 = VisibilityManager.minViewDistance;
+        var d0 = VisibilityManager.MIN_VIEW_DISTANCE;
         float resolution = 1f;
         var p1 = t1.position;
         var p2 = t2.position;
@@ -32,8 +34,7 @@ public class TerrainData{
         float y = p1.z + d0 * dy;
         float score = d0 * clearScore;
         //var offset = terrain.terrainData.size;
-        for (float d = d0; d < length; d += resolution)
-        {
+        for (float d = d0; d < length; d += resolution) {
             x += dx;
             y += dy;
             //var pos = t2.transform.position;
@@ -42,16 +43,17 @@ public class TerrainData{
             //if (i == 0) Debug.Log(string.Format("[{0}, {1}]", x, y));
             var forestRate = getTerrainRate(x, y, TerrainType.Forest);
             score += (forestRate * forestScore * d + (1 - forestRate) * clearScore) * resolution;
-            if (score >= detLimit) return false;
 
+            if (score >= detLimit)
+                return false;
         }
         return true;
-
     }
-    static float getTerrainRate(float x, float y,int type)
+
+    static float getTerrainRate(float x, float y, int type)
     {
-        int i = Mathf.RoundToInt((y / size.z + .5f)*width);
-        int j = Mathf.RoundToInt((x / size.x + .5f)*height);
+        int i = Mathf.RoundToInt((y / Size.z + .5f) * width);
+        int j = Mathf.RoundToInt((x / Size.x + .5f) * height);
         return alphaMap[i, j, type];
         /*var dx = 1.0f / (size.z - 1);
         var dy = 1.0f / (size.x - 1);
@@ -70,24 +72,23 @@ public class TerrainData{
             (map[xMin + 1, yMin + 1] + map[xMin, yMin] - (map[xMin + 1, yMin] + map[xMin, yMin + 1])) * xt * yt;
         return frac;*/
     }
+
     static float forestMap(Vector3 position)
     {
         return 0;
     }
 
-    internal static float populationScore(Vector3 position, Vector3 offset)
+    public static float populationScore(Vector3 position, Vector3 offset)
     {
         float score = 0;
         var p = position;
         var i = 0;
-        
-        while (inBounds(p))
-        {
-            
+
+        while (inBounds(p)) {
+
             score += getTerrainRate(position.x, position.z, TerrainType.Forest);
             p += offset;
-            if (i > 1000)
-            {
+            if (i > 1000) {
                 Debug.LogError(p);
                 break;
             }
@@ -96,17 +97,19 @@ public class TerrainData{
         //Debug.Log(score);
         return score;
     }
+
     static bool inBounds(Vector3 position)
     {
-        return position.z / size.z < .5f && position.z / size.z > -.5f && position.x / size.x < .5f && position.x / size.x > -.5f;
+        return position.z / Size.z < .5f && position.z / Size.z > -.5f && position.x / Size.x < .5f && position.x / Size.x > -.5f;
     }
 }
+
 class TerrainType
 {
-    public const int Forest  = 0;
-    public const int Plain   = 1;
-    public const int Field1  = 2;
-    public const int Field2  = 3;
-    public const int Hedge   = 4;
-    public const int Town    = 5;
+    public const int Forest = 0;
+    public const int Plain = 1;
+    public const int Field1 = 2;
+    public const int Field2 = 3;
+    public const int Hedge = 4;
+    public const int Town = 5;
 }

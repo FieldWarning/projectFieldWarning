@@ -156,11 +156,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetUnitFinalFacing(Vector3 v)
     {
         Vector3 diff;
-        if (Pathfinder.HasDestination()) {
+        if (Pathfinder.HasDestination())
             diff = v - Pathfinder.GetDestination();
-        } else {
+        else
             diff = v - transform.position;
-        }
+        
+    
         SetUnitFinalHeading(diff.getRadianAngle());
     }
 
@@ -184,16 +185,13 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetVisible(bool vis)
     {
         var renderers = GetRenderers();
-        foreach (var r in renderers) {
-            r.enabled = vis;
-        }
+        foreach (var r in renderers)
+            r.enabled = vis;        
 
-        if (vis) {
+        if (vis)
             SetLayer(LayerMask.NameToLayer("Selectable"));
-
-        } else {
-            SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
-        }
+        else 
+            SetLayer(LayerMask.NameToLayer("Ignore Raycast"));        
     }
 
     protected float getHeading()

@@ -13,143 +13,118 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 using PFW.Model.Game;
+using System;
 
 public class VisibleBehavior : MonoBehaviour
 {
-    private Point _currentRegion;
-    //List<VisibleBehavior> hostileTeam;
-    private Dictionary<VisibleBehavior, bool> _spottedBy = new Dictionary<VisibleBehavior, bool>();
-    int spottedByCount;
-    private Dictionary<VisibleBehavior, bool> _spotting = new Dictionary<VisibleBehavior, bool>();
-    private bool _hostile;
-    public Team Team;
+    [SerializeField]
+    private float max_spot_range = 800f;
+    [SerializeField]
+    private float stealth_pen_factor = 1f;
+    [SerializeField]
+    private float stealth_factor = 10f;
+
+    private HashSet<VisibleBehavior> _spotters = new HashSet<VisibleBehavior>();
+    private bool _isVisible = true;
+
+    public UnitBehaviour UnitBehaviour;
+
+    private Team _team {
+        get { return UnitBehaviour.Platoon.Owner.Team; }
+    }
+
+    private MatchSession _session {
+        get { return UnitBehaviour.Platoon.Owner.Session; }
+    }
 
     // Use this for initialization
     void Start()
     {
-        /*if (hostile)
-        {
-            setDetected(false);
-        }
-        else
-        {
-            GetComponent<Renderer>().material.color = Color.blue;
-        }*/
+        if (_team != _session.LocalPlayer.Team)
+            ToggleUnitVisibility(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        var newRegion = VisibilityManager.GetRegion(transform);
-        if (_currentRegion != newRegion) {
-            //Debug.Log("region updated");
-            VisibilityManager.UpdateUnitRegion(this, newRegion);
-            _currentRegion = newRegion;
+        ScanForEnemies();
+        if (_team != _session.LocalPlayer.Team)
+            MaybeHideFromEnemies();
+    }
+
+    // Alert all nearby enemy units that they may have to show themselves.
+    // Only works if they have colliders!
+    private void ScanForEnemies()
+    {
+        Collider[] hits = Physics.OverlapSphere(this.transform.position, max_spot_range, LayerMask.NameToLayer("Selectable"), QueryTriggerInteraction.Ignore);
+
+        foreach (Collider c in hits) {
+            GameObject go = c.gameObject;
+            
+            // this finds colliders, health bars and all other crap except units
+            var unitBehaviour = go.GetComponentInParent<UnitBehaviour>();
+            if (unitBehaviour == null)
+                continue;
+            
+            /* This assumes that all selectables with colliders have a visibility manager, which may be a bad assumption: */
+            if (unitBehaviour.Platoon.Owner.Team != _team)
+                unitBehaviour.gameObject.SendMessage("MaybeReveal", this);
         }
     }
 
-    public void Initialize(Team t)
+    // Check if there are any enemies that can detect this unit 
+    // and make it invisible if not.
+    private void MaybeHideFromEnemies()
     {
-        //Team = t;
-        //var o = Team.Blue;
-        //if (t == Team.Blue) o = Team.Red;
-        //SetHostileTeam(VisibilityManager.getTeamMembers(o));
-        //VisibilityManager.addVisibleBehaviour(this);
-        //if (Team == Team.Red) {
-        //    GetComponent<Renderer>().material.color = Color.red;
-        //} else {
-        //    GetComponent<Renderer>().material.color = Color.blue;
-        //}
-        //UpdateTeamBelonging();
-        //_currentRegion = VisibilityManager.getRegion(transform);
-        //VisibilityManager.updateUnitRegion(this, _currentRegion);
+        // Spotters are only removed here; if there are already none then the unit must have been hidden when the collection was emptied:
+        if (_spotters.Count == 0)
+            return;
+
+        _spotters.RemoveWhere(s => s == null || !s.CanDetect(this));
+        if (_spotters.Count == 0)
+            ToggleUnitVisibility(false);
     }
 
-    public void SetDetected(bool detected)
+    // It is the responsibility of the defender to 
+    // reveal themselves if necessary. This is done here.
+    private void MaybeReveal(VisibleBehavior spotter)
     {
-        if (!_hostile) return;
-        if (detected) {
-            GetComponent<Renderer>().enabled = true;
-            //GetComponent<Renderer>().material.color = Color.red;
-        } else {
-            GetComponent<Renderer>().enabled = false;
-            //GetComponent<Renderer>().material.color = Color.black;
-        }
-    }
-
-    public Point GetRegion()
-    {
-        return _currentRegion;
-    }
-
-    internal void SetSpotting(VisibleBehavior enemy, bool p)
-    {
-        if (enemy == this) Debug.LogError("error");
-        if (p && !_spotting[enemy]) {
-            _spotting[enemy] = true;
-        } else {
-            _spotting[enemy] = false;
-        }
-    }
-
-    internal void SetSpottedBy(VisibleBehavior unit, bool p)
-    {
-        if (p && !_spottedBy[unit]) {
-            if (spottedByCount == 0) {
-                SetDetected(true);
+        if (spotter.CanDetect(this)) {
+            if (_spotters.Count == 0) {
+                ToggleUnitVisibility(true);
             }
-            spottedByCount += 1;
-            _spottedBy[unit] = true; ;
 
-        }
-        if (!p && _spottedBy[unit]) {
-            spottedByCount -= 1;
-            if (spottedByCount == 0) {
-                SetDetected(false);
-            }
-            _spottedBy[unit] = false;
+            _spotters.Add(spotter);
         }
     }
 
-    internal void SetHostileTeam(List<VisibleBehavior> hostileTeam)
+    private bool CanDetect(VisibleBehavior target)
     {
-        foreach (var h in hostileTeam.Where(x => !_spotting.Keys.Contains(x))) {
-            _spotting.Add(h, false);
-            _spottedBy.Add(h, false);
-        }
+        float distance = Vector3.Distance(transform.position, target.transform.position);
+        return distance < max_spot_range && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
     }
 
-    /*public override int GetHashCode()
+    private void ToggleUnitVisibility(bool revealUnit)
     {
-        return hashCode;
-    }
-    public bool Equals(VisibleBehavior obj)
-    {
-        return obj != null && obj.hashCode == this.hashCode;
-    }*/
-
-    internal void AddHostile(VisibleBehavior b)
-    {
-        if (!_spottedBy.ContainsKey(b)) 
-            _spottedBy.Add(b, false);
-        
-        if (!_spotting.ContainsKey(b)) 
-            _spotting.Add(b, false);        
+        _isVisible = revealUnit;
+        ToggleAllRenderers(gameObject, revealUnit);
+        MaybeTogglePlatoonVisibility(revealUnit);
     }
 
-    internal void UpdateTeamBelonging()
+    private void MaybeTogglePlatoonVisibility(bool unitRevealed)
     {
-        //hostile = team != UIManagerBehaviour.owner.team;
-        //if (!hostile || spottedByCount > 0)
-        //{
-        //    GetComponent<Renderer>().enabled = true;
-        //}
-        //else
-        //{
-        //    GetComponent<Renderer>().enabled = false;
-        //}
+        PlatoonBehaviour platoon = UnitBehaviour.Platoon;
+        ToggleAllRenderers(platoon.gameObject, 
+            !platoon.Units.TrueForAll(
+                u => !u.gameObject.GetComponent<VisibleBehavior>()._isVisible));
+    }
+
+    private void ToggleAllRenderers(GameObject o, bool enable)
+    {
+        var allRenderers = o.GetComponentsInChildren<Renderer>();
+        foreach (var childRenderer in allRenderers)
+            childRenderer.enabled = enable;        
     }
 }
