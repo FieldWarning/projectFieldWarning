@@ -1,9 +1,7 @@
 fileFormatVersion: 2
 guid: a8a62dc9e2583894eabc7ddd7184fabd
-timeCreated: 1525547239
-licenseType: Free
 ModelImporter:
-  serializedVersion: 22
+  serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
     100002: ruins3_LOD0
@@ -48,6 +46,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -62,7 +61,7 @@ ModelImporter:
     - 0.25
     - 0.125
     - 0.01
-    globalScale: 6.7
+    globalScale: 50
     meshCompression: 0
     addColliders: 0
     importVisibility: 1
@@ -82,6 +81,8 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0

@@ -1,0 +1,14 @@
+Release Notes v3.0 : 29-12-2017
+
+This is a first public release of the free version of v3
+
+Forum: http://forum.unity3d.com/threads/easyroads3d-v3-the-upcoming-new-road-system.229327/
+
+
+Install Notes:
+
+To install this update in an existing EasyRoads3D project it is recommended to follow the next steps:
+
+1. Open a new scene.
+2. Simply import package updates over the existing install without first removing the previous package.
+3. Open your scene.
