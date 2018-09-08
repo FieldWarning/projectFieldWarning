@@ -1,6 +1,7 @@
 fileFormatVersion: 2
 guid: c91c1eb85782d5748ace27eb4d7415bb
 SpeedTreeImporter:
+  externalObjects: {}
   serializedVersion: 4
   mainColor: {r: 1, g: 1, b: 1, a: 1}
   hueVariation: {r: 1, g: 0.5, b: 0, a: 0.1}
@@ -44,7 +45,7 @@ SpeedTreeImporter:
   animateCrossFading: 1
   billboardTransitionCrossFadeWidth: 0.25
   fadeOutWidth: 0.25
-  scaleFactor: 0.3048
+  scaleFactor: 0.006096
   materialVersion: 3
   userData: 
   assetBundleName: 
