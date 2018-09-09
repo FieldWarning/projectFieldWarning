@@ -16,7 +16,7 @@ using System.Linq;
 
 public class MovementModule : PlatoonModule, Matchable<Vector3>
 {
-    public Vector3 finalHeading;
+    public Vector3 FinalHeading;
 
     public MoveWaypoint Waypoint
     {

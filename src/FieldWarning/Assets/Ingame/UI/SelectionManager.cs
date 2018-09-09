@@ -115,18 +115,24 @@ namespace PFW.Ingame.UI
 
         public void DispatchMoveCommand(bool useGhostHeading)
         {
-            var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);
-            bool shift = Input.GetKey(KeyCode.LeftShift);
-            _selection.ForEach(x => x.Movement.BeginQueueing(shift));
-            _selection.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
+            PrepareDestination();
+
             if (useGhostHeading) {
                 _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
             } else {
                 _selection.ForEach(x => x.Movement.UseDefaultHeading());
             }
+
             _selection.ForEach(x => x.Movement.EndQueueing());
 
             MaybeDropSelectionAfterOrder();
+        }
+
+        public void PrepareDestination() {
+            var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);
+            bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
+            _selection.ForEach(x => x.Movement.BeginQueueing(shouldQueue));
+            _selection.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
         }
 
         public void MaybeDropSelectionAfterOrder()
