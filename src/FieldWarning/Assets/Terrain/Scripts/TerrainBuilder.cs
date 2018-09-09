@@ -44,8 +44,6 @@ public class TerrainBuilder : MonoBehaviour
 
         TerrainData.initialize(alphaMap);
         RoadNetwork.BuildNetwork();
-
-        PathfinderData.singleton = new PathfinderData(terrain);
     }
 
     private static void InitializeAlphamap()

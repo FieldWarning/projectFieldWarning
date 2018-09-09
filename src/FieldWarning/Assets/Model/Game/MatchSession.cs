@@ -39,6 +39,8 @@ namespace PFW.Model.Game
 
         private VisibilityManager _visibilityManager;
 
+        public PathfinderData PathfinderData { get; private set; }
+
         public void Awake()
         {
             // TODO: I don't think we will want to customize the 
@@ -82,6 +84,9 @@ namespace PFW.Model.Game
                 _visibilityManager.Session = this;
             if (_visibilityManager.LocalTeam == null)
                 _visibilityManager.LocalTeam = LocalPlayer.Team;
+
+            // TODO: pass the terrain from whatever code will be starting matches, instead of searching for it like this:
+            PathfinderData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
         }
 
 

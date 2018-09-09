@@ -55,7 +55,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public virtual void Awake()
     {
-        Pathfinder = new Pathfinder(this, PathfinderData.singleton);
     }
 
     public virtual void Start()
@@ -64,7 +63,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         tag = UNIT_TAG;
 
         Source = GetComponent<AudioSource>();
-
+        
         Platoon.Owner.Session.RegisterUnitBirth(this);
     }
 
@@ -98,6 +97,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         } else {
             _currentRotation += ORIENTATION_RATE * Time.deltaTime * diff;
         }
+
         transform.localEulerAngles = Mathf.Rad2Deg * new Vector3(-_currentRotation.x, -_currentRotation.y, _currentRotation.z);
         _forward = new Vector3(-Mathf.Sin(_currentRotation.y), 0f, Mathf.Cos(_currentRotation.y));
         _right = new Vector3(_forward.z, 0f, -_forward.x);
@@ -109,9 +109,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
             return;
 
         _health -= receivedDamage;
-        if (_health <= 0) {
-            Destroy();
-        }
+        if (_health <= 0) 
+            Destroy();        
     }
 
     public abstract void UpdateMapOrientation();
@@ -119,6 +118,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetPlatoon(PlatoonBehaviour p)
     {
         Platoon = p;
+        Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathfinderData);
     }
 
     public float GetHealth()
@@ -147,9 +147,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Sets the unit's destination location, with a specific given heading value
     public void SetFinalOrientation(Vector3 d, float heading)
     {
-        if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever) {
-            SetUnitFinalHeading(heading);
-        }
+        if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever)
+            SetUnitFinalHeading(heading);        
     }
 
     // Updates the unit's final heading so that it faces the specified location

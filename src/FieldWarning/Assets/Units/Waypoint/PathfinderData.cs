@@ -17,8 +17,6 @@ using Priority_Queue;
 
 public class PathfinderData
 {
-    public static PathfinderData singleton;
-    
     private static PathArc InvalidArc = new PathArc(null, null);
     private const float SparseGridSpacing = 100f;
 
