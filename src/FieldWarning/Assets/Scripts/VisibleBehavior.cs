@@ -65,7 +65,7 @@ public class VisibleBehavior : MonoBehaviour
             
             // this finds colliders, health bars and all other crap except units
             var unitBehaviour = go.GetComponentInParent<UnitBehaviour>();
-            if (unitBehaviour == null)
+            if (unitBehaviour == null || !unitBehaviour.enabled)
                 continue;
             
             /* This assumes that all selectables with colliders have a visibility manager, which may be a bad assumption: */
