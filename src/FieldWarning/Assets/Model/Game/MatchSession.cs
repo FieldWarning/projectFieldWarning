@@ -117,5 +117,11 @@ namespace PFW.Model.Game
             AllUnits.Remove(unit);
             _visibilityManager.RegisterUnitDeath(unit);
         }
+
+        // TODO If we can refactor MatchSession to create the spawn points, we will be able to get rid of this:
+        public void AddSpawnPoint(SpawnPointBehaviour spawn)
+        {
+            _inputManager.AddSpawnPoint(spawn);
+        }
     }
 }

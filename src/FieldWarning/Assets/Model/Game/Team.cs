@@ -23,6 +23,11 @@ namespace PFW.Model.Game
         public Color Color;
 
         public List<Player> Players { get; } = new List<Player>();
+
+        public MatchSession Session {
+            // Guard omitted intentionally - a team must always have players:
+            get { return Players[0].Session; }
+        }
         
         public bool IsEnemy(Team t)
         {

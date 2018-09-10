@@ -14,7 +14,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using PFW.Ingame.UI;
 
 public class SpawnPointBehaviour : MonoBehaviour
 {
@@ -36,7 +35,7 @@ public class SpawnPointBehaviour : MonoBehaviour
     {
         GetComponentInChildren<Renderer>().material.color = Team.Color;
 
-        InputManager.AddSpawnPoint(this);
+        Team.Session.AddSpawnPoint(this);
     }
 
     public void Update()

@@ -26,7 +26,7 @@ namespace PFW.Ingame.UI
     {
         private Texture2D _firePosReticle;
 
-        public static List<SpawnPointBehaviour> SpawnPointList = new List<SpawnPointBehaviour>();
+        private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
         public enum MouseMode { normal, purchasing, firePos };
@@ -46,7 +46,7 @@ namespace PFW.Ingame.UI
             }
         }
 
-        public Player LocalPlayer {
+        private Player _localPlayer {
             get {
                 return Session.LocalPlayer;
             }
@@ -171,7 +171,7 @@ namespace PFW.Ingame.UI
         public void TankButtonCallback()
         {
             if (_currentBuyTransaction == null)
-                _currentBuyTransaction = new BuyTransaction(UnitType.Tank, LocalPlayer);
+                _currentBuyTransaction = new BuyTransaction(UnitType.Tank, _localPlayer);
             else
                 _currentBuyTransaction.AddUnit();
 
@@ -193,7 +193,7 @@ namespace PFW.Ingame.UI
 
         public void BuildUnit(UnitType t)
         {
-            var behaviour = GhostPlatoonBehaviour.Build(t, LocalPlayer, 4);
+            var behaviour = GhostPlatoonBehaviour.Build(t, _localPlayer, 4);
             _currentBuyTransaction.GhostPlatoons.Add(behaviour);
         }
 
@@ -208,7 +208,8 @@ namespace PFW.Ingame.UI
 
         private SpawnPointBehaviour GetClosestSpawn(Vector3 p)
         {
-            var pointList = SpawnPointList.Where(x => x.Team == LocalPlayer.Team).ToList();
+            var pointList = _spawnPointList.Where(
+                x => x.Team == _localPlayer.Team).ToList();
 
             SpawnPointBehaviour go = pointList.First();
             float distance = Single.PositiveInfinity;
@@ -222,10 +223,10 @@ namespace PFW.Ingame.UI
             return go;
         }
 
-        public static void AddSpawnPoint(SpawnPointBehaviour s)
+        public void AddSpawnPoint(SpawnPointBehaviour s)
         {
-            if (!SpawnPointList.Contains(s))
-                SpawnPointList.Add(s);
+            if (!_spawnPointList.Contains(s))
+                _spawnPointList.Add(s);
         }
 
         public void ApplyHotkeys()
