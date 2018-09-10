@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using PFW.Ingame.UI;
 
+using static PFW.Ingame.UI.InputManager;
+
 namespace PFW.Model.Game
 {
     public class MatchSession : MonoBehaviour
@@ -33,8 +35,11 @@ namespace PFW.Model.Game
         public ICollection<UnitBehaviour> AllUnits { get; } = new List<UnitBehaviour>();
         public ICollection<PlatoonBehaviour> AllPlatoons { get; } = new List<PlatoonBehaviour>();
 
-        // rip encapsulation:
-        public InputManager UIManager;
+        private InputManager _inputManager;
+        public MouseMode CurrentMouseMode {
+            get { return _inputManager.CurMouseMode; }
+        }
+
         public SelectionManager SelectionManager;
 
         private VisibilityManager _visibilityManager;
@@ -59,12 +64,12 @@ namespace PFW.Model.Game
             LocalPlayer = redTeam.Players[0];
 
 
-            UIManager = FindObjectOfType<InputManager>();
-            if (UIManager == null)
-                UIManager = gameObject.AddComponent<InputManager>();
+            _inputManager = FindObjectOfType<InputManager>();
+            if (_inputManager == null)
+                _inputManager = gameObject.AddComponent<InputManager>();
 
-            if (UIManager.Session == null)
-                UIManager.Session = this;
+            if (_inputManager.Session == null)
+                _inputManager.Session = this;
 
 
 

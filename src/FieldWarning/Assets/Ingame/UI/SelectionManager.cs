@@ -77,8 +77,8 @@ namespace PFW.Ingame.UI
         public void Update()
         {
             // disgustingly tight coupling:
-            if (Session.UIManager.CurMouseMode != MouseMode.normal
-                && Session.UIManager.CurMouseMode != MouseMode.firePos)
+            if (Session.CurrentMouseMode != MouseMode.normal
+                && Session.CurrentMouseMode != MouseMode.firePos)
                 return;
 
             _clickManager.Update();
@@ -182,7 +182,7 @@ namespace PFW.Ingame.UI
 
         private void UpdateSelection()
         {
-            if (Session.UIManager.CurMouseMode == MouseMode.firePos)
+            if (Session.CurrentMouseMode == MouseMode.firePos)
                 return;
 
             List<PlatoonBehaviour> newSelection = Session.AllPlatoons.Where(x => IsInside(x)).ToList();
