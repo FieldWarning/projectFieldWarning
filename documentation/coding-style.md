@@ -104,7 +104,8 @@ namespace PFW.Ingame.UI
 ```
 
 0. Every PFW-created file starts with the APv2 license disclaimer. 
-0a. Every PFW-created file is in the top-level `PFW` namespace.
+
+1. Every PFW-created file is in the top-level `PFW` namespace.
 
 2. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods and types. A single line statement block can go without braces but the block must be properly indented on its own line.
 
@@ -114,23 +115,23 @@ The purpose of K&R braces is to avoid "stretched" code where every expression is
 
 4. We use `_camelCase` for internal and private fields and use `readonly` where possible. Prefix internal and private instance fields with `_`, static fields with `s_` and thread static fields with `t_`. When used on static fields, `readonly` should come after `static` (e.g. `static readonly` not `readonly static`).  Public fields use PascalCasing, methods use PascalCasing regardless of protection level.
 
-4. We try very hard to keep as many fields and methods private as possible, and to avoid the use of static. We always specify the visibility, even if it's the default (e.g. `private string _foo` not `string _foo`). Visibility should be the first modifier (e.g. `public abstract` not `abstract public`). If you are only making a variable public so you can manipulate it in the Unity explorer, make it private with the `[SerializeField]` annotation instead.
+5. We try very hard to keep as many fields and methods private as possible, and to avoid the use of static. We always specify the visibility, even if it's the default (e.g. `private string _foo` not `string _foo`). Visibility should be the first modifier (e.g. `public abstract` not `abstract public`). If you are only making a variable public so you can manipulate it in the Unity explorer, make it private with the `[SerializeField]` annotation instead.
 
-5. We use ALL_CAPS to name all our constant local variables and fields. Unity generally makes it hard to use constants because they can't be exposed in the editor, so you can also use ALL_CAPS to refer to "semantic constants" - variables that lack the `readonly` keyword because they have to be visible in editor, but must not be changed at runtime. Setting the value of a variable named like this is, naturally, not allowed.
+6. We use ALL_CAPS to name all our constant local variables and fields. Unity generally makes it hard to use constants because they can't be exposed in the editor, so you can also use ALL_CAPS to refer to "semantic constants" - variables that lack the `readonly` keyword because they have to be visible in editor, but must not be changed at runtime. Setting the value of a variable named like this is, naturally, not allowed.
 
-6. For non-const fields, we still try to limit their mutability as much as possible. We try to have fields without a setter and with a private getter. If that is not possible, we try to make setter only usable once (see the Session field in the example above).
+7. For non-const fields, we still try to limit their mutability as much as possible. We try to have fields without a setter and with a private getter. If that is not possible, we try to make setter only usable once (see the Session field in the example above).
 
-7. We do not use setter and getter methods, instead we always use C# properties. There is only one case where the use of a getter/setter method is warranted, which is to signify that the operation has a side effect or that it is slow and should be cached by the caller. Even in those cases, there are better names ("CalculateDistance" instead of "GetDistance" if we are trying to show slowness for example).
+8. We do not use setter and getter methods, instead we always use C# properties. There is only one case where the use of a getter/setter method is warranted, which is to signify that the operation has a side effect or that it is slow and should be cached by the caller. Even in those cases, there are better names ("CalculateDistance" instead of "GetDistance" if we are trying to show slowness for example).
 
-8. We try to keep methods short and focused on doing one thing. A block of 3-4 expressions can usually be improved by a comment saying what that block is trying to achieve. A commented block of 3-4 expressions can be replaced by a method, where the method name contains what would have been the comment ("`ShowGhostUnitsAndMaybePurchase()`"). 
+9. We try to keep methods short and focused on doing one thing. A block of 3-4 expressions can usually be improved by a comment saying what that block is trying to achieve. A commented block of 3-4 expressions can be replaced by a method, where the method name contains what would have been the comment ("`ShowGhostUnitsAndMaybePurchase()`"). 
 
-9. `this.` can make method invocations more expressive, but using it for field access is almost always wrong and hints at a naming issue.
+10. `this.` can make method invocations more expressive, but using it for field access is almost always wrong and hints at a naming issue.
 
-10. Namespace imports should be specified at the top of the file, below the license disclaimer, *outside* of `namespace` declarations, and should be sorted alphabetically. PFW imports should be separated from engine imports by an empty line.
+11. Namespace imports should be specified at the top of the file, below the license disclaimer, *outside* of `namespace` declarations, and should be sorted alphabetically. PFW imports should be separated from engine imports by an empty line.
    
-11. Avoid more than one empty line at any time. Two blank lines can rarely be used for emphasis, but the need for them hints that the code is doing too much and needs to be refactored.
+12. Avoid more than one empty line at any time. Two blank lines can rarely be used for emphasis, but the need for them hints that the code is doing too much and needs to be refactored.
 
-12. Avoid spurious free spaces.
+13. Avoid spurious free spaces.
    For example avoid `if (someVar == 0)...`, where the dots mark the spurious free spaces.
    Consider enabling "View White Space (Ctrl+E, S)" if using Visual Studio to aid detection.
    Extra free space may however be used for alignment, e.g.:   
@@ -139,24 +140,24 @@ firstUnit  = NewUnit();
 secondUnit = NewUnit();
 ```
 
-13. If a file happens to differ in style from these guidelines (e.g. private members are named `m_member`
+14. If a file happens to differ in style from these guidelines (e.g. private members are named `m_member`
    rather than `_member`), the existing style in that file takes precedence.
    
-14. We only use `var` when it's obvious what the variable type is (e.g. `var stream = new FileStream(...)` not `var stream = OpenStandardInput()`).
+15. We only use `var` when it's obvious what the variable type is (e.g. `var stream = new FileStream(...)` not `var stream = OpenStandardInput()`).
 
-15. We use language keywords instead of BCL types (e.g. `int, string, float` instead of `Int32, String, Single`, etc) for both type references as well as method calls (e.g. `int.Parse` instead of `Int32.Parse`).
+16. We use language keywords instead of BCL types (e.g. `int, string, float` instead of `Int32, String, Single`, etc) for both type references as well as method calls (e.g. `int.Parse` instead of `Int32.Parse`).
 
-16. We use ```nameof(...)``` instead of ```"..."``` whenever possible and relevant.
+17. We use ```nameof(...)``` instead of ```"..."``` whenever possible and relevant.
 
-17. Fields should be specified at the top within type declarations.
+18. Fields should be specified at the top within type declarations.
 
-18. When including non-ASCII characters in the source code use Unicode escape sequences (\uXXXX) instead of literal characters. Literal non-ASCII characters occasionally get garbled by a tool or editor.
+19. When including non-ASCII characters in the source code use Unicode escape sequences (\uXXXX) instead of literal characters. Literal non-ASCII characters occasionally get garbled by a tool or editor.
 
-19. Case labels are not indented. 
+20. Case labels are not indented. 
 
-20. We seek to fail fast and do not program defensively. A method should not check its inputs for `null`. Instead it should directly use them and throw a `NullException` if it was provided faulty values. It is the responsibility of the caller to handle `null` values as soon as they occur - trying to recover from a bad input only makes it harder to find the source of the problem.
+21. We seek to fail fast and do not program defensively. A method should not check its inputs for `null`. Instead it should directly use them and throw a `NullException` if it was provided faulty values. It is the responsibility of the caller to handle `null` values as soon as they occur - trying to recover from a bad input only makes it harder to find the source of the problem.
 
-21. We prefer composition over inheritance.
+22. We prefer composition over inheritance.
 
 
 We have provided a Visual Studio 2013 vssettings file (`coding-style.vssettings`) at the root of the repository, enabling C# auto-formatting conforming to the above guidelines. Note that rules 7 and 8 are not covered by the vssettings, since these are not rules currently supported by VS formatting. Ctrl+k Ctrl+d.
