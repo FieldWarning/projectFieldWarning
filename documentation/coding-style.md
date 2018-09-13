@@ -103,7 +103,7 @@ namespace PFW.Ingame.UI
 
 ```
 
-0. Every PFW-created file starts with the APv2 license disclaimer.
+0. Every PFW-created file starts with the APv2 license disclaimer. Every PFW-created file is in the PFW toplevel namespace.
 
 1. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods and types. A single line statement block can go without braces but the block must be properly indented on its own line.
 
