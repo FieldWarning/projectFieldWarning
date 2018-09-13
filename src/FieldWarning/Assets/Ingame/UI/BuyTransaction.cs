@@ -12,7 +12,7 @@
 */
 
 using System.Collections.Generic;
-using Pfw.Ingame.Prototype;
+using PFW.Ingame.Prototype;
 using UnityEngine;
 
 using PFW.Model.Game;

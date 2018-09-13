@@ -15,7 +15,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using PFW.Weapons;
-using Pfw.Ingame.Prototype;
+using PFW.Ingame.Prototype;
 
 using PFW.Ingame.UI;
 using PFW.Model.Game;

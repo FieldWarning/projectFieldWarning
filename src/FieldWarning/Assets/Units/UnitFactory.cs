@@ -13,7 +13,7 @@
 
 using UnityEngine;
 
-namespace Pfw.Ingame.Prototype
+namespace PFW.Ingame.Prototype
 {
     public static class UnitFactory
     {

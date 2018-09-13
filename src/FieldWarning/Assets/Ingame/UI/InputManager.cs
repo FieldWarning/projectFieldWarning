@@ -16,8 +16,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.EventSystems;
-using Pfw.Ingame.Prototype;
 
+using PFW.Ingame.Prototype;
 using PFW.Model.Game;
 
 namespace PFW.Ingame.UI
