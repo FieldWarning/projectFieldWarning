@@ -103,15 +103,16 @@ namespace PFW.Ingame.UI
 
 ```
 
-0. Every PFW-created file starts with the APv2 license disclaimer. Every PFW-created file is in the PFW toplevel namespace.
+0. Every PFW-created file starts with the APv2 license disclaimer. 
+0a. Every PFW-created file is in the top-level `PFW` namespace.
 
-1. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods and types. A single line statement block can go without braces but the block must be properly indented on its own line.
+2. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods and types. A single line statement block can go without braces but the block must be properly indented on its own line.
 
 The purpose of K&R braces is to avoid "stretched" code where every expression is surrounded by empty lines, diluting signaling value of empty lines. The purpose of K&R braces is not to save space by never separating code blocks. You are strongly encouraged to add an empty line between any two lines, and especially after any braces, if you find it improves readability (for an extreme case, note the empty lines around the first case of the switch above).
 
-2. We use four spaces of indentation (no tabs).
+3. We use four spaces of indentation (no tabs).
 
-3. We use `_camelCase` for internal and private fields and use `readonly` where possible. Prefix internal and private instance fields with `_`, static fields with `s_` and thread static fields with `t_`. When used on static fields, `readonly` should come after `static` (e.g. `static readonly` not `readonly static`).  Public fields use PascalCasing, methods use PascalCasing regardless of protection level.
+4. We use `_camelCase` for internal and private fields and use `readonly` where possible. Prefix internal and private instance fields with `_`, static fields with `s_` and thread static fields with `t_`. When used on static fields, `readonly` should come after `static` (e.g. `static readonly` not `readonly static`).  Public fields use PascalCasing, methods use PascalCasing regardless of protection level.
 
 4. We try very hard to keep as many fields and methods private as possible, and to avoid the use of static. We always specify the visibility, even if it's the default (e.g. `private string _foo` not `string _foo`). Visibility should be the first modifier (e.g. `public abstract` not `abstract public`). If you are only making a variable public so you can manipulate it in the Unity explorer, make it private with the `[SerializeField]` annotation instead.
 
@@ -125,7 +126,7 @@ The purpose of K&R braces is to avoid "stretched" code where every expression is
 
 9. `this.` can make method invocations more expressive, but using it for field access is almost always wrong and hints at a naming issue.
 
-10. Namespace imports should be specified at the top of the file, *outside* of `namespace` declarations, and should be sorted alphabetically.
+10. Namespace imports should be specified at the top of the file, below the license disclaimer, *outside* of `namespace` declarations, and should be sorted alphabetically. PFW imports should be separated from engine imports by an empty line.
    
 11. Avoid more than one empty line at any time. Two blank lines can rarely be used for emphasis, but the need for them hints that the code is doing too much and needs to be refactored.
 
