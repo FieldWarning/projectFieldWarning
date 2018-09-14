@@ -109,13 +109,13 @@ namespace PFW.Ingame.UI
 
 2. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods and types. A single line statement block can go without braces but the block must be properly indented on its own line.
 
-The purpose of K&R braces is to avoid "stretched" code where every expression is surrounded by empty lines, diluting signaling value of empty lines. The purpose of K&R braces is not to save space by never separating code blocks. You are strongly encouraged to add an empty line between any two lines, and especially after any braces, if you find it improves readability (for an extreme case, note the empty lines around the first case of the switch above).
+The purpose of K&R braces is to avoid "stretched" code where every expression is surrounded by empty lines, diluting the signaling value of empty lines. The purpose of K&R braces is not to save space by never separating code blocks. You are strongly encouraged to add an empty line between any two lines, and especially after any braces, if you find it improves readability (for an extreme case, note the empty lines around the first case of the switch above).
 
 3. We use four spaces of indentation (no tabs).
 
 4. We use `_camelCase` for internal and private fields and use `readonly` where possible. Prefix internal and private instance fields with `_`, static fields with `s_` and thread static fields with `t_`. When used on static fields, `readonly` should come after `static` (e.g. `static readonly` not `readonly static`).  Public fields use PascalCasing, methods use PascalCasing regardless of protection level.
 
-5. We try very hard to keep as many fields and methods private as possible, and to avoid the use of static. We always specify the visibility, even if it's the default (e.g. `private string _foo` not `string _foo`). Visibility should be the first modifier (e.g. `public abstract` not `abstract public`). If you are only making a variable public so you can manipulate it in the Unity explorer, make it private with the `[SerializeField]` annotation instead.
+5. We try very hard to keep as many fields and methods private as possible, and to avoid the use of `static`. We always specify the visibility, even if it's the default (e.g. `private string _foo` not `string _foo`). Visibility should be the first modifier (e.g. `public abstract` not `abstract public`). If you are only making a variable public so you can manipulate it in the Unity explorer, make it private with the `[SerializeField]` annotation instead.
 
 6. We use ALL_CAPS to name all our constant local variables and fields. Unity generally makes it hard to use constants because they can't be exposed in the editor, so you can also use ALL_CAPS to refer to "semantic constants" - variables that lack the `readonly` keyword because they have to be visible in editor, but must not be changed at runtime. Setting the value of a variable named like this is, naturally, not allowed.
 
@@ -160,7 +160,7 @@ secondUnit = NewUnit();
 22. We prefer composition over inheritance.
 
 
-We have provided a Visual Studio 2013 vssettings file (`coding-style.vssettings`) at the root of the repository, enabling C# auto-formatting conforming to the above guidelines. Note that rules 7 and 8 are not covered by the vssettings, since these are not rules currently supported by VS formatting. Ctrl+k Ctrl+d.
+We have provided a Visual Studio 2013 vssettings file (`coding-style.vssettings`) at the root of the repository, enabling C# auto-formatting conforming to the above guidelines. Ctrl+k Ctrl+d.
 
 
 // TODO some sort of automatic formatting tool, i dont think codeformatter does the job since its not customizable enough
