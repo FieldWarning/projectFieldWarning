@@ -15,9 +15,9 @@ using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
-using System;
+using Unity.Entities;
 
-public class VisibleBehavior : MonoBehaviour
+public class VisibleBehavior //: IComponentData
 {
     [SerializeField]
     private float max_spot_range = 800f;
@@ -30,6 +30,7 @@ public class VisibleBehavior : MonoBehaviour
     private bool _isVisible = true;
 
     public UnitBehaviour UnitBehaviour;
+    private GameObject _gameObject;
 
     private Team _team {
         get { return UnitBehaviour.Platoon.Owner.Team; }
@@ -39,44 +40,37 @@ public class VisibleBehavior : MonoBehaviour
         get { return UnitBehaviour.Platoon.Owner.Session; }
     }
 
-    // Use this for initialization
-    void Start()
-    {
-        if (_team != _session.LocalPlayer.Team)
-            ToggleUnitVisibility(false);
-    }
+    private VisibleBehavior() { }
 
-    // Update is called once per frame
-    void Update()
+    public VisibleBehavior(GameObject unit, UnitBehaviour unitBehaviour)
     {
-        ScanForEnemies();
-        if (_team != _session.LocalPlayer.Team)
-            MaybeHideFromEnemies();
+        _gameObject = unit;
+        UnitBehaviour = unitBehaviour;
     }
 
     // Alert all nearby enemy units that they may have to show themselves.
     // Only works if they have colliders!
-    private void ScanForEnemies()
+    public void ScanForEnemies()
     {
-        Collider[] hits = Physics.OverlapSphere(this.transform.position, max_spot_range, LayerMask.NameToLayer("Selectable"), QueryTriggerInteraction.Ignore);
+        Collider[] hits = Physics.OverlapSphere(_gameObject.transform.position, max_spot_range, LayerMask.NameToLayer("Selectable"), QueryTriggerInteraction.Ignore);
 
         foreach (Collider c in hits) {
             GameObject go = c.gameObject;
-            
+
             // this finds colliders, health bars and all other crap except units
             var unitBehaviour = go.GetComponentInParent<UnitBehaviour>();
             if (unitBehaviour == null || !unitBehaviour.enabled)
                 continue;
-            
+
             /* This assumes that all selectables with colliders have a visibility manager, which may be a bad assumption: */
             if (unitBehaviour.Platoon.Owner.Team != _team)
-                unitBehaviour.gameObject.SendMessage("MaybeReveal", this);
+                unitBehaviour.VisibleBehavior.MaybeReveal(this);
         }
     }
 
     // Check if there are any enemies that can detect this unit 
     // and make it invisible if not.
-    private void MaybeHideFromEnemies()
+    public void MaybeHideFromEnemies()
     {
         // Spotters are only removed here; if there are already none then the unit must have been hidden when the collection was emptied:
         if (_spotters.Count == 0)
@@ -102,29 +96,29 @@ public class VisibleBehavior : MonoBehaviour
 
     private bool CanDetect(VisibleBehavior target)
     {
-        float distance = Vector3.Distance(transform.position, target.transform.position);
+        float distance = Vector3.Distance(_gameObject.transform.position, target._gameObject.transform.position);
         return distance < max_spot_range && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
     }
 
-    private void ToggleUnitVisibility(bool revealUnit)
+    public void ToggleUnitVisibility(bool revealUnit)
     {
         _isVisible = revealUnit;
-        ToggleAllRenderers(gameObject, revealUnit);
+        ToggleAllRenderers(_gameObject, revealUnit);
         MaybeTogglePlatoonVisibility(revealUnit);
     }
 
     private void MaybeTogglePlatoonVisibility(bool unitRevealed)
     {
         PlatoonBehaviour platoon = UnitBehaviour.Platoon;
-        ToggleAllRenderers(platoon.gameObject, 
+        ToggleAllRenderers(platoon.gameObject,
             !platoon.Units.TrueForAll(
-                u => !u.gameObject.GetComponent<VisibleBehavior>()._isVisible));
+                u => !u.VisibleBehavior._isVisible));
     }
 
     private void ToggleAllRenderers(GameObject o, bool enable)
     {
         var allRenderers = o.GetComponentsInChildren<Renderer>();
         foreach (var childRenderer in allRenderers)
-            childRenderer.enabled = enable;        
+            childRenderer.enabled = enable;
     }
 }

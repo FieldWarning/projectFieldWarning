@@ -76,8 +76,9 @@ namespace PFW.Ingame.Prototype
 
         private static void AddVisibleBehaviour(GameObject unit)
         {
-            VisibleBehavior vis = unit.AddComponent<VisibleBehavior>();
-            vis.UnitBehaviour = unit.GetComponent<UnitBehaviour>();
+            var unitBehaviour = unit.GetComponent<UnitBehaviour>();
+            VisibleBehavior vis = new VisibleBehavior(unit, unitBehaviour);
+            unitBehaviour.VisibleBehavior = vis;
         }
     }
 

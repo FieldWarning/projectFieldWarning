@@ -26,6 +26,9 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public Pathfinder Pathfinder { get; private set; }
     public AudioSource Source { get; private set; }
 
+    // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
+    public VisibleBehavior VisibleBehavior;
+
     // These are set by the subclass in DoMovement()
     protected Vector3 _position;
     protected Vector3 _rotation;
