@@ -72,8 +72,7 @@ public class VisibleBehavior //: IComponentData
     // and make it invisible if not.
     public void MaybeHideFromEnemies()
     {
-        // Spotters are only removed here; if there are already none then the unit must have been hidden when the collection was emptied:
-        if (_spotters.Count == 0)
+        if (!_isVisible)
             return;
 
         _spotters.RemoveWhere(s => s == null || !s.CanDetect(this));

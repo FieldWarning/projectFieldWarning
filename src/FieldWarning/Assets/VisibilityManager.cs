@@ -99,6 +99,19 @@ public class VisibilityManager : MonoBehaviour
         var y = Mathf.FloorToInt((MAP_SIZE / 2 + transform.position.z) / MAX_VIEW_DISTANCE);
         return new Point(x, y);
     }
+
+    public void UpdateTeamBelonging(Team newTeam)
+    {
+        var tmp = AllyUnits;
+        AllyUnits = EnemyUnits;
+        EnemyUnits = tmp;
+
+        AllyUnits.ForEach(u => u.ToggleUnitVisibility(true));
+        EnemyUnits.ForEach(u => u.ToggleUnitVisibility(false));
+        AllyUnits.ForEach(u => u.ScanForEnemies());
+
+        LocalTeam = newTeam;
+    }
 }
 
 public struct Point
