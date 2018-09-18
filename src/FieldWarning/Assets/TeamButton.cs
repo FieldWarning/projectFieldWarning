@@ -37,7 +37,6 @@ public class TeamButton : MonoBehaviour
     public void onClick()
     {
         _session.LocalPlayer = _team.Players[0];
-        // I do not think this is worth supporting when we will remove it:
-        //VisibilityManager.UpdateTeamBelonging();
+        _session.UpdateTeamBelonging(_team);
     }
 }

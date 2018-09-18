@@ -35,6 +35,14 @@ public class VisibilityManager : MonoBehaviour
 
     void Update()
     {
+        foreach (var unit in AllyUnits) 
+            unit.ScanForEnemies();
+
+        foreach (var unit in EnemyUnits) {
+            unit.ScanForEnemies();
+            unit.MaybeHideFromEnemies();
+        }
+
         // Potential optimizations:
         // - Keep a table of distances and only update on moving units
         // - Keep a table of regions and only update when units enter/leave regions
@@ -56,19 +64,20 @@ public class VisibilityManager : MonoBehaviour
 
     public void RegisterUnitBirth(UnitBehaviour unit)
     {
-        VisibleBehavior visibleBehavior = unit.GetComponent<VisibleBehavior>();
-        if (visibleBehavior == null)
-            return;
+        VisibleBehavior visibleBehavior = unit.VisibleBehavior;
 
-        if (unit.Platoon.Owner.Team == LocalTeam)
+        if (unit.Platoon.Owner.Team == LocalTeam) {
             AllyUnits.Add(visibleBehavior);
-        else
+
+        } else {
             EnemyUnits.Add(visibleBehavior);
+            visibleBehavior.ToggleUnitVisibility(false);
+        }
     }
 
     public void RegisterUnitDeath(UnitBehaviour unit)
     {
-        VisibleBehavior visibleBehavior = unit.GetComponent<VisibleBehavior>();
+        VisibleBehavior visibleBehavior = unit.VisibleBehavior;
         if (visibleBehavior == null)
             return;
 
@@ -89,6 +98,19 @@ public class VisibilityManager : MonoBehaviour
         var x = Mathf.FloorToInt((MAP_SIZE / 2 + transform.position.x) / MAX_VIEW_DISTANCE);
         var y = Mathf.FloorToInt((MAP_SIZE / 2 + transform.position.z) / MAX_VIEW_DISTANCE);
         return new Point(x, y);
+    }
+
+    public void UpdateTeamBelonging(Team newTeam)
+    {
+        var tmp = AllyUnits;
+        AllyUnits = EnemyUnits;
+        EnemyUnits = tmp;
+
+        AllyUnits.ForEach(u => u.ToggleUnitVisibility(true));
+        EnemyUnits.ForEach(u => u.ToggleUnitVisibility(false));
+        AllyUnits.ForEach(u => u.ScanForEnemies());
+
+        LocalTeam = newTeam;
     }
 }
 
