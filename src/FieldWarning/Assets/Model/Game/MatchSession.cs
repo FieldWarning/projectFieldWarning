@@ -123,5 +123,10 @@ namespace PFW.Model.Game
         {
             _inputManager.AddSpawnPoint(spawn);
         }
+
+        public void UpdateTeamBelonging(Team newTeam)
+        {
+            _visibilityManager.UpdateTeamBelonging(newTeam);
+        }
     }
 }
