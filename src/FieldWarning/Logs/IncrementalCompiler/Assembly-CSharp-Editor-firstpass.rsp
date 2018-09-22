@@ -6,6 +6,26 @@
 -nostdlib
 -unsafe
 -r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Assembly-CSharp-firstpass.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.Properties.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Properties.Codegen.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Jobs.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Jobs.Editor.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.Editor.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Properties.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Collections.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Burst.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Rendering.Hybrid.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Properties.Editor.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.Hybrid.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Mathematics.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Transforms.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Burst.Editor.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.TextMeshPro.dll
+-r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Transforms.Hybrid.dll
 -r:"C:\Program Files\Unity\Editor\Data\Managed/UnityEngine/UnityEngine.dll"
 -r:"C:\Program Files\Unity\Editor\Data\Managed/UnityEngine/UnityEngine.AIModule.dll"
 -r:"C:\Program Files\Unity\Editor\Data\Managed/UnityEngine/UnityEngine.ARModule.dll"
@@ -69,26 +89,6 @@
 -r:"C:\Program Files\Unity\Editor\Data\Managed/UnityEngine/UnityEngine.XRModule.dll"
 -r:"C:\Program Files\Unity\Editor\Data\Managed/UnityEditor.dll"
 -r:"C:\Program Files\Unity\Editor\Data\Managed/Unity.Locator.dll"
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.Properties.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Properties.Codegen.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Jobs.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Jobs.Editor.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.Editor.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Properties.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Collections.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Burst.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Rendering.Hybrid.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Properties.Editor.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.Hybrid.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Mathematics.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Entities.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Transforms.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Burst.Editor.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.TextMeshPro.dll
--r:C:/Users/Dell/Documents/GitHub/projectFieldWarning/src/FieldWarning/Library/ScriptAssemblies/Unity.Transforms.Hybrid.dll
 -r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll"
 -r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/Editor/UnityEditor.UI.dll"
 -r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/Editor/UnityEditor.TestRunner.dll"
