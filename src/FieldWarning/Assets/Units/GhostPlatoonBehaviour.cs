@@ -74,8 +74,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     private void AddSingleUnit()
     {
-        GameObject _unitPrefab = UnitFactory.FindPrefab(_unitType);
-        GameObject unit = UnitFactory.MakeGhostUnit(_unitPrefab);        
+        GameObject _unitPrefab = _owner.Session.UnitFactory.FindPrefab(_unitType);
+        GameObject unit = _owner.Session.UnitFactory.MakeGhostUnit(_unitPrefab);        
         _units.Add(unit);
     }
 

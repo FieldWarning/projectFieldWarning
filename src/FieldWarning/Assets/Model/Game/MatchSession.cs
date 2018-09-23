@@ -17,6 +17,9 @@ using UnityEngine;
 using PFW.Ingame.UI;
 
 using static PFW.Ingame.UI.InputManager;
+using ECS;
+using Unity.Entities;
+using PFW.Ingame.Prototype;
 
 namespace PFW.Model.Game
 {
@@ -46,6 +49,7 @@ namespace PFW.Model.Game
 
         public PathfinderData PathfinderData { get; private set; }
 
+        public UnitFactory UnitFactory { get; private set; }
         public void Awake()
         {
             // TODO: I don't think we will want to customize the 
@@ -92,6 +96,7 @@ namespace PFW.Model.Game
 
             // TODO: pass the terrain from whatever code will be starting matches, instead of searching for it like this:
             PathfinderData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
+            UnitFactory = new UnitFactory(this);
         }
 
 

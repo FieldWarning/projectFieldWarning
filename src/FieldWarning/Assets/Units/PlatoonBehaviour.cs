@@ -83,11 +83,11 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
 
-        var unitPrefab = UnitFactory.FindPrefab(t);
+        var unitPrefab = Owner.Session.UnitFactory.FindPrefab(t);
 
         for (int i = 0; i < n; i++) {
             var unitInstance = 
-                UnitFactory.MakeUnit(unitPrefab, Owner.Team.Color);
+                Owner.Session.UnitFactory.MakeUnit(unitPrefab, Owner.Team.Color);
             var unitBehaviour = unitInstance.GetComponent<UnitBehaviour>();
             unitBehaviour.SetPlatoon(this);
             Units.Add(unitBehaviour);
