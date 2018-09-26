@@ -11,11 +11,11 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using Unity.Entities;
 using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
-using Unity.Entities;
 
 public class VisibleBehavior //: IComponentData
 {

@@ -11,12 +11,14 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using Unity.Collections;
+using Unity.Entities;
 using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
 
-// This class currently does not do anything.
+//[UpdateAfter(typeof(MovementSystem))]
 public class VisibilityManager : MonoBehaviour
 {
     public MatchSession Session;

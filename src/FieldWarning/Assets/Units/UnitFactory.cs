@@ -13,6 +13,8 @@
 using UnityEngine;
 
 using PFW.Model.Game;
+using ECS;
+using Unity.Entities;
 
 namespace PFW.Ingame.Prototype
 {
@@ -87,6 +89,10 @@ namespace PFW.Ingame.Prototype
             var unitBehaviour = unit.GetComponent<UnitBehaviour>();
             VisibleBehavior vis = new VisibleBehavior(unit, unitBehaviour);
             unitBehaviour.VisibleBehavior = vis;
+
+            unitBehaviour.Entity = _session.EntityManager.CreateEntity();
+            _session.EntityManager
+                .AddComponentData(unitBehaviour.Entity, new Vision());
         }
     }
 

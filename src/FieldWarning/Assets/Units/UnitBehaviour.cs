@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using PFW.Weapons;
+using Unity.Entities;
 
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
@@ -41,6 +42,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // the localEulerAngles will sometimes automatically change to some new equivalent angles
     private Vector3 _currentRotation;
 
+    private TerrainCollider _Ground;
     protected TerrainCollider Ground {
         get {
             if (_Ground == null) {
@@ -53,8 +55,19 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     protected float _finalHeading;
 
     private Terrain _terrain;
-    private TerrainCollider _Ground;
     private float _health;
+
+    // An entity is like a lightweight GameObject (just an ID). Entities contain components, which are like lightweight parallelizable MonoBehaviours. We want to gradually convert our MonoBehaviours to components held within this entity, and once that is complete we can replace UnitBehaviour with just the Entity:
+    private Entity _entity;
+    public Entity Entity {
+        get {
+            return _entity;
+        }
+        set {
+            if (_entity == null)
+                _entity = value;
+        }
+    }
 
     public virtual void Awake()
     {

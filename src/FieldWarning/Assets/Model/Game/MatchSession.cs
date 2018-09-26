@@ -50,6 +50,9 @@ namespace PFW.Model.Game
         public PathfinderData PathfinderData { get; private set; }
 
         public UnitFactory UnitFactory { get; private set; }
+
+        public EntityManager EntityManager;
+
         public void Awake()
         {
             // TODO: I don't think we will want to customize the 
@@ -96,9 +99,11 @@ namespace PFW.Model.Game
 
             // TODO: pass the terrain from whatever code will be starting matches, instead of searching for it like this:
             PathfinderData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
-            UnitFactory = new UnitFactory(this);
-        }
 
+            UnitFactory = new UnitFactory(this);
+
+            EntityManager = World.Active.GetOrCreateManager<EntityManager>();
+        }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
         {
@@ -119,6 +124,8 @@ namespace PFW.Model.Game
 
         public void RegisterUnitDeath(UnitBehaviour unit)
         {
+            EntityManager.DestroyEntity(unit.Entity);
+
             AllUnits.Remove(unit);
             _visibilityManager.RegisterUnitDeath(unit);
         }
