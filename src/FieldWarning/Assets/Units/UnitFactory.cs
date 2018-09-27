@@ -13,8 +13,7 @@
 using UnityEngine;
 
 using PFW.Model.Game;
-using ECS;
-using Unity.Entities;
+using PFW.ECS;
 
 namespace PFW.Ingame.Prototype
 {

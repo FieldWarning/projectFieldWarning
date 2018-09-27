@@ -17,7 +17,6 @@ using UnityEngine;
 using PFW.Ingame.UI;
 
 using static PFW.Ingame.UI.InputManager;
-using ECS;
 using Unity.Entities;
 using PFW.Ingame.Prototype;
 
