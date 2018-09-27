@@ -59,15 +59,16 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     // An entity is like a lightweight GameObject (just an ID). Entities contain components, which are like lightweight parallelizable MonoBehaviours. We want to gradually convert our MonoBehaviours to components held within this entity, and once that is complete we can replace UnitBehaviour with just the Entity:
     private Entity _entity;
-    public Entity Entity {
-        get {
-            return _entity;
-        }
-        set {
-            if (_entity == null)
-                _entity = value;
-        }
-    }
+    public Entity Entity;
+    //    {
+    //    get {
+    //        return _entity;
+    //    }
+    //    set {
+    //        if (_entity == null)
+    //            _entity = value;
+    //    }
+    //}
 
     public virtual void Awake()
     {
