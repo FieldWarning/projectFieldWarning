@@ -34,7 +34,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public List<PlatoonModule> Modules = new List<PlatoonModule>();
     public bool IsInitialized = false;
 
-    public static readonly float UNIT_DISTANCE = 4;
+    public static readonly float UNIT_DISTANCE = 40*TerrainConstants.MAP_SCALE;
 
     public Player Owner { get; private set; }
 

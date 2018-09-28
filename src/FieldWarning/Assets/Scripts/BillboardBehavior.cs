@@ -19,7 +19,7 @@ using UnityEngine;
 public class BillboardBehavior : SelectableBehavior
 {
     [SerializeField]
-    private float ALTITUDE = 1f;
+    private float ALTITUDE = 10f * TerrainConstants.MAP_SCALE;
     [SerializeField]
     private float SIZE = 0.1f;
 

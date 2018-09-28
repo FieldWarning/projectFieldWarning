@@ -19,7 +19,7 @@ public class Pathfinder
     public const float Forever = float.MaxValue;
     public static Vector3 NoPosition = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-    private const float StepSize = 1.2f; // Any object that the pathfinder is able to navigate around must have at least this radius
+    private const float StepSize = 12f * TerrainConstants.MAP_SCALE; // Any object that the pathfinder is able to navigate around must have at least this radius
     private const float AngSearchInc = 12f; // Angluar search increment for local path finding
     private const float MaxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
     private const float CompletionDist = 1.5f * StepSize; // Good enough if we can get within this distance of the target destination
@@ -42,7 +42,7 @@ public class Pathfinder
         this.unit = unit;
         this.data = data;
         path = new List<PathNode>();
-        finalCompletionDist = 0.5f + unit.Data.minTurnRadius;
+        finalCompletionDist = 5f*TerrainConstants.MAP_SCALE + unit.Data.minTurnRadius;
         nextUpdateTime = 0f;
     }
 

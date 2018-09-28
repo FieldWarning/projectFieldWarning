@@ -28,8 +28,8 @@ using UnityEngine;
 public class SlidingCameraBehaviour : MonoBehaviour
 {
     [Header("Translational Movement")]
-    [SerializeField] private float _panSpeed = 5f;
-    [SerializeField] private float _panLerpSpeed = 10f;
+    [SerializeField] private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
+    [SerializeField] private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
 
     [Header("Rotational Movement")]
     [SerializeField] private float _horizontalRotationSpeed = 600f;
@@ -39,11 +39,11 @@ public class SlidingCameraBehaviour : MonoBehaviour
     [SerializeField] private float _minCameraAngle = 5f;
 
     [Header("Zoom Level")]
-    [SerializeField] private float _zoomSpeed = 500f;
+    [SerializeField] private float _zoomSpeed = 5000f * TerrainConstants.MAP_SCALE;
     [SerializeField] private float _zoomTiltSpeed = 4f;
-    [SerializeField] private float _minAltitude = 0.2f;
+    [SerializeField] private float _minAltitude = 1.0f * TerrainConstants.MAP_SCALE;
     [SerializeField] private float _tiltThreshold = 2f;
-    [SerializeField] private float _maxAltitude = 2000;
+    [SerializeField] private float _maxAltitude = 20000f * TerrainConstants.MAP_SCALE;
     [SerializeField] private float _heightSpeedScaling = 0.75f;
     [SerializeField] private float _zoomOutAngle = 45f;
 

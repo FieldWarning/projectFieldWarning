@@ -18,17 +18,17 @@ using UnityEngine;
 public class UnitData
 {
     //create from xml file or something
-    public float movementSpeed = 6f;
-    public float reverseSpeed = 1f;
-    public float accelRate = 1.0f;
+    public float movementSpeed = 50f * TerrainConstants.MAP_SCALE;
+    public float reverseSpeed = 10f * TerrainConstants.MAP_SCALE;
+    public float accelRate = 10f * TerrainConstants.MAP_SCALE;
     public float maxRotationSpeed = 50f;  // Units of degrees per second
-    public float minTurnRadius = 0f;
-    public float maxLateralAccel = 1.5f;
-    public float suspension = 0.1f;
+    public float minTurnRadius = 0f * TerrainConstants.MAP_SCALE;
+    public float maxLateralAccel = 15f * TerrainConstants.MAP_SCALE;
+    public float suspension = 0.01f / TerrainConstants.MAP_SCALE;
     public float maxHealth = 10f;
     public List<WeaponData> weaponData;
-    public float length = 1.2f; // length and width are used for pivoting on terrain, and to define radius
-    public float width = 0.7f;
+    public float length = 12f * TerrainConstants.MAP_SCALE; // length and width are used for pivoting on terrain, and to define radius
+    public float width = 7f * TerrainConstants.MAP_SCALE;
     public MobilityType mobility;
 
     // These variables are not read in from an external file
