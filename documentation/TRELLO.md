@@ -13,4 +13,4 @@ We have three types of Trello cards:
 -> Anything not in the User stories or Epics column should be a TASK, meaning not blocked by prerequisites and can be done in a day (or longer if it is not possible to break it up any further).
 
 
-For new contributors, we have tasks marked with green. These are easier and more suitable for getting your feet wet with the codebase and Unity
+For new contributors, we have tasks marked with green. These are easier and more suitable for getting your feet wet with the codebase and Unity.
