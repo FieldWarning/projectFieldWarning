@@ -30,14 +30,14 @@ namespace PFW.Service
             _units.Add(new Unit() { Name = "HEMIT", Category = allCats.ElementAt(0), Coalition = usa });
             _units.Add(new Unit() { Name = "Riflemen", Category = allCats.ElementAt(1), Coalition = usa });
             _units.Add(new Unit() { Name = "Marines", Category = allCats.ElementAt(1), Coalition = usa });
-            _units.Add(new Unit() { Name = "MIM-104 Patriot", Category = allCats.ElementAt(2), Coalition = usa });
+            _units.Add(new Unit() { Name = "PLZ-5", Category = allCats.ElementAt(2), Coalition = usa });
 
             _units.Add(new Unit() { Name = "M1A2 Abrams", Category = allCats.ElementAt(3), Coalition = usa });
             _units.Add(new Unit() { Name = "M1A1 Abrams", Category = allCats.ElementAt(3), Coalition = usa });
 
             _units.Add(new Unit() { Name = "Army Rangers", Category = allCats.ElementAt(4), Coalition = usa });
 
-            _units.Add(new Unit() { Name = "HUMVE", Category = allCats.ElementAt(5), Coalition = usa });
+            _units.Add(new Unit() { Name = "ARTY", Category = allCats.ElementAt(5), Coalition = usa });
 
             _units.Add(new Unit() { Name = "AH-64D Apache", Category = allCats.ElementAt(6), Coalition = usa });
         }

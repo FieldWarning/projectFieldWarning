@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using AssemblyCSharp;
 using UnityEngine;
 
 namespace PFW.Weapons
@@ -41,9 +42,14 @@ namespace PFW.Weapons
         private Transform barrel;
         [SerializeField]
         private Transform shotEmitter;
+        //-----newly added start-------------//
         [SerializeField]
-        private ParticleSystem shotEffect;
-
+        private Transform ShotStarterPosition;//where the shell spawns 
+        [SerializeField]
+        private GameObject bullet;//The shell being Fired 
+        //-----newly added end-------------//
+        [SerializeField]
+        private ParticleSystem shotEffect;//will aim to make actual objects fire and not effects 
         [SerializeField]
         private AudioClip shotSound;
         [SerializeField]
@@ -54,15 +60,33 @@ namespace PFW.Weapons
         {
             unit = gameObject.GetComponent<UnitBehaviour>();
             enabled = false;
+           
+
         }
 
         public void Update()
         {
-            if (target == null || !target.exists())
-                target = new TargetTuple(FindClosestEnemy());
 
-            if (RotateTurret(target))
-                TryFireWeapon(target);
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
+            {
+
+                if (target == null || !target.exists())
+                    target = new TargetTuple(FindClosestEnemy());
+
+                if (RotateTurret(target))
+                    TryFireWeapon(target);
+            }
+
+
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
+            {
+                if (target != null)
+                {
+                    RotateTurret(target);
+                    TryFireWeapon(target);
+                }
+            }
+
         }
 
         public void WakeUp()
@@ -72,6 +96,8 @@ namespace PFW.Weapons
             enabled = true;
         }
 
+
+
         private bool RotateTurret(TargetTuple target)
         {
             bool aimed = false;
@@ -80,21 +106,25 @@ namespace PFW.Weapons
 
             Vector3 pos = target.enemy == null ? target.position : target.enemy.transform.position;
 
-            if (pos != Vector3.zero) {
+            if (pos != Vector3.zero)
+            {
                 aimed = true;
-                shotEmitter.LookAt(pos);
+               // shotEmitter.LookAt(pos);
+               //shot emmiter was comented out because arty has no shot emmiter
 
                 Vector3 directionToTarget = pos - turret.position;
                 Quaternion rotationToTarget = Quaternion.LookRotation(mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
-                if (Mathf.Abs(targetTurretAngle) > data.ArcHorizontal) {
+                if (Mathf.Abs(targetTurretAngle) > data.ArcHorizontal)
+                {
                     targetTurretAngle = 0f;
                     aimed = false;
                 }
 
                 targetBarrelAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
-                if (targetBarrelAngle < -data.ArcUp || targetBarrelAngle > data.ArcDown) {
+                if (targetBarrelAngle < -data.ArcUp || targetBarrelAngle > data.ArcDown)
+                {
                     targetBarrelAngle = 0f;
                     aimed = false;
                 }
@@ -106,18 +136,31 @@ namespace PFW.Weapons
             float deltaAngle;
 
             deltaAngle = (targetTurretAngle - turretAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn) {
+            if (Mathf.Abs(deltaAngle) > turn)
+            {
                 turretAngle += (deltaAngle > 0 ? 1 : -1) * turn;
                 aimed = false;
-            } else {
+            }
+            else
+            {
                 turretAngle = targetTurretAngle;
             }
 
+            #region ArtyAdditionalCode
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
+            {
+                targetBarrelAngle = -data.ArcUp;
+            }
+            #endregion
+
             deltaAngle = (targetBarrelAngle - barrelAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn) {
+            if (Mathf.Abs(deltaAngle) > turn)
+            {
                 barrelAngle += (deltaAngle > 0 ? 1 : -1) * turn;
                 aimed = false;
-            } else {
+            }
+            else
+            {
                 barrelAngle = targetBarrelAngle;
             }
 
@@ -129,27 +172,56 @@ namespace PFW.Weapons
 
         private bool FireWeapon(TargetTuple target)
         {
-            // sound
-            unit.Source.PlayOneShot(shotSound, shotVolume);
-            // particle
-            shotEffect.Play();
 
-            if (target.enemy != null) {
-                System.Random rnd = new System.Random();
-                int roll = rnd.Next(1, 100);
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
+            {
 
-                // HIT
-                if (roll < data.Accuracy) {
-                    target.enemy.GetComponent<UnitBehaviour>()
-                        .HandleHit(data.Damage);
-                    return true;
+                // sound
+                unit.Source.PlayOneShot(shotSound, shotVolume);
+                // particle
+                shotEffect.Play();
+
+                if (target.enemy != null)
+                {
+                    System.Random rnd = new System.Random();
+                    int roll = rnd.Next(1, 100);
+
+                    // HIT
+                    if (roll < data.Accuracy)
+                    {
+
+                     
+                        target.enemy.GetComponent<UnitBehaviour>()
+                            .HandleHit(data.Damage);
+                        return true;
+                    }
                 }
-            } else {
-                // ensure we only fire pos once
-                this.target = null;
+                else
+                {
+                    // ensure we only fire pos once
+                    this.target = null;
+                }
+
+                // MISS
+                return false;
             }
 
-            // MISS
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
+            {
+                //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
+
+
+                GameObject shell = Resources.Load<GameObject>("shell");
+                GameObject shell_new =Instantiate(shell, ShotStarterPosition.position, ShotStarterPosition.transform.rotation);
+                shell_new.GetComponent<BulletBehavior>().SetUp(ShotStarterPosition, target.position, 60);
+
+                //Debug.Break();
+               
+
+                return true;
+                
+            }
+
             return false;
         }
 
@@ -171,14 +243,16 @@ namespace PFW.Weapons
             GameObject Target = null;
             var thisTeam = unit.Platoon.Owner.Team;
 
-            foreach (GameObject unit in units) {
+            foreach (GameObject unit in units)
+            {
                 // Filter out friendlies:
                 if (unit.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(unit.transform.position, unit.transform.position);
-                if (distance < data.FireRange) {
+                if (distance < data.FireRange)
+                {
                     return unit;
                 }
             }

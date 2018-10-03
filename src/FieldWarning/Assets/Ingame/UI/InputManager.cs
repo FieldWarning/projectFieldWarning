@@ -179,6 +179,15 @@ namespace PFW.Ingame.UI
             CurMouseMode = MouseMode.purchasing;
         }
 
+        public void ArtyButtonCallback()
+        {
+            if (_currentBuyTransaction == null)
+                _currentBuyTransaction = new BuyTransaction(UnitType.Arty, _localPlayer);
+            else
+                _currentBuyTransaction.AddUnit();
+            CurMouseMode = MouseMode.purchasing;
+        }  
+
         public void InfantryButtonCallback()
         {
             BuildUnit(UnitType.Infantry);

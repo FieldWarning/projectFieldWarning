@@ -18,14 +18,14 @@ namespace AssemblyCSharp
 {
     public class Bullet
     {
-        private Vector3 _startPosition;
-        private Vector3 _endPosition;
-        int _vellocity;
+        public Vector3 _startPosition;
+        public Vector3 _endPosition;
+        public float _vellocity;       
+        public int _arc;
 
-        //will be used later so shells arent lasers
-        int _arc;
+        public Bullet() { }
 
-        public Bullet(Vector3 start_position, Vector3 end_position, int vellocity, int arc, bool isHit)
+        public Bullet(Vector3 start_position, Vector3 end_position, int vellocity=100, bool isHit=true, int arc=60 )
         {
             _startPosition = start_position;
             _endPosition = end_position;
@@ -34,6 +34,7 @@ namespace AssemblyCSharp
 
             //If the shell is a miss end position will be recalculated into a
             //random yet close position to the enemy unit
+            //should be implemneted into a dispersion circle later on 
 
             if (!isHit) {
                 end_position.x = UnityEngine.Random.Range(-20.0f, 20.0f);

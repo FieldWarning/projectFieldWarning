@@ -69,7 +69,18 @@ namespace PFW.Ingame.UI
 
                 // this is very hacky and WIP just to keep the current spawning system working
                 var session = GameObject.Find("GameSession");
-                card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().TankButtonCallback);
+
+                // See above, we need to either make this fully dynamic or put the cat names in the type system:
+                switch (cat.Name) {
+                case "TNK":
+                    card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().TankButtonCallback);
+                    break;
+                case "SUP":
+                    card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().ArtyButtonCallback);
+                    break;
+                default:
+                    break;
+                }
 
                 // TODO Set picture too
                 // TODO Transports?

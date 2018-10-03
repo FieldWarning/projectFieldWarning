@@ -24,7 +24,7 @@ namespace PFW.Ingame.Prototype
         public UnitFactory(MatchSession session)
         {
             _session = session;
-        } 
+        }
 
         public GameObject FindPrefab(UnitType type)
         {
@@ -43,6 +43,9 @@ namespace PFW.Ingame.Prototype
                 var b = obj.AddComponent<InfantryBehaviour>();
                 b.enabled = false;
                 unit = obj;
+                break;
+            case UnitType.Arty:
+                unit = Resources.Load<GameObject>("Arty");
                 break;
             default:
                 unit = null;
@@ -99,6 +102,7 @@ namespace PFW.Ingame.Prototype
     {
         Tank,
         Infantry,
-        AFV
+        AFV,
+        Arty
     }
 }
