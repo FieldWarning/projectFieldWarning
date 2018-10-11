@@ -126,7 +126,7 @@ public class VehicleBehaviour : UnitBehaviour
 
         // Need to face approximately the right direction before speeding up
         float angDist = Mathf.Max(0f, Mathf.Abs(remainingTurn) - HEADING_THRESHOLD);
-        if (angDist > Mathf.PI / 2)
+        if (angDist > Mathf.PI / 4)
             return Data.optimumTurnSpeed;
 
         // Want to go just fast enough to cover the linear and angular distance if the unit starts slowing down now
@@ -135,7 +135,7 @@ public class VehicleBehaviour : UnitBehaviour
 
         // But not so fast that it cannot make the turn
         if (linSpeed > Data.optimumTurnSpeed && angDist > 0f)
-            targetSpeed = Mathf.Min(targetSpeed, 0.3f * linDist * rotSpeed / angDist);
+            targetSpeed = Mathf.Min(targetSpeed, 0.25f * linDist * rotSpeed / angDist);
 
         return targetSpeed;
     }

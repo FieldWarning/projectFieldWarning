@@ -242,7 +242,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     // Returns the unit's speed on the current terrain
     public float GetTerrainSpeedMultiplier()
     {
-        float terrainSpeed = Pathfinder.data.GetUnitSpeed(Data.mobility, transform.position, 0f, -transform.forward);
+        float terrainSpeed = Data.mobility.GetUnitSpeed(Pathfinder.data.terrain, Pathfinder.data.map, transform.position, 0f, -transform.forward);
         terrainSpeed = Mathf.Max(terrainSpeed, 0.5f * TerrainConstants.MAP_SCALE); // Never let the speed to go exactly 0, just so units don't get stuck
         return terrainSpeed;
     }

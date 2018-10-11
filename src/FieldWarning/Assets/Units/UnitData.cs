@@ -18,8 +18,8 @@ using UnityEngine;
 public class UnitData
 {
     //create from xml file or something
-    public float movementSpeed = 50f * TerrainConstants.MAP_SCALE;
-    public float reverseSpeed = 10f * TerrainConstants.MAP_SCALE;
+    public float movementSpeed = 20f * TerrainConstants.MAP_SCALE;
+    public float reverseSpeed = 4f * TerrainConstants.MAP_SCALE;
     public float accelRate = 10f * TerrainConstants.MAP_SCALE;
     public float maxRotationSpeed = 50f;  // Units of degrees per second
     public float minTurnRadius = 0f * TerrainConstants.MAP_SCALE;

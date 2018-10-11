@@ -14,19 +14,24 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Priority_Queue;
+using EasyRoads3Dv3;
 
 public class PathfinderData
 {
     private static PathArc InvalidArc = new PathArc(null, null);
-    private const float SparseGridSpacing = 100f;
+    private const float SparseGridSpacing = 1000f * TerrainConstants.MAP_SCALE;
+    private const float NodePruneDistThresh = 10f * TerrainConstants.MAP_SCALE;
+    private const float ArcMaxDist = 2500f * TerrainConstants.MAP_SCALE;
 
     public Terrain terrain;
+    public TerrainMap map;
     public List<PathNode> graph;
     FastPriorityQueue<PathNode> openSet;
 
     public PathfinderData(Terrain terrain)
     {
         this.terrain = terrain;
+        map = new TerrainMap(terrain);
         graph = new List<PathNode>();
         BuildGraph();
     }
@@ -34,15 +39,23 @@ public class PathfinderData
     private void BuildGraph()
     {
         graph.Clear();
+        Vector3 size = terrain.terrainData.size;//TerrainBuilder.size;
 
-        // TODO: Add nodes for terrain features and roads
+        // TODO: Add nodes for terrain features
 
+        // Add nodes for roads
+        ERModularRoad[] roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
+        foreach (ERModularRoad road in roads) {
+            foreach (Vector3 roadVert in road.middleIndentVecs) {
+                if (Mathf.Abs(roadVert.x) < size.x/2 && Mathf.Abs(roadVert.z) < size.z/2)
+                    graph.Add(new PathNode(roadVert));
+            }
+        }
 
-        // Fill in any big open spaces with a sparse grid in case the above missed anything important
-        Vector3 size = TerrainBuilder.size;
+        /*// Fill in any big open spaces with a sparse grid in case the above missed anything important
         Vector3 newPos = new Vector3(0f, 0f, 0f);
-        for (float x = 0f; x < size.x; x += SparseGridSpacing / 10) {
-            for (float z = 0f; z < size.z; z += SparseGridSpacing / 10) {
+        for (float x = -size.x/2; x < size.x/2; x += SparseGridSpacing / 10) {
+            for (float z = -size.z/2; z < size.z/2; z += SparseGridSpacing / 10) {
                 newPos.Set(x, 0f, z);
 
                 float minDist = float.MaxValue;
@@ -52,14 +65,23 @@ public class PathfinderData
                 if (minDist > SparseGridSpacing)
                     graph.Add(new PathNode(newPos));
             }
+        }*/
+        
+        // Remove nodes that are right on top of each other
+        for (int i = 0; i < graph.Count; i++) {
+            for (int j = i + 1; j < graph.Count; j++) {
+                if ((graph[i].position - graph[j].position).magnitude < NodePruneDistThresh)
+                    graph.RemoveAt(j);
+            }
         }
 
         openSet = new FastPriorityQueue<PathNode>(graph.Count + 1);
-
-        // Compute arcs for all pairs of nodes
+        
+        // Compute arcs for all pairs of nodes within cutoff distance
         for (int i = 0; i < graph.Count; i++) {
             for (int j = i + 1; j < graph.Count; j++) {
-                AddArc(graph[i], graph[j]);
+                if ((graph[i].position - graph[j].position).magnitude < ArcMaxDist) 
+                    AddArc(graph[i], graph[j]);
             }
         }
 
@@ -82,7 +104,8 @@ public class PathfinderData
                     float time = FindPath(path,
                         graph[i].position, graph[j].position,
                         mobility, 0f, MoveCommandType.Fast);
-                    if (arc.time[mobility.Index] < 1.1 * time) {
+
+                    if (arc.time[mobility.Index] < 1.05 * time) {
                         necessary = true;
                         break;
                     }
@@ -113,7 +136,7 @@ public class PathfinderData
         // Compute the arc's traversal time for each MobilityType
         foreach (MobilityType mobility in MobilityType.MobilityTypes) {
             arc.time[mobility.Index] = Pathfinder.FindLocalPath(
-                this, node1.position, node2.position, mobility, 0f);
+                this, node1.position, node2.position, mobility, 0f, MoveCommandType.Fast);
         }
     }
 
@@ -122,48 +145,6 @@ public class PathfinderData
         PathArc arc = GetArc(node1, node2);
         node1.arcs.Remove(arc);
         node2.arcs.Remove(arc);
-    }
-
-    // Gives the relative speed of a unit with the given MobilityType at the given location
-    // Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
-    // If radius > 0, check for units in the way, otherwise just look at terrain
-    public float GetUnitSpeed(MobilityType mobility, Vector3 location, float unitRadius, Vector3 direction)
-    {
-        // This is a slow way to do it, and we will probably need a fast, generic method to find units within a given distance of a location
-        if (unitRadius > 0f) {
-            // TODO use unit list from game/match session
-            // TODO maybe move this logic into its own method?
-            GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
-            foreach (GameObject unit in units) {
-                float dist = Vector3.Distance(location, unit.transform.position);
-                if (dist < unitRadius + unit.GetComponent<UnitBehaviour>().Data.radius)
-                    return 0f;
-            }
-        }
-
-        // Find unit speed on terrain
-        // TODO: Make this also depend on the terrain type, not just elevation
-
-        direction.y = 0f;
-        direction.Normalize();
-        Vector3 perpendicular = new Vector3(-direction.z, 0f, direction.x);
-
-        float height = terrain.SampleHeight(location);
-        float forwardHeight = terrain.SampleHeight(location - direction);
-        float sideHeight = terrain.SampleHeight(location + perpendicular);
-
-        float forwardSlope = forwardHeight - height;
-        float sideSlope = sideHeight - height;
-        float slopeSquared = forwardSlope*forwardSlope + sideSlope*sideSlope;
-
-        //if (Time.frameCount%100 == 50) Debug.Log(terrain.terrainData.GetInterpolatedNormal(location.x, location.y));
-
-        float overallSlopeFactor = mobility.SlopeSensitivity * slopeSquared;
-        float directionalSlopeFactor = mobility.SlopeSensitivity * mobility.DirectionalSlopeSensitivity * forwardSlope;
-        float speed = 1.0f / (1.0f + overallSlopeFactor + directionalSlopeFactor);
-        speed = Mathf.Max(speed - 0.1f, 0f);
-
-        return speed;
     }
 
     // Run the A* algorithm and put the result in path
@@ -179,7 +160,7 @@ public class PathfinderData
         path.Add(new PathNode(destination));
 
         PathNode cameFromDest = null;
-        float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, unitRadius);
+        float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, unitRadius, command);
 
         if (gScoreDest < Pathfinder.Forever) {
             if (command == MoveCommandType.Slow || command == MoveCommandType.Reverse)
@@ -193,16 +174,20 @@ public class PathfinderData
             neighbor.isClosed = false;
             neighbor.cameFrom = null;
             neighbor.gScore = Pathfinder.Forever;
-
-            float gScoreNew = Pathfinder.FindLocalPath(this, start, neighbor.position, mobility, unitRadius);
-            if (gScoreNew < Pathfinder.Forever) {
-                neighbor.gScore = gScoreNew;
-                float fScoreNew = gScoreNew + TimeHeuristic(neighbor.position, destination, mobility);
-                openSet.Enqueue(neighbor, fScoreNew);
+            
+            if ((start - neighbor.position).magnitude < ArcMaxDist) {
+                float gScoreNew = Pathfinder.FindLocalPath(this, start, neighbor.position, mobility, unitRadius, command);
+                if (gScoreNew < Pathfinder.Forever) {
+                    neighbor.gScore = gScoreNew;
+                    float fScoreNew = gScoreNew + TimeHeuristic(neighbor.position, destination, mobility);
+                    openSet.Enqueue(neighbor, fScoreNew);
+                }
             }
         }
 
+        //Debug.Log("-------------------------------------- " + graph.Count + " " + openSet.Count);
         while (openSet.Count > 0) {
+            //Debug.Log(openSet.Count);
 
             PathNode current = openSet.Dequeue();
             current.isClosed = true;
@@ -235,7 +220,8 @@ public class PathfinderData
                 }
             }
 
-            float arcTimeDest = Pathfinder.FindLocalPath(this, current.position, destination, mobility, unitRadius);
+            float arcTimeDest = Pathfinder.FindLocalPath(
+                this, current.position, destination, mobility, unitRadius, command);
             if (arcTimeDest >= Pathfinder.Forever)
                 continue;
             if (arcTimeDest < Pathfinder.Forever && command == MoveCommandType.Slow)
