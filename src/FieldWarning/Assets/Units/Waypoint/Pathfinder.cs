@@ -22,7 +22,7 @@ public class Pathfinder
     private const float StepSize = 12f * TerrainConstants.MAP_SCALE; // Any object that the pathfinder is able to navigate around must have at least this radius
     private const float AngSearchInc = 12f; // Angluar search increment for local path finding
     private const float MaxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
-    private const float CompletionDist = 1.5f * StepSize; // Good enough if we can get within this distance of the target destination
+    private const float CompletionDist = 2.0f * StepSize; // Good enough if we can get within this distance of the waypoint
     private const float UpdateInterval = 0.5f;
 
     private static bool straightStep; // Tells if the most recent call to TakeStep gave a stright forward step
@@ -95,7 +95,7 @@ public class Pathfinder
             }
 
             Vector3 newWaypoint = TakeStep(
-                data, unit.transform.position, targetNode.position, unit.Data.mobility, unit.Data.radius);
+                data, unit.transform.position, targetNode.position, unit.Data.mobility, unit.Data.radius, command);
 
             if (newWaypoint != NoPosition) {
                 waypoint = straightStep ? targetNode.position : newWaypoint;
@@ -123,6 +123,13 @@ public class Pathfinder
         return waypoint;
     }
 
+    public Vector3 GetSecondWaypoint()
+    {
+        if (path.Count > 1)
+            return path[path.Count - 2].position;
+        return NoPosition;
+    }
+
     public bool HasDestination()
     {
         return path.Count > 0;
@@ -140,7 +147,8 @@ public class Pathfinder
         PathfinderData data,
         Vector3 start, Vector3 destination,
         MobilityType mobility,
-        float radius)
+        float radius,
+        MoveCommandType command)
     {
         float distance = (destination - start).magnitude;
         Vector3 waypoint = start;
@@ -148,10 +156,10 @@ public class Pathfinder
 
         while (distance > CompletionDist) {
             Vector3 previous = waypoint;
-            waypoint = TakeStep(data, waypoint, destination, mobility, radius);
+            waypoint = TakeStep(data, waypoint, destination, mobility, radius, command);
             if (waypoint == NoPosition)
                 return Forever;
-            time += StepSize / data.GetUnitSpeed(mobility, waypoint, radius, (waypoint - previous).normalized);
+            time += StepSize / mobility.GetUnitSpeed(data.terrain, data.map, waypoint, radius, (waypoint - previous).normalized);
             distance = (destination - waypoint).magnitude;
         }
 
@@ -164,7 +172,8 @@ public class Pathfinder
         PathfinderData data,
         Vector3 start, Vector3 destination,
         MobilityType mobility,
-        float radius)
+        float radius,
+        MoveCommandType command)
     {
         Vector3 straight = (destination - start).normalized;
         straightStep = false;
@@ -176,14 +185,14 @@ public class Pathfinder
 
                 Vector3 direction1 = ang1 > 0f ? Quaternion.AngleAxis(ang1 * direction, Vector3.up) * straight : straight;
                 Vector3 midpoint = start + direction1 * StepSize;
-                float midspeed = data.GetUnitSpeed(mobility, midpoint, radius, direction1);
+                float midspeed = mobility.GetUnitSpeed(data.terrain, data.map, midpoint, radius, direction1);
 
                 if (midspeed > 0f) {
                     for (float ang2 = 0f; ang2 <= ang1; ang2 += AngSearchInc) {
 
                         Vector3 direction2 = ang2 > 0f ? Quaternion.AngleAxis(ang2 * direction, Vector3.up) * straight : straight;
                         Vector3 endpoint = midpoint + straight * StepSize;
-                        float endspeed = data.GetUnitSpeed(mobility, endpoint, radius, direction2);
+                        float endspeed = mobility.GetUnitSpeed(data.terrain, data.map, endpoint, radius, direction2);
 
                         if (endspeed > 0f) {
                             straightStep = ang1 == 0f && ang2 == 0f;

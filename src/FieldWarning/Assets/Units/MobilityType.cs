@@ -10,7 +10,8 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
-
+ 
+using UnityEngine;
 using System.Collections.Generic;
 
 // The purpose of having MobilityType as a separate class from UnitData is
@@ -39,5 +40,61 @@ public sealed class MobilityType
 
         Index = MobilityTypes.Count;
         MobilityTypes.Insert(Index, this);
+    }
+
+    // Gives the relative speed of a unit with the given MobilityType at the given location
+    // Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
+    // If radius > 0, check for units in the way, otherwise just look at terrain
+    public float GetUnitSpeed(Terrain terrain, TerrainMap map, Vector3 location, float unitRadius, Vector3 direction)
+    {
+        // This is a slow way to do it, and we will probably need a fast, generic method to find units within a given distance of a location
+        if (unitRadius > 0f) {
+            // TODO use unit list from game/match session
+            // TODO maybe move this logic into its own method?
+            GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
+            foreach (GameObject unit in units) {
+                float dist = Vector3.Distance(location, unit.transform.position);
+                if (dist < unitRadius + unit.GetComponent<UnitBehaviour>().Data.radius)
+                    return 0f;
+            }
+        }
+
+        // Find unit speed on terrain
+        int terrainType = map.GetTerrainType(location);
+        
+        float speed = 0f;
+        if (terrainType == TerrainMap.FOREST) {
+            speed = 0.2f;
+        } else if (terrainType == TerrainMap.PLAIN) {
+            speed = 0.6f/4;
+        } else if (terrainType == TerrainMap.ROAD) {
+            speed = 1.0f;
+        } else if (terrainType == TerrainMap.WATER) {
+            speed = 0.0f;
+        }
+
+        if (speed <= 0)
+            return 0f;
+        return speed*GetSlopeFactor(terrain, location, direction);
+    }
+
+    private float GetSlopeFactor(Terrain terrain, Vector3 location, Vector3 direction)
+    {
+        direction.y = 0f;
+        direction.Normalize();
+        Vector3 perpendicular = new Vector3(-direction.z, 0f, direction.x);
+
+        float height = terrain.SampleHeight(location);
+        float forwardHeight = terrain.SampleHeight(location - direction);
+        float sideHeight = terrain.SampleHeight(location + perpendicular);
+
+        float forwardSlope = forwardHeight - height;
+        float sideSlope = sideHeight - height;
+        float slopeSquared = forwardSlope * forwardSlope + sideSlope * sideSlope;
+
+        float overallSlopeFactor = SlopeSensitivity * slopeSquared;
+        float directionalSlopeFactor = SlopeSensitivity * DirectionalSlopeSensitivity * forwardSlope;
+        float speed = 1.0f / (1.0f + overallSlopeFactor + directionalSlopeFactor);
+        return Mathf.Max(speed - 0.1f, 0f);
     }
 }
