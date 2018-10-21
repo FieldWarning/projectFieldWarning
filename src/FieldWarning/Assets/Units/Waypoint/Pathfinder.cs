@@ -16,14 +16,14 @@ using System.Collections.Generic;
 
 public class Pathfinder
 {
-    public const float Forever = float.MaxValue;
+    public const float Forever = float.MaxValue/2;
     public static Vector3 NoPosition = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-    private const float StepSize = 12f * TerrainConstants.MAP_SCALE; // Any object that the pathfinder is able to navigate around must have at least this radius
+    public const float StepSize = 12f * TerrainConstants.MAP_SCALE; // Any object that the pathfinder is able to navigate around must have at least this radius
     private const float AngSearchInc = 12f; // Angluar search increment for local path finding
     private const float MaxAngle = 85f; // Maximum turn a unit can make to either side to get around an obstacle
-    private const float CompletionDist = 2.0f * StepSize; // Good enough if we can get within this distance of the waypoint
-    private const float UpdateInterval = 0.5f;
+    private const float CompletionDist = 30f * TerrainConstants.MAP_SCALE; // Good enough if we can get within this distance of an intermediate waypoint
+    private const float UpdateInterval = 0.25f;
 
     private static bool straightStep; // Tells if the most recent call to TakeStep gave a stright forward step
 
@@ -62,7 +62,7 @@ public class Pathfinder
         this.command = command;
 
         float pathTime = data.FindPath(path, unit.transform.position, destination, unit.Data.mobility, 0f, command);
-        if (pathTime == Forever)
+        if (pathTime >= Forever)
             path.Clear();
         return pathTime;
     }
@@ -74,60 +74,76 @@ public class Pathfinder
     {
         if (!HasDestination()) { // Nowhere to go
             waypoint = NoPosition;
-            return waypoint;
-        }
-        
-        if (Time.time > nextUpdateTime) {
+        }else if (Time.time > nextUpdateTime) {
             nextUpdateTime = Time.time + UpdateInterval;
-            PathNode targetNode = path[path.Count - 1];
-
-            float distance = Vector3.Distance(unit.transform.position, targetNode.position);
-            if (distance < (path.Count > 1 ? CompletionDist : finalCompletionDist)) { // Unit arrived at the next path node
-                path.RemoveAt(path.Count - 1);
-                if (!HasDestination()) { // Unit arrived at the destination
-                    command = MoveCommandType.Slow;
-                    waypoint = NoPosition;
-                    return waypoint;
-                } else {
-                    previousNode = null;
-                    targetNode = path[path.Count - 1];
-                }
-            }
-
-            Vector3 newWaypoint = TakeStep(
-                data, unit.transform.position, targetNode.position, unit.Data.mobility, unit.Data.radius, command);
-
-            if (newWaypoint != NoPosition) {
-                waypoint = straightStep ? targetNode.position : newWaypoint;
-            } else {
-
-                // The unit has gotten stuck when following the previously computed path.
-                // Now recompute a new path to the destination using the global graph, this time using finite radius
-                float pathTime = data.FindPath(path, unit.transform.position, path[0].position, unit.Data.mobility, unit.Data.radius, command);
-                //float pathTime = SetPath (path[0].position, command);
-
-                if (pathTime == Forever) {  // The unit has somehow gotten itself trapped
-                    Debug.Log("I am stuck!!!");
-                    waypoint = NoPosition;
-                } else {
-                    // If this is an intermediate step of the path, then the pre-computed global graph might
-                    // be broken and the corresponding arc should be recomputed to avoid having units cycle forever
-                    if (previousNode != null && path.Count > 1) {
-                        data.RemoveArc(previousNode, targetNode);
-                        data.AddArc(previousNode, targetNode);
-                    }
-                }
-            }
+            UpdateWaypoint();
         }
+
+        if (waypoint == NoPosition)
+            command = MoveCommandType.Slow;
 
         return waypoint;
     }
 
-    public Vector3 GetSecondWaypoint()
+    private void UpdateWaypoint()
     {
-        if (path.Count > 1)
-            return path[path.Count - 2].position;
-        return NoPosition;
+        PathNode targetNode = path[path.Count - 1];
+
+        float distance = Vector3.Distance(unit.transform.position, PathfinderData.Position(targetNode));
+        if (distance < (path.Count > 1 ? CompletionDist : finalCompletionDist)) { // Unit arrived at the next path node
+            path.RemoveAt(path.Count - 1);
+            if (!HasDestination()) { // Unit arrived at the destination
+                waypoint = NoPosition;
+                return;
+            } else {
+                previousNode = targetNode;
+                targetNode = path[path.Count - 1];
+            }
+        }
+
+        Vector3 targetPosition = PathfinderData.Position(targetNode);
+        //Debug.Log(targetNode.isRoad + (previousNode != null ? " "+previousNode.isRoad : ""));
+        if (targetNode.isRoad && previousNode != null && previousNode.isRoad)
+            targetPosition = GetRoadIntersection(PathfinderData.Position(targetNode), PathfinderData.Position(previousNode), unit.transform.position);
+
+        Vector3 newWaypoint = TakeStep(
+            data, unit.transform.position, targetPosition, unit.Data.mobility, unit.Data.radius);
+
+        if (newWaypoint != NoPosition) {
+            waypoint = straightStep ? targetPosition : newWaypoint;
+        } else {
+
+            // The unit has gotten stuck when following the previously computed path.
+            // Now recompute a new path to the destination using the global graph, this time using finite radius
+            float pathTime = data.FindPath(path, unit.transform.position, PathfinderData.Position(path[0]), unit.Data.mobility, unit.Data.radius, command);
+            //float pathTime = SetPath (path[0].position, command);
+
+            if (pathTime == Forever) {  // The unit has somehow gotten itself trapped
+                Debug.Log("I am stuck!!!");
+                waypoint = NoPosition;
+            } else {
+                // If this is an intermediate step of the path, then the pre-computed global graph might
+                // be broken and the corresponding arc should be recomputed to avoid having units cycle forever
+                if (previousNode != null && path.Count > 1) {
+                    data.RemoveArc(previousNode, targetNode);
+                    data.AddArc(previousNode, targetNode);
+                }
+            }
+
+        }
+    }
+
+    private Vector3 GetRoadIntersection(Vector3 forward, Vector3 behind, Vector3 position)
+    {
+        Vector3 roadUnit = (forward - behind).normalized;
+        Vector3 direct = forward - position;
+        float projection = direct.x*roadUnit.x + direct.z*roadUnit.z;
+        if (projection < 0)
+            return forward;
+        Vector3 parallel = roadUnit * projection;
+        Vector3 normal = direct - parallel;
+        //float ratio = parallel.magnitude / direct.magnitude;
+        return position + 3*normal + roadUnit*Mathf.Min(0.8f*projection, 10*StepSize);
     }
 
     public bool HasDestination()
@@ -137,7 +153,7 @@ public class Pathfinder
 
     public Vector3 GetDestination()
     {
-        return path.Count > 0 ? path[0].position : NoPosition;
+        return path.Count > 0 ? PathfinderData.Position(path[0]) : NoPosition;
     }
 
     // Build a path in an approximately straight line from start to destination by stringing together steps
@@ -147,8 +163,7 @@ public class Pathfinder
         PathfinderData data,
         Vector3 start, Vector3 destination,
         MobilityType mobility,
-        float radius,
-        MoveCommandType command)
+        float radius)
     {
         float distance = (destination - start).magnitude;
         Vector3 waypoint = start;
@@ -156,12 +171,13 @@ public class Pathfinder
 
         while (distance > CompletionDist) {
             Vector3 previous = waypoint;
-            waypoint = TakeStep(data, waypoint, destination, mobility, radius, command);
+            waypoint = TakeStep(data, waypoint, destination, mobility, radius);
             if (waypoint == NoPosition)
                 return Forever;
             time += StepSize / mobility.GetUnitSpeed(data.terrain, data.map, waypoint, radius, (waypoint - previous).normalized);
             distance = (destination - waypoint).magnitude;
         }
+        time += distance / mobility.GetUnitSpeed(data.terrain, data.map, waypoint, radius, (destination - waypoint).normalized);
 
         return time;
     }
@@ -172,8 +188,7 @@ public class Pathfinder
         PathfinderData data,
         Vector3 start, Vector3 destination,
         MobilityType mobility,
-        float radius,
-        MoveCommandType command)
+        float radius)
     {
         Vector3 straight = (destination - start).normalized;
         straightStep = false;

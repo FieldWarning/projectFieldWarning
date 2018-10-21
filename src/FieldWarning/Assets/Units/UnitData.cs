@@ -18,9 +18,9 @@ using UnityEngine;
 public class UnitData
 {
     //create from xml file or something
-    public float movementSpeed = 20f * TerrainConstants.MAP_SCALE;
-    public float reverseSpeed = 4f * TerrainConstants.MAP_SCALE;
-    public float accelRate = 10f * TerrainConstants.MAP_SCALE;
+    public float movementSpeed = 50f * TerrainConstants.MAP_SCALE;
+    public float reverseSpeed = 15f * TerrainConstants.MAP_SCALE;
+    public float accelRate = 13f * TerrainConstants.MAP_SCALE;
     public float maxRotationSpeed = 50f;  // Units of degrees per second
     public float minTurnRadius = 0f * TerrainConstants.MAP_SCALE;
     public float maxLateralAccel = 15f * TerrainConstants.MAP_SCALE;
@@ -54,9 +54,9 @@ public class UnitData
     public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP
     {        
         var d = new UnitData();
-        d.movementSpeed = 6f;
-        d.maxRotationSpeed = 50;
-        d.maxHealth = 10f;
+        //d.movementSpeed = 6f;
+        //d.maxRotationSpeed = 50;
+        //d.maxHealth = 10f;
         d.weaponData.Add(new WeaponData());
         return d;
     }
@@ -64,8 +64,8 @@ public class UnitData
     public static UnitData Tank()
     {
         var d = new UnitData();
-        d.movementSpeed = 6f;
-        d.maxRotationSpeed = 50;
+        //d.movementSpeed = 6f;
+        //d.maxRotationSpeed = 50;
         d.weaponData.Add(new WeaponData(200, 2, 8, 1, 30)); //will use tanks for the damage tests
         d.weaponData.Add(new WeaponData(20, 0, 1.5f, 1, 40)); // minigun
         return d;
@@ -74,9 +74,9 @@ public class UnitData
     public static UnitData Infantry()
     {
         var d = new UnitData();
-        d.movementSpeed = 3f;
-        d.maxRotationSpeed = 50;
-        d.weaponData.Add(new WeaponData());
+        //d.movementSpeed = 3f;
+        //d.maxRotationSpeed = 50;
+        //d.weaponData.Add(new WeaponData());
         return d;
     }
 }

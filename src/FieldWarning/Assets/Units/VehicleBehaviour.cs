@@ -142,25 +142,33 @@ public class VehicleBehaviour : UnitBehaviour
 
     private void DoLinearMotion(float targetSpeed)
     {
-        targetSpeed = GetTerrainSpeedMultiplier() * Mathf.Clamp(targetSpeed, -Data.reverseSpeed, Data.movementSpeed);
+        float terrainSpeed = GetTerrainSpeedMultiplier();
+        if (terrainSpeed <= 0f) { // This is so the unit will "bump off" impassible terrain
+            _linVelocity = 0f;
+            Bounce();
+            //_position -= transform.forward * Data.movementSpeed * Time.deltaTime;
+        } else {
+            targetSpeed = terrainSpeed * Mathf.Clamp(targetSpeed, -Data.reverseSpeed, Data.movementSpeed);
 
-        _forwardAccel = Mathf.Sign(targetSpeed - _linVelocity) * Data.accelRate;
-        if (Mathf.Sign(_forwardAccel) != Mathf.Sign(_linVelocity))
-            _forwardAccel *= DECELERATION_FACTOR;
+            _forwardAccel = Mathf.Sign(targetSpeed - _linVelocity) * Data.accelRate;
+            if (Mathf.Sign(_forwardAccel) != Mathf.Sign(_linVelocity))
+                _forwardAccel *= DECELERATION_FACTOR;
 
-        if (Mathf.Abs(_forwardAccel) > 0) {
-            float accelTime = (targetSpeed - _linVelocity) / _forwardAccel;
-            if (accelTime < Data.accelDampTime)
-                _forwardAccel = _forwardAccel * (0.25f + 0.75f * accelTime / Data.accelDampTime);
+            if (Mathf.Abs(_forwardAccel) > 0) {
+                float accelTime = (targetSpeed - _linVelocity) / _forwardAccel;
+                if (accelTime < Data.accelDampTime)
+                    _forwardAccel = _forwardAccel * (0.25f + 0.75f * accelTime / Data.accelDampTime);
 
-            if (_forwardAccel > 0) {
-                _linVelocity = Mathf.Min(targetSpeed, _linVelocity + _forwardAccel * Time.deltaTime);
-            } else {
-                _linVelocity = Mathf.Max(targetSpeed, _linVelocity + _forwardAccel * Time.deltaTime);
+                if (_forwardAccel > 0) {
+                    _linVelocity = Mathf.Min(targetSpeed, _linVelocity + _forwardAccel * Time.deltaTime);
+                } else {
+                    _linVelocity = Mathf.Max(targetSpeed, _linVelocity + _forwardAccel * Time.deltaTime);
+                }
             }
+
+            _position += transform.forward * _linVelocity * Time.deltaTime;
         }
 
-        _position += transform.forward * _linVelocity * Time.deltaTime;
         _position.y = _terrainHeight;
     }
 
@@ -182,6 +190,23 @@ public class VehicleBehaviour : UnitBehaviour
 
         _rotation.x = _terrainTiltForward + accelTiltForward;
         _rotation.z = _terrainTiltRight - accelTiltRight;
+    }
+
+    // Bounce off impassible terrain, hopefully back to somewhere the unit belongs
+    private const float BOUNCE_RADIUS = 4f * TerrainConstants.MAP_SCALE;
+    private void Bounce()
+    {
+        Vector3 bounceDirection = Vector3.zero;
+        for (float angle = 0f; angle < 360f; angle += 30f) {
+            Vector3 offset = BOUNCE_RADIUS*new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0f, Mathf.Cos(angle * Mathf.Deg2Rad));
+            float speed = Data.mobility.GetUnitSpeed(Pathfinder.data.terrain, Pathfinder.data.map, transform.position + offset, 0f, -transform.forward);
+            if (speed > 0f)
+                bounceDirection += offset;
+        }
+        if (bounceDirection.magnitude < 0.01f)
+            bounceDirection = -transform.forward;
+
+        _position += bounceDirection.normalized * Data.movementSpeed * Time.deltaTime;
     }
 
     protected override Renderer[] GetRenderers()
@@ -206,18 +231,29 @@ public class VehicleBehaviour : UnitBehaviour
 
     public override void UpdateMapOrientation()
     {
-        // This way of doing the rotation should look nice because the unit won't sink into the ground
-        //      much assuming length and width are set correctly, but it is not very fast
+        int terrainType = Pathfinder == null ? TerrainMap.PLAIN : Pathfinder.data.map.GetTerrainType(transform.position);
+        if (terrainType == TerrainMap.BRIDGE) {
+            _terrainTiltForward = 0f;
+            _terrainTiltRight = 0f;
+            _terrainHeight = TerrainMap.BRIDGE_HEIGHT;
+        } else if (terrainType == TerrainMap.WATER) {
+            _terrainTiltForward = 0f;
+            _terrainTiltRight = 0f;
+            _terrainHeight = Pathfinder.data.map.waterHeight;
+        } else {
+            // This way of doing the rotation should look nice because the unit won't sink into the ground
+            //      much assuming length and width are set correctly, but it is not very fast
 
-        // Apparently our forward and backward are opposite of the Unity convention
-        float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + _forward * Data.length / 2);
-        float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - _forward * Data.length / 2);
-        float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - _right * Data.width / 2);
-        float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + _right * Data.width / 2);
+            // Apparently our forward and backward are opposite of the Unity convention
+            float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + _forward * Data.length / 2);
+            float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - _forward * Data.length / 2);
+            float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - _right * Data.width / 2);
+            float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + _right * Data.width / 2);
 
-        _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
-        _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.length);
-        _terrainTiltRight = Mathf.Atan((rightHeight - leftHeight) / Data.width);
+            _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
+            _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.length);
+            _terrainTiltRight = Mathf.Atan((rightHeight - leftHeight) / Data.width);
+        }
     }
 
     protected override bool IsMoving()
