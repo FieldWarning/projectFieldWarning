@@ -33,10 +33,16 @@ public sealed class MobilityType
     // A value of 0.5 means the unit will go the same speed on flat terrain as it does on a 30 degree downhill incline
     public readonly float DirectionalSlopeSensitivity;
 
+    public readonly float PlainSpeed, ForestSpeed, WaterSpeed;
+
     public MobilityType()
     {
         SlopeSensitivity = 2.0f;
         DirectionalSlopeSensitivity = 0.6f;
+
+        PlainSpeed = 0.4f;
+        ForestSpeed = 0.2f;
+        WaterSpeed = 0.0f;
 
         Index = MobilityTypes.Count;
         MobilityTypes.Insert(Index, this);
@@ -63,18 +69,26 @@ public sealed class MobilityType
         int terrainType = map.GetTerrainType(location);
         
         float speed = 0f;
-        if (terrainType == TerrainMap.FOREST) {
-            speed = 0.2f;
-        } else if (terrainType == TerrainMap.PLAIN) {
-            speed = 0.6f/4;
+        if (terrainType == TerrainMap.BRIDGE) {
+            speed = 1.0f;
+        } else if (terrainType == TerrainMap.BUILDING) {
+            speed = 0.0f;
         } else if (terrainType == TerrainMap.ROAD) {
             speed = 1.0f;
+        } else if (terrainType == TerrainMap.FOREST) {
+            speed = ForestSpeed;
+        } else if (terrainType == TerrainMap.PLAIN) {
+            speed = PlainSpeed;
         } else if (terrainType == TerrainMap.WATER) {
-            speed = 0.0f;
+            speed = WaterSpeed;
         }
 
         if (speed <= 0)
             return 0f;
+
+        if (terrainType == TerrainMap.BRIDGE || terrainType == TerrainMap.WATER)
+            return speed;
+
         return speed*GetSlopeFactor(terrain, location, direction);
     }
 
@@ -82,6 +96,7 @@ public sealed class MobilityType
     {
         direction.y = 0f;
         direction.Normalize();
+        direction *= 10f * TerrainConstants.MAP_SCALE;
         Vector3 perpendicular = new Vector3(-direction.z, 0f, direction.x);
 
         float height = terrain.SampleHeight(location);
