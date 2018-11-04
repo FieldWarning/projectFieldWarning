@@ -25,11 +25,12 @@ namespace PFW.Ingame.UI
     public class InputManager : MonoBehaviour
     {
         private Texture2D _firePosReticle;
+        private Texture2D _primedReticle;
 
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
-        public enum MouseMode { normal, purchasing, firePos };
+        public enum MouseMode { normal, purchasing, firePos, reverseMove, fastMove };
         public MouseMode CurMouseMode { get; private set; } = MouseMode.normal;
 
         private BuyTransaction _currentBuyTransaction;
@@ -57,9 +58,12 @@ namespace PFW.Ingame.UI
         void Start()
         {
             _firePosReticle = (Texture2D)Resources.Load("FirePosTestTexture");
-
             if (_firePosReticle == null)
                 throw new Exception("No fire pos reticle specified!");
+
+            _primedReticle = (Texture2D)Resources.Load("PrimedCursor");
+            if (_primedReticle == null)
+                throw new Exception("No primed reticle specified!");
 
             _rightClickManager = new ClickManager(1, OnOrderStart, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
         }
@@ -92,8 +96,22 @@ namespace PFW.Ingame.UI
                     Session.SelectionManager.DispatchFirePosCommand();
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
-                    ExitFirePosMode();
+                    EnterNormalMode();
 
+                break;
+
+            case MouseMode.reverseMove:
+                // TODO send reverse command
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                    EnterNormalMode();
+                break;
+
+            case MouseMode.fastMove:
+                // TODO send fast move command
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                    EnterNormalMode();
                 break;
 
             default:
@@ -248,6 +266,12 @@ namespace PFW.Ingame.UI
 
             } else if (Commands.FirePos && !Session.SelectionManager.Empty) {
                 EnterFirePosMode();
+
+            } else if (Commands.ReverseMove && !Session.SelectionManager.Empty) {
+                EnterReverseMoveMode();
+
+            } else if (Commands.FastMove && !Session.SelectionManager.Empty) {
+                EnterFastMoveMode();
             }
         }
 
@@ -258,10 +282,24 @@ namespace PFW.Ingame.UI
             Cursor.SetCursor(_firePosReticle, hotspot, CursorMode.Auto);
         }
 
-        private void ExitFirePosMode()
+        private void EnterNormalMode()
         {
             CurMouseMode = MouseMode.normal;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+
+        private void EnterFastMoveMode()
+        {
+            CurMouseMode = MouseMode.fastMove;
+            Vector2 hotspot = new Vector2(0, 0);
+            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+        }
+
+        private void EnterReverseMoveMode()
+        {
+            CurMouseMode = MouseMode.reverseMove;
+            Vector2 hotspot = new Vector2(0, 0);
+            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
         }
     }
 
@@ -282,6 +320,18 @@ namespace PFW.Ingame.UI
         public static bool FirePos {
             get {
                 return Input.GetKeyDown(Hotkeys.FirePos);
+            }
+        }
+
+        public static bool ReverseMove {
+            get {
+                return Input.GetKeyDown(Hotkeys.ReverseMove);
+            }
+        }
+
+        public static bool FastMove {
+            get {
+                return Input.GetKeyDown(Hotkeys.FastMove);
             }
         }
     }
