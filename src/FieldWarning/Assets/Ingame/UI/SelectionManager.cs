@@ -113,6 +113,14 @@ namespace PFW.Ingame.UI
             transporters.ForEach(x => x.EndQueueing());
         }
 
+        /**
+         * Send a movement command to the currently selected platoons.
+         * 
+         * \param useGhostHeading If true, the platoons will move to their sillhouettes
+         * (e.g. the command was previewed using mouse drag and the units should move to
+         * the positions that were shown in the preview). If false, the platoons
+         * will just pick their destinations based on where the cursor is.
+         */
         public void DispatchMoveCommand(bool useGhostHeading)
         {
             PrepareDestination();
