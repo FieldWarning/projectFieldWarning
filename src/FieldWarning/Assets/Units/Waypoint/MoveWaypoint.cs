@@ -16,17 +16,19 @@ using UnityEngine;
 
 public class MoveWaypoint : Waypoint
 {
-    public Vector3 destination;
-    public float heading;
+    public Vector3 Destination;
+    public float Heading;
+
+    public enum MoveMode { normalMove, reverseMove, fastMove };
+    public MoveMode moveMode { get; private set; } = MoveMode.normalMove;
 
     public MoveWaypoint(PlatoonBehaviour p) : base(p) { }
 
     public override void ProcessWaypoint()
     {
-
-        var destinations = Formations.GetLineFormation(destination, heading, platoon.Units.Count);
+        var destinations = Formations.GetLineFormation(Destination, Heading, platoon.Units.Count);
         platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
-        platoon.Units.ForEach(x => x.SetUnitFinalHeading(heading));
+        platoon.Units.ForEach(x => x.SetUnitFinalHeading(Heading));
     }
 
     public override bool OrderComplete()

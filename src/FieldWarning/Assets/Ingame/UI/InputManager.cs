@@ -47,6 +47,8 @@ namespace PFW.Ingame.UI
             }
         }
 
+        private SelectionManager _selectionManager;
+
         private Player _localPlayer {
             get {
                 return Session.LocalPlayer;
@@ -54,6 +56,12 @@ namespace PFW.Ingame.UI
         }
 
         private Vector3 _boxSelectStart;
+
+        void Awake()
+        {
+            _selectionManager = new SelectionManager();
+            _selectionManager.Awake();
+        }
 
         void Start()
         {
@@ -70,6 +78,8 @@ namespace PFW.Ingame.UI
 
         void Update()
         {
+            _selectionManager.Update(CurMouseMode);
+
             switch (CurMouseMode) {
 
             case MouseMode.purchasing:
@@ -93,7 +103,7 @@ namespace PFW.Ingame.UI
                 ApplyHotkeys();
 
                 if (Input.GetMouseButtonDown(0))
-                    Session.SelectionManager.DispatchFirePosCommand();
+                    _selectionManager.DispatchFirePosCommand();
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
@@ -101,14 +111,18 @@ namespace PFW.Ingame.UI
                 break;
 
             case MouseMode.reverseMove:
-                // TODO send reverse command
+                ApplyHotkeys();
+                if (Input.GetMouseButtonDown(0))
+                    _selectionManager.DispatchMoveCommand(false);
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
                 break;
 
             case MouseMode.fastMove:
-                // TODO send fast move command
+                ApplyHotkeys();
+                if (Input.GetMouseButtonDown(0))
+                    _selectionManager.DispatchMoveCommand(false);
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
@@ -117,6 +131,11 @@ namespace PFW.Ingame.UI
             default:
                 throw new Exception("impossible state");
             }
+        }
+
+        public void OnGUI()
+        {
+            _selectionManager.OnGUI();
         }
 
         private void ShowGhostUnitsAndMaybePurchase(RaycastHit terrainHover)
@@ -140,7 +159,7 @@ namespace PFW.Ingame.UI
 
                 if (_currentBuyTransaction == null)
                     return;
-                
+
                 closestSpawn.BuyPlatoons(_currentBuyTransaction.GhostPlatoons);
 
                 if (Input.GetKey(KeyCode.LeftShift)) {
@@ -165,25 +184,25 @@ namespace PFW.Ingame.UI
         void OnOrderStart()
         {
             RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit)) 
-                Session.SelectionManager.PrepareMoveOrderPreview(hit.point);            
+            if (Util.GetTerrainClickLocation(out hit))
+                _selectionManager.PrepareMoveOrderPreview(hit.point);
         }
 
         void OnOrderHold()
         {
             RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit)) 
-                Session.SelectionManager.RotateMoveOrderPreview(hit.point);
+            if (Util.GetTerrainClickLocation(out hit))
+                _selectionManager.RotateMoveOrderPreview(hit.point);
         }
 
         void OnOrderShortClick()
         {
-            Session.SelectionManager.DispatchMoveCommand(false);
+            _selectionManager.DispatchMoveCommand(false);
         }
 
         void OnOrderLongClick()
         {
-            Session.SelectionManager.DispatchMoveCommand(true);
+            _selectionManager.DispatchMoveCommand(true);
         }
 
         public void TankButtonCallback()
@@ -204,7 +223,7 @@ namespace PFW.Ingame.UI
             else
                 _currentBuyTransaction.AddUnit();
             CurMouseMode = MouseMode.purchasing;
-        }  
+        }
 
         public void InfantryButtonCallback()
         {
@@ -259,18 +278,18 @@ namespace PFW.Ingame.UI
         public void ApplyHotkeys()
         {
             if (Commands.Unload) {
-                Session.SelectionManager.DispatchUnloadCommand();
+                _selectionManager.DispatchUnloadCommand();
 
             } else if (Commands.Load) {
-                Session.SelectionManager.DispatchLoadCommand();
+                _selectionManager.DispatchLoadCommand();
 
-            } else if (Commands.FirePos && !Session.SelectionManager.Empty) {
+            } else if (Commands.FirePos && !_selectionManager.Empty) {
                 EnterFirePosMode();
 
-            } else if (Commands.ReverseMove && !Session.SelectionManager.Empty) {
+            } else if (Commands.ReverseMove && !_selectionManager.Empty) {
                 EnterReverseMoveMode();
 
-            } else if (Commands.FastMove && !Session.SelectionManager.Empty) {
+            } else if (Commands.FastMove && !_selectionManager.Empty) {
                 EnterFastMoveMode();
             }
         }
@@ -300,6 +319,16 @@ namespace PFW.Ingame.UI
             CurMouseMode = MouseMode.reverseMove;
             Vector2 hotspot = new Vector2(0, 0);
             Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+        }
+
+        public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
+        {
+            _selectionManager.RegisterPlatoonBirth(platoon);
+        }
+
+        public void RegisterPlatoonDeath(PlatoonBehaviour platoon)
+        {
+            _selectionManager.RegisterPlatoonDeath(platoon);
         }
     }
 

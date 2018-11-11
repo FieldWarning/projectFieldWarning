@@ -38,11 +38,6 @@ namespace PFW.Model.Game
         public ICollection<PlatoonBehaviour> AllPlatoons { get; } = new List<PlatoonBehaviour>();
 
         private InputManager _inputManager;
-        public MouseMode CurrentMouseMode {
-            get { return _inputManager.CurMouseMode; }
-        }
-
-        public SelectionManager SelectionManager;
 
         private VisibilityManager _visibilityManager;
 
@@ -78,15 +73,6 @@ namespace PFW.Model.Game
                 _inputManager.Session = this;
 
 
-
-            SelectionManager = FindObjectOfType<SelectionManager>();
-            if (SelectionManager == null)
-                SelectionManager = gameObject.AddComponent<SelectionManager>();
-
-            if (SelectionManager.Session == null)
-                SelectionManager.Session = this;
-
-
             _visibilityManager = FindObjectOfType<VisibilityManager>();
             if (_visibilityManager == null)
                 _visibilityManager = gameObject.AddComponent<VisibilityManager>();
@@ -107,12 +93,13 @@ namespace PFW.Model.Game
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
         {
             AllPlatoons.Add(platoon);
+            _inputManager.RegisterPlatoonBirth(platoon);
         }
 
         public void RegisterPlatoonDeath(PlatoonBehaviour platoon)
         {
             AllPlatoons.Remove(platoon);
-            SelectionManager.RegisterPlatoonDeath(platoon);
+            _inputManager.RegisterPlatoonDeath(platoon);
         }
 
         public void RegisterUnitBirth(UnitBehaviour unit)

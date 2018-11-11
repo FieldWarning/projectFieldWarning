@@ -74,7 +74,7 @@ public class Pathfinder
     {
         if (!HasDestination()) { // Nowhere to go
             waypoint = NoPosition;
-        }else if (Time.time > nextUpdateTime) {
+        } else if (Time.time > nextUpdateTime) {
             nextUpdateTime = Time.time + UpdateInterval;
             UpdateWaypoint();
         }
