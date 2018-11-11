@@ -20,6 +20,12 @@ using System.Linq;
 
 namespace PFW.Ingame.UI
 {
+    /**
+     * Responsible for the set of selected units.
+     * 
+     * Tracks which units are currently selected, adds and removes
+     * units from the selection, dispatches orders to the selected units.
+     */ 
     public class SelectionManager
     {
         private List<PlatoonBehaviour> _selection;

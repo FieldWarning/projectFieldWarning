@@ -20,6 +20,9 @@ using PFW.Service;
 
 namespace PFW.Ingame.UI
 {
+    /**
+     * Creates the interface for purchasing units within a match.
+     */ 
     public class DeploymentMenu : MonoBehaviour
     {
         public GameObject MenuButtonPrefab;

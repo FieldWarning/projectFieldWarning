@@ -22,6 +22,12 @@ using PFW.Model.Game;
 
 namespace PFW.Ingame.UI
 {
+    /**
+     * Handles almost all input during a match.
+     * 
+     * Some input, particularly for to selecting and deselecting units,
+     * is handled in SelectionManager instead.
+     */ 
     public class InputManager : MonoBehaviour
     {
         private Texture2D _firePosReticle;

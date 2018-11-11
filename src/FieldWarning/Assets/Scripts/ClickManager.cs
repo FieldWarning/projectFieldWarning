@@ -18,9 +18,13 @@ using static PFW.Ingame.UI.Constants;
 
 /*
  * The purpose of this class is to distinguish between short clicks
- * and dragging movements with the mouse held down. Once a mouse action is
- * completed, the appropriate callback is called - in this, the class works
- * as a "trampoline".
+ * and dragging movements with the mouse held down. 
+ * 
+ * The owner of a ClickManager initializes it with some callbacks and 
+ * repeatedly calls Update(). In each call, ClickManager checks the state
+ * of the mouse and calls any relevant callbacks. ClickManager is
+ * like a "trampoline" - when it is called its only job is to invoke
+ * a handler, usually in the class that called it.
  */
 public class ClickManager
 {
