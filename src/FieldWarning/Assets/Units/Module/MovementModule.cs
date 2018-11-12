@@ -22,7 +22,7 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
     {
         get
         {
-            return base.newWaypoint as MoveWaypoint;
+            return base.NewWaypoint as MoveWaypoint;
         }
     }
 

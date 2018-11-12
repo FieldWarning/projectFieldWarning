@@ -20,15 +20,18 @@ public class MoveWaypoint : Waypoint
     public float Heading;
 
     public enum MoveMode { normalMove, reverseMove, fastMove };
-    public MoveMode moveMode { get; private set; } = MoveMode.normalMove;
+
+    // TODO: make this immutable again, would require untangling the inheritance
+    public MoveMode moveMode { get; set; } = MoveMode.normalMove;
 
     public MoveWaypoint(PlatoonBehaviour p) : base(p) { }
 
     public override void ProcessWaypoint()
     {
         var destinations = Formations.GetLineFormation(Destination, Heading, platoon.Units.Count);
-        platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
-        platoon.Units.ForEach(x => x.SetUnitFinalHeading(Heading));
+        platoon.Units.ForEach(x => x.SetUnitDestination(this));
+        //platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
+        //platoon.Units.ForEach(x => x.SetUnitFinalHeading(Heading));
     }
 
     public override bool OrderComplete()

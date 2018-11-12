@@ -18,7 +18,7 @@ public abstract class PlatoonModule
 
     public PlatoonBehaviour Platoon;
 
-    public virtual Waypoint newWaypoint
+    public virtual Waypoint NewWaypoint
     {
         get
         {
@@ -46,19 +46,19 @@ public abstract class PlatoonModule
         if (!isQueueing)
             Platoon.Waypoints.Clear();
        
-        newWaypoint = GetModuleWaypoint();
+        NewWaypoint = GetModuleWaypoint();
     }
 
     public void EndQueueing()
     {
         if (_isQueueing || (Platoon.ActiveWaypoint != null && !Platoon.ActiveWaypoint.Interrupt()))
         {
-            Platoon.Waypoints.Enqueue(newWaypoint);
+            Platoon.Waypoints.Enqueue(NewWaypoint);
         }
         else
         {
-            Platoon.ActiveWaypoint = newWaypoint;
-            newWaypoint.ProcessWaypoint();
+            Platoon.ActiveWaypoint = NewWaypoint;
+            NewWaypoint.ProcessWaypoint();
         }
     }
 

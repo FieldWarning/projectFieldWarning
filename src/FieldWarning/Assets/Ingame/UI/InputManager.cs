@@ -27,7 +27,7 @@ namespace PFW.Ingame.UI
      * 
      * Some input, particularly for to selecting and deselecting units,
      * is handled in SelectionManager instead.
-     */ 
+     */
     public class InputManager : MonoBehaviour
     {
         private Texture2D _firePosReticle;
@@ -79,7 +79,7 @@ namespace PFW.Ingame.UI
             if (_primedReticle == null)
                 throw new Exception("No primed reticle specified!");
 
-            _rightClickManager = new ClickManager(1, OnOrderStart, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
+            _rightClickManager = new ClickManager(1, MoveGhostsToMouse, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
         }
 
         void Update()
@@ -118,8 +118,11 @@ namespace PFW.Ingame.UI
 
             case MouseMode.reverseMove:
                 ApplyHotkeys();
-                if (Input.GetMouseButtonDown(0))
-                    _selectionManager.DispatchMoveCommand(false);
+                if (Input.GetMouseButtonDown(0)) {
+                    MoveGhostsToMouse();
+                    _selectionManager.DispatchMoveCommand(
+                            false, MoveWaypoint.MoveMode.reverseMove);
+                }
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
@@ -127,8 +130,11 @@ namespace PFW.Ingame.UI
 
             case MouseMode.fastMove:
                 ApplyHotkeys();
-                if (Input.GetMouseButtonDown(0))
-                    _selectionManager.DispatchMoveCommand(false);
+                if (Input.GetMouseButtonDown(0)) {
+                    MoveGhostsToMouse();
+                    _selectionManager.DispatchMoveCommand(
+                            false, MoveWaypoint.MoveMode.fastMove);
+                }
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
@@ -187,7 +193,12 @@ namespace PFW.Ingame.UI
             }
         }
 
-        void OnOrderStart()
+        /**
+         * The ghost units are used to briefly hold the destination
+         * for a move order, so they need to be moved to the cursor
+         * if a move order click is issued.
+         */ 
+        void MoveGhostsToMouse()
         {
             RaycastHit hit;
             if (Util.GetTerrainClickLocation(out hit))
@@ -203,14 +214,17 @@ namespace PFW.Ingame.UI
 
         void OnOrderShortClick()
         {
-            _selectionManager.DispatchMoveCommand(false);
+            _selectionManager.DispatchMoveCommand(false, MoveWaypoint.MoveMode.normalMove);
         }
 
         void OnOrderLongClick()
         {
-            _selectionManager.DispatchMoveCommand(true);
+            _selectionManager.DispatchMoveCommand(true, MoveWaypoint.MoveMode.normalMove);
         }
 
+        /**
+         * Called when the tank button is pressed in the buy menu.
+         */ 
         public void TankButtonCallback()
         {
             if (_currentBuyTransaction == null)
@@ -222,6 +236,9 @@ namespace PFW.Ingame.UI
             CurMouseMode = MouseMode.purchasing;
         }
 
+        /**
+         * Called when the arty button is pressed in the buy menu.
+         */
         public void ArtyButtonCallback()
         {
             if (_currentBuyTransaction == null)
@@ -231,12 +248,18 @@ namespace PFW.Ingame.UI
             CurMouseMode = MouseMode.purchasing;
         }
 
+        /**
+         * Called when infantry button is pressed in the buy menu.
+         */
         public void InfantryButtonCallback()
         {
             BuildUnit(UnitType.Infantry);
             CurMouseMode = MouseMode.purchasing;
         }
 
+        /**
+         * Called when the afv button is pressed in the buy menu.
+         */
         public void AFVButtonCallback()
         {
             BuildUnit(UnitType.AFV);

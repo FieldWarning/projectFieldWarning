@@ -19,7 +19,7 @@ public class TransporterModule : PlatoonModule, Matchable<TransportableModule>
     {
         get
         {
-            return base.newWaypoint as TransporterWaypoint;
+            return base.NewWaypoint as TransporterWaypoint;
         }
     }
 

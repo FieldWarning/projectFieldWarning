@@ -118,21 +118,29 @@ namespace PFW.Ingame.UI
          * the positions that were shown in the preview). If false, the platoons
          * will just pick their destinations based on where the cursor is.
          */
-        public void DispatchMoveCommand(bool useGhostHeading)
+        public void DispatchMoveCommand(bool useGhostHeading, MoveWaypoint.MoveMode moveMode)
         {
             PrepareDestination();
 
+            // Set the heading of the waypoints:
             if (useGhostHeading) {
                 _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
             } else {
                 _selection.ForEach(x => x.Movement.UseDefaultHeading());
             }
 
+            // Set the move type of the waypoints:
+            _selection.ForEach(x => x.Movement.Waypoint.moveMode = moveMode);
+
+            // Enqueue the prepared waypoints:
             _selection.ForEach(x => x.Movement.EndQueueing());
 
             MaybeDropSelectionAfterOrder();
         }
 
+        /**
+         * Create waypoints and set their destinations, one waypoint per unit.
+         */ 
         public void PrepareDestination()
         {
             var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);

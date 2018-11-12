@@ -153,6 +153,32 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         return Platoon;
     }
 
+    // Waypoint-aware path setting. TODO there are like 5 methods for this,
+    // perhaps some can be cut?
+    public void SetUnitDestination(MoveWaypoint waypoint)
+    {
+        MoveCommandType moveType;
+
+        // TODO we have two enums for the same thing, remove one:
+        switch (waypoint.moveMode) {
+        case MoveWaypoint.MoveMode.fastMove:
+            moveType = MoveCommandType.Fast;
+            break;
+        case MoveWaypoint.MoveMode.normalMove:
+            moveType = MoveCommandType.Slow;
+            break;
+        case MoveWaypoint.MoveMode.reverseMove:
+            moveType = MoveCommandType.Reverse;
+            break;
+        default:
+            throw new System.Exception("Impossible state");
+        }
+
+        float a = Pathfinder.SetPath(waypoint.Destination, moveType);
+        if (a < Pathfinder.Forever)
+            SetUnitFinalHeading(waypoint.Heading);
+    }
+
     // Sets the unit's destination location, with a default heading value
     public void SetUnitDestination(Vector3 v)
     {

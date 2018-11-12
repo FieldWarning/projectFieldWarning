@@ -17,7 +17,7 @@ public class TransportableModule : PlatoonModule
     {
         get
         {
-            return base.newWaypoint as TransportableWaypoint;
+            return base.NewWaypoint as TransportableWaypoint;
         }
     }
 
