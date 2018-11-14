@@ -18,14 +18,18 @@ using static PFW.Ingame.UI.Constants;
 
 /*
  * The purpose of this class is to distinguish between short clicks
- * and dragging movements with the mouse held down. Once a mouse action is
- * completed, the appropriate callback is called - in this, the class works
- * as a "trampoline".
+ * and dragging movements with the mouse held down. 
+ * 
+ * The owner of a ClickManager initializes it with some callbacks and 
+ * repeatedly calls Update(). In each call, ClickManager checks the state
+ * of the mouse and calls any relevant callbacks. ClickManager is
+ * like a "trampoline" - when it is called its only job is to invoke
+ * a handler, usually in the class that called it.
  */
 public class ClickManager
 {
     private readonly int _button;
-    
+
     private Vector3 _lastMousePosition;
     private float _mouseDistanceTravelled = 0;
 
@@ -33,6 +37,10 @@ public class ClickManager
     private readonly Action _nonDragMouseRelease;
     private readonly Action _dragMouseRelease;
     private readonly Action _whileDraggingMouse;
+
+    // Prevents the firing of any events 
+    // unless the inital mouse down event was detected.
+    private bool _primed = false;
 
     public ClickManager(int button, Action onMouseDown, Action nonDragMouseRelease, Action dragMouseRelease, Action whileDraggingMouse)
     {
@@ -49,25 +57,27 @@ public class ClickManager
     public void Update()
     {
         if (Input.GetMouseButtonDown(_button)) {
+            _primed = true;
             _mouseDistanceTravelled = 0;
             _lastMousePosition = Input.mousePosition;
             _onMouseDown();
         }
 
-        if (Input.GetMouseButton(_button) && !isDragClick()) {
+        if (_primed && Input.GetMouseButton(_button) && !isDragClick()) {
             _mouseDistanceTravelled += Vector3.Distance(Input.mousePosition, _lastMousePosition);
             _lastMousePosition = Input.mousePosition;
         }
 
-        if (Input.GetMouseButton(_button) && isDragClick())
+        if (_primed && Input.GetMouseButton(_button) && isDragClick())
             _whileDraggingMouse();
 
-
-        if (Input.GetMouseButtonUp(_button))
+        if (_primed && Input.GetMouseButtonUp(_button)) {
+            _primed = false;
             if (isDragClick())
                 _dragMouseRelease();
             else
                 _nonDragMouseRelease();
+        }
     }
 
     private bool isDragClick()

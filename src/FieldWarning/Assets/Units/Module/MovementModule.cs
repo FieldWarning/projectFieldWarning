@@ -22,7 +22,7 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
     {
         get
         {
-            return base.newWaypoint as MoveWaypoint;
+            return base.NewWaypoint as MoveWaypoint;
         }
     }
 
@@ -47,12 +47,12 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
     public void GetHeadingFromGhost()
     {
         var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-        SetFinalOrientation(Waypoint.destination, heading);
+        SetFinalOrientation(Waypoint.Destination, heading);
     }
 
     public void UseDefaultHeading()
     {
-        SetFinalOrientation(Waypoint.destination, UnitBehaviour.NO_HEADING);
+        SetFinalOrientation(Waypoint.Destination, UnitBehaviour.NO_HEADING);
     }
 
     private Vector3 GetFunctionalPosition()
@@ -60,7 +60,7 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
         var moveWaypoint = Platoon.Waypoints.Where(x => x is MoveWaypoint);
         if (moveWaypoint.Count() > 0)
         {
-            return (moveWaypoint.Last() as MoveWaypoint).destination;
+            return (moveWaypoint.Last() as MoveWaypoint).Destination;
         }
         else
         {
@@ -70,8 +70,8 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
 
     public void SetFinalOrientation(Vector3 v, float h)
     {
-        Waypoint.destination = v;
-        Waypoint.heading = h;
+        Waypoint.Destination = v;
+        Waypoint.Heading = h;
     }
 
     public void SetMatch(Vector3 match)

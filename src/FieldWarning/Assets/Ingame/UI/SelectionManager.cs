@@ -20,7 +20,13 @@ using System.Linq;
 
 namespace PFW.Ingame.UI
 {
-    public class SelectionManager : MonoBehaviour
+    /**
+     * Responsible for the set of selected units.
+     * 
+     * Tracks which units are currently selected, adds and removes
+     * units from the selection, dispatches orders to the selected units.
+     */ 
+    public class SelectionManager
     {
         private List<PlatoonBehaviour> _selection;
         public bool Empty {
@@ -38,22 +44,15 @@ namespace PFW.Ingame.UI
 
         private ClickManager _clickManager;
 
-        private MatchSession _session;
-        public MatchSession Session {
-            get {
-                return _session;
-            }
-
-            set {
-                if (_session == null)
-                    _session = value;
-            }
-        }
-
         // State for managing move order previews:
         private Vector3 _previewPosition;
         private bool _makePreviewVisible;
         // END state for managing move order previews:
+
+        private MouseMode _mouseMode;
+
+        public ICollection<PlatoonBehaviour> AllPlatoons { get; }
+            = new List<PlatoonBehaviour>();
 
         public void Awake()
         {
@@ -74,14 +73,12 @@ namespace PFW.Ingame.UI
             }
         }
 
-        public void Update()
+        public void Update(MouseMode mouseMode)
         {
-            // disgustingly tight coupling:
-            if (Session.CurrentMouseMode != MouseMode.normal
-                && Session.CurrentMouseMode != MouseMode.firePos)
-                return;
-
-            _clickManager.Update();
+            _mouseMode = mouseMode;
+            
+            if (_mouseMode == MouseMode.normal)
+                _clickManager.Update();
         }
 
         public void DispatchFirePosCommand()
@@ -113,22 +110,39 @@ namespace PFW.Ingame.UI
             transporters.ForEach(x => x.EndQueueing());
         }
 
-        public void DispatchMoveCommand(bool useGhostHeading)
+        /**
+         * Send a movement command to the currently selected platoons.
+         * 
+         * \param useGhostHeading If true, the platoons will move to their sillhouettes
+         * (e.g. the command was previewed using mouse drag and the units should move to
+         * the positions that were shown in the preview). If false, the platoons
+         * will just pick their destinations based on where the cursor is.
+         */
+        public void DispatchMoveCommand(bool useGhostHeading, MoveWaypoint.MoveMode moveMode)
         {
             PrepareDestination();
 
+            // Set the heading of the waypoints:
             if (useGhostHeading) {
                 _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
             } else {
                 _selection.ForEach(x => x.Movement.UseDefaultHeading());
             }
 
+            // Set the move type of the waypoints:
+            _selection.ForEach(x => x.Movement.Waypoint.moveMode = moveMode);
+
+            // Enqueue the prepared waypoints:
             _selection.ForEach(x => x.Movement.EndQueueing());
 
             MaybeDropSelectionAfterOrder();
         }
 
-        public void PrepareDestination() {
+        /**
+         * Create waypoints and set their destinations, one waypoint per unit.
+         */ 
+        public void PrepareDestination()
+        {
             var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);
             bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
             _selection.ForEach(x => x.Movement.BeginQueueing(shouldQueue));
@@ -182,10 +196,12 @@ namespace PFW.Ingame.UI
 
         private void UpdateSelection()
         {
-            if (Session.CurrentMouseMode == MouseMode.firePos)
+            if (_mouseMode == MouseMode.firePos
+                || _mouseMode == MouseMode.fastMove
+                || _mouseMode == MouseMode.reverseMove)
                 return;
 
-            List<PlatoonBehaviour> newSelection = Session.AllPlatoons.Where(x => IsInside(x)).ToList();
+            List<PlatoonBehaviour> newSelection = AllPlatoons.Where(x => IsInside(x)).ToList();
             if (!Input.GetKey(KeyCode.LeftShift) && _selection != null) {
                 List<PlatoonBehaviour> old = _selection.Except(newSelection).ToList();
                 UnselectAll(old);
@@ -251,7 +267,7 @@ namespace PFW.Ingame.UI
         }
 
         public void PrepareMoveOrderPreview(Vector3 position)
-        {            
+        {
             Vector3 centerMass = _selection.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
             _previewPosition = position;
             PositionGhostUnits(2 * _previewPosition - centerMass, false);
@@ -259,7 +275,7 @@ namespace PFW.Ingame.UI
             // Prevent short clicks from displaying preview by only showing it on the first call to RotateMoveOrderPreview call. Should maybe move the logic to UIManager, since it should be responsible for recognizing hold clicks, not this code.
             _makePreviewVisible = true;
         }
-        
+
         public void RotateMoveOrderPreview(Vector3 facingPoint)
         {
             PositionGhostUnits(facingPoint, _makePreviewVisible);
@@ -290,8 +306,15 @@ namespace PFW.Ingame.UI
             }
         }
 
-        public void RegisterPlatoonDeath(PlatoonBehaviour platoon) {
+        public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
+        {
+            AllPlatoons.Add(platoon);
+        }
+
+        public void RegisterPlatoonDeath(PlatoonBehaviour platoon)
+        {
             _selection.Remove(platoon);
+            AllPlatoons.Remove(platoon);
         }
     }
 }

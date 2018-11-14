@@ -22,14 +22,21 @@ using PFW.Model.Game;
 
 namespace PFW.Ingame.UI
 {
+    /**
+     * Handles almost all input during a match.
+     * 
+     * Some input, particularly for to selecting and deselecting units,
+     * is handled in SelectionManager instead.
+     */
     public class InputManager : MonoBehaviour
     {
         private Texture2D _firePosReticle;
+        private Texture2D _primedReticle;
 
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
-        public enum MouseMode { normal, purchasing, firePos };
+        public enum MouseMode { normal, purchasing, firePos, reverseMove, fastMove };
         public MouseMode CurMouseMode { get; private set; } = MouseMode.normal;
 
         private BuyTransaction _currentBuyTransaction;
@@ -46,6 +53,8 @@ namespace PFW.Ingame.UI
             }
         }
 
+        private SelectionManager _selectionManager;
+
         private Player _localPlayer {
             get {
                 return Session.LocalPlayer;
@@ -54,18 +63,29 @@ namespace PFW.Ingame.UI
 
         private Vector3 _boxSelectStart;
 
+        void Awake()
+        {
+            _selectionManager = new SelectionManager();
+            _selectionManager.Awake();
+        }
+
         void Start()
         {
             _firePosReticle = (Texture2D)Resources.Load("FirePosTestTexture");
-
             if (_firePosReticle == null)
                 throw new Exception("No fire pos reticle specified!");
 
-            _rightClickManager = new ClickManager(1, OnOrderStart, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
+            _primedReticle = (Texture2D)Resources.Load("PrimedCursor");
+            if (_primedReticle == null)
+                throw new Exception("No primed reticle specified!");
+
+            _rightClickManager = new ClickManager(1, MoveGhostsToMouse, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
         }
 
         void Update()
         {
+            _selectionManager.Update(CurMouseMode);
+
             switch (CurMouseMode) {
 
             case MouseMode.purchasing:
@@ -89,16 +109,45 @@ namespace PFW.Ingame.UI
                 ApplyHotkeys();
 
                 if (Input.GetMouseButtonDown(0))
-                    Session.SelectionManager.DispatchFirePosCommand();
+                    _selectionManager.DispatchFirePosCommand();
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
-                    ExitFirePosMode();
+                    EnterNormalMode();
 
+                break;
+
+            case MouseMode.reverseMove:
+                ApplyHotkeys();
+                if (Input.GetMouseButtonDown(0)) {
+                    MoveGhostsToMouse();
+                    _selectionManager.DispatchMoveCommand(
+                            false, MoveWaypoint.MoveMode.reverseMove);
+                }
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                    EnterNormalMode();
+                break;
+
+            case MouseMode.fastMove:
+                ApplyHotkeys();
+                if (Input.GetMouseButtonDown(0)) {
+                    MoveGhostsToMouse();
+                    _selectionManager.DispatchMoveCommand(
+                            false, MoveWaypoint.MoveMode.fastMove);
+                }
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                    EnterNormalMode();
                 break;
 
             default:
                 throw new Exception("impossible state");
             }
+        }
+
+        public void OnGUI()
+        {
+            _selectionManager.OnGUI();
         }
 
         private void ShowGhostUnitsAndMaybePurchase(RaycastHit terrainHover)
@@ -122,7 +171,7 @@ namespace PFW.Ingame.UI
 
                 if (_currentBuyTransaction == null)
                     return;
-                
+
                 closestSpawn.BuyPlatoons(_currentBuyTransaction.GhostPlatoons);
 
                 if (Input.GetKey(KeyCode.LeftShift)) {
@@ -144,30 +193,38 @@ namespace PFW.Ingame.UI
             }
         }
 
-        void OnOrderStart()
+        /**
+         * The ghost units are used to briefly hold the destination
+         * for a move order, so they need to be moved to the cursor
+         * if a move order click is issued.
+         */ 
+        void MoveGhostsToMouse()
         {
             RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit)) 
-                Session.SelectionManager.PrepareMoveOrderPreview(hit.point);            
+            if (Util.GetTerrainClickLocation(out hit))
+                _selectionManager.PrepareMoveOrderPreview(hit.point);
         }
 
         void OnOrderHold()
         {
             RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit)) 
-                Session.SelectionManager.RotateMoveOrderPreview(hit.point);
+            if (Util.GetTerrainClickLocation(out hit))
+                _selectionManager.RotateMoveOrderPreview(hit.point);
         }
 
         void OnOrderShortClick()
         {
-            Session.SelectionManager.DispatchMoveCommand(false);
+            _selectionManager.DispatchMoveCommand(false, MoveWaypoint.MoveMode.normalMove);
         }
 
         void OnOrderLongClick()
         {
-            Session.SelectionManager.DispatchMoveCommand(true);
+            _selectionManager.DispatchMoveCommand(true, MoveWaypoint.MoveMode.normalMove);
         }
 
+        /**
+         * Called when the tank button is pressed in the buy menu.
+         */ 
         public void TankButtonCallback()
         {
             if (_currentBuyTransaction == null)
@@ -179,6 +236,9 @@ namespace PFW.Ingame.UI
             CurMouseMode = MouseMode.purchasing;
         }
 
+        /**
+         * Called when the arty button is pressed in the buy menu.
+         */
         public void ArtyButtonCallback()
         {
             if (_currentBuyTransaction == null)
@@ -186,14 +246,20 @@ namespace PFW.Ingame.UI
             else
                 _currentBuyTransaction.AddUnit();
             CurMouseMode = MouseMode.purchasing;
-        }  
+        }
 
+        /**
+         * Called when infantry button is pressed in the buy menu.
+         */
         public void InfantryButtonCallback()
         {
             BuildUnit(UnitType.Infantry);
             CurMouseMode = MouseMode.purchasing;
         }
 
+        /**
+         * Called when the afv button is pressed in the buy menu.
+         */
         public void AFVButtonCallback()
         {
             BuildUnit(UnitType.AFV);
@@ -241,13 +307,19 @@ namespace PFW.Ingame.UI
         public void ApplyHotkeys()
         {
             if (Commands.Unload) {
-                Session.SelectionManager.DispatchUnloadCommand();
+                _selectionManager.DispatchUnloadCommand();
 
             } else if (Commands.Load) {
-                Session.SelectionManager.DispatchLoadCommand();
+                _selectionManager.DispatchLoadCommand();
 
-            } else if (Commands.FirePos && !Session.SelectionManager.Empty) {
+            } else if (Commands.FirePos && !_selectionManager.Empty) {
                 EnterFirePosMode();
+
+            } else if (Commands.ReverseMove && !_selectionManager.Empty) {
+                EnterReverseMoveMode();
+
+            } else if (Commands.FastMove && !_selectionManager.Empty) {
+                EnterFastMoveMode();
             }
         }
 
@@ -258,10 +330,34 @@ namespace PFW.Ingame.UI
             Cursor.SetCursor(_firePosReticle, hotspot, CursorMode.Auto);
         }
 
-        private void ExitFirePosMode()
+        private void EnterNormalMode()
         {
             CurMouseMode = MouseMode.normal;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+
+        private void EnterFastMoveMode()
+        {
+            CurMouseMode = MouseMode.fastMove;
+            Vector2 hotspot = new Vector2(0, 0);
+            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+        }
+
+        private void EnterReverseMoveMode()
+        {
+            CurMouseMode = MouseMode.reverseMove;
+            Vector2 hotspot = new Vector2(0, 0);
+            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+        }
+
+        public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
+        {
+            _selectionManager.RegisterPlatoonBirth(platoon);
+        }
+
+        public void RegisterPlatoonDeath(PlatoonBehaviour platoon)
+        {
+            _selectionManager.RegisterPlatoonDeath(platoon);
         }
     }
 
@@ -282,6 +378,18 @@ namespace PFW.Ingame.UI
         public static bool FirePos {
             get {
                 return Input.GetKeyDown(Hotkeys.FirePos);
+            }
+        }
+
+        public static bool ReverseMove {
+            get {
+                return Input.GetKeyDown(Hotkeys.ReverseMove);
+            }
+        }
+
+        public static bool FastMove {
+            get {
+                return Input.GetKeyDown(Hotkeys.FastMove);
             }
         }
     }
