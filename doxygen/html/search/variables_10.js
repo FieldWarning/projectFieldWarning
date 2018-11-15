@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['radius',['radius',['../class_unit_data.html#a5a82c66d10273d20a412b480f6688eed',1,'UnitData']]],
+  ['raiseataltitude',['raiseAtAltitude',['../class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_landing_gear.html#a37f18925a3f9d01587d84f5a931805da',1,'UnityStandardAssets::Vehicles::Aeroplane::LandingGear']]],
+  ['reflection',['reflection',['../class_unity_standard_assets_1_1_water_1_1_water_tile.html#afbbdc233e3c3eb9bdb994cd649761f5d',1,'UnityStandardAssets::Water::WaterTile']]],
+  ['reflectionmask',['reflectionMask',['../class_unity_standard_assets_1_1_water_1_1_planar_reflection.html#a9dc798eef2279794ab2d34242810a628',1,'UnityStandardAssets::Water::PlanarReflection']]],
+  ['reflectionsampler',['reflectionSampler',['../class_unity_standard_assets_1_1_water_1_1_planar_reflection.html#a1677dea47658aae145100204e24cf51f',1,'UnityStandardAssets::Water::PlanarReflection']]],
+  ['reflectlayers',['reflectLayers',['../class_unity_standard_assets_1_1_water_1_1_water.html#ad8e5b877f3c4268919a4b815c495a897',1,'UnityStandardAssets::Water::Water']]],
+  ['reflectskybox',['reflectSkybox',['../class_unity_standard_assets_1_1_water_1_1_planar_reflection.html#ac9d2d7b456df4e66601c899f34520dce',1,'UnityStandardAssets::Water::PlanarReflection']]],
+  ['refractlayers',['refractLayers',['../class_unity_standard_assets_1_1_water_1_1_water.html#a25798989345280626fe9a2f9167ee80e',1,'UnityStandardAssets::Water::Water']]],
+  ['relative',['relative',['../class_unity_standard_assets_1_1_utility_1_1_simple_mouse_rotator.html#ae3fa7d106b4665c21827c83c0f536b6d',1,'UnityStandardAssets::Utility::SimpleMouseRotator']]],
+  ['reloadtime',['ReloadTime',['../class_p_f_w_1_1_weapons_1_1_weapon_data.html#a0ea3f3c351d31ebc71a304eba20e3337',1,'PFW::Weapons::WeaponData']]],
+  ['reloadtimer',['ReloadTimer',['../class_assembly_c_sharp_1_1_weapons_reload_timer.html#a5e57182a9aa2c92b5b33853c3ecd6a30',1,'AssemblyCSharp::WeaponsReloadTimer']]],
+  ['repeattrigger',['repeatTrigger',['../class_unity_standard_assets_1_1_utility_1_1_activate_trigger.html#a2efeb1eed91a40bce625222c1de6177d',1,'UnityStandardAssets::Utility::ActivateTrigger']]],
+  ['replacement',['replacement',['../class_unity_standard_assets_1_1_utility_1_1_auto_mobile_shader_switch_1_1_replacement_definition.html#aa969ba1a979e7f9b4364fa9d9c4de934',1,'UnityStandardAssets::Utility::AutoMobileShaderSwitch::ReplacementDefinition']]],
+  ['reset',['reset',['../class_unity_standard_assets_1_1_effects_1_1_explosive.html#abb3fa4d189349a743f7ddcd17e1f502d',1,'UnityStandardAssets::Effects::Explosive']]],
+  ['resettimedelay',['resetTimeDelay',['../class_unity_standard_assets_1_1_effects_1_1_explosive.html#a723673fe534fca888c16860bd64dddc2',1,'UnityStandardAssets::Effects::Explosive']]],
+  ['responsespeed',['responseSpeed',['../class_unity_standard_assets_1_1_cross_platform_input_1_1_axis_touch_button.html#adf1bf30668ea4383040d07ebb00fb373',1,'UnityStandardAssets::CrossPlatformInput::AxisTouchButton']]],
+  ['returntocentrespeed',['returnToCentreSpeed',['../class_unity_standard_assets_1_1_cross_platform_input_1_1_axis_touch_button.html#a2a194c4af2b74c29b5388c9e0bffd4f5',1,'UnityStandardAssets::CrossPlatformInput::AxisTouchButton']]],
+  ['reversemove',['ReverseMove',['../class_p_f_w_1_1_ingame_1_1_u_i_1_1_hotkeys.html#a9bffd7455106864cadd14f4e46f1c29a',1,'PFW::Ingame::UI::Hotkeys']]],
+  ['reversespeed',['reverseSpeed',['../class_unit_data.html#a63e04a0415ce47851f11882d6b2c0d14',1,'UnitData']]],
+  ['road',['ROAD',['../class_terrain_map.html#aaaf96625839571c7dbbae792760df8a4',1,'TerrainMap']]],
+  ['rotatedegreespersecond',['rotateDegreesPerSecond',['../class_unity_standard_assets_1_1_utility_1_1_auto_move_and_rotate.html#a44e784fd8e9253c3ae420024be95b0e2',1,'UnityStandardAssets::Utility::AutoMoveAndRotate']]],
+  ['rotationrange',['rotationRange',['../class_unity_standard_assets_1_1_utility_1_1_simple_mouse_rotator.html#af79ed9357370019db5ce36b6915d570f',1,'UnityStandardAssets::Utility::SimpleMouseRotator']]],
+  ['rotationrate',['RotationRate',['../class_p_f_w_1_1_weapons_1_1_weapon_data.html#a5633d6059f336a7c00cf35a7ce1ae232',1,'PFW::Weapons::WeaponData']]],
+  ['rotationspeed',['rotationSpeed',['../class_unity_standard_assets_1_1_utility_1_1_simple_mouse_rotator.html#afc9602d14db21096a9777a6eaba4fbb5',1,'UnityStandardAssets::Utility::SimpleMouseRotator']]]
+];

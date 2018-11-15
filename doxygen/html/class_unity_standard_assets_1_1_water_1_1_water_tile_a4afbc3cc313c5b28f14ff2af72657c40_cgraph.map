@@ -1,0 +1,4 @@
+<map id="UnityStandardAssets.Water.WaterTile.OnWillRenderObject" name="UnityStandardAssets.Water.WaterTile.OnWillRenderObject">
+<area shape="rect" id="node2" href="$class_unity_standard_assets_1_1_water_1_1_planar_reflection.html#a0dc504b4e5d267a4ffb2b5227689f8da" title="UnityStandardAssets.Water.\lPlanarReflection.WaterTileBeing\lRendered" alt="" coords="265,5,473,61"/>
+<area shape="rect" id="node3" href="$class_unity_standard_assets_1_1_water_1_1_water_base.html#a9496cf672bf0909b0496521aaa1c9029" title="UnityStandardAssets.Water.\lWaterBase.WaterTileBeingRendered" alt="" coords="252,86,487,127"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="PFW.Ingame.UI.InputManager.BuildUnit" name="PFW.Ingame.UI.InputManager.BuildUnit">
+<area shape="rect" id="node2" href="$class_ghost_platoon_behaviour.html#accbc6b03eff2f33f96376aac09ab6b11" title="GhostPlatoonBehaviour.Build" alt="" coords="253,13,444,39"/>
+<area shape="rect" id="node3" href="$class_ghost_platoon_behaviour.html#ac1df674244f09527175584d4b85183fb" title="GhostPlatoonBehaviour.Initialize" alt="" coords="492,13,700,39"/>
+</map>

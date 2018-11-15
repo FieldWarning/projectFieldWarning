@@ -1,0 +1,4 @@
+<map id="UnityStandardAssets.Water.WaterTile" name="UnityStandardAssets.Water.WaterTile">
+<area shape="rect" id="node3" href="$class_unity_standard_assets_1_1_water_1_1_planar_reflection.html" title="{UnityStandardAssets.Water.\lPlanarReflection\n|+ reflectionMask\l+ reflectSkybox\l+ clearColor\l+ reflectionSampler\l+ clipPlaneOffset\l|+ Start()\l+ RenderHelpCameras()\l+ LateUpdate()\l+ WaterTileBeingRendered()\l+ OnEnable()\l+ OnDisable()\l}" alt="" coords="48,132,236,356"/>
+<area shape="rect" id="node4" href="$class_unity_standard_assets_1_1_water_1_1_water_base.html" title="{UnityStandardAssets.Water.\lWaterBase\n|+ sharedMaterial\l+ waterQuality\l+ edgeBlend\l|+ UpdateShader()\l+ WaterTileBeingRendered()\l+ Update()\l}" alt="" coords="260,169,448,319"/>
+</map>

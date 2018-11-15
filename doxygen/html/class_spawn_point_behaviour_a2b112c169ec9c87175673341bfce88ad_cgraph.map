@@ -1,0 +1,32 @@
+<map id="SpawnPointBehaviour.Update" name="SpawnPointBehaviour.Update">
+<area shape="rect" id="node2" href="$class_ghost_platoon_behaviour.html#a60fea7a329b164aab24a2abcc3fb5225" title="GhostPlatoonBehaviour.Spawn" alt="" coords="245,419,445,446"/>
+<area shape="rect" id="node3" href="$class_ghost_platoon_behaviour.html#ad183737a69147b4ebdb9561d4fb8473a" title="GhostPlatoonBehaviour.Build\lRealPlatoon" alt="" coords="493,315,684,356"/>
+<area shape="rect" id="node16" href="$class_platoon_behaviour.html#a2a254a0e49ff73440b3de0e46a55f9aa" title="PlatoonBehaviour.Spawn" alt="" coords="506,515,671,542"/>
+<area shape="rect" id="node4" href="$class_platoon_behaviour.html#a68f9757b25f906f2dcb36eb329526f57" title="PlatoonBehaviour.Initialize" alt="" coords="756,238,929,265"/>
+<area shape="rect" id="node15" href="$class_platoon_behaviour.html#a7a5982462ae050ab161028bea8d67a1b" title="PlatoonBehaviour.SetGhost\lPlatoon" alt="" coords="752,315,933,356"/>
+<area shape="rect" id="node5" href="$class_p_f_w_1_1_ingame_1_1_prototype_1_1_unit_factory.html#a695b13e83c2856c1a977cff92e83ff1a" title="PFW.Ingame.Prototype.Unit\lFactory.FindPrefab" alt="" coords="1024,5,1209,47"/>
+<area shape="rect" id="node6" href="$class_p_f_w_1_1_ingame_1_1_prototype_1_1_unit_factory.html#af321bb3b54598eae0b0be8517e085eb8" title="PFW.Ingame.Prototype.Unit\lFactory.MakeUnit" alt="" coords="1024,71,1209,112"/>
+<area shape="rect" id="node7" href="$class_unit_behaviour.html#a936cd0113ef094504458b0075eeef609" title="UnitBehaviour.SetPlatoon" alt="" coords="1032,137,1201,163"/>
+<area shape="rect" id="node8" href="$class_platoon_behaviour.html#af1e4a341540ce9b16e9052edfe75af68" title="PlatoonBehaviour.BuildModules" alt="" coords="1015,187,1219,214"/>
+<area shape="rect" id="node9" href="$class_ghost_platoon_behaviour.html#accbc6b03eff2f33f96376aac09ab6b11" title="GhostPlatoonBehaviour.Build" alt="" coords="1021,238,1212,265"/>
+<area shape="rect" id="node11" href="$class_transporter_module.html#a8b5682ebce676460a3e6eb2630edeefb" title="TransporterModule.SetTransported" alt="" coords="1006,289,1227,315"/>
+<area shape="rect" id="node12" href="$class_movement_module.html#a441f08fab65c2ccc03bca5140f2f34f6" title="MovementModule.SetDestination" alt="" coords="1011,339,1223,366"/>
+<area shape="rect" id="node14" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_icon_behaviour.html#abb566f9900a861e627caaa0e54f907e3" title="PFW.Ingame.UI.IconBehaviour.\lSetSource" alt="" coords="1015,391,1218,432"/>
+<area shape="rect" id="node10" href="$class_ghost_platoon_behaviour.html#ac1df674244f09527175584d4b85183fb" title="GhostPlatoonBehaviour.Initialize" alt="" coords="1295,238,1503,265"/>
+<area shape="rect" id="node13" href="$class_movement_module.html#a88892b52cfe79643e1e5a2ce1e119e46" title="MovementModule.SetFinalOrientation" alt="" coords="1280,423,1519,450"/>
+<area shape="rect" id="node17" href="$class_formations.html#af2c63193806b462ab8397dec4c736c8c" title="Formations.GetLineFormation" alt="" coords="745,406,940,433"/>
+<area shape="rect" id="node18" href="$class_platoon_module.html#a1bfc1e6251b3297e0f579a24c4ea386c" title="PlatoonModule.BeginQueueing" alt="" coords="743,457,943,483"/>
+<area shape="rect" id="node20" href="$class_movement_module.html#aec00f88fad8651adf425874113db793d" title="MovementModule.GetDestination\lFromGhost" alt="" coords="736,508,949,549"/>
+<area shape="rect" id="node21" href="$class_platoon_module.html#af596924ad644b45724bf39d7f70ff235" title="PlatoonModule.EndQueueing" alt="" coords="747,574,938,601"/>
+<area shape="rect" id="node24" href="$class_ghost_platoon_behaviour.html#ad0b1d28c785e4fb800665b4368780ff1" title="GhostPlatoonBehaviour.Set\lVisible" alt="" coords="752,639,933,680"/>
+<area shape="rect" id="node31" href="$class_p_f_w_1_1_model_1_1_game_1_1_match_session.html#ab001f92c0b9de869ffe6843e930ed5ee" title="PFW.Model.Game.MatchSession.\lRegisterPlatoonBirth" alt="" coords="732,704,953,745"/>
+<area shape="rect" id="node19" href="$class_platoon_module.html#a9b4779506247d23065347249322956d4" title="PlatoonModule.GetModuleWaypoint" alt="" coords="1001,457,1232,483"/>
+<area shape="rect" id="node22" href="$class_waypoint.html#ace02d25cd1655936079f835fee9fab12" title="Waypoint.Interrupt" alt="" coords="1053,558,1181,585"/>
+<area shape="rect" id="node23" href="$class_waypoint.html#a7c605044f038204c44b091e766878d2e" title="Waypoint.ProcessWaypoint" alt="" coords="1025,609,1209,635"/>
+<area shape="rect" id="node25" href="$class_unit_behaviour.html#aaa94f70d0153e3cd997e77eb86ae4a69" title="UnitBehaviour.SetVisible" alt="" coords="1035,659,1199,686"/>
+<area shape="rect" id="node28" href="$class_unit_label_attacher.html#a5125338bf4d8be9d07c47d0914cc52b0" title="UnitLabelAttacher.SetVisibility" alt="" coords="1017,710,1216,737"/>
+<area shape="rect" id="node26" href="$class_unit_behaviour.html#a774a6e25bd55774194fff8bddb663d8f" title="UnitBehaviour.GetRenderers" alt="" coords="1307,609,1492,635"/>
+<area shape="rect" id="node27" href="$class_unit_behaviour.html#aeb94f47adde77cc405513d1b01da2fe6" title="UnitBehaviour.SetLayer" alt="" coords="1321,659,1478,686"/>
+<area shape="rect" id="node29" href="$class_unit_label_attacher.html#aea9c568be24632cc352d5e5efec318cd" title="UnitLabelAttacher.Show" alt="" coords="1319,710,1480,737"/>
+<area shape="rect" id="node30" href="$class_unit_label_attacher.html#a7178d1628f3278bffe1c08045d0a1b6c" title="UnitLabelAttacher.Hide" alt="" coords="1322,761,1477,787"/>
+</map>

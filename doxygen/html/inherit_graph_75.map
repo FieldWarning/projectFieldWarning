@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_waypoint.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="5,56,83,83"/>
+<area shape="rect" id="node2" href="$class_move_waypoint.html" title="MoveWaypoint" alt="" coords="155,5,261,32"/>
+<area shape="rect" id="node3" href="$class_transportable_waypoint.html" title="TransportableWaypoint" alt="" coords="131,56,285,83"/>
+<area shape="rect" id="node4" href="$class_transporter_waypoint.html" title="TransporterWaypoint" alt="" coords="137,107,279,133"/>
+</map>

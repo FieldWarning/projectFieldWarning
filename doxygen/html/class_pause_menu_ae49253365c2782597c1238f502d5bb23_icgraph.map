@@ -1,0 +1,4 @@
+<map id="PauseMenu.MenuOff" name="PauseMenu.MenuOff">
+<area shape="rect" id="node2" href="$class_pause_menu.html#aa1096f3427ccbf44ae62d4a9f1fa434a" title="PauseMenu.OnMenuStatusChange" alt="" coords="196,5,423,32"/>
+<area shape="rect" id="node3" href="$class_scene_and_u_r_l_loader.html#a710d02a3aaf277ca0789f6e337c5fbbc" title="SceneAndURLLoader.SceneLoad" alt="" coords="202,56,417,83"/>
+</map>

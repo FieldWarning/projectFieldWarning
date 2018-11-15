@@ -1,0 +1,4 @@
+<map id="PFW.Model.Game.MatchSession" name="PFW.Model.Game.MatchSession">
+<area shape="rect" id="node3" href="$class_p_f_w_1_1_model_1_1_game_1_1_player.html" title="{PFW.Model.Game.Player\n|+ Session\l|}" alt="" coords="110,331,281,408"/>
+<area shape="rect" id="node4" href="$class_p_f_w_1_1_model_1_1_game_1_1_team.html" title="{PFW.Model.Game.Team\n|+ Name\l+ Color\l+ Players\l+ Session\l|+ IsEnemy()\l+ AddPlayer()\l}" alt="" coords="161,132,328,268"/>
+</map>

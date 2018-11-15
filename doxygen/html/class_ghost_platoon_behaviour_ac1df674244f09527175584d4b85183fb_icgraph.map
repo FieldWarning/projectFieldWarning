@@ -1,0 +1,14 @@
+<map id="GhostPlatoonBehaviour.Initialize" name="GhostPlatoonBehaviour.Initialize">
+<area shape="rect" id="node2" href="$class_ghost_platoon_behaviour.html#accbc6b03eff2f33f96376aac09ab6b11" title="GhostPlatoonBehaviour.Build" alt="" coords="261,114,452,141"/>
+<area shape="rect" id="node3" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#a2fc7f1b90fa137844f3879b955d4de95" title="PFW.Ingame.UI.BuyTransaction.\lBuyTransaction" alt="" coords="500,8,712,49"/>
+<area shape="rect" id="node4" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#aacc14c56a8e69314f13560f4423d7d10" title="PFW.Ingame.UI.BuyTransaction.\lAddUnit" alt="" coords="500,73,712,115"/>
+<area shape="rect" id="node8" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html#a0995b422c425f733a48bd8ac7277e7fd" title="PFW.Ingame.UI.InputManager.\lBuildUnit" alt="" coords="506,139,706,180"/>
+<area shape="rect" id="node9" href="$class_platoon_behaviour.html#a68f9757b25f906f2dcb36eb329526f57" title="PlatoonBehaviour.Initialize" alt="" coords="519,206,693,233"/>
+<area shape="rect" id="node5" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#a17f89af70f617967fc60b9507dd0c127" title="PFW.Ingame.UI.BuyTransaction.\lClone" alt="" coords="760,5,972,47"/>
+<area shape="rect" id="node6" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html#a1621ac7312a56c9d84de09f27e5b392d" title="Called when the tank button is pressed in the buy menu. " alt="" coords="766,71,966,112"/>
+<area shape="rect" id="node7" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html#a910b8400d8797d3cd469f2217be7f54e" title="Called when the arty button is pressed in the buy menu. " alt="" coords="766,136,966,177"/>
+<area shape="rect" id="node10" href="$class_ghost_platoon_behaviour.html#ad183737a69147b4ebdb9561d4fb8473a" title="GhostPlatoonBehaviour.Build\lRealPlatoon" alt="" coords="771,201,961,243"/>
+<area shape="rect" id="node11" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#ae7e74a8a376352adc8a119cfa774599c" title="PFW.Ingame.UI.BuyTransaction.\lFinish" alt="" coords="1020,172,1232,213"/>
+<area shape="rect" id="node12" href="$class_ghost_platoon_behaviour.html#a60fea7a329b164aab24a2abcc3fb5225" title="GhostPlatoonBehaviour.Spawn" alt="" coords="1026,238,1226,265"/>
+<area shape="rect" id="node13" href="$class_spawn_point_behaviour.html#a2b112c169ec9c87175673341bfce88ad" title="SpawnPointBehaviour.Update" alt="" coords="1280,238,1472,265"/>
+</map>

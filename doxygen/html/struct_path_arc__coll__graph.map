@@ -1,0 +1,4 @@
+<map id="PathArc" name="PathArc">
+<area shape="rect" id="node2" href="$class_path_node.html" title="{PathNode\n|+ isRoad\l+ arcs\l+ x\l+ gScore\l+ isClosed\l|+ PathNode()\l}" alt="" coords="35,147,133,283"/>
+<area shape="rect" id="node3" href="$class_priority___queue_1_1_fast_priority_queue_node.html" title="{FastPriorityQueueNode\n|+ Priority\l+ QueueIndex\l|}" alt="" coords="5,5,163,97"/>
+</map>

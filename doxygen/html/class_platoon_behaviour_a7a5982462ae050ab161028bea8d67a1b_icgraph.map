@@ -1,0 +1,6 @@
+<map id="PlatoonBehaviour.SetGhostPlatoon" name="PlatoonBehaviour.SetGhostPlatoon">
+<area shape="rect" id="node2" href="$class_ghost_platoon_behaviour.html#ad183737a69147b4ebdb9561d4fb8473a" title="GhostPlatoonBehaviour.Build\lRealPlatoon" alt="" coords="235,35,425,76"/>
+<area shape="rect" id="node3" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#ae7e74a8a376352adc8a119cfa774599c" title="PFW.Ingame.UI.BuyTransaction.\lFinish" alt="" coords="473,5,685,47"/>
+<area shape="rect" id="node4" href="$class_ghost_platoon_behaviour.html#a60fea7a329b164aab24a2abcc3fb5225" title="GhostPlatoonBehaviour.Spawn" alt="" coords="479,71,679,98"/>
+<area shape="rect" id="node5" href="$class_spawn_point_behaviour.html#a2b112c169ec9c87175673341bfce88ad" title="SpawnPointBehaviour.Update" alt="" coords="733,71,925,98"/>
+</map>

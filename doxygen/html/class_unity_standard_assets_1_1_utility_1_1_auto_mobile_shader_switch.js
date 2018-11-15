@@ -1,0 +1,5 @@
+var class_unity_standard_assets_1_1_utility_1_1_auto_mobile_shader_switch =
+[
+    [ "ReplacementDefinition", "class_unity_standard_assets_1_1_utility_1_1_auto_mobile_shader_switch_1_1_replacement_definition.html", "class_unity_standard_assets_1_1_utility_1_1_auto_mobile_shader_switch_1_1_replacement_definition" ],
+    [ "ReplacementList", "class_unity_standard_assets_1_1_utility_1_1_auto_mobile_shader_switch_1_1_replacement_list.html", "class_unity_standard_assets_1_1_utility_1_1_auto_mobile_shader_switch_1_1_replacement_list" ]
+];

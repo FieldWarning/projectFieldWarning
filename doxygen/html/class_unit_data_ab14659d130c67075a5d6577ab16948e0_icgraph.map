@@ -1,0 +1,5 @@
+<map id="UnitData.UnitData" name="UnitData.UnitData">
+<area shape="rect" id="node2" href="$class_unit_data.html#a804e113012296544ef3eac0d48e170ae" title="UnitData.GenericUnit" alt="" coords="180,5,324,32"/>
+<area shape="rect" id="node3" href="$class_unit_data.html#aa75091e427da6ac22e7470b4ba805f7a" title="UnitData.Tank" alt="" coords="200,56,304,83"/>
+<area shape="rect" id="node4" href="$class_unit_data.html#a781c5e751f946d559352e3aa7820e7f4" title="UnitData.Infantry" alt="" coords="193,107,311,133"/>
+</map>

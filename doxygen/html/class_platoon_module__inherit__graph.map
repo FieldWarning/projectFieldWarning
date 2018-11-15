@@ -1,0 +1,5 @@
+<map id="PlatoonModule" name="PlatoonModule">
+<area shape="rect" id="node2" href="$class_movement_module.html" title="{MovementModule\n|+ FinalHeading\l+ Waypoint\l|+ MovementModule()\l+ SetDestination()\l+ GetDestinationFromGhost()\l+ GetHeadingFromGhost()\l+ UseDefaultHeading()\l+ SetFinalOrientation()\l+ SetMatch()\l+ GetScore()\l# GetModuleWaypoint()\l}" alt="" coords="5,219,199,428"/>
+<area shape="rect" id="node3" href="$class_transportable_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="223,270,386,377"/>
+<area shape="rect" id="node4" href="$class_transporter_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="411,233,569,413"/>
+</map>

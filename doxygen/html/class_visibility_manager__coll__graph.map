@@ -1,0 +1,5 @@
+<map id="VisibilityManager" name="VisibilityManager">
+<area shape="rect" id="node3" href="$class_p_f_w_1_1_model_1_1_game_1_1_match_session.html" title="{PFW.Model.Game.MatchSession\n|+ EntityManager\l+ Settings\l+ Teams\l+ AllUnits\l+ AllPlatoons\l+ PathfinderData\l+ UnitFactory\l|+ Awake()\l+ RegisterPlatoonBirth()\l+ RegisterPlatoonDeath()\l+ RegisterUnitBirth()\l+ RegisterUnitDeath()\l+ AddSpawnPoint()\l+ UpdateTeamBelonging()\l}" alt="" coords="47,471,265,724"/>
+<area shape="rect" id="node4" href="$class_p_f_w_1_1_model_1_1_game_1_1_player.html" title="{PFW.Model.Game.Player\n|+ Session\l|}" alt="" coords="95,331,265,408"/>
+<area shape="rect" id="node5" href="$class_p_f_w_1_1_model_1_1_game_1_1_team.html" title="{PFW.Model.Game.Team\n|+ Name\l+ Color\l+ Players\l+ Session\l|+ IsEnemy()\l+ AddPlayer()\l}" alt="" coords="146,132,313,268"/>
+</map>

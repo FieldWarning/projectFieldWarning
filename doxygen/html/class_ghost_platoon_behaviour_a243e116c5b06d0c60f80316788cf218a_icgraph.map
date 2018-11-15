@@ -1,0 +1,9 @@
+<map id="GhostPlatoonBehaviour.Destroy" name="GhostPlatoonBehaviour.Destroy">
+<area shape="rect" id="node2" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#aacc14c56a8e69314f13560f4423d7d10" title="PFW.Ingame.UI.BuyTransaction.\lAddUnit" alt="" coords="260,85,472,127"/>
+<area shape="rect" id="node6" href="$class_ghost_platoon_behaviour.html#a33ff953f2ac4fc2d7e67ff4d01ce0d7f" title="GhostPlatoonBehaviour.Handle\lRealUnitDestroyed" alt="" coords="265,165,467,207"/>
+<area shape="rect" id="node3" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#a17f89af70f617967fc60b9507dd0c127" title="PFW.Ingame.UI.BuyTransaction.\lClone" alt="" coords="520,5,732,47"/>
+<area shape="rect" id="node4" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html#a1621ac7312a56c9d84de09f27e5b392d" title="Called when the tank button is pressed in the buy menu. " alt="" coords="526,71,726,112"/>
+<area shape="rect" id="node5" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html#a910b8400d8797d3cd469f2217be7f54e" title="Called when the arty button is pressed in the buy menu. " alt="" coords="526,136,726,177"/>
+<area shape="rect" id="node7" href="$class_unit_behaviour.html#a8b0d52cff7a7812cbf0d581d57c5d2aa" title="UnitBehaviour.Destroy" alt="" coords="551,202,701,229"/>
+<area shape="rect" id="node8" href="$class_unit_behaviour.html#a504bc47f93fb9fbff6bb75cc21a9264d" title="UnitBehaviour.HandleHit" alt="" coords="780,202,941,229"/>
+</map>

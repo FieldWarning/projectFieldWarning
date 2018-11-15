@@ -1,0 +1,4 @@
+<map id="GhostPlatoonBehaviour.HandleRealUnitDestroyed" name="GhostPlatoonBehaviour.HandleRealUnitDestroyed">
+<area shape="rect" id="node2" href="$class_unit_behaviour.html#a8b0d52cff7a7812cbf0d581d57c5d2aa" title="UnitBehaviour.Destroy" alt="" coords="255,13,405,39"/>
+<area shape="rect" id="node3" href="$class_unit_behaviour.html#a504bc47f93fb9fbff6bb75cc21a9264d" title="UnitBehaviour.HandleHit" alt="" coords="453,13,615,39"/>
+</map>

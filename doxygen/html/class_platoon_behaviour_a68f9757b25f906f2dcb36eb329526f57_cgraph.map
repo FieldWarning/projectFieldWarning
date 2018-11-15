@@ -1,0 +1,12 @@
+<map id="PlatoonBehaviour.Initialize" name="PlatoonBehaviour.Initialize">
+<area shape="rect" id="node2" href="$class_p_f_w_1_1_ingame_1_1_prototype_1_1_unit_factory.html#a695b13e83c2856c1a977cff92e83ff1a" title="PFW.Ingame.Prototype.Unit\lFactory.FindPrefab" alt="" coords="245,5,430,47"/>
+<area shape="rect" id="node3" href="$class_p_f_w_1_1_ingame_1_1_prototype_1_1_unit_factory.html#af321bb3b54598eae0b0be8517e085eb8" title="PFW.Ingame.Prototype.Unit\lFactory.MakeUnit" alt="" coords="245,71,430,112"/>
+<area shape="rect" id="node4" href="$class_unit_behaviour.html#a936cd0113ef094504458b0075eeef609" title="UnitBehaviour.SetPlatoon" alt="" coords="253,137,422,163"/>
+<area shape="rect" id="node5" href="$class_platoon_behaviour.html#af1e4a341540ce9b16e9052edfe75af68" title="PlatoonBehaviour.BuildModules" alt="" coords="235,187,439,214"/>
+<area shape="rect" id="node6" href="$class_ghost_platoon_behaviour.html#accbc6b03eff2f33f96376aac09ab6b11" title="GhostPlatoonBehaviour.Build" alt="" coords="242,238,433,265"/>
+<area shape="rect" id="node8" href="$class_transporter_module.html#a8b5682ebce676460a3e6eb2630edeefb" title="TransporterModule.SetTransported" alt="" coords="227,289,448,315"/>
+<area shape="rect" id="node9" href="$class_movement_module.html#a441f08fab65c2ccc03bca5140f2f34f6" title="MovementModule.SetDestination" alt="" coords="231,339,443,366"/>
+<area shape="rect" id="node11" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_icon_behaviour.html#abb566f9900a861e627caaa0e54f907e3" title="PFW.Ingame.UI.IconBehaviour.\lSetSource" alt="" coords="236,391,439,432"/>
+<area shape="rect" id="node7" href="$class_ghost_platoon_behaviour.html#ac1df674244f09527175584d4b85183fb" title="GhostPlatoonBehaviour.Initialize" alt="" coords="511,238,719,265"/>
+<area shape="rect" id="node10" href="$class_movement_module.html#a88892b52cfe79643e1e5a2ce1e119e46" title="MovementModule.SetFinalOrientation" alt="" coords="496,339,735,366"/>
+</map>

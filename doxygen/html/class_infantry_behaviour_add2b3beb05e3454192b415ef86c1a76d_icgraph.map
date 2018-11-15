@@ -1,0 +1,6 @@
+<map id="InfantryBehaviour.interactsWithTransport" name="InfantryBehaviour.interactsWithTransport">
+<area shape="rect" id="node2" href="$class_transporter_behaviour.html#ab95604be270a364cd7138f64c32de6c5" title="TransporterBehaviour.loading\lComplete" alt="" coords="235,5,423,47"/>
+<area shape="rect" id="node3" href="$class_transporter_behaviour.html#a27cd103bbfac3b6c5b23ff6b9a0d92f5" title="TransporterBehaviour.unloading\lComplete" alt="" coords="228,71,431,112"/>
+<area shape="rect" id="node5" href="$class_transporter_behaviour.html#a17edaf8693a9ed70c279386cdbbc83b4" title="TransporterBehaviour.interrupt" alt="" coords="232,137,427,163"/>
+<area shape="rect" id="node4" href="$class_transporter_waypoint.html#a679a922c391970cae90f8eecf861637c" title="TransporterWaypoint.Order\lComplete" alt="" coords="479,71,657,112"/>
+</map>

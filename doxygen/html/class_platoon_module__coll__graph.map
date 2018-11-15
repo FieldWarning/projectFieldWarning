@@ -1,0 +1,12 @@
+<map id="PlatoonModule" name="PlatoonModule">
+<area shape="rect" id="node7" href="$class_transporter_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="12,577,171,742"/>
+<area shape="rect" id="node9" href="$class_transportable_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="195,606,358,713"/>
+<area shape="rect" id="node10" href="$class_movement_module.html" title="{MovementModule\n|+ FinalHeading\l+ Waypoint\l|+ MovementModule()\l+ SetDestination()\l+ GetDestinationFromGhost()\l+ GetHeadingFromGhost()\l+ UseDefaultHeading()\l+ SetFinalOrientation()\l+ SetMatch()\l+ GetScore()\l# GetModuleWaypoint()\l}" alt="" coords="488,555,681,764"/>
+<area shape="rect" id="node2" href="$class_platoon_behaviour.html" title="{PlatoonBehaviour\n|+ Type\l+ Waypoints\l+ Units\l+ Modules\l+ IsInitialized\l+ Owner\l|+ Update()\l+ BuildModules()\l+ Initialize()\l+ SetGhostPlatoon()\l+ Spawn()\l+ SetSelected()\l+ SetEnabled()\l+ SendFirePosOrder()\l+ Destroy()\l}" alt="" coords="510,827,659,1095"/>
+<area shape="rect" id="node6" href="$class_waypoint.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="512,1157,657,1279"/>
+<area shape="rect" id="node5" href="$class_selectable_behavior.html" title="{SelectableBehavior\n||+ GetPlatoon()\l}" alt="" coords="791,169,923,246"/>
+<area shape="rect" id="node13" href="$class_ghost_platoon_behaviour.html" title="{GhostPlatoonBehaviour\n|+ FinalHeading\l|+ GetRealPlatoon()\l+ BuildRealPlatoon()\l+ Initialize()\l+ SetOrientation()\l+ SetVisible()\l+ SetIgnoreRaycast()\l+ _setIgnoreRaycast()\l+ Destroy()\l+ Spawn()\l+ HandleRealUnitDestroyed()\l+ Build()\l}" alt="" coords="932,307,1123,531"/>
+<area shape="rect" id="node4" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_icon_behaviour.html" title="{PFW.Ingame.UI.IconBehaviour\n|+ BaseColor\l|+ SetLayer()\l+ SetSource()\l+ SetVisible()\l+ SetSelected()\l+ SetGhost()\l}" alt="" coords="757,591,956,727"/>
+<area shape="rect" id="node8" href="$interface_matchable.html" title="{Matchable\&lt; Transportable\lModule \&gt;\n||+ SetMatch()\l+ GetScore()\l}" alt="" coords="5,154,177,261"/>
+<area shape="rect" id="node11" href="$interface_matchable.html" title="{Matchable\&lt; Vector3 \&gt;\n||+ SetMatch()\l+ GetScore()\l}" alt="" coords="509,161,660,253"/>
+</map>

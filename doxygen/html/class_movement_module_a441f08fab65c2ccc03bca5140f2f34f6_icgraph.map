@@ -1,0 +1,8 @@
+<map id="MovementModule.SetDestination" name="MovementModule.SetDestination">
+<area shape="rect" id="node2" href="$class_movement_module.html#a91fb9ddf842522418a5fbf46b477907b" title="MovementModule.SetMatch" alt="" coords="265,5,448,32"/>
+<area shape="rect" id="node3" href="$class_platoon_behaviour.html#a68f9757b25f906f2dcb36eb329526f57" title="PlatoonBehaviour.Initialize" alt="" coords="270,56,443,83"/>
+<area shape="rect" id="node4" href="$class_ghost_platoon_behaviour.html#ad183737a69147b4ebdb9561d4fb8473a" title="GhostPlatoonBehaviour.Build\lRealPlatoon" alt="" coords="496,49,687,90"/>
+<area shape="rect" id="node5" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#ae7e74a8a376352adc8a119cfa774599c" title="PFW.Ingame.UI.BuyTransaction.\lFinish" alt="" coords="735,19,947,61"/>
+<area shape="rect" id="node6" href="$class_ghost_platoon_behaviour.html#a60fea7a329b164aab24a2abcc3fb5225" title="GhostPlatoonBehaviour.Spawn" alt="" coords="741,85,941,112"/>
+<area shape="rect" id="node7" href="$class_spawn_point_behaviour.html#a2b112c169ec9c87175673341bfce88ad" title="SpawnPointBehaviour.Update" alt="" coords="995,85,1187,112"/>
+</map>

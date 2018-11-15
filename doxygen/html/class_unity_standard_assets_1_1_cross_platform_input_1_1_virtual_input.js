@@ -1,0 +1,28 @@
+var class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input =
+[
+    [ "AxisExists", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#ab5744afc94aa095e2f8149bc44920360", null ],
+    [ "ButtonExists", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a5d70deed210f91fc144d9a62cab4c535", null ],
+    [ "GetAxis", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#acc3057ff75396039d6b27f518f2c0806", null ],
+    [ "GetButton", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a74f82647d8ca8e17d4f89d94c19a891c", null ],
+    [ "GetButtonDown", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#ae7cfad86082449cfd335b337450241a7", null ],
+    [ "GetButtonUp", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a91fa118a5b6f1e66d6551a385b664d07", null ],
+    [ "MousePosition", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a204a66311a817e49ca0f137a2aa584d2", null ],
+    [ "RegisterVirtualAxis", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#aa530866e5a5597cee5f56a80b5074914", null ],
+    [ "RegisterVirtualButton", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a6073a4d0dc59419c956d3454217f07c3", null ],
+    [ "SetAxis", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#ab0bef7a37bb6e5962d7d2dffea4d083f", null ],
+    [ "SetAxisNegative", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#ad3af2e79617bf02ba1d9dd51162a404a", null ],
+    [ "SetAxisPositive", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#abd4920b94dff2454bac3daa6c355c71d", null ],
+    [ "SetAxisZero", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#ad2b9d1001a194fd34c26086a39e25849", null ],
+    [ "SetButtonDown", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#aff10ff821f722ce82e9a48b5406e836e", null ],
+    [ "SetButtonUp", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a03e5f4e3650d7322569b5b39f53a8522", null ],
+    [ "SetVirtualMousePositionX", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a7eec67e6da5890b0d14ec6e9f1adb43d", null ],
+    [ "SetVirtualMousePositionY", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#acf54ec0ee9e7e54bb603538e49ff3d61", null ],
+    [ "SetVirtualMousePositionZ", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a2f5097b2d04f3af6db5a1bad128fbaa1", null ],
+    [ "UnRegisterVirtualAxis", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#a97ed9f03493198eab55eb47e9fa77801", null ],
+    [ "UnRegisterVirtualButton", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#aff127b39add01c4d34a6b5a396d42ea1", null ],
+    [ "VirtualAxisReference", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#af19a8841bf61b55baa6d791a82f67cdd", null ],
+    [ "m_AlwaysUseVirtual", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#abe7ea4edf0c3003a5a19969530cd855e", null ],
+    [ "m_VirtualAxes", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#abb0e84e118d732a626c67adb78b26eff", null ],
+    [ "m_VirtualButtons", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#adbc824b5db08f6929aee3be874bc76cb", null ],
+    [ "virtualMousePosition", "class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html#afa1db3ff31769359a2ba5de88d860e45", null ]
+];

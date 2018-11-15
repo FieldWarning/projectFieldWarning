@@ -1,0 +1,6 @@
+<map id="UnitBehaviour.SetUnitFinalFacing" name="UnitBehaviour.SetUnitFinalFacing">
+<area shape="rect" id="node2" href="$class_pathfinder.html#a97a809023c7c4b1485abee38b09adcdb" title="Pathfinder.HasDestination" alt="" coords="231,5,403,32"/>
+<area shape="rect" id="node3" href="$class_pathfinder.html#a0ca536f17f597ddc20f8ca96fbea9c18" title="Pathfinder.GetDestination" alt="" coords="232,56,403,83"/>
+<area shape="rect" id="node5" href="$class_unit_behaviour.html#a05f39e1f7570c249171048f674f9eef9" title="UnitBehaviour.SetUnitFinal\lHeading" alt="" coords="229,107,405,149"/>
+<area shape="rect" id="node4" href="$class_pathfinder_data.html#a28143e7c9a906eeae23c56a6dd4abc47" title="PathfinderData.Position" alt="" coords="453,56,612,83"/>
+</map>

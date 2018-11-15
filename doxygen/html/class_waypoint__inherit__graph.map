@@ -1,0 +1,5 @@
+<map id="Waypoint" name="Waypoint">
+<area shape="rect" id="node2" href="$class_move_waypoint.html" title="{MoveWaypoint\n|+ Destination\l+ Heading\l+ moveMode\l|+ MoveWaypoint()\l+ ProcessWaypoint()\l+ OrderComplete()\l+ Interrupt()\l}" alt="" coords="5,189,151,340"/>
+<area shape="rect" id="node3" href="$class_transportable_waypoint.html" title="{TransportableWaypoint\n|+ transporterWaypoint\l|+ TransportableWaypoint()\l+ ProcessWaypoint()\l+ OrderComplete()\l+ Interrupt()\l}" alt="" coords="175,204,349,325"/>
+<area shape="rect" id="node4" href="$class_transporter_waypoint.html" title="{TransporterWaypoint\n|+ loading\l+ transportableWaypoint\l|+ TransporterWaypoint()\l+ ProcessWaypoint()\l+ OrderComplete()\l+ Interrupt()\l}" alt="" coords="373,197,537,333"/>
+</map>

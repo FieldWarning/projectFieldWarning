@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_virtual_input.html" title="UnityStandardAssets.Cross\lPlatformInput.VirtualInput" alt="" coords="5,53,188,94"/>
+<area shape="rect" id="node2" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_platform_specific_1_1_mobile_input.html" title="UnityStandardAssets.Cross\lPlatformInput.PlatformSpecific.\lMobileInput" alt="" coords="236,5,436,61"/>
+<area shape="rect" id="node3" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_platform_specific_1_1_standalone_input.html" title="UnityStandardAssets.Cross\lPlatformInput.PlatformSpecific.\lStandaloneInput" alt="" coords="236,85,436,141"/>
+</map>

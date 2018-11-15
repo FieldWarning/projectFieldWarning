@@ -1,0 +1,8 @@
+<map id="TransporterModule.SetTransported" name="TransporterModule.SetTransported">
+<area shape="rect" id="node2" href="$class_platoon_behaviour.html#a68f9757b25f906f2dcb36eb329526f57" title="PlatoonBehaviour.Initialize" alt="" coords="277,42,451,69"/>
+<area shape="rect" id="node7" href="$class_transporter_waypoint.html#a679a922c391970cae90f8eecf861637c" title="TransporterWaypoint.Order\lComplete" alt="" coords="275,93,453,135"/>
+<area shape="rect" id="node3" href="$class_ghost_platoon_behaviour.html#ad183737a69147b4ebdb9561d4fb8473a" title="GhostPlatoonBehaviour.Build\lRealPlatoon" alt="" coords="501,35,692,76"/>
+<area shape="rect" id="node4" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#ae7e74a8a376352adc8a119cfa774599c" title="PFW.Ingame.UI.BuyTransaction.\lFinish" alt="" coords="740,5,952,47"/>
+<area shape="rect" id="node5" href="$class_ghost_platoon_behaviour.html#a60fea7a329b164aab24a2abcc3fb5225" title="GhostPlatoonBehaviour.Spawn" alt="" coords="746,71,946,98"/>
+<area shape="rect" id="node6" href="$class_spawn_point_behaviour.html#a2b112c169ec9c87175673341bfce88ad" title="SpawnPointBehaviour.Update" alt="" coords="1000,71,1192,98"/>
+</map>

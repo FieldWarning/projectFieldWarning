@@ -1,0 +1,6 @@
+<map id="UnitBehaviour" name="UnitBehaviour">
+<area shape="rect" id="node5" href="$class_infantry_behaviour.html" title="{InfantryBehaviour\n||+ Start()\l+ buildMen()\l+ Update()\l+ setTransportTarget()\l+ SetUnitFinalHeading()\l+ unload()\l+ SetOriginalOrientation()\l+ OrdersComplete()\l+ UpdateMapOrientation()\l+ interactsWithTransport()\l# DoMovement()\l# IsMoving()\l# GetRenderers()\l}" alt="" coords="5,968,179,1221"/>
+<area shape="rect" id="node6" href="$class_vehicle_behaviour.html" title="{VehicleBehaviour\n||+ SetOriginalOrientation()\l+ UpdateMapOrientation()\l+ OrdersComplete()\l# DoMovement()\l# GetRenderers()\l# IsMoving()\l}" alt="" coords="203,1019,373,1170"/>
+<area shape="rect" id="node2" href="$class_selectable_behavior.html" title="{SelectableBehavior\n||+ GetPlatoon()\l}" alt="" coords="41,138,173,215"/>
+<area shape="rect" id="node4" href="$interface_matchable.html" title="{Matchable\&lt; Vector3 \&gt;\n||+ SetMatch()\l+ GetScore()\l}" alt="" coords="197,131,347,223"/>
+</map>

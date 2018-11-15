@@ -1,0 +1,4 @@
+<map id="VehicleBehaviour.DoMovement" name="VehicleBehaviour.DoMovement">
+<area shape="rect" id="node2" href="$class_pathfinder.html#a97a809023c7c4b1485abee38b09adcdb" title="Pathfinder.HasDestination" alt="" coords="461,5,633,32"/>
+<area shape="rect" id="node3" href="$class_pathfinder.html#a906ef513ec90c7680c18b329ed7c1ad7" title="Pathfinder.GetWaypoint" alt="" coords="253,31,413,57"/>
+</map>

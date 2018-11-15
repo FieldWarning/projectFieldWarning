@@ -1,0 +1,4 @@
+<map id="Priority_Queue.FastPriorityQueueNode" name="Priority_Queue.FastPriorityQueueNode">
+<area shape="rect" id="node2" href="$class_path_node.html" title="{PathNode\n|+ isRoad\l+ arcs\l+ x\l+ gScore\l+ isClosed\l+ cameFrom\l|+ PathNode()\l}" alt="" coords="5,160,104,311"/>
+<area shape="rect" id="node3" href="$class_priority___queue_1_1_stable_priority_queue_node.html" title="{Priority_Queue.StablePriority\lQueueNode\n|+ InsertionIndex\l|}" alt="" coords="129,189,319,281"/>
+</map>

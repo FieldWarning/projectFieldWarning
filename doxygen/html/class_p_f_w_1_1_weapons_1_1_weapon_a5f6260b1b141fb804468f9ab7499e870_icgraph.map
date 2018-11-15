@@ -1,0 +1,5 @@
+<map id="PFW.Weapons.Weapon.WakeUp" name="PFW.Weapons.Weapon.WakeUp">
+<area shape="rect" id="node2" href="$class_unit_behaviour.html#a24ba0282cc962fc3e5767e7adde8877d" title="UnitBehaviour.WakeUp" alt="" coords="271,46,425,73"/>
+<area shape="rect" id="node3" href="$class_infantry_behaviour.html#a7b825f3b255961cc6f8b3e98a5ef61e2" title="InfantryBehaviour.SetOriginal\lOrientation" alt="" coords="474,5,662,47"/>
+<area shape="rect" id="node4" href="$class_vehicle_behaviour.html#a982df1635ca96e3a187645dec4bb9a41" title="VehicleBehaviour.SetOriginal\lOrientation" alt="" coords="473,71,663,112"/>
+</map>

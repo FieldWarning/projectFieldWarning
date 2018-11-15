@@ -1,0 +1,116 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$class_alpha_button_click_mask.html" title="AlphaButtonClickMask" alt="" coords="484,202,639,229"/>
+<area shape="rect" id="node4" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_joystick.html" title="UnityStandardAssets.Cross\lPlatformInput.Joystick" alt="" coords="470,5,653,47"/>
+<area shape="rect" id="node6" href="$class_level_reset.html" title="LevelReset" alt="" coords="519,253,604,279"/>
+<area shape="rect" id="node8" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_axis_touch_button.html" title="UnityStandardAssets.Cross\lPlatformInput.AxisTouchButton" alt="" coords="461,71,662,112"/>
+<area shape="rect" id="node9" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_touch_pad.html" title="UnityStandardAssets.Cross\lPlatformInput.TouchPad" alt="" coords="470,136,653,177"/>
+<area shape="rect" id="node11" href="$interface_p_f_w_1_1_service_1_1_i_service.html" title="PFW.Service.IService\l\&lt; Deck \&gt;" alt="" coords="5,277,152,319"/>
+<area shape="rect" id="node12" href="$interface_p_f_w_1_1_service_1_1_i_deck_service.html" title="PFW.Service.IDeckService" alt="" coords="207,303,384,330"/>
+<area shape="rect" id="node13" href="$class_p_f_w_1_1_service_1_1_deck_service.html" title="PFW.Service.DeckService" alt="" coords="474,303,649,330"/>
+<area shape="rect" id="node14" href="$interface_p_f_w_1_1_service_1_1_i_service.html" title="PFW.Service.IService\l\&lt; Faction \&gt;" alt="" coords="5,343,152,384"/>
+<area shape="rect" id="node15" href="$interface_p_f_w_1_1_service_1_1_i_faction_service.html" title="PFW.Service.IFactionService" alt="" coords="200,354,391,381"/>
+<area shape="rect" id="node16" href="$class_p_f_w_1_1_service_1_1_faction_service.html" title="PFW.Service.FactionService" alt="" coords="468,354,655,381"/>
+<area shape="rect" id="node17" href="$interface_p_f_w_1_1_service_1_1_i_service.html" title="PFW.Service.IService\l\&lt; Unit \&gt;" alt="" coords="5,408,152,449"/>
+<area shape="rect" id="node18" href="$interface_p_f_w_1_1_service_1_1_i_unit_service.html" title="PFW.Service.IUnitService" alt="" coords="210,411,381,438"/>
+<area shape="rect" id="node19" href="$class_p_f_w_1_1_service_1_1_unit_service.html" title="PFW.Service.UnitService" alt="" coords="478,405,645,431"/>
+<area shape="rect" id="node20" href="$interface_p_f_w_1_1_service_1_1_i_service.html" title="PFW.Service.IService\l\&lt; UnitCategory \&gt;" alt="" coords="5,473,152,515"/>
+<area shape="rect" id="node21" href="$interface_p_f_w_1_1_service_1_1_i_unit_category_service.html" title="PFW.Service.IUnitCategory\lService" alt="" coords="205,468,385,509"/>
+<area shape="rect" id="node22" href="$class_p_f_w_1_1_service_1_1_unit_category_service.html" title="PFW.Service.UnitCategory\lService" alt="" coords="473,456,650,497"/>
+<area shape="rect" id="node23" href="$interface_matchable.html" title="Matchable\&lt; Transportable\lModule \&gt;" alt="" coords="475,2092,647,2133"/>
+<area shape="rect" id="node24" href="$class_transporter_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="785,2103,914,2130"/>
+<area shape="rect" id="node25" href="$interface_matchable.html" title="Matchable\&lt; Vector3 \&gt;" alt="" coords="486,2209,637,2235"/>
+<area shape="rect" id="node26" href="$class_movement_module.html" title="MovementModule" alt="" coords="788,2209,911,2235"/>
+<area shape="rect" id="node27" href="$class_unit_behaviour.html" title="UnitBehaviour" alt="" coords="799,2787,900,2814"/>
+<area shape="rect" id="node28" href="$class_infantry_behaviour.html" title="InfantryBehaviour" alt="" coords="1015,2762,1135,2789"/>
+<area shape="rect" id="node29" href="$class_vehicle_behaviour.html" title="VehicleBehaviour" alt="" coords="1015,2813,1136,2839"/>
+<area shape="rect" id="node31" href="$class_bullet_behavior.html" title="BulletBehavior" alt="" coords="509,2259,613,2286"/>
+<area shape="rect" id="node32" href="$class_camera_behaviour.html" title="CameraBehaviour" alt="" coords="500,2310,623,2337"/>
+<area shape="rect" id="node33" href="$class_camera_collision.html" title="CameraCollision" alt="" coords="503,2361,619,2387"/>
+<area shape="rect" id="node34" href="$class_camera_switch.html" title="CameraSwitch" alt="" coords="508,2411,615,2438"/>
+<area shape="rect" id="node35" href="$class_destructible_structure.html" title="DestructibleStructure" alt="" coords="489,2462,633,2489"/>
+<area shape="rect" id="node36" href="$class_event_system_checker.html" title="EventSystemChecker" alt="" coords="488,2513,635,2539"/>
+<area shape="rect" id="node37" href="$class_forced_reset.html" title="ForcedReset" alt="" coords="513,2563,609,2590"/>
+<area shape="rect" id="node38" href="$class_f_p_s_display.html" title="FPSDisplay" alt="" coords="516,2614,607,2641"/>
+<area shape="rect" id="node39" href="$class_ghost_platoon_behaviour.html" title="GhostPlatoonBehaviour" alt="" coords="483,2665,640,2691"/>
+<area shape="rect" id="node40" href="$class_menu_scene_loader.html" title="MenuSceneLoader" alt="" coords="496,2715,627,2742"/>
+<area shape="rect" id="node41" href="$class_mesh_builder.html" title="MeshBuilder" alt="" coords="514,2766,609,2793"/>
+<area shape="rect" id="node42" href="$class_mini_map.html" title="MiniMap" alt="" coords="526,2817,597,2843"/>
+<area shape="rect" id="node43" href="$class_mini_map_icon.html" title="MiniMapIcon" alt="" coords="514,2867,609,2894"/>
+<area shape="rect" id="node44" href="$class_pause_menu.html" title="PauseMenu" alt="" coords="516,2918,607,2945"/>
+<area shape="rect" id="node45" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_deployment_menu.html" title="Creates the interface for purchasing units within a match. " alt="" coords="452,2969,671,2995"/>
+<area shape="rect" id="node46" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html" title="Handles almost all input during a match. " alt="" coords="463,3019,659,3046"/>
+<area shape="rect" id="node47" href="$class_p_f_w_1_1_model_1_1_game_1_1_match_session.html" title="PFW.Model.Game.MatchSession" alt="" coords="453,3070,670,3097"/>
+<area shape="rect" id="node48" href="$class_p_f_w_1_1_model_1_1_game_1_1_player.html" title="PFW.Model.Game.Player" alt="" coords="476,3121,647,3147"/>
+<area shape="rect" id="node49" href="$class_p_f_w_1_1_model_1_1_game_1_1_team.html" title="PFW.Model.Game.Team" alt="" coords="478,3171,645,3198"/>
+<area shape="rect" id="node50" href="$class_p_f_w_1_1_weapons_1_1_weapon.html" title="PFW.Weapons.Weapon" alt="" coords="480,3222,643,3249"/>
+<area shape="rect" id="node51" href="$class_platoon_behaviour.html" title="PlatoonBehaviour" alt="" coords="500,3273,623,3299"/>
+<area shape="rect" id="node52" href="$class_quit.html" title="Quit" alt="" coords="538,3323,585,3350"/>
+<area shape="rect" id="node53" href="$class_road_network.html" title="RoadNetwork" alt="" coords="512,3374,611,3401"/>
+<area shape="rect" id="node54" href="$class_scene_and_u_r_l_loader.html" title="SceneAndURLLoader" alt="" coords="488,3425,635,3451"/>
+<area shape="rect" id="node55" href="$class_selectable_behavior.html" title="SelectableBehavior" alt="" coords="495,3475,627,3502"/>
+<area shape="rect" id="node60" href="$class_sliding_camera_behaviour.html" title="Sliding camera is our main RTS cam. " alt="" coords="480,3526,643,3553"/>
+<area shape="rect" id="node61" href="$class_spawn_point_behaviour.html" title="SpawnPointBehaviour" alt="" coords="488,3577,635,3603"/>
+<area shape="rect" id="node62" href="$class_symbol_behaviour.html" title="SymbolBehaviour" alt="" coords="500,3627,623,3654"/>
+<area shape="rect" id="node63" href="$class_team_button.html" title="TeamButton" alt="" coords="515,3678,607,3705"/>
+<area shape="rect" id="node64" href="$class_terrain_builder.html" title="TerrainBuilder" alt="" coords="511,3729,612,3755"/>
+<area shape="rect" id="node65" href="$class_transporter_behaviour.html" title="TransporterBehaviour" alt="" coords="490,3779,633,3806"/>
+<area shape="rect" id="node66" href="$class_unit_label_attacher.html" title="UnitLabelAttacher" alt="" coords="499,3830,624,3857"/>
+<area shape="rect" id="node67" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_button_handler.html" title="UnityStandardAssets.Cross\lPlatformInput.ButtonHandler" alt="" coords="469,3881,653,3923"/>
+<area shape="rect" id="node68" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_input_axis_scrollbar.html" title="UnityStandardAssets.Cross\lPlatformInput.InputAxisScrollbar" alt="" coords="458,3947,665,3988"/>
+<area shape="rect" id="node69" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_mobile_control_rig.html" title="UnityStandardAssets.Cross\lPlatformInput.MobileControlRig" alt="" coords="461,4012,661,4053"/>
+<area shape="rect" id="node70" href="$class_unity_standard_assets_1_1_cross_platform_input_1_1_tilt_input.html" title="UnityStandardAssets.Cross\lPlatformInput.TiltInput" alt="" coords="470,4077,653,4119"/>
+<area shape="rect" id="node71" href="$class_unity_standard_assets_1_1_effects_1_1_afterburner_physics_force.html" title="UnityStandardAssets.Effects.\lAfterburnerPhysicsForce" alt="" coords="465,4143,658,4184"/>
+<area shape="rect" id="node72" href="$class_unity_standard_assets_1_1_effects_1_1_explosion_fire_and_debris.html" title="UnityStandardAssets.Effects.\lExplosionFireAndDebris" alt="" coords="465,4208,658,4249"/>
+<area shape="rect" id="node73" href="$class_unity_standard_assets_1_1_effects_1_1_explosion_physics_force.html" title="UnityStandardAssets.Effects.\lExplosionPhysicsForce" alt="" coords="465,4273,658,4315"/>
+<area shape="rect" id="node74" href="$class_unity_standard_assets_1_1_effects_1_1_explosive.html" title="UnityStandardAssets.Effects.\lExplosive" alt="" coords="465,4339,658,4380"/>
+<area shape="rect" id="node75" href="$class_unity_standard_assets_1_1_effects_1_1_extinguishable_particle_system.html" title="UnityStandardAssets.Effects.\lExtinguishableParticleSystem" alt="" coords="463,4404,659,4445"/>
+<area shape="rect" id="node76" href="$class_unity_standard_assets_1_1_effects_1_1_fire_light.html" title="UnityStandardAssets.Effects.\lFireLight" alt="" coords="465,4469,658,4511"/>
+<area shape="rect" id="node77" href="$class_unity_standard_assets_1_1_effects_1_1_hose.html" title="UnityStandardAssets.Effects.Hose" alt="" coords="450,4535,673,4562"/>
+<area shape="rect" id="node78" href="$class_unity_standard_assets_1_1_effects_1_1_particle_system_multiplier.html" title="UnityStandardAssets.Effects.\lParticleSystemMultiplier" alt="" coords="465,4587,658,4628"/>
+<area shape="rect" id="node79" href="$class_unity_standard_assets_1_1_effects_1_1_smoke_particles.html" title="UnityStandardAssets.Effects.\lSmokeParticles" alt="" coords="465,4652,658,4693"/>
+<area shape="rect" id="node80" href="$class_unity_standard_assets_1_1_effects_1_1_water_hose_particles.html" title="UnityStandardAssets.Effects.\lWaterHoseParticles" alt="" coords="465,4717,658,4759"/>
+<area shape="rect" id="node81" href="$class_unity_standard_assets_1_1_scene_utils_1_1_particle_scene_controls.html" title="UnityStandardAssets.Scene\lUtils.ParticleSceneControls" alt="" coords="468,4783,655,4824"/>
+<area shape="rect" id="node82" href="$class_unity_standard_assets_1_1_scene_utils_1_1_place_target_with_mouse.html" title="UnityStandardAssets.Scene\lUtils.PlaceTargetWithMouse" alt="" coords="468,4848,655,4889"/>
+<area shape="rect" id="node83" href="$class_unity_standard_assets_1_1_scene_utils_1_1_slow_mo_button.html" title="UnityStandardAssets.Scene\lUtils.SlowMoButton" alt="" coords="468,4913,655,4955"/>
+<area shape="rect" id="node84" href="$class_unity_standard_assets_1_1_utility_1_1_activate_trigger.html" title="UnityStandardAssets.Utility.\lActivateTrigger" alt="" coords="468,4979,655,5020"/>
+<area shape="rect" id="node85" href="$class_unity_standard_assets_1_1_utility_1_1_auto_mobile_shader_switch.html" title="UnityStandardAssets.Utility.\lAutoMobileShaderSwitch" alt="" coords="468,5044,655,5085"/>
+<area shape="rect" id="node86" href="$class_unity_standard_assets_1_1_utility_1_1_auto_move_and_rotate.html" title="UnityStandardAssets.Utility.\lAutoMoveAndRotate" alt="" coords="468,5109,655,5151"/>
+<area shape="rect" id="node87" href="$class_unity_standard_assets_1_1_utility_1_1_drag_rigidbody.html" title="UnityStandardAssets.Utility.\lDragRigidbody" alt="" coords="468,5175,655,5216"/>
+<area shape="rect" id="node88" href="$class_unity_standard_assets_1_1_utility_1_1_dynamic_shadow_settings.html" title="UnityStandardAssets.Utility.\lDynamicShadowSettings" alt="" coords="468,5240,655,5281"/>
+<area shape="rect" id="node89" href="$class_unity_standard_assets_1_1_utility_1_1_follow_target.html" title="UnityStandardAssets.Utility.\lFollowTarget" alt="" coords="468,5305,655,5347"/>
+<area shape="rect" id="node90" href="$class_unity_standard_assets_1_1_utility_1_1_f_p_s_counter.html" title="UnityStandardAssets.Utility.\lFPSCounter" alt="" coords="468,5371,655,5412"/>
+<area shape="rect" id="node91" href="$class_unity_standard_assets_1_1_utility_1_1_object_resetter.html" title="UnityStandardAssets.Utility.\lObjectResetter" alt="" coords="468,5436,655,5477"/>
+<area shape="rect" id="node92" href="$class_unity_standard_assets_1_1_utility_1_1_particle_system_destroyer.html" title="UnityStandardAssets.Utility.\lParticleSystemDestroyer" alt="" coords="468,5501,655,5543"/>
+<area shape="rect" id="node93" href="$class_unity_standard_assets_1_1_utility_1_1_platform_specific_content.html" title="UnityStandardAssets.Utility.\lPlatformSpecificContent" alt="" coords="468,5567,655,5608"/>
+<area shape="rect" id="node94" href="$class_unity_standard_assets_1_1_utility_1_1_simple_activator_menu.html" title="UnityStandardAssets.Utility.\lSimpleActivatorMenu" alt="" coords="468,521,655,563"/>
+<area shape="rect" id="node95" href="$class_unity_standard_assets_1_1_utility_1_1_simple_mouse_rotator.html" title="UnityStandardAssets.Utility.\lSimpleMouseRotator" alt="" coords="468,587,655,628"/>
+<area shape="rect" id="node96" href="$class_unity_standard_assets_1_1_utility_1_1_smooth_follow.html" title="UnityStandardAssets.Utility.\lSmoothFollow" alt="" coords="468,652,655,693"/>
+<area shape="rect" id="node97" href="$class_unity_standard_assets_1_1_utility_1_1_timed_object_activator.html" title="UnityStandardAssets.Utility.\lTimedObjectActivator" alt="" coords="468,717,655,759"/>
+<area shape="rect" id="node98" href="$class_unity_standard_assets_1_1_utility_1_1_timed_object_destructor.html" title="UnityStandardAssets.Utility.\lTimedObjectDestructor" alt="" coords="468,783,655,824"/>
+<area shape="rect" id="node99" href="$class_unity_standard_assets_1_1_utility_1_1_waypoint_circuit.html" title="UnityStandardAssets.Utility.\lWaypointCircuit" alt="" coords="468,848,655,889"/>
+<area shape="rect" id="node100" href="$class_unity_standard_assets_1_1_utility_1_1_waypoint_progress_tracker.html" title="UnityStandardAssets.Utility.\lWaypointProgressTracker" alt="" coords="468,913,655,955"/>
+<area shape="rect" id="node101" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_ai_control.html" title="UnityStandardAssets.Vehicles.\lAeroplane.AeroplaneAiControl" alt="" coords="460,979,663,1020"/>
+<area shape="rect" id="node102" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_audio.html" title="UnityStandardAssets.Vehicles.\lAeroplane.AeroplaneAudio" alt="" coords="460,1044,663,1085"/>
+<area shape="rect" id="node103" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_controller.html" title="UnityStandardAssets.Vehicles.\lAeroplane.AeroplaneController" alt="" coords="460,1109,663,1151"/>
+<area shape="rect" id="node104" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_control_surface_animator.html" title="UnityStandardAssets.Vehicles.\lAeroplane.AeroplaneControlSurface\lAnimator" alt="" coords="448,1175,675,1231"/>
+<area shape="rect" id="node105" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_propeller_animator.html" title="UnityStandardAssets.Vehicles.\lAeroplane.AeroplanePropellerAnimator" alt="" coords="439,1256,684,1297"/>
+<area shape="rect" id="node106" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_user_control2_axis.html" title="UnityStandardAssets.Vehicles.\lAeroplane.AeroplaneUserControl2Axis" alt="" coords="440,1321,683,1363"/>
+<area shape="rect" id="node107" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_user_control4_axis.html" title="UnityStandardAssets.Vehicles.\lAeroplane.AeroplaneUserControl4Axis" alt="" coords="440,1387,683,1428"/>
+<area shape="rect" id="node108" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_jet_particle_effect.html" title="UnityStandardAssets.Vehicles.\lAeroplane.JetParticleEffect" alt="" coords="460,1452,663,1493"/>
+<area shape="rect" id="node109" href="$class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_landing_gear.html" title="UnityStandardAssets.Vehicles.\lAeroplane.LandingGear" alt="" coords="460,1517,663,1559"/>
+<area shape="rect" id="node110" href="$class_unity_standard_assets_1_1_water_1_1_displace.html" title="UnityStandardAssets.Water.\lDisplace" alt="" coords="467,1583,655,1624"/>
+<area shape="rect" id="node112" href="$class_unity_standard_assets_1_1_water_1_1_planar_reflection.html" title="UnityStandardAssets.Water.\lPlanarReflection" alt="" coords="467,1648,655,1689"/>
+<area shape="rect" id="node113" href="$class_unity_standard_assets_1_1_water_1_1_specular_lighting.html" title="UnityStandardAssets.Water.\lSpecularLighting" alt="" coords="467,1713,655,1755"/>
+<area shape="rect" id="node114" href="$class_unity_standard_assets_1_1_water_1_1_water.html" title="UnityStandardAssets.Water.\lWater" alt="" coords="467,1779,655,1820"/>
+<area shape="rect" id="node115" href="$class_unity_standard_assets_1_1_water_1_1_water_base.html" title="UnityStandardAssets.Water.\lWaterBase" alt="" coords="467,1844,655,1885"/>
+<area shape="rect" id="node116" href="$class_unity_standard_assets_1_1_water_1_1_water_basic.html" title="UnityStandardAssets.Water.\lWaterBasic" alt="" coords="467,1909,655,1951"/>
+<area shape="rect" id="node117" href="$class_unity_standard_assets_1_1_water_1_1_water_tile.html" title="UnityStandardAssets.Water.\lWaterTile" alt="" coords="467,1975,655,2016"/>
+<area shape="rect" id="node118" href="$class_visibility_manager.html" title="VisibilityManager" alt="" coords="501,2041,622,2067"/>
+<area shape="rect" id="node56" href="$class_billboard_behavior.html" title="BillboardBehavior" alt="" coords="789,3446,910,3473"/>
+<area shape="rect" id="node57" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_compound_healthbar_behaviour.html" title="PFW.Ingame.UI.CompoundHealthbar\lBehaviour" alt="" coords="732,3497,967,3539"/>
+<area shape="rect" id="node58" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_health_bar_behaviour.html" title="PFW.Ingame.UI.HealthBarBehaviour" alt="" coords="734,3563,965,3590"/>
+<area shape="rect" id="node59" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_icon_behaviour.html" title="PFW.Ingame.UI.IconBehaviour" alt="" coords="750,3395,949,3422"/>
+<area shape="rect" id="node111" href="$class_unity_standard_assets_1_1_water_1_1_gerstner_displace.html" title="UnityStandardAssets.Water.\lGerstnerDisplace" alt="" coords="755,1583,943,1624"/>
+<area shape="rect" id="node119" href="$class_platoon_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="507,2158,615,2185"/>
+<area shape="rect" id="node120" href="$class_transportable_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="778,2158,921,2185"/>
+</map>

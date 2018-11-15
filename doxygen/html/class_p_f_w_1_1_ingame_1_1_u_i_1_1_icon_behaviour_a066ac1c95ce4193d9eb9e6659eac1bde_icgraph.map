@@ -1,0 +1,5 @@
+<map id="PFW.Ingame.UI.IconBehaviour.SetVisible" name="PFW.Ingame.UI.IconBehaviour.SetVisible">
+<area shape="rect" id="node2" href="$class_platoon_behaviour.html#a952a96ed1e6eff7720e5300d1518b920" title="PlatoonBehaviour.SetEnabled" alt="" coords="256,46,449,73"/>
+<area shape="rect" id="node3" href="$class_transporter_waypoint.html#a62eb6555e14d19a925a1b50c51602cd3" title="TransporterWaypoint.Process\lWaypoint" alt="" coords="497,5,692,47"/>
+<area shape="rect" id="node4" href="$class_transporter_waypoint.html#a679a922c391970cae90f8eecf861637c" title="TransporterWaypoint.Order\lComplete" alt="" coords="505,71,684,112"/>
+</map>
