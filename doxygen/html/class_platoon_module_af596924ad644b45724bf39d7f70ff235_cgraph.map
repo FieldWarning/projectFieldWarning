@@ -1,4 +1,0 @@
-<map id="PlatoonModule.EndQueueing" name="PlatoonModule.EndQueueing">
-<area shape="rect" id="node2" href="$class_waypoint.html#ace02d25cd1655936079f835fee9fab12" title="Waypoint.Interrupt" alt="" coords="272,5,400,32"/>
-<area shape="rect" id="node3" href="$class_waypoint.html#a7c605044f038204c44b091e766878d2e" title="Waypoint.ProcessWaypoint" alt="" coords="244,56,428,83"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="Priority_Queue.FastPriorityQueue&lt; T &gt;" name="Priority_Queue.FastPriorityQueue&lt; T &gt;">
-<area shape="rect" id="node2" title="A helper&#45;interface only needed to make writing unit tests a bit easier (hence the &#39;internal&#39; access m..." alt="" coords="13,233,176,325"/>
-<area shape="rect" id="node3" href="$interface_priority___queue_1_1_i_priority_queue.html" title="{IPriorityQueue\&lt; TItem,\l TPriority \&gt;\n|+ First\l+ Count\l|+ Enqueue()\l+ Dequeue()\l+ Clear()\l+ Contains()\l+ Remove()\l+ UpdatePriority()\l}" alt="" coords="19,5,171,185"/>
-</map>

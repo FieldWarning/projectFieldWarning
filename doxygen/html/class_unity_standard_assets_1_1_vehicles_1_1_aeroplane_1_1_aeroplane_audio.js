@@ -1,4 +1,0 @@
-var class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_audio =
-[
-    [ "AdvancedSetttings", "class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_audio_1_1_advanced_setttings.html", "class_unity_standard_assets_1_1_vehicles_1_1_aeroplane_1_1_aeroplane_audio_1_1_advanced_setttings" ]
-];

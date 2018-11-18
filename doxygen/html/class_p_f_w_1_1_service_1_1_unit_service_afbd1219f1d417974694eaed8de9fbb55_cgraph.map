@@ -1,6 +1,0 @@
-<map id="PFW.Service.UnitService.Awake" name="PFW.Service.UnitService.Awake">
-<area shape="rect" id="node2" href="$class_p_f_w_1_1_service_1_1_unit_category_service.html#aba680fc753dcb4dbf693f3d33cfdd842" title="PFW.Service.UnitCategory\lService.Awake" alt="" coords="231,5,408,47"/>
-<area shape="rect" id="node3" href="$class_p_f_w_1_1_service_1_1_faction_service.html#aa47d2d9f723b3c10af96e67c98c64133" title="PFW.Service.FactionService.\lAwake" alt="" coords="224,71,415,112"/>
-<area shape="rect" id="node4" href="$class_p_f_w_1_1_service_1_1_unit_category_service.html#a6b95cc1f257fc2878e3ea02c621df817" title="PFW.Service.UnitCategory\lService.All" alt="" coords="231,136,408,177"/>
-<area shape="rect" id="node5" href="$class_p_f_w_1_1_service_1_1_faction_service.html#a4fc1cf12f63b8035bfeaf8ef461041c1" title="PFW.Service.FactionService.\lAllCoalitions" alt="" coords="224,201,415,243"/>
-</map>

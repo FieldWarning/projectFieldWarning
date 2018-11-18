@@ -1,5 +1,0 @@
-<map id="VehicleBehaviour" name="VehicleBehaviour">
-<area shape="rect" id="node2" href="$class_unit_behaviour.html" title="{UnitBehaviour\n|+ UNIT_TAG\l+ NO_HEADING\l+ Data\l+ VisibleBehavior\l+ Entity\l+ Platoon\l+ Pathfinder\l+ Source\l+ _forward\l+ _right\l+ Ground\l# _position\l# _rotation\l# _finalHeading\l|+ Awake()\l+ Start()\l+ Update()\l+ HandleHit()\l+ UpdateMapOrientation()\l+ SetPlatoon()\l+ GetHealth()\l+ SetHealth()\l+ GetPlatoon()\l+ SetUnitDestination()\l+ SetUnitDestination()\l+ SetFinalOrientation()\l+ SetUnitFinalFacing()\l+ SetUnitFinalHeading()\l+ SetLayer()\l+ SetVisible()\l+ SetMatch()\l+ GetScore()\l+ SetOriginalOrientation()\l+ OrdersComplete()\l+ GetTerrainSpeedMultiplier()\l+ Destroy()\l# DoMovement()\l# IsMoving()\l# GetRenderers()\l# getHeading()\l# WakeUp()\l}" alt="" coords="59,271,249,920"/>
-<area shape="rect" id="node3" href="$class_selectable_behavior.html" title="{SelectableBehavior\n||+ GetPlatoon()\l}" alt="" coords="5,138,137,215"/>
-<area shape="rect" id="node5" href="$interface_matchable.html" title="{Matchable\&lt; Vector3 \&gt;\n||+ SetMatch()\l+ GetScore()\l}" alt="" coords="161,131,312,223"/>
-</map>

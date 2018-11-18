@@ -1,4 +1,0 @@
-<map id="TransporterModule" name="TransporterModule">
-<area shape="rect" id="node2" href="$class_platoon_module.html" title="Copyright (c) 2017&#45;present, PFW Contributors. " alt="" coords="5,5,164,171"/>
-<area shape="rect" id="node3" href="$interface_matchable.html" title="{Matchable\&lt; Transportable\lModule \&gt;\n||+ SetMatch()\l+ GetScore()\l}" alt="" coords="188,35,360,141"/>
-</map>

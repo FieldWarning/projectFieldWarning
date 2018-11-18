@@ -1,9 +1,0 @@
-<map id="VehicleBehaviour.SetOriginalOrientation" name="VehicleBehaviour.SetOriginalOrientation">
-<area shape="rect" id="node2" href="$class_unit_behaviour.html#a24ba0282cc962fc3e5767e7adde8877d" title="UnitBehaviour.WakeUp" alt="" coords="261,77,415,104"/>
-<area shape="rect" id="node7" href="$class_vehicle_behaviour.html#abb58c68d79e741c8371ef5907eb5abb9" title="VehicleBehaviour.UpdateMap\lOrientation" alt="" coords="243,129,433,170"/>
-<area shape="rect" id="node3" href="$class_unit_behaviour.html#aaa94f70d0153e3cd997e77eb86ae4a69" title="UnitBehaviour.SetVisible" alt="" coords="508,31,672,57"/>
-<area shape="rect" id="node6" href="$class_p_f_w_1_1_weapons_1_1_weapon.html#a5f6260b1b141fb804468f9ab7499e870" title="PFW.Weapons.Weapon.WakeUp" alt="" coords="481,81,699,108"/>
-<area shape="rect" id="node4" href="$class_unit_behaviour.html#a774a6e25bd55774194fff8bddb663d8f" title="UnitBehaviour.GetRenderers" alt="" coords="747,5,932,32"/>
-<area shape="rect" id="node5" href="$class_unit_behaviour.html#aeb94f47adde77cc405513d1b01da2fe6" title="UnitBehaviour.SetLayer" alt="" coords="761,56,918,83"/>
-<area shape="rect" id="node8" href="$class_terrain_map.html#a6bbc1e4318ce1ec9c0af6f19afcfefeb" title="TerrainMap.GetTerrainType" alt="" coords="501,136,679,163"/>
-</map>

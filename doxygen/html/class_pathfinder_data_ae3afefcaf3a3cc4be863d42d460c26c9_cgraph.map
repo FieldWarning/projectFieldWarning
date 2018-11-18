@@ -1,6 +1,0 @@
-<map id="PathfinderData.AddArc" name="PathfinderData.AddArc">
-<area shape="rect" id="node2" href="$class_pathfinder.html#a9d602969463b0211fc9ccfc5456f6af6" title="Pathfinder.FindLocalPath" alt="" coords="208,5,375,32"/>
-<area shape="rect" id="node5" href="$class_pathfinder_data.html#a28143e7c9a906eeae23c56a6dd4abc47" title="PathfinderData.Position" alt="" coords="212,56,371,83"/>
-<area shape="rect" id="node3" href="$class_mobility_type.html#a4784b00673452a2cb7759bb2d2cce192" title="MobilityType.GetUnitSpeed" alt="" coords="423,5,603,32"/>
-<area shape="rect" id="node4" href="$class_terrain_map.html#a6bbc1e4318ce1ec9c0af6f19afcfefeb" title="TerrainMap.GetTerrainType" alt="" coords="651,5,829,32"/>
-</map>

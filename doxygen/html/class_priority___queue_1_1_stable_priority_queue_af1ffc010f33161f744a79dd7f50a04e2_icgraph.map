@@ -1,5 +1,0 @@
-<map id="Priority_Queue.StablePriorityQueue.Contains" name="Priority_Queue.StablePriorityQueue.Contains">
-<area shape="rect" id="node2" href="$class_priority___queue_1_1_stable_priority_queue.html#aa939f3ec7e371367dd2ed3e08148e9ff" title="Enqueue a node to the priority queue. " alt="" coords="244,5,435,47"/>
-<area shape="rect" id="node3" href="$class_priority___queue_1_1_stable_priority_queue.html#a59f3f52a679b865da66f6e505f6b2ff4" title="This method must be called on a node every time its priority changes while it is in the queue..." alt="" coords="244,71,435,112"/>
-<area shape="rect" id="node4" href="$class_priority___queue_1_1_stable_priority_queue.html#ad5e8db85c93f4ccf45f11a1d63afa89e" title="Removes a node from the queue. " alt="" coords="244,136,435,177"/>
-</map>

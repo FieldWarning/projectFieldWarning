@@ -1,5 +1,0 @@
-<map id="RoadNetwork.RoadNode.BuildBranchCandidate" name="RoadNetwork.RoadNode.BuildBranchCandidate">
-<area shape="rect" id="node2" href="$class_road_network_1_1_road_node.html#aed70fa48f3bd73047b832d2bc8906099" title="RoadNetwork.RoadNode.Valid" alt="" coords="249,5,445,32"/>
-<area shape="rect" id="node3" href="$class_road_network_1_1_road_node.html#aaa1199c8fa48786283652047c991652f" title="RoadNetwork.RoadNode.Get\lHeadingScore" alt="" coords="253,57,441,98"/>
-<area shape="rect" id="node4" href="$class_terrain_data.html#aeeedd68c05ae698f77e3575ec77e8dd9" title="TerrainData.populationScore" alt="" coords="493,64,679,91"/>
-</map>

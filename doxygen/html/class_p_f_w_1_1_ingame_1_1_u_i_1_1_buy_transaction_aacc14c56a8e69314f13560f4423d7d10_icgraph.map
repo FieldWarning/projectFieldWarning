@@ -1,5 +1,0 @@
-<map id="PFW.Ingame.UI.BuyTransaction.AddUnit" name="PFW.Ingame.UI.BuyTransaction.AddUnit">
-<area shape="rect" id="node2" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#a17f89af70f617967fc60b9507dd0c127" title="PFW.Ingame.UI.BuyTransaction.\lClone" alt="" coords="265,5,477,47"/>
-<area shape="rect" id="node3" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html#a1621ac7312a56c9d84de09f27e5b392d" title="Called when the tank button is pressed in the buy menu. " alt="" coords="271,71,471,112"/>
-<area shape="rect" id="node4" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_input_manager.html#a910b8400d8797d3cd469f2217be7f54e" title="Called when the arty button is pressed in the buy menu. " alt="" coords="271,136,471,177"/>
-</map>

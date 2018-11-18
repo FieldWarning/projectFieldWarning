@@ -1,5 +1,0 @@
-<map id="VisibleBehavior.ToggleUnitVisibility" name="VisibleBehavior.ToggleUnitVisibility">
-<area shape="rect" id="node2" href="$class_visible_behavior.html#a70113a21640837edd6c782e1ab33997b" title="VisibleBehavior.MaybeHide\lFromEnemies" alt="" coords="228,5,407,47"/>
-<area shape="rect" id="node3" href="$class_visibility_manager.html#a1d82e7a2ce68076268d3d128268ba6da" title="VisibilityManager.Register\lUnitBirth" alt="" coords="231,71,404,112"/>
-<area shape="rect" id="node4" href="$class_p_f_w_1_1_model_1_1_game_1_1_match_session.html#af981739a9edd146d82ba6c4100ba9a27" title="PFW.Model.Game.MatchSession.\lRegisterUnitBirth" alt="" coords="455,71,676,112"/>
-</map>

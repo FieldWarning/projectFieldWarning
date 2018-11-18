@@ -1,8 +1,0 @@
-<map id="GhostPlatoonBehaviour.SetVisible" name="GhostPlatoonBehaviour.SetVisible">
-<area shape="rect" id="node2" href="$class_unit_behaviour.html#aaa94f70d0153e3cd997e77eb86ae4a69" title="UnitBehaviour.SetVisible" alt="" coords="252,56,416,83"/>
-<area shape="rect" id="node5" href="$class_unit_label_attacher.html#a5125338bf4d8be9d07c47d0914cc52b0" title="UnitLabelAttacher.SetVisibility" alt="" coords="235,107,433,133"/>
-<area shape="rect" id="node3" href="$class_unit_behaviour.html#a774a6e25bd55774194fff8bddb663d8f" title="UnitBehaviour.GetRenderers" alt="" coords="481,5,667,32"/>
-<area shape="rect" id="node4" href="$class_unit_behaviour.html#aeb94f47adde77cc405513d1b01da2fe6" title="UnitBehaviour.SetLayer" alt="" coords="495,56,653,83"/>
-<area shape="rect" id="node6" href="$class_unit_label_attacher.html#aea9c568be24632cc352d5e5efec318cd" title="UnitLabelAttacher.Show" alt="" coords="493,107,655,133"/>
-<area shape="rect" id="node7" href="$class_unit_label_attacher.html#a7178d1628f3278bffe1c08045d0a1b6c" title="UnitLabelAttacher.Hide" alt="" coords="497,157,651,184"/>
-</map>

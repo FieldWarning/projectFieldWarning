@@ -1,4 +1,0 @@
-<map id="PFW.Service.FactionService" name="PFW.Service.FactionService">
-<area shape="rect" id="node3" href="$interface_p_f_w_1_1_service_1_1_i_faction_service.html" title="{IFactionService\n||+ AllByFaction()\l+ AllCoalitions()\l}" alt="" coords="140,131,256,223"/>
-<area shape="rect" id="node4" href="$interface_p_f_w_1_1_service_1_1_i_service.html" title="{IService\&lt; Faction \&gt;\n||+ All()\l}" alt="" coords="131,5,265,83"/>
-</map>

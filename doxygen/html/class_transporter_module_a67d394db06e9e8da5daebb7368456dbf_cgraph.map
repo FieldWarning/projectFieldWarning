@@ -1,8 +1,0 @@
-<map id="TransporterModule.SetMatch" name="TransporterModule.SetMatch">
-<area shape="rect" id="node2" href="$class_platoon_module.html#a1bfc1e6251b3297e0f579a24c4ea386c" title="PlatoonModule.BeginQueueing" alt="" coords="253,5,453,32"/>
-<area shape="rect" id="node4" href="$class_transportable_module.html#af997234cab337bc51a0114724d90a344" title="TransportableModule.SetTransport" alt="" coords="243,56,463,83"/>
-<area shape="rect" id="node5" href="$class_platoon_module.html#af596924ad644b45724bf39d7f70ff235" title="PlatoonModule.EndQueueing" alt="" coords="257,107,448,133"/>
-<area shape="rect" id="node3" href="$class_platoon_module.html#a9b4779506247d23065347249322956d4" title="PlatoonModule.GetModuleWaypoint" alt="" coords="511,5,741,32"/>
-<area shape="rect" id="node6" href="$class_waypoint.html#ace02d25cd1655936079f835fee9fab12" title="Waypoint.Interrupt" alt="" coords="562,81,690,108"/>
-<area shape="rect" id="node7" href="$class_waypoint.html#a7c605044f038204c44b091e766878d2e" title="Waypoint.ProcessWaypoint" alt="" coords="534,132,718,159"/>
-</map>

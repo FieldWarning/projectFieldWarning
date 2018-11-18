@@ -1,8 +1,0 @@
-<map id="UnitLabelAttacher.Show" name="UnitLabelAttacher.Show">
-<area shape="rect" id="node2" href="$class_unit_label_attacher.html#a5125338bf4d8be9d07c47d0914cc52b0" title="UnitLabelAttacher.SetVisibility" alt="" coords="215,31,413,57"/>
-<area shape="rect" id="node3" href="$class_ghost_platoon_behaviour.html#ad0b1d28c785e4fb800665b4368780ff1" title="GhostPlatoonBehaviour.Set\lVisible" alt="" coords="461,23,643,65"/>
-<area shape="rect" id="node4" href="$class_movement_module.html#a91fb9ddf842522418a5fbf46b477907b" title="MovementModule.SetMatch" alt="" coords="691,5,873,32"/>
-<area shape="rect" id="node5" href="$class_platoon_behaviour.html#a2a254a0e49ff73440b3de0e46a55f9aa" title="PlatoonBehaviour.Spawn" alt="" coords="699,56,865,83"/>
-<area shape="rect" id="node6" href="$class_ghost_platoon_behaviour.html#a60fea7a329b164aab24a2abcc3fb5225" title="GhostPlatoonBehaviour.Spawn" alt="" coords="921,56,1121,83"/>
-<area shape="rect" id="node7" href="$class_spawn_point_behaviour.html#a2b112c169ec9c87175673341bfce88ad" title="SpawnPointBehaviour.Update" alt="" coords="1169,56,1361,83"/>
-</map>

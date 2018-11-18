@@ -1,5 +1,0 @@
-<map id="UnitBehaviour.Update" name="UnitBehaviour.Update">
-<area shape="rect" id="node2" href="$class_unit_behaviour.html#ab9151c40f7a568563afc623ba728a22f" title="UnitBehaviour.DoMovement" alt="" coords="227,5,407,32"/>
-<area shape="rect" id="node3" href="$class_unit_behaviour.html#a3f241f4af67d0b64d7a583ce14ba5bb1" title="UnitBehaviour.IsMoving" alt="" coords="240,56,395,83"/>
-<area shape="rect" id="node4" href="$class_unit_behaviour.html#afd75b16e7cb8432f5022c6af7352ea7d" title="UnitBehaviour.UpdateMapOrientation" alt="" coords="200,107,435,133"/>
-</map>

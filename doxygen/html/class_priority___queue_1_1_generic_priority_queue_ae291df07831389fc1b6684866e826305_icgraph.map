@@ -1,5 +1,0 @@
-<map id="Priority_Queue.GenericPriorityQueue.Contains" name="Priority_Queue.GenericPriorityQueue.Contains">
-<area shape="rect" id="node2" href="$class_priority___queue_1_1_generic_priority_queue.html#aa8941f90a627f5dbdec7316b21548860" title="Enqueue a node to the priority queue. " alt="" coords="252,5,451,61"/>
-<area shape="rect" id="node3" href="$class_priority___queue_1_1_generic_priority_queue.html#af584bb9cdbdc7e2b1ab02769147a3117" title="This method must be called on a node every time its priority changes while it is in the queue..." alt="" coords="252,85,451,141"/>
-<area shape="rect" id="node4" href="$class_priority___queue_1_1_generic_priority_queue.html#a5ab03a019c63c94774203392b6b906f7" title="Removes a node from the queue. " alt="" coords="252,165,451,221"/>
-</map>

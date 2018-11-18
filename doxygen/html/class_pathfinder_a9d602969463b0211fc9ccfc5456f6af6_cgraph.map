@@ -1,4 +1,0 @@
-<map id="Pathfinder.FindLocalPath" name="Pathfinder.FindLocalPath">
-<area shape="rect" id="node2" href="$class_mobility_type.html#a4784b00673452a2cb7759bb2d2cce192" title="MobilityType.GetUnitSpeed" alt="" coords="220,5,400,32"/>
-<area shape="rect" id="node3" href="$class_terrain_map.html#a6bbc1e4318ce1ec9c0af6f19afcfefeb" title="TerrainMap.GetTerrainType" alt="" coords="448,5,627,32"/>
-</map>

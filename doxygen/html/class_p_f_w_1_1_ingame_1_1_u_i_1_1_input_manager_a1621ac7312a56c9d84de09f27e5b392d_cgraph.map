@@ -1,6 +1,0 @@
-<map id="PFW.Ingame.UI.InputManager.TankButtonCallback" name="PFW.Ingame.UI.InputManager.TankButtonCallback">
-<area shape="rect" id="node2" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_buy_transaction.html#aacc14c56a8e69314f13560f4423d7d10" title="PFW.Ingame.UI.BuyTransaction.\lAddUnit" alt="" coords="253,23,465,65"/>
-<area shape="rect" id="node3" href="$class_ghost_platoon_behaviour.html#a243e116c5b06d0c60f80316788cf218a" title="GhostPlatoonBehaviour.Destroy" alt="" coords="513,5,720,32"/>
-<area shape="rect" id="node4" href="$class_ghost_platoon_behaviour.html#accbc6b03eff2f33f96376aac09ab6b11" title="GhostPlatoonBehaviour.Build" alt="" coords="521,56,712,83"/>
-<area shape="rect" id="node5" href="$class_ghost_platoon_behaviour.html#ac1df674244f09527175584d4b85183fb" title="GhostPlatoonBehaviour.Initialize" alt="" coords="768,56,976,83"/>
-</map>

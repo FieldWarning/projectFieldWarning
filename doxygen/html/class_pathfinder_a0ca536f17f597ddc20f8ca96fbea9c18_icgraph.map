@@ -1,6 +1,0 @@
-<map id="Pathfinder.GetDestination" name="Pathfinder.GetDestination">
-<area shape="rect" id="node2" href="$class_infantry_behaviour.html#a8663ca0f8fa72ac67476812130596a76" title="InfantryBehaviour.Update" alt="" coords="239,5,405,32"/>
-<area shape="rect" id="node3" href="$class_infantry_behaviour.html#a37ba13cc48eba4c5c27781c15338b625" title="InfantryBehaviour.setTransport\lTarget" alt="" coords="224,57,420,98"/>
-<area shape="rect" id="node4" href="$class_unit_behaviour.html#af39b20afe0f2f09ddf80f56fc2d0b504" title="UnitBehaviour.SetUnitFinal\lFacing" alt="" coords="234,122,410,163"/>
-<area shape="rect" id="node5" href="$class_unit_behaviour.html#a69475ba3086dd66be1a41080b8c42147" title="UnitBehaviour.getHeading" alt="" coords="237,188,407,215"/>
-</map>

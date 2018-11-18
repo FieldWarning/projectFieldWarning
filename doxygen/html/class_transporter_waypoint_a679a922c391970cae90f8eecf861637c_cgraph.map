@@ -1,8 +1,0 @@
-<map id="TransporterWaypoint.OrderComplete" name="TransporterWaypoint.OrderComplete">
-<area shape="rect" id="node2" href="$class_transportable_waypoint.html#ada4586777e1adc6cbb0f57e8fbb5b4a5" title="TransportableWaypoint.Order\lComplete" alt="" coords="247,5,438,47"/>
-<area shape="rect" id="node3" href="$class_transporter_module.html#a8b5682ebce676460a3e6eb2630edeefb" title="TransporterModule.SetTransported" alt="" coords="232,71,453,98"/>
-<area shape="rect" id="node4" href="$class_platoon_behaviour.html#a952a96ed1e6eff7720e5300d1518b920" title="PlatoonBehaviour.SetEnabled" alt="" coords="246,122,439,149"/>
-<area shape="rect" id="node6" href="$class_transporter_behaviour.html#a27cd103bbfac3b6c5b23ff6b9a0d92f5" title="TransporterBehaviour.unloading\lComplete" alt="" coords="241,175,444,216"/>
-<area shape="rect" id="node5" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_icon_behaviour.html#a066ac1c95ce4193d9eb9e6659eac1bde" title="PFW.Ingame.UI.IconBehaviour.\lSetVisible" alt="" coords="501,112,704,153"/>
-<area shape="rect" id="node7" href="$class_infantry_behaviour.html#add2b3beb05e3454192b415ef86c1a76d" title="InfantryBehaviour.interacts\lWithTransport" alt="" coords="515,177,690,219"/>
-</map>

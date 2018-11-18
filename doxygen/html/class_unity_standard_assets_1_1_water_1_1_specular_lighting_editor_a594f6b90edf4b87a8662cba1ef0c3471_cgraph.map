@@ -1,6 +1,0 @@
-<map id="UnityStandardAssets.Water.SpecularLightingEditor.OnInspectorGUI" name="UnityStandardAssets.Water.SpecularLightingEditor.OnInspectorGUI">
-<area shape="rect" id="node2" href="$class_water_editor_utility.html#ac3c2023f74d4f0ac5062f1c8d1ff4d3e" title="WaterEditorUtility.SetMaterial\lColor" alt="" coords="301,5,496,47"/>
-<area shape="rect" id="node3" href="$class_water_editor_utility.html#a54d98514839c67b732eed897ff6f1993" title="WaterEditorUtility.GetMaterial\lColor" alt="" coords="301,71,496,112"/>
-<area shape="rect" id="node4" href="$class_water_editor_utility.html#aeee82ae8c53e1f505220b3576b0bc5c6" title="WaterEditorUtility.SetMaterial\lFloat" alt="" coords="301,136,496,177"/>
-<area shape="rect" id="node5" href="$class_water_editor_utility.html#a424b4fc328b7370bd1f90a1516268982" title="WaterEditorUtility.GetMaterial\lFloat" alt="" coords="301,201,496,243"/>
-</map>

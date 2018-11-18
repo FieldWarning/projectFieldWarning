@@ -1,4 +1,0 @@
-<map id="PFW.Ingame.UI.InputManager.ApplyHotkeys" name="PFW.Ingame.UI.InputManager.ApplyHotkeys">
-<area shape="rect" id="node2" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_selection_manager.html#a9a75dc92d34929f0cce22487e1d1ea3a" title="PFW.Ingame.UI.SelectionManager.\lDispatchUnloadCommand" alt="" coords="253,5,480,47"/>
-<area shape="rect" id="node3" href="$class_p_f_w_1_1_ingame_1_1_u_i_1_1_selection_manager.html#a4a3b24e6e76e814be94588775a208064" title="PFW.Ingame.UI.SelectionManager.\lDispatchLoadCommand" alt="" coords="253,71,480,112"/>
-</map>
