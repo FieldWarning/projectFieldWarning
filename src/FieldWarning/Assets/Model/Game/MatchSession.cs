@@ -16,12 +16,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using PFW.Ingame.UI;
 
-using static PFW.Ingame.UI.InputManager;
 using Unity.Entities;
 using PFW.Ingame.Prototype;
 
 namespace PFW.Model.Game
 {
+    /**
+     * Represents the ongoing match.
+     * 
+     * Holds a lot of data that would be singleton or global, but is intentionally
+     * non-static (so that we can easily clean up).
+     */ 
     public class MatchSession : MonoBehaviour
     {
         [NonSerialized]
@@ -44,7 +49,11 @@ namespace PFW.Model.Game
         public PathfinderData PathfinderData { get; private set; }
 
         public UnitFactory UnitFactory { get; private set; }
-
+        
+        /**
+         * Currently not used, but code saved for when we convert to ECS.
+         * Entities are lightweight game objects that consist of components only.
+         */ 
         public EntityManager EntityManager;
 
         public void Awake()
