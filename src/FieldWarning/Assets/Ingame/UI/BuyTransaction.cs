@@ -29,10 +29,10 @@ namespace PFW.Ingame.UI
         private int _smallestPlatoonSize;
 
         public UnitType UnitType { get; }
-        public Player Owner { get; }
+        public PlayerData Owner { get; }
         public List<GhostPlatoonBehaviour> GhostPlatoons { get; }
 
-        public BuyTransaction(UnitType type, Player owner)
+        public BuyTransaction(UnitType type, PlayerData owner)
         {
             UnitType = type;
             Owner = owner;

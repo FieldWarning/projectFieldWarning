@@ -55,9 +55,9 @@ namespace PFW.Ingame.UI
 
         private SelectionManager _selectionManager;
 
-        private Player _localPlayer {
+        private PlayerData _localPlayer {
             get {
-                return Session.LocalPlayer;
+                return Session.LocalPlayer.Data;
             }
         }
 

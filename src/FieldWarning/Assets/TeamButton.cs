@@ -36,7 +36,7 @@ public class TeamButton : MonoBehaviour
 
     public void onClick()
     {
-        _session.LocalPlayer = _team.Players[0];
+        _session.LocalPlayer.Data = _team.Players[0];
         _session.UpdateTeamBelonging(_team);
     }
 }

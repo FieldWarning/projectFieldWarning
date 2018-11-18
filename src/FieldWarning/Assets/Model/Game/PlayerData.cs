@@ -11,15 +11,17 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using UnityEngine;
-
 namespace PFW.Model.Game
 {
-    public class Player : MonoBehaviour
+    /**
+     * Most players are passive data containers.
+     * 
+     * For the logic behind managed players, take a look at the PlayerBehaviour class.
+     */
+    public class PlayerData
     {
         public Team Team;
-
-        [SerializeField]
+        
         private MatchSession _session;
         public MatchSession Session {
             get {
@@ -31,5 +33,8 @@ namespace PFW.Model.Game
                     _session = value;
             }
         }
+
+        public float Money = 1000;
+        public float IncomeTick = 7;
     }
 }
