@@ -36,7 +36,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
     public static readonly float UNIT_DISTANCE = 40*TerrainConstants.MAP_SCALE;
 
-    public Player Owner { get; private set; }
+    public PlayerData Owner { get; private set; }
 
     public void Update()
     {
@@ -74,7 +74,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
         }
     }
 
-    public void Initialize(UnitType t, Player owner, int n)
+    public void Initialize(UnitType t, PlayerData owner, int n)
     {
         Type = t;
         Owner = owner;

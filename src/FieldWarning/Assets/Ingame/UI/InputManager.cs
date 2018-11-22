@@ -55,9 +55,9 @@ namespace PFW.Ingame.UI
 
         private SelectionManager _selectionManager;
 
-        private Player _localPlayer {
+        private PlayerData _localPlayer {
             get {
-                return Session.LocalPlayer;
+                return Session.LocalPlayer.Data;
             }
         }
 
@@ -111,7 +111,8 @@ namespace PFW.Ingame.UI
                 if (Input.GetMouseButtonDown(0))
                     _selectionManager.DispatchFirePosCommand();
 
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
+                    || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
 
                 break;
@@ -124,7 +125,8 @@ namespace PFW.Ingame.UI
                             false, MoveWaypoint.MoveMode.reverseMove);
                 }
 
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
+                    || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
                 break;
 
@@ -136,7 +138,8 @@ namespace PFW.Ingame.UI
                             false, MoveWaypoint.MoveMode.fastMove);
                 }
 
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift)) 
+                    || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
                 break;
 

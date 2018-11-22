@@ -18,6 +18,8 @@ using UnityEngine.UI;
 using PFW.Model.Armory;
 using PFW.Service;
 
+using PFW.Model.Game;
+
 namespace PFW.Ingame.UI
 {
     /**
@@ -27,6 +29,8 @@ namespace PFW.Ingame.UI
     {
         public GameObject MenuButtonPrefab;
         public GameObject UnitCardDeploymentPrefab;
+
+        public PlayerBehaviour LocalPlayer;
 
         private bool _isOpen = false;
 
@@ -133,7 +137,7 @@ namespace PFW.Ingame.UI
 
         private void UpdateDeploymentPoints()
         {
-            _menuButton.text = Random.Range(0, 2000).ToString();
+            _menuButton.text = LocalPlayer.Money.ToString();
         }
     }
 }

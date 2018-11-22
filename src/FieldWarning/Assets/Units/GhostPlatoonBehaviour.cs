@@ -28,7 +28,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private UnitType _unitType;
     private GameObject _realPlatoon;
     private PlatoonBehaviour _platoonBehaviour;
-    private Player _owner;
+    private PlayerData _owner;
     private List<GameObject> _units = new List<GameObject>();
     
     void Update()
@@ -61,7 +61,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _platoonBehaviour.SetGhostPlatoon(this);
     }
 
-    public void Initialize(UnitType t, Player owner, int unitCount)
+    public void Initialize(UnitType t, PlayerData owner, int unitCount)
     {
         _owner = owner;
         _unitType = t;
@@ -125,7 +125,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public static GhostPlatoonBehaviour Build(UnitType t, Player owner, int count)
+    public static GhostPlatoonBehaviour Build(UnitType t, PlayerData owner, int count)
     {
         GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();

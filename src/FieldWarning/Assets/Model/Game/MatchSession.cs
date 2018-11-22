@@ -30,7 +30,7 @@ namespace PFW.Model.Game
     public class MatchSession : MonoBehaviour
     {
         [NonSerialized]
-        public Player LocalPlayer;
+        public PlayerBehaviour LocalPlayer;
 
         public Settings Settings { get; } = new Settings();
         public ICollection<Team> Teams { get; } = new List<Team>();
@@ -71,7 +71,10 @@ namespace PFW.Model.Game
             Teams.Add(blueTeam);
             Teams.Add(redTeam);
 
-            LocalPlayer = redTeam.Players[0];
+            LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
+            LocalPlayer.Data = redTeam.Players[0];
+            DeploymentMenu menu = GameObject.Find("Managers").GetComponent<DeploymentMenu>();
+            menu.LocalPlayer = LocalPlayer;
 
 
             _inputManager = FindObjectOfType<InputManager>();
@@ -89,7 +92,7 @@ namespace PFW.Model.Game
             if (_visibilityManager.Session == null)
                 _visibilityManager.Session = this;
             if (_visibilityManager.LocalTeam == null)
-                _visibilityManager.LocalTeam = LocalPlayer.Team;
+                _visibilityManager.LocalTeam = LocalPlayer.Data.Team;
 
             // TODO: pass the terrain from whatever code will be starting matches, instead of searching for it like this:
             PathfinderData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());

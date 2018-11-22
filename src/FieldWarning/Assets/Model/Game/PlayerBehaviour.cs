@@ -11,34 +11,31 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PFW.Model.Game
 {
-    public class Team : MonoBehaviour
+    /**
+     * Represents "managed" players.
+     * 
+     * This full-fledged player object is for players for who we 
+     * manage lines of sight, income, and other data as opposed
+     * to just getting them over the network.
+     */
+    public class PlayerBehaviour : MonoBehaviour
     {
-        public string Name;
-        public Color Color;
+        public PlayerData Data;
 
-        public List<PlayerData> Players { get; } = new List<PlayerData>();
-
-        public MatchSession Session {
-            // Guard omitted intentionally - a team must always have players:
-            get { return Players[0].Session; }
+        /**
+         * Returns the money rounded to a multiple of the income tick.
+         */ 
+        public float Money {
+            get { return Mathf.Floor(Data.Money / Data.IncomeTick) * Data.IncomeTick; }
         }
-        
-        public bool IsEnemy(Team t)
+
+        public void Update()
         {
-            return Color != t.Color;
-        }
-
-        public void AddPlayer(MatchSession session) {
-            PlayerData p = new PlayerData();
-            p.Session = session;
-            p.Team = this;
-            Players.Add(p);
+            Data.Money += Data.IncomeTick * Time.deltaTime;
         }
     }
 }
