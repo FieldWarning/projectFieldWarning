@@ -6,3 +6,4 @@
 | road pack          | EasyRoads3D               | yes      | FREE (store) | https://assetstore.unity.com/packages/3d/characters/easyroads3d-free-v3-987 |
 | standard assets    | Standard Assets           | yes      | FREE (store) | https://assetstore.unity.com/packages/essentials/asset-packs/standard-assets-32351 |
 | primed cursor      | Ingame/UI/Resources/PrimedCursor.png | yes| CC      | https://www.cursor.cc/?action=icon&file_id=23020
+| PLZ Arty           | bullets&tracers/pzl-05.obj| no       | proprietary  | unknown|
