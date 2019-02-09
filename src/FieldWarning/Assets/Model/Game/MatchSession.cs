@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using PFW.Ingame.UI;
 
-using Unity.Entities;
 using PFW.Ingame.Prototype;
 
 namespace PFW.Model.Game
@@ -49,12 +48,6 @@ namespace PFW.Model.Game
         public PathfinderData PathfinderData { get; private set; }
 
         public UnitFactory UnitFactory { get; private set; }
-        
-        /**
-         * Currently not used, but code saved for when we convert to ECS.
-         * Entities are lightweight game objects that consist of components only.
-         */ 
-        public EntityManager EntityManager;
 
         public void Awake()
         {
@@ -98,8 +91,6 @@ namespace PFW.Model.Game
             PathfinderData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
 
             UnitFactory = new UnitFactory(this);
-
-            EntityManager = World.Active.GetOrCreateManager<EntityManager>();
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
@@ -122,8 +113,6 @@ namespace PFW.Model.Game
 
         public void RegisterUnitDeath(UnitBehaviour unit)
         {
-            EntityManager.DestroyEntity(unit.Entity);
-
             AllUnits.Remove(unit);
             _visibilityManager.RegisterUnitDeath(unit);
         }
