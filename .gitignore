@@ -5,3 +5,10 @@ src/FieldWarning/Assets/Units/New Terrain.asset
 src/FieldWarning/Assets/New Terrain.asset
 
 doxygen/html/
+
+# Build artifacts:
+src/FieldWarning/Joined.exe
+src/FieldWarning/Joined_Data/*
+src/FieldWarning/MonoBleedingEdge/*
+src/FieldWarning/UnityCrashHandler64.exe
+src/FieldWarning/UnityPlayer.dll
