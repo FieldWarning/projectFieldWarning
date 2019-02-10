@@ -1,0 +1,5 @@
+This folder contains old assets and the proprietary tank model we use for prototyping.
+
+As soon as we create our own tank model, this folder will be removed.
+
+DO NOT PLACE ANY NEW FILES HERE. Any new models shall go into a Mesh/ folder under terrain (for terrain) or units (for units).
