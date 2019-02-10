@@ -133,10 +133,12 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         Owner.Session.RegisterPlatoonBirth(this);
     }
-    
+
+    // Called when a platoon enters or leaves the player's selection.
     public void SetSelected(bool selected)
     {
         Icon?.SetSelected(selected);
+        Units.ForEach(unit => unit.SetSelected(selected));
     }
 
     public void SetEnabled(bool enabled)

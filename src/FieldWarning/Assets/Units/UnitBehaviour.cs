@@ -26,6 +26,9 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public Pathfinder Pathfinder { get; private set; }
     public AudioSource Source { get; private set; }
 
+    [SerializeField]
+    private GameObject _selectionCircle;
+
     // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
     public VisibleBehavior VisibleBehavior;
 
@@ -58,6 +61,9 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 
     public virtual void Awake()
     {
+        if (_selectionCircle == null)
+            throw new System.Exception(
+                "unitBehaviour: Must have a reference to selection circle object");
     }
 
     public virtual void Start()
@@ -272,6 +278,12 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
             Destroy(Platoon.gameObject);
             Platoon.Owner.Session.RegisterPlatoonDeath(Platoon);
         }
+    }
+
+    // Called when a unit enters or leaves the player's selection.
+    public void SetSelected(bool selected)
+    {
+        _selectionCircle.SetActive(selected);
     }
 }
 

@@ -10,12 +10,11 @@ Properties {
 SubShader {
     Tags {"RenderType"="Transparent" "Queue"="Transparent"}
     // Render into depth buffer only
-    Pass {
-		
+    Pass {		
 		Lighting Off
-        ColorMask 0
-		
+        ColorMask 0		
     }
+
     // Render normally
     Pass {
         ZWrite Off
