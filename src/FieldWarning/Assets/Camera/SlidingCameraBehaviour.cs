@@ -134,6 +134,11 @@ public class SlidingCameraBehaviour : MonoBehaviour
         ClampCameraAltitude();
         TiltCameraIfNearGround(oldAltitude);
 
+        // Prevent clipping through hills
+        if (_targetPosition.y < Terrain.activeTerrain.SampleHeight(_targetPosition)) {
+            _targetPosition.y = Terrain.activeTerrain.SampleHeight(_targetPosition);
+        }
+        
         // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
         transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
