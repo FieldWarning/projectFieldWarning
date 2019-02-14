@@ -199,9 +199,9 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void ClampCameraAltitude()
     {
-        _targetPosition = new Vector3(
-            _targetPosition.x, 
-            Mathf.Clamp(_targetPosition.y, _minAltitude, _maxAltitude),
-            _targetPosition.z);
+        _targetPosition.y = Mathf.Clamp(
+                _targetPosition.y, 
+                Terrain.activeTerrain.SampleHeight(_targetPosition) + _minAltitude,
+                _maxAltitude);
     }
 }
