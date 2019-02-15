@@ -262,11 +262,11 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         _targetPosition.x = Mathf.Clamp(
                 _targetPosition.x, 
-                Terrain.activeTerrain.GetPosition().x - _maxCameraDistanceFromTerrain,
-                Terrain.activeTerrain.GetPosition().x + Terrain.activeTerrain.terrainData.size.x + _maxCameraDistanceFromTerrain);
+                Terrain.activeTerrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
+                Terrain.activeTerrain.GetPosition().x + Terrain.activeTerrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
         _targetPosition.z = Mathf.Clamp(
                 _targetPosition.z,
-                Terrain.activeTerrain.GetPosition().z - _maxCameraDistanceFromTerrain,
-                Terrain.activeTerrain.GetPosition().z + Terrain.activeTerrain.terrainData.size.z + _maxCameraDistanceFromTerrain);
+                Terrain.activeTerrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
+                Terrain.activeTerrain.GetPosition().z + Terrain.activeTerrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
     }
 }
