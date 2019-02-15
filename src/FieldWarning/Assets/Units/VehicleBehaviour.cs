@@ -265,4 +265,18 @@ public class VehicleBehaviour : UnitBehaviour
     {
         return !Pathfinder.HasDestination();
     }
+
+    public void PlayAudio()
+    {
+        //bool toggleChange = false;
+        AudioSource unitAudio = GetComponent<AudioSource>();
+        //if()
+        unitAudio.Play();
+    }
+
+    public override void SetSelected(bool selected)
+    {
+        base.SetSelected(selected);
+        PlayAudio();
+    }
 }

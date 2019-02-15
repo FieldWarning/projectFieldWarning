@@ -281,7 +281,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     }
 
     // Called when a unit enters or leaves the player's selection.
-    public void SetSelected(bool selected)
+    public virtual void SetSelected(bool selected)
     {
         _selectionCircle.SetActive(selected);
     }
