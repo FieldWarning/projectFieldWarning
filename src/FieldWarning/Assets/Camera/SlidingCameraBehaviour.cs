@@ -21,7 +21,6 @@ using UnityEngine;
  * - There are minimal and maximal altitudes to prevent going below the level.
  * 
  * TODO:
- * - Make the camera stay above terrain deformations.
  * - Maybe prevent the camera from clipping into units.
  * - A/B test values for a better feel.
  */
@@ -30,6 +29,9 @@ public class SlidingCameraBehaviour : MonoBehaviour
     [Header("Translational Movement")]
     [SerializeField] private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
     [SerializeField] private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
+    [SerializeField] private float _borderPanningOffset = 2;    //Pixels
+    [SerializeField] private float _borderPanningCornerSize = 200;    //Pixels
+    [SerializeField] private float _maxCameraHorizontalDistanceFromTerrain = 5000f * TerrainConstants.MAP_SCALE;
 
     [Header("Rotational Movement")]
     [SerializeField] private float _horizontalRotationSpeed = 600f;
@@ -97,11 +99,17 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
         _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
 
+        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
+            //Border panning with mouse
+            PanFromScreenBorder();
+        }
+
         AimedZoom();
 
         if (Input.GetMouseButton(2)) {
             RotateCamera();
         }
+        
     }
 
     private void LateUpdate()
@@ -133,6 +141,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _leftoverZoom -= dzoom;
         ClampCameraAltitude();
         TiltCameraIfNearGround(oldAltitude);
+        ClampCameraXZPosition();
 
         // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
         transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
@@ -200,8 +209,64 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private void ClampCameraAltitude()
     {
         _targetPosition.y = Mathf.Clamp(
-                _targetPosition.y, 
+                _targetPosition.y,
                 Terrain.activeTerrain.SampleHeight(_targetPosition) + _minAltitude,
                 _maxAltitude);
+    }
+
+    private void PanFromScreenBorder()
+    {
+        if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
+            && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
+            || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
+            && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) { //Lower-left screen corner
+            _translateX += -1 * GetScaledPanSpeed();
+            _translateZ += -1 * GetScaledPanSpeed();
+        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
+            && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
+            || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
+            && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {  //Lower-right screen corner
+            _translateX += 1 * GetScaledPanSpeed();
+            _translateZ += -1 * GetScaledPanSpeed();
+        } else if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
+            && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
+            || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
+            && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-left screen corner
+            _translateX += -1 * GetScaledPanSpeed();
+            _translateZ += 1 * GetScaledPanSpeed();
+        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
+            && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
+            || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
+            && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-right screen corner
+            _translateX += 1 * GetScaledPanSpeed();
+            _translateZ += 1 * GetScaledPanSpeed();
+        } else {    //Border of screen but not corners
+            if (Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
+                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Left screen side
+                _translateX += -1 * GetScaledPanSpeed();
+            } else if(Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
+                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Right screen side
+                _translateX += 1 * GetScaledPanSpeed();
+            } else if (Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0
+                && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Bottom screen side
+                _translateZ += -1 * GetScaledPanSpeed();
+            } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height
+                && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Top screen side
+                _translateZ += 1 * GetScaledPanSpeed();
+            }
+        }
+        
+    }
+
+    private void ClampCameraXZPosition()
+    {
+        _targetPosition.x = Mathf.Clamp(
+                _targetPosition.x, 
+                Terrain.activeTerrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
+                Terrain.activeTerrain.GetPosition().x + Terrain.activeTerrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
+        _targetPosition.z = Mathf.Clamp(
+                _targetPosition.z,
+                Terrain.activeTerrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
+                Terrain.activeTerrain.GetPosition().z + Terrain.activeTerrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
     }
 }
