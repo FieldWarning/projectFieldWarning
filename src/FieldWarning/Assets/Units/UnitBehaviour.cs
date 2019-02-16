@@ -150,7 +150,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetUnitDestination(MoveWaypoint waypoint)
     {
         MoveCommandType moveType;
-
+        //Audio call
+        _audioComponent.UnitMoveAudio();
         // TODO we have two enums for the same thing, remove one:
         switch (waypoint.moveMode) {
         case MoveWaypoint.MoveMode.fastMove:
@@ -284,7 +285,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetSelected(bool selected)
     {
         _selectionCircle.SetActive(selected);
-        _audioComponent.PlayAudio(selected);
+        _audioComponent.UnitSelectAudio(selected);
     }
 }
 

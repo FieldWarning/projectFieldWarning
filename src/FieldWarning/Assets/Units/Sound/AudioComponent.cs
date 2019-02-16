@@ -15,11 +15,23 @@ using UnityEngine;
 
 public class AudioComponent : MonoBehaviour
 {
-    public void PlayAudio(bool selected)
+    [SerializeField] private AudioClip _selectAudio, _moveAudio;
+    //private AudioSource _unitAudio;
+    public void UnitSelectAudio(bool selected)
     {
-        AudioSource unitAudio = GetComponent<AudioSource>();
-        if (selected)
-            unitAudio.Play();
+        AudioSource _unitAudio = GetComponent<AudioSource>();
+        _unitAudio.clip = _selectAudio;
+        if (selected) {
+            _unitAudio.Play();
+            new WaitForSeconds(_unitAudio.clip.length); //it doesn't wait, need to loop
+        }
     }
 
+    public void UnitMoveAudio()
+    {
+        AudioSource _unitAudio = GetComponent<AudioSource>();
+        _unitAudio.clip = _moveAudio;
+        _unitAudio.Play();
+        new WaitForSeconds(_unitAudio.clip.length); //it doesn't wait, need to loop
+    }
 }
