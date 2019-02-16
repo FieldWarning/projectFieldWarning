@@ -25,10 +25,10 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public PlatoonBehaviour Platoon { get; private set; }
     public Pathfinder Pathfinder { get; private set; }
     public AudioSource Source { get; private set; }
-
+    
     [SerializeField]
     private GameObject _selectionCircle;
-
+    [SerializeField] private AudioComponent _audioComponent;
     // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
     public VisibleBehavior VisibleBehavior;
 
@@ -281,9 +281,10 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     }
 
     // Called when a unit enters or leaves the player's selection.
-    public virtual void SetSelected(bool selected)
+    public void SetSelected(bool selected)
     {
         _selectionCircle.SetActive(selected);
+        _audioComponent.PlayAudio(selected);
     }
 }
 

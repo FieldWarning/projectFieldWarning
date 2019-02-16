@@ -26,6 +26,8 @@ public class VehicleBehaviour : UnitBehaviour
     private float _terrainTiltForward, _terrainTiltRight;
     private float _terrainHeight;
 
+    
+    
     new void Awake()
     {
         base.Awake();
@@ -264,18 +266,5 @@ public class VehicleBehaviour : UnitBehaviour
     public override bool OrdersComplete()
     {
         return !Pathfinder.HasDestination();
-    }
-
-    public void PlayAudio(bool selected)
-    {
-        AudioSource unitAudio = GetComponent<AudioSource>();
-        if(selected)
-            unitAudio.Play();
-    }
-
-    public override void SetSelected(bool selected)
-    {
-        base.SetSelected(selected);
-        PlayAudio(selected);
     }
 }
