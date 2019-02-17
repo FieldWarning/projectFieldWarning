@@ -11,22 +11,20 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Quit : MonoBehaviour
+namespace PFW.UI.MainMenu
 {
-    // Use this for initialization
-    void Start() { }
-
-    // Update is called once per frame
-    void Update()
+    public class OptionsSetter : MonoBehaviour
     {
-        if (Input.GetKey(KeyCode.Escape)) {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+        [SerializeField]
+        private Toggle _toggle = null;
+
+        public void SetStickySelection()
+        {
+            Options.StickySelection = _toggle.isOn;
         }
     }
 }

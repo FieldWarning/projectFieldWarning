@@ -11,7 +11,10 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-public class Options
+namespace PFW
 {
-    public static bool StickySelection = true;
+    public class Options
+    {
+        public static bool StickySelection = true;
+    }
 }

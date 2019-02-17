@@ -31,6 +31,7 @@ ModelImporter:
     400024: wheel8_LOD0
     2100000: lambert2
     2100002: lambert1
+    2100004: lambert3
     2300000: camera_LOD0
     2300002: hull_LOD0
     2300004: hull_LOD1
