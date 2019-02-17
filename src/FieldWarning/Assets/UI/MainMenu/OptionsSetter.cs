@@ -11,10 +11,20 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-namespace PFW
+
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace PFW.UI.MainMenu
 {
-    public class Options
+    public class OptionsSetter : MonoBehaviour
     {
-        public static bool StickySelection = true;
+        [SerializeField]
+        private Toggle _toggle = null;
+
+        public void SetStickySelection()
+        {
+            Options.StickySelection = _toggle.isOn;
+        }
     }
 }
