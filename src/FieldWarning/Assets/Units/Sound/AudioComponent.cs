@@ -16,22 +16,23 @@ using UnityEngine;
 public class AudioComponent : MonoBehaviour
 {
     [SerializeField] private AudioClip _selectAudio, _moveAudio;
-    //private AudioSource _unitAudio;
+    private AudioSource _unitAudio;
+
     public void UnitSelectAudio(bool selected)
     {
-        AudioSource _unitAudio = GetComponent<AudioSource>();
+        _unitAudio = GetComponent<AudioSource>(); //works
+        //_unitAudio = gameObject.AddComponent<AudioSource>(); //breaks audio when selecting units with right click mass selection
         _unitAudio.clip = _selectAudio;
         if (selected) {
             _unitAudio.Play();
-            new WaitForSeconds(_unitAudio.clip.length); //it doesn't wait, need to loop
         }
     }
 
     public void UnitMoveAudio()
     {
-        AudioSource _unitAudio = GetComponent<AudioSource>();
+        AudioSource _unitAudio = GetComponent<AudioSource>(); //works
+        //_unitAudio = gameObject.AddComponent<AudioSource>(); //works
         _unitAudio.clip = _moveAudio;
         _unitAudio.Play();
-        new WaitForSeconds(_unitAudio.clip.length); //it doesn't wait, need to loop
     }
 }

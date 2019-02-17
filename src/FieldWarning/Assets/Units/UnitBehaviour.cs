@@ -72,7 +72,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         tag = UNIT_TAG;
 
         Source = GetComponent<AudioSource>();
-        
+
         Platoon.Owner.Session.RegisterUnitBirth(this);
     }
 
