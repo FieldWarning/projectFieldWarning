@@ -11,7 +11,9 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * Sliding camera is our main RTS cam. It is wargame-like and provides almost entirely free movement. Zooming in goes toward the cursor ("sliding"), zooming out moves back and up at a fixed angle. The camera faces up slightly when zoomed all the way into the ground, and tries to restore its facing when zoomed out again.
@@ -32,6 +34,14 @@ public class SlidingCameraBehaviour : MonoBehaviour
     [SerializeField] private float _borderPanningOffset = 2;    //Pixels
     [SerializeField] private float _borderPanningCornerSize = 200;    //Pixels
     [SerializeField] private float _maxCameraHorizontalDistanceFromTerrain = 5000f * TerrainConstants.MAP_SCALE;
+    private Image _cornerArrowBottomLeft;
+    private Image _cornerArrowBottomRight;
+    private Image _cornerArrowTopLeft;
+    private Image _cornerArrowTopRight;
+    private Image _sideArrowLeft;
+    private Image _sideArrowRight;
+    private Image _sideArrowTop;
+    private Image _sideArrowBottom;
 
     [Header("Rotational Movement")]
     [SerializeField] private float _horizontalRotationSpeed = 600f;
@@ -90,6 +100,39 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _targetPosition = transform.position;
 
         _zoomOutDirection = Quaternion.AngleAxis(_zoomOutAngle, Vector3.right) * Vector3.back;
+
+        _cornerArrowBottomLeft = GameObject.Find("PanningArrowBottomLeft").GetComponent<Image>();
+        if (_cornerArrowBottomLeft == null)
+            throw new Exception("No cornerArrowBottomLeft specified!");
+
+        _cornerArrowBottomRight = GameObject.Find("PanningArrowBottomRight").GetComponent<Image>();
+        if (_cornerArrowBottomRight == null)
+            throw new Exception("No cornerArrowBottomRight specified!");
+
+        _cornerArrowTopLeft = GameObject.Find("PanningArrowTopLeft").GetComponent<Image>();
+        if (_cornerArrowTopLeft == null)
+            throw new Exception("No cornerArrowTopLeft specified!");
+
+        _cornerArrowTopRight = GameObject.Find("PanningArrowTopRight").GetComponent<Image>();
+        if (_cornerArrowTopRight == null)
+            throw new Exception("No cornerArrowTopRight specified!");
+
+        _sideArrowLeft = GameObject.Find("PanningArrowLeft").GetComponent<Image>();
+        if (_sideArrowLeft == null)
+            throw new Exception("No sideArrowLeft specified!");
+
+        _sideArrowRight = GameObject.Find("PanningArrowRight").GetComponent<Image>();
+        if (_sideArrowRight == null)
+            throw new Exception("No sideArrowRight specified!");
+
+        _sideArrowTop = GameObject.Find("PanningArrowTop").GetComponent<Image>();
+        if (_sideArrowTop == null)
+            throw new Exception("No sideArrowTop specified!");
+
+        _sideArrowBottom = GameObject.Find("PanningArrowBottom").GetComponent<Image>();
+        if (_sideArrowBottom == null)
+            throw new Exception("No sideArrowBottom specified!");
+
     }
 
     // Update() only plans movement; position/rotation are directly changed in LateUpdate().
@@ -100,8 +143,10 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
 
         if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
-            //Border panning with mouse
+            //Try border panning with mouse
             PanFromScreenBorder();
+        } else {
+            SetPanningCursor(ScreenCorner.None);
         }
 
         AimedZoom();
@@ -139,8 +184,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
         }
 
         _leftoverZoom -= dzoom;
-        ClampCameraAltitude();
         TiltCameraIfNearGround(oldAltitude);
+        ClampCameraAltitude();
         ClampCameraXZPosition();
 
         // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
@@ -220,39 +265,57 @@ public class SlidingCameraBehaviour : MonoBehaviour
             && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
             || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
             && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) { //Lower-left screen corner
+            SetPanningCursor(ScreenCorner.BottomLeft);
             _translateX += -1 * GetScaledPanSpeed();
             _translateZ += -1 * GetScaledPanSpeed();
+
         } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
             && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
             || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
             && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {  //Lower-right screen corner
+            SetPanningCursor(ScreenCorner.BottomRight);
             _translateX += 1 * GetScaledPanSpeed();
             _translateZ += -1 * GetScaledPanSpeed();
+
         } else if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
             && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
             || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
             && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-left screen corner
+            SetPanningCursor(ScreenCorner.TopLeft);
             _translateX += -1 * GetScaledPanSpeed();
             _translateZ += 1 * GetScaledPanSpeed();
+
         } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
             && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
             || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
             && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-right screen corner
+            SetPanningCursor(ScreenCorner.TopRight);
             _translateX += 1 * GetScaledPanSpeed();
             _translateZ += 1 * GetScaledPanSpeed();
+
         } else {    //Border of screen but not corners
             if (Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
                 && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Left screen side
+                SetPanningCursor(ScreenCorner.Left);
                 _translateX += -1 * GetScaledPanSpeed();
+
             } else if(Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
                 && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Right screen side
+                SetPanningCursor(ScreenCorner.Right);
                 _translateX += 1 * GetScaledPanSpeed();
+
             } else if (Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0
                 && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Bottom screen side
+                SetPanningCursor(ScreenCorner.Bottom);
                 _translateZ += -1 * GetScaledPanSpeed();
+
             } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height
                 && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Top screen side
+                SetPanningCursor(ScreenCorner.Top);
                 _translateZ += 1 * GetScaledPanSpeed();
+
+            } else {
+                SetPanningCursor(ScreenCorner.None);
             }
         }
         
@@ -268,5 +331,75 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 _targetPosition.z,
                 Terrain.activeTerrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
                 Terrain.activeTerrain.GetPosition().z + Terrain.activeTerrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
+    }
+
+    private void SetPanningCursor(ScreenCorner corner)
+    {
+        Cursor.visible = false;
+        DisableAllPanningArrows();
+        switch (corner) {
+        case ScreenCorner.TopLeft:
+            _cornerArrowTopLeft.transform.position = Input.mousePosition;
+            _cornerArrowTopLeft.enabled = true;
+            break;
+        case ScreenCorner.TopRight:
+            _cornerArrowTopRight.transform.position = Input.mousePosition;
+            _cornerArrowTopRight.enabled = true;
+            break;
+        case ScreenCorner.BottomLeft:
+            _cornerArrowBottomLeft.transform.position = Input.mousePosition;
+            _cornerArrowBottomLeft.enabled = true;
+            break;
+        case ScreenCorner.BottomRight:
+            _cornerArrowBottomRight.transform.position = Input.mousePosition;
+            _cornerArrowBottomRight.enabled = true;
+            break;
+        case ScreenCorner.Top:
+            _sideArrowTop.transform.position = Input.mousePosition;
+            _sideArrowTop.enabled = true;
+            break;
+        case ScreenCorner.Bottom:
+            _sideArrowBottom.transform.position = Input.mousePosition;
+            _sideArrowBottom.enabled = true;
+            break;
+        case ScreenCorner.Left:
+            _sideArrowLeft.transform.position = Input.mousePosition;
+            _sideArrowLeft.enabled = true;
+            break;
+        case ScreenCorner.Right:
+            _sideArrowRight.transform.position = Input.mousePosition;
+            _sideArrowRight.enabled = true;
+            break;
+        case ScreenCorner.None:
+            Cursor.visible = true;
+            break;
+        default:
+            break;
+        }
+    }
+
+    private void DisableAllPanningArrows()
+    {
+        _cornerArrowBottomLeft.enabled = false;
+        _cornerArrowBottomRight.enabled = false;
+        _cornerArrowTopLeft.enabled = false;
+        _cornerArrowTopRight.enabled = false;
+        _sideArrowLeft.enabled = false;
+        _sideArrowRight.enabled = false;
+        _sideArrowTop.enabled = false;
+        _sideArrowBottom.enabled = false;
+    }
+
+    enum ScreenCorner
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        Top,
+        Bottom,
+        Left,
+        Right,
+        None
     }
 }
