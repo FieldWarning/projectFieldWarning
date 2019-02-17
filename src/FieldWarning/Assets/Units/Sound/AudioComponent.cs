@@ -15,9 +15,10 @@ using UnityEngine;
 
 public class AudioComponent : MonoBehaviour
 {
-    [SerializeField] private AudioClip _selectAudio, _moveAudio;
+    [SerializeField] private AudioClip _selectAudio, _moveAudio, _attackAudio;
     private AudioSource _unitAudio;
 
+    //If we want to use AddComponent, than we should get rid of it at the end of the method with Object.Destroy()
     public void UnitSelectAudio(bool selected)
     {
         _unitAudio = GetComponent<AudioSource>(); //works
@@ -33,6 +34,13 @@ public class AudioComponent : MonoBehaviour
         AudioSource _unitAudio = GetComponent<AudioSource>(); //works
         //_unitAudio = gameObject.AddComponent<AudioSource>(); //works
         _unitAudio.clip = _moveAudio;
+        _unitAudio.Play();
+    }
+
+    public void UnitAttackAudio()
+    {
+        AudioSource _unitAudio = GetComponent<AudioSource>();
+        _unitAudio.clip = _attackAudio;
         _unitAudio.Play();
     }
 }
