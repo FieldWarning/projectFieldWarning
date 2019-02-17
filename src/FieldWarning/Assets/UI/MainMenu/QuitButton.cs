@@ -13,15 +13,13 @@
 
 using UnityEngine;
 
-public class Quit : MonoBehaviour
+namespace PFW.UI.MainMenu
 {
-    // Use this for initialization
-    void Start() { }
-
-    // Update is called once per frame
-    void Update()
+    public class QuitButton : MonoBehaviour
     {
-        if (Input.GetKey(KeyCode.Escape)) {
+
+        public void Quit()
+        {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
