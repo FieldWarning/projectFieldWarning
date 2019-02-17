@@ -24,7 +24,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public UnitData Data = UnitData.GenericUnit();
     public PlatoonBehaviour Platoon { get; private set; }
     public Pathfinder Pathfinder { get; private set; }
-    public AudioSource Source { get; private set; }
     
     [SerializeField]
     private GameObject _selectionCircle;
@@ -70,8 +69,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     {
         _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
         tag = UNIT_TAG;
-
-        Source = GetComponent<AudioSource>();
 
         Platoon.Owner.Session.RegisterUnitBirth(this);
     }
