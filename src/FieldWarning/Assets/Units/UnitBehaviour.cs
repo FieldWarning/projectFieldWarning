@@ -280,10 +280,14 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     }
 
     // Called when a unit enters or leaves the player's selection.
-    public void SetSelected(bool selected)
+    // justPreviewing - true when the unit should be shaded as if selected, but the
+    //                  actual selected set has not been changed yet
+    public void SetSelected(bool selected, bool justPreviewing)
     {
         _selectionCircle.SetActive(selected);
-        _voiceComponent.PlayUnitSelectionVoiceline(selected);
+        if (!justPreviewing) {
+            _voiceComponent.PlayUnitSelectionVoiceline(selected);
+        }
     }
 }
 

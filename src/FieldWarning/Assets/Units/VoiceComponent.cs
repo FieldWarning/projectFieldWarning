@@ -21,12 +21,11 @@ namespace PFW.Units
         private AudioClip _selectAudio, _moveAudio, _attackAudio;
         [SerializeField]
         private AudioSource _audioSource;
-
-        //If we want to use AddComponent, than we should get rid of it at the end of the method with Object.Destroy()
+        
         public void PlayUnitSelectionVoiceline(bool selected)
         {
-            _audioSource.clip = _selectAudio;
             if (selected) {
+                _audioSource.clip = _selectAudio;
                 _audioSource.Play();
             }
         }
