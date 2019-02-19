@@ -112,6 +112,11 @@ public partial class PlatoonBehaviour : MonoBehaviour
         IsInitialized = true;
     }
 
+    public void PlayMoveCommandVoiceline()
+    {
+        Units.FirstOrDefault()?.PlayMoveCommandVoiceline();
+    }
+
     public void SetGhostPlatoon(GhostPlatoonBehaviour obj)
     {
         GhostPlatoon = obj;

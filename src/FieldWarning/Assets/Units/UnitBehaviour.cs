@@ -149,7 +149,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetUnitDestination(MoveWaypoint waypoint)
     {
         MoveCommandType moveType;
-        _voiceComponent.PlayMoveCommandVoiceline();
         // TODO we have two enums for the same thing, remove one:
         switch (waypoint.moveMode) {
         case MoveWaypoint.MoveMode.fastMove:
@@ -168,6 +167,11 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         float a = Pathfinder.SetPath(waypoint.Destination, moveType);
         if (a < Pathfinder.Forever)
             SetUnitFinalHeading(waypoint.Heading);
+    }
+
+    public void PlayMoveCommandVoiceline()
+    {
+        _voiceComponent.PlayMoveCommandVoiceline();
     }
 
     // Sets the unit's destination location, with a default heading value

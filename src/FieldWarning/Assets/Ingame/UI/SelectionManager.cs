@@ -135,6 +135,8 @@ namespace PFW.Ingame.UI
             // Enqueue the prepared waypoints:
             _selection.ForEach(x => x.Movement.EndQueueing());
 
+            _selection.ForEach(x => x.PlayMoveCommandVoiceline());
+
             MaybeDropSelectionAfterOrder();
         }
 
