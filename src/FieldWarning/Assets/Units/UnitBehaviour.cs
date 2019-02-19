@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using PFW.Weapons;
+using PFW.Units;
 
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
@@ -27,7 +28,8 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     
     [SerializeField]
     private GameObject _selectionCircle;
-    [SerializeField] private AudioComponent _audioComponent;
+    [SerializeField]
+    private VoiceComponent _audioComponent;
     // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
     public VisibleBehavior VisibleBehavior;
 

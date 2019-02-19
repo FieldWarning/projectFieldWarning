@@ -25,8 +25,6 @@ public class VehicleBehaviour : UnitBehaviour
 
     private float _terrainTiltForward, _terrainTiltRight;
     private float _terrainHeight;
-
-    
     
     new void Awake()
     {
