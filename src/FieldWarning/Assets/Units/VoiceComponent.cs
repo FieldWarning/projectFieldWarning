@@ -19,32 +19,28 @@ namespace PFW.Units
     {
         [SerializeField]
         private AudioClip _selectAudio, _moveAudio, _attackAudio;
-        private AudioSource _unitAudio;
+        [SerializeField]
+        private AudioSource _audioSource;
 
         //If we want to use AddComponent, than we should get rid of it at the end of the method with Object.Destroy()
-        public void UnitSelectAudio(bool selected)
+        public void PlayUnitSelectionVoiceline(bool selected)
         {
-            _unitAudio = GetComponent<AudioSource>(); //works
-                                                      //_unitAudio = gameObject.AddComponent<AudioSource>(); //breaks audio when selecting units with right click mass selection
-            _unitAudio.clip = _selectAudio;
+            _audioSource.clip = _selectAudio;
             if (selected) {
-                _unitAudio.Play();
+                _audioSource.Play();
             }
         }
 
-        public void UnitMoveAudio()
+        public void PlayMoveCommandVoiceline()
         {
-            AudioSource _unitAudio = GetComponent<AudioSource>(); //works
-                                                                  //_unitAudio = gameObject.AddComponent<AudioSource>(); //works
-            _unitAudio.clip = _moveAudio;
-            _unitAudio.Play();
+            _audioSource.clip = _moveAudio;
+            _audioSource.Play();
         }
 
-        public void UnitAttackAudio()
+        public void PlayAttackCommandVoiceline()
         {
-            AudioSource _unitAudio = GetComponent<AudioSource>();
-            _unitAudio.clip = _attackAudio;
-            _unitAudio.Play();
+            _audioSource.clip = _attackAudio;
+            _audioSource.Play();
         }
     }
 }

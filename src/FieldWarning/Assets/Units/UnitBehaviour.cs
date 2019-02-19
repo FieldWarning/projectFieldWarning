@@ -29,7 +29,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     [SerializeField]
     private GameObject _selectionCircle;
     [SerializeField]
-    private VoiceComponent _audioComponent;
+    private VoiceComponent _voiceComponent;
     // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
     public VisibleBehavior VisibleBehavior;
 
@@ -149,8 +149,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetUnitDestination(MoveWaypoint waypoint)
     {
         MoveCommandType moveType;
-        //Audio call
-        _audioComponent.UnitMoveAudio();
+        _voiceComponent.PlayMoveCommandVoiceline();
         // TODO we have two enums for the same thing, remove one:
         switch (waypoint.moveMode) {
         case MoveWaypoint.MoveMode.fastMove:
@@ -284,7 +283,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetSelected(bool selected)
     {
         _selectionCircle.SetActive(selected);
-        _audioComponent.UnitSelectAudio(selected);
+        _voiceComponent.PlayUnitSelectionVoiceline(selected);
     }
 }
 
