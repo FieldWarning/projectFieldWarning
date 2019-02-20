@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using PFW.Weapons;
+using PFW.Units;
 
 public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
 {
@@ -24,11 +25,11 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public UnitData Data = UnitData.GenericUnit();
     public PlatoonBehaviour Platoon { get; private set; }
     public Pathfinder Pathfinder { get; private set; }
-    public AudioSource Source { get; private set; }
-
+    
     [SerializeField]
     private GameObject _selectionCircle;
-
+    [SerializeField]
+    private VoiceComponent _voiceComponent;
     // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
     public VisibleBehavior VisibleBehavior;
 
@@ -71,8 +72,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
         tag = UNIT_TAG;
 
-        Source = GetComponent<AudioSource>();
-        
         Platoon.Owner.Session.RegisterUnitBirth(this);
     }
 
@@ -150,7 +149,6 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetUnitDestination(MoveWaypoint waypoint)
     {
         MoveCommandType moveType;
-
         // TODO we have two enums for the same thing, remove one:
         switch (waypoint.moveMode) {
         case MoveWaypoint.MoveMode.fastMove:
@@ -169,6 +167,11 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
         float a = Pathfinder.SetPath(waypoint.Destination, moveType);
         if (a < Pathfinder.Forever)
             SetUnitFinalHeading(waypoint.Heading);
+    }
+
+    public void PlayMoveCommandVoiceline()
+    {
+        _voiceComponent.PlayMoveCommandVoiceline();
     }
 
     // Sets the unit's destination location, with a default heading value
@@ -281,9 +284,14 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     }
 
     // Called when a unit enters or leaves the player's selection.
-    public void SetSelected(bool selected)
+    // justPreviewing - true when the unit should be shaded as if selected, but the
+    //                  actual selected set has not been changed yet
+    public void SetSelected(bool selected, bool justPreviewing)
     {
         _selectionCircle.SetActive(selected);
+        if (!justPreviewing) {
+            _voiceComponent.PlayUnitSelectionVoiceline(selected);
+        }
     }
 }
 

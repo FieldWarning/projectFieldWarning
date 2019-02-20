@@ -135,6 +135,8 @@ namespace PFW.Ingame.UI
             // Enqueue the prepared waypoints:
             _selection.ForEach(x => x.Movement.EndQueueing());
 
+            _selection.ForEach(x => x.PlayMoveCommandVoiceline());
+
             MaybeDropSelectionAfterOrder();
         }
 
@@ -152,7 +154,7 @@ namespace PFW.Ingame.UI
         public void MaybeDropSelectionAfterOrder()
         {
             if (!Input.GetKey(KeyCode.LeftShift) && !Options.StickySelection)
-                UnselectAll(_selection);
+                UnselectAll(_selection, false);
         }
 
         private void StartBoxSelection()
@@ -164,19 +166,19 @@ namespace PFW.Ingame.UI
         private void UpdateBoxSelection()
         {
             _mouseEnd = Input.mousePosition;
-            UpdateSelection();
+            UpdateSelection(false);
             _active = true;
         }
 
         private void EndDrag()
         {
             _active = false;
-            UpdateSelection();
+            UpdateSelection(true);
         }
 
         private void OnSelectShortClick()
         {
-            UnselectAll(_selection);
+            UnselectAll(_selection, false);
 
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -190,11 +192,10 @@ namespace PFW.Ingame.UI
                         _selection.Add(selectable.GetPlatoon());
                 }
             }
-
-            SetSelected(_selection);
+            SetSelected(_selection, false);
         }
 
-        private void UpdateSelection()
+        private void UpdateSelection(bool finalizeSelection)
         {
             if (_mouseMode == MouseMode.firePos
                 || _mouseMode == MouseMode.fastMove
@@ -202,11 +203,11 @@ namespace PFW.Ingame.UI
                 return;
 
             List<PlatoonBehaviour> newSelection = AllPlatoons.Where(x => IsInside(x)).ToList();
-            if (!Input.GetKey(KeyCode.LeftShift) && _selection != null) {
+            if (!Input.GetKey(KeyCode.LeftShift) && _selection != null && _selection.Count != 0) {
                 List<PlatoonBehaviour> old = _selection.Except(newSelection).ToList();
-                UnselectAll(old);
+                UnselectAll(old, !finalizeSelection);
             }
-            SetSelected(newSelection);
+            SetSelected(newSelection, !finalizeSelection);
             _selection = newSelection;
         }
 
@@ -232,15 +233,15 @@ namespace PFW.Ingame.UI
             return insideX && insideY;
         }
 
-        private void UnselectAll(List<PlatoonBehaviour> l)
+        private void UnselectAll(List<PlatoonBehaviour> l, bool justPreviewing)
         {
-            l.ForEach(x => x.SetSelected(false));
+            l.ForEach(x => x.SetSelected(false, justPreviewing));
             l.Clear();
         }
 
-        private void SetSelected(List<PlatoonBehaviour> l)
+        private void SetSelected(List<PlatoonBehaviour> l, bool justPreviewing)
         {
-            l.ForEach(x => x.SetSelected(true));
+            l.ForEach(x => x.SetSelected(true, justPreviewing));
         }
 
         // Responsible for drawing the selection rectangle

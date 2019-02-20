@@ -112,6 +112,11 @@ public partial class PlatoonBehaviour : MonoBehaviour
         IsInitialized = true;
     }
 
+    public void PlayMoveCommandVoiceline()
+    {
+        Units.FirstOrDefault()?.PlayMoveCommandVoiceline();
+    }
+
     public void SetGhostPlatoon(GhostPlatoonBehaviour obj)
     {
         GhostPlatoon = obj;
@@ -135,10 +140,12 @@ public partial class PlatoonBehaviour : MonoBehaviour
     }
 
     // Called when a platoon enters or leaves the player's selection.
-    public void SetSelected(bool selected)
+    // justPreviewing - true when the unit should be shaded as if selected, but the
+    //                  actual selected set has not been changed yet
+    public void SetSelected(bool selected, bool justPreviewing)
     {
         Icon?.SetSelected(selected);
-        Units.ForEach(unit => unit.SetSelected(selected));
+        Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
     }
 
     public void SetEnabled(bool enabled)

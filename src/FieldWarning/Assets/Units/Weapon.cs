@@ -21,6 +21,7 @@ namespace PFW.Weapons
         public WeaponData data { get; private set; }
         public UnitBehaviour unit { get; private set; }
         public float reloadTimeLeft { get; private set; }
+        public AudioSource Source { get; private set; }
 
         private TargetTuple target;
         public void setTarget(Vector3 position)
@@ -60,8 +61,11 @@ namespace PFW.Weapons
         {
             unit = gameObject.GetComponent<UnitBehaviour>();
             enabled = false;
-           
+        }
 
+        public void Start()
+        {
+            Source = GetComponent<AudioSource>();
         }
 
         public void Update()
@@ -177,7 +181,7 @@ namespace PFW.Weapons
             {
 
                 // sound
-                unit.Source.PlayOneShot(shotSound, shotVolume);
+                Source.PlayOneShot(shotSound, shotVolume);
                 // particle
                 shotEffect.Play();
 
