@@ -1,0 +1,206 @@
+fileFormatVersion: 2
+guid: abb3190370cd1364080aea9ac5ea3545
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: hull_LOD0
+    100002: hull_LOD1
+    100004: hull_LOD2
+    100006: //RootNode
+    100008: turret_LOD0
+    100010: turret_LOD1
+    100012: wheel_B1_LOD0
+    100014: wheel_B1_LOD1
+    100016: wheel_B2_LOD0
+    100018: wheel_B2_LOD1
+    100020: wheel_B3_LOD0
+    100022: wheel_B4_LOD0
+    100024: wheel_B5_LOD0
+    100026: wheel_B5_LOD1
+    100028: wheel_B6_LOD0
+    100030: wheel_B6_LOD1
+    100032: wheel_B7_LOD0
+    100034: wheel_B8_LOD0
+    100036: wheel_FL_LOD0
+    100038: wheel_FL_LOD1
+    100040: wheel_FR_LOD0
+    100042: wheel_FR_LOD1
+    400000: hull_LOD0
+    400002: hull_LOD1
+    400004: hull_LOD2
+    400006: //RootNode
+    400008: turret_LOD0
+    400010: turret_LOD1
+    400012: wheel_B1_LOD0
+    400014: wheel_B1_LOD1
+    400016: wheel_B2_LOD0
+    400018: wheel_B2_LOD1
+    400020: wheel_B3_LOD0
+    400022: wheel_B4_LOD0
+    400024: wheel_B5_LOD0
+    400026: wheel_B5_LOD1
+    400028: wheel_B6_LOD0
+    400030: wheel_B6_LOD1
+    400032: wheel_B7_LOD0
+    400034: wheel_B8_LOD0
+    400036: wheel_FL_LOD0
+    400038: wheel_FL_LOD1
+    400040: wheel_FR_LOD0
+    400042: wheel_FR_LOD1
+    2100000: lambert2
+    2300000: hull_LOD0
+    2300002: hull_LOD1
+    2300004: hull_LOD2
+    2300006: turret_LOD0
+    2300008: turret_LOD1
+    2300010: wheel_B1_LOD0
+    2300012: wheel_B1_LOD1
+    2300014: wheel_B2_LOD0
+    2300016: wheel_B2_LOD1
+    2300018: wheel_B3_LOD0
+    2300020: wheel_B4_LOD0
+    2300022: wheel_B5_LOD0
+    2300024: wheel_B5_LOD1
+    2300026: wheel_B6_LOD0
+    2300028: wheel_B6_LOD1
+    2300030: wheel_B7_LOD0
+    2300032: wheel_B8_LOD0
+    2300034: wheel_FL_LOD0
+    2300036: wheel_FL_LOD1
+    2300038: wheel_FR_LOD0
+    2300040: wheel_FR_LOD1
+    3300000: hull_LOD0
+    3300002: hull_LOD1
+    3300004: hull_LOD2
+    3300006: turret_LOD0
+    3300008: turret_LOD1
+    3300010: wheel_B1_LOD0
+    3300012: wheel_B1_LOD1
+    3300014: wheel_B2_LOD0
+    3300016: wheel_B2_LOD1
+    3300018: wheel_B3_LOD0
+    3300020: wheel_B4_LOD0
+    3300022: wheel_B5_LOD0
+    3300024: wheel_B5_LOD1
+    3300026: wheel_B6_LOD0
+    3300028: wheel_B6_LOD1
+    3300030: wheel_B7_LOD0
+    3300032: wheel_B8_LOD0
+    3300034: wheel_FL_LOD0
+    3300036: wheel_FL_LOD1
+    3300038: wheel_FR_LOD0
+    3300040: wheel_FR_LOD1
+    4300000: wheel_FL_LOD0
+    4300002: wheel_B3_LOD0
+    4300004: wheel_B4_LOD0
+    4300006: wheel_FR_LOD0
+    4300008: wheel_B8_LOD0
+    4300010: wheel_B7_LOD0
+    4300012: wheel_B1_LOD0
+    4300014: wheel_B2_LOD0
+    4300016: wheel_B5_LOD0
+    4300018: wheel_B6_LOD0
+    4300020: hull_LOD0
+    4300022: turret_LOD0
+    4300024: wheel_B1_LOD1
+    4300026: wheel_B5_LOD1
+    4300028: wheel_B2_LOD1
+    4300030: wheel_FL_LOD1
+    4300032: wheel_FR_LOD1
+    4300034: turret_LOD1
+    4300036: hull_LOD1
+    4300038: wheel_B6_LOD1
+    4300040: hull_LOD2
+    20500000: //RootNode
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert2
+    second: {fileID: 2100000, guid: 4d009a9c7527c1a4291b76681720a2a7, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.01
+    globalScale: 1.23
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
