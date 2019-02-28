@@ -52,7 +52,7 @@ public class UnitData
     }
 
     public static UnitData GenericUnit() //used in Unit Behaviour because both tanks and infantry have 10HP
-    {        
+    {
         var d = new UnitData();
         //d.movementSpeed = 6f;
         //d.maxRotationSpeed = 50;
