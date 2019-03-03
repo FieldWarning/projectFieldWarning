@@ -15,7 +15,7 @@ using UnityEngine;
 using PFW.Weapons;
 using PFW.Units;
 
-public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
+public abstract class UnitBehaviour : SelectableBehavior
 {
     public const string UNIT_TAG = "Unit";
     public const float NO_HEADING = float.MaxValue;
@@ -126,7 +126,7 @@ public abstract class UnitBehaviour : SelectableBehavior, Matchable<Vector3>
     public void SetPlatoon(PlatoonBehaviour p)
     {
         Platoon = p;
-        Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathfinderData);
+        Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathData);
     }
 
     public float GetHealth()

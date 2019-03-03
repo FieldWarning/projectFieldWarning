@@ -11,12 +11,10 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
-using UnityEngine;
-using PFW.Ingame.UI;
-
 using PFW.Ingame.Prototype;
+using PFW.Ingame.UI;
+using UnityEngine;
 
 namespace PFW.Model.Game
 {
@@ -25,38 +23,32 @@ namespace PFW.Model.Game
      * 
      * Holds a lot of data that would be singleton or global, but is intentionally
      * non-static (so that we can easily clean up).
-     */ 
+     */
     public class MatchSession : MonoBehaviour
     {
-        [NonSerialized]
-        public PlayerBehaviour LocalPlayer;
-
-        public Settings Settings { get; } = new Settings();
-        public ICollection<Team> Teams { get; } = new List<Team>();
-
-        // TODO: I think all entities that need a global list should keep one
-        // of their own, to minimize shared state. Instead of using these 
-        // lists, supply a unit registration call and have MatchSession call
-        // that in RegisterUnitBirth() (see VisibilityManager for an example):
-        public ICollection<UnitBehaviour> AllUnits { get; } = new List<UnitBehaviour>();
-        public ICollection<PlatoonBehaviour> AllPlatoons { get; } = new List<PlatoonBehaviour>();
-
         private InputManager _inputManager;
-
         private VisibilityManager _visibilityManager;
 
-        public PathfinderData PathfinderData { get; private set; }
+        public Settings Settings { get; set; }
 
-        public UnitFactory UnitFactory { get; private set; }
+        public PlayerBehaviour LocalPlayer { get; private set; }
+
+        /* TODO: I think all entities that need a global list should keep one
+         * of their own, to minimize shared state. Instead of using these 
+         * lists, supply a unit registration call and have MatchSession call
+         * that in RegisterUnitBirth() (see VisibilityManager for an example): */
+        public ICollection<Team> Teams { get; } = new List<Team>();
+        public ICollection<UnitBehaviour> Units { get; } = new List<UnitBehaviour>();
+        public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
+
+        public PathfinderData PathData { get; private set; }
+
+        public UnitFactory Factory { get; private set; }
 
         public void Awake()
         {
-            // TODO: I don't think we will want to customize the 
-            // team colors etc to be map-specific. So it makes more sense
-            // to have MatchSession create the team objects instead of 
-            // dragging them into the scene like it works now.
-            Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
-            Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
+            var blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
+            var redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
             blueTeam.AddPlayer(this);
             redTeam.AddPlayer(this);
@@ -66,54 +58,45 @@ namespace PFW.Model.Game
 
             LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
             LocalPlayer.Data = redTeam.Players[0];
-            DeploymentMenu menu = GameObject.Find("Managers").GetComponent<DeploymentMenu>();
-            menu.LocalPlayer = LocalPlayer;
 
+            GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
+       
+            _inputManager = FindObjectOfType<InputManager>() ?? 
+                     gameObject.AddComponent<InputManager>();
 
-            _inputManager = FindObjectOfType<InputManager>();
-            if (_inputManager == null)
-                _inputManager = gameObject.AddComponent<InputManager>();
+            _visibilityManager = FindObjectOfType<VisibilityManager>() ?? 
+                     gameObject.AddComponent<VisibilityManager>();
 
-            if (_inputManager.Session == null)
-                _inputManager.Session = this;
+            _inputManager.Session = _inputManager.Session ?? this;
+            _visibilityManager.LocalTeam = _visibilityManager.LocalTeam ?? LocalPlayer.Data.Team;
 
-
-            _visibilityManager = FindObjectOfType<VisibilityManager>();
-            if (_visibilityManager == null)
-                _visibilityManager = gameObject.AddComponent<VisibilityManager>();
-
-            if (_visibilityManager.Session == null)
-                _visibilityManager.Session = this;
-            if (_visibilityManager.LocalTeam == null)
-                _visibilityManager.LocalTeam = LocalPlayer.Data.Team;
-
-            // TODO: pass the terrain from whatever code will be starting matches, instead of searching for it like this:
-            PathfinderData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
-
-            UnitFactory = new UnitFactory(this);
+            // TODO: Pass terrain from future location of starting matches (no Find)
+            PathData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
+            Factory = new UnitFactory(this);
+            Settings = new Settings();
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
         {
-            AllPlatoons.Add(platoon);
+            Platoons.Add(platoon);
             _inputManager.RegisterPlatoonBirth(platoon);
         }
 
         public void RegisterPlatoonDeath(PlatoonBehaviour platoon)
         {
-            AllPlatoons.Remove(platoon);
+            Platoons.Remove(platoon);
             _inputManager.RegisterPlatoonDeath(platoon);
         }
 
         public void RegisterUnitBirth(UnitBehaviour unit)
         {
-            AllUnits.Add(unit);
+            Units.Add(unit);
             _visibilityManager.RegisterUnitBirth(unit);
         }
 
         public void RegisterUnitDeath(UnitBehaviour unit)
         {
-            AllUnits.Remove(unit);
+            Units.Remove(unit);
             _visibilityManager.RegisterUnitDeath(unit);
         }
 
