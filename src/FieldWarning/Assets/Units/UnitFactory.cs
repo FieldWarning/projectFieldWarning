@@ -82,7 +82,7 @@ namespace PFW.Ingame.Prototype
             var minimapIcon = GameObject.Instantiate(Resources.Load<GameObject>("MiniMapIcon"));
             minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
             minimapIcon.transform.parent = unit.transform;
-            minimapIcon.transform.localPosition = Vector3.zero;
+            minimapIcon.transform.localPosition = new Vector3(0,0.01f,0);
         }
 
         private void AddVisibleBehaviour(GameObject unit)

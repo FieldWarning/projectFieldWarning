@@ -42,7 +42,7 @@ public class Pathfinder
         this.unit = unit;
         this.data = data;
         path = new List<PathNode>();
-        finalCompletionDist = 5f*TerrainConstants.MAP_SCALE + unit.Data.minTurnRadius;
+        finalCompletionDist = 0.5f*TerrainConstants.MAP_SCALE + unit.Data.minTurnRadius;
         nextUpdateTime = 0f;
     }
 
