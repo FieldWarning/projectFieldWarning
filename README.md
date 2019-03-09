@@ -1,5 +1,6 @@
 # Project: Field Warning
 Project: Field Warning is a community-made RTS game centered around squad and company-scale warfare.
+We are currently on Unity version **2018.3.6**.
 
 ## Downloading and Installing
 **We recommend using [GitHub Desktop](https://desktop.github.com) to download**;
@@ -50,8 +51,6 @@ We use the following venues of communication:
 - Trello (Tasks): https://trello.com/b/qXxCGXIW/pfw-beta
 - Discord: https://discord.gg/ExQtQX4
 - Github: https://github.com/FieldWarning/projectFieldWarning
-
-General note: anyone with a tag on the discord is trustworthy.
 
 ## Documentation
 All of our documentation is available in the projectFieldWarning/documentation folder.
