@@ -73,6 +73,8 @@ namespace PFW.Weapons
 
             if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
             {
+                //Removes the Target if it went out of range
+                checkTargetDistance();
 
                 if (target == null || !target.exists())
                     target = new TargetTuple(FindClosestEnemy());
@@ -243,27 +245,35 @@ namespace PFW.Weapons
         public GameObject FindClosestEnemy()
         {
             // TODO utilize precomputed distance lists from session
+            // TODO Have a global List of enemy units to prevent using FindGameobjects since it is very ressource intensive
+            // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range units
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             GameObject Target = null;
             var thisTeam = unit.Platoon.Owner.Team;
 
-            foreach (GameObject unit in units)
+            foreach (GameObject enemy in units)
             {
                 // Filter out friendlies:
-                if (unit.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
+                if (enemy.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance(unit.transform.position, unit.transform.position);
+                var distance = Vector3.Distance(unit.transform.position, enemy.transform.position);
                 if (distance < data.FireRange)
                 {
-                    return unit;
+                    return enemy;
                 }
             }
             return Target;
         }
 
-
+        private void checkTargetDistance()
+        {
+            var distance = Vector3.Distance(unit.transform.position, target.enemy.transform.position);
+            if (distance > data.FireRange) {
+                target = null;
+            }
+        }
         private class TargetTuple
         {
             public Vector3 position { get; private set; }
