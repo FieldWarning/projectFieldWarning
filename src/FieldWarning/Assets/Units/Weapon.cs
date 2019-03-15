@@ -71,8 +71,9 @@ namespace PFW.Weapons
         public void Update()
         {
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
-            {
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
+                //Removes the Target if it went out of range
+                checkTargetDistance();
 
                 if (target == null || !target.exists())
                     target = new TargetTuple(FindClosestEnemy());
@@ -82,16 +83,15 @@ namespace PFW.Weapons
             }
 
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
-            {
-                if (target != null)
-                {
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
+                if (target != null) {
                     RotateTurret(target);
                     TryFireWeapon(target);
                 }
             }
 
         }
+
 
         public void WakeUp()
         {
@@ -110,25 +110,22 @@ namespace PFW.Weapons
 
             Vector3 pos = target.enemy == null ? target.position : target.enemy.transform.position;
 
-            if (pos != Vector3.zero)
-            {
+            if (pos != Vector3.zero) {
                 aimed = true;
-               // shotEmitter.LookAt(pos);
-               //shot emmiter was comented out because arty has no shot emmiter
+                // shotEmitter.LookAt(pos);
+                //shot emmiter was comented out because arty has no shot emmiter
 
                 Vector3 directionToTarget = pos - turret.position;
                 Quaternion rotationToTarget = Quaternion.LookRotation(mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
-                if (Mathf.Abs(targetTurretAngle) > data.ArcHorizontal)
-                {
+                if (Mathf.Abs(targetTurretAngle) > data.ArcHorizontal) {
                     targetTurretAngle = 0f;
                     aimed = false;
                 }
 
                 targetBarrelAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
-                if (targetBarrelAngle < -data.ArcUp || targetBarrelAngle > data.ArcDown)
-                {
+                if (targetBarrelAngle < -data.ArcUp || targetBarrelAngle > data.ArcDown) {
                     targetBarrelAngle = 0f;
                     aimed = false;
                 }
@@ -140,31 +137,24 @@ namespace PFW.Weapons
             float deltaAngle;
 
             deltaAngle = (targetTurretAngle - turretAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn)
-            {
+            if (Mathf.Abs(deltaAngle) > turn) {
                 turretAngle += (deltaAngle > 0 ? 1 : -1) * turn;
                 aimed = false;
-            }
-            else
-            {
+            } else {
                 turretAngle = targetTurretAngle;
             }
 
             #region ArtyAdditionalCode
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
-            {
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
                 targetBarrelAngle = -data.ArcUp;
             }
             #endregion
 
             deltaAngle = (targetBarrelAngle - barrelAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn)
-            {
+            if (Mathf.Abs(deltaAngle) > turn) {
                 barrelAngle += (deltaAngle > 0 ? 1 : -1) * turn;
                 aimed = false;
-            }
-            else
-            {
+            } else {
                 barrelAngle = targetBarrelAngle;
             }
 
@@ -177,31 +167,26 @@ namespace PFW.Weapons
         private bool FireWeapon(TargetTuple target)
         {
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
-            {
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
 
                 // sound
                 Source.PlayOneShot(shotSound, shotVolume);
                 // particle
                 shotEffect.Play();
 
-                if (target.enemy != null)
-                {
+                if (target.enemy != null) {
                     System.Random rnd = new System.Random();
                     int roll = rnd.Next(1, 100);
 
                     // HIT
-                    if (roll < data.Accuracy)
-                    {
+                    if (roll < data.Accuracy) {
 
-                     
+
                         target.enemy.GetComponent<UnitBehaviour>()
                             .HandleHit(data.Damage);
                         return true;
                     }
-                }
-                else
-                {
+                } else {
                     // ensure we only fire pos once
                     this.target = null;
                 }
@@ -210,20 +195,19 @@ namespace PFW.Weapons
                 return false;
             }
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
-            {
+            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
                 //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
 
 
                 GameObject shell = Resources.Load<GameObject>("shell");
-                GameObject shell_new =Instantiate(shell, ShotStarterPosition.position, ShotStarterPosition.transform.rotation);
+                GameObject shell_new = Instantiate(shell, ShotStarterPosition.position, ShotStarterPosition.transform.rotation);
                 shell_new.GetComponent<BulletBehavior>().SetUp(ShotStarterPosition, target.position, 60);
 
                 //Debug.Break();
-               
+
 
                 return true;
-                
+
             }
 
             return false;
@@ -243,27 +227,33 @@ namespace PFW.Weapons
         public GameObject FindClosestEnemy()
         {
             // TODO utilize precomputed distance lists from session
+            // TODO Have a global List of enemy units to prevent using FindGameobjects since it is very ressource intensive
+            // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range units
             GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             GameObject Target = null;
             var thisTeam = unit.Platoon.Owner.Team;
 
-            foreach (GameObject unit in units)
-            {
+            foreach (GameObject enemy in units) {
                 // Filter out friendlies:
-                if (unit.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
+                if (enemy.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance(unit.transform.position, unit.transform.position);
-                if (distance < data.FireRange)
-                {
-                    return unit;
+                var distance = Vector3.Distance(unit.transform.position, enemy.transform.position);
+                if (distance < data.FireRange) {
+                    return enemy;
                 }
             }
             return Target;
         }
 
-
+        private void checkTargetDistance()
+        {
+            var distance = Vector3.Distance(unit.transform.position, target.enemy.transform.position);
+            if (distance > data.FireRange) {
+                target = null;
+            }
+        }
         private class TargetTuple
         {
             public Vector3 position { get; private set; }
