@@ -12,6 +12,7 @@
  */
 
 using Nakama;
+using Nakama.TinyJson;
 using TMPro;
 using UnityEngine;
 using System;
@@ -40,8 +41,21 @@ namespace PFW.Networking
         [SerializeField]
         private GameObject _failedNotification;
 
+        private string _username;
         private IClient _client;
         private ISession _session;
+
+        // Chat fields:
+        const string CHAT_ROOM = "warchat";
+        const bool CHAT_ROOM_PERSISTENT = true;
+        const bool CHAT_ROOM_HIDDEN = false;
+
+        [SerializeField]
+        private TMP_Text _chatMessagesArea;
+        [SerializeField]
+        private TMP_InputField _chatInputField;
+        private ISocket _chatSocket;
+        private IChannel _chatChannel;
 
         public async void Login()
         {
@@ -54,9 +68,11 @@ namespace PFW.Networking
 
             _client = new Client(SERVER_KEY, _serverInputField.text, port, false);
 
+            // TODO there is actually a server-managed server field that currently holds a random string, we should update that:
+            _username = _usernameInputField.text;
             try {
                 _session = await _client.AuthenticateEmailAsync(
-                        _usernameInputField.text + FAKE_EMAIL_SUFFIX,
+                        _username + FAKE_EMAIL_SUFFIX,
                         _passwordInputField.text);
 
             } catch {
@@ -65,7 +81,57 @@ namespace PFW.Networking
             }
 
             _loginModal.SetActive(false);
-            Debug.LogFormat("Authenticated session: {0}", _session);
+
+            // TODO move everything below this line to a chat-management module?:
+            _chatSocket =  _client.CreateWebSocket();
+            await _chatSocket.ConnectAsync(_session);
+            _chatChannel = await _chatSocket.JoinChatAsync(
+                    CHAT_ROOM, ChannelType.Room, CHAT_ROOM_PERSISTENT, CHAT_ROOM_HIDDEN);
+            
+            _chatMessagesArea.text += $"Welcome {_username}, you have connected with session {_session} to {_chatChannel.Id}.\n";
+
+            // Handle any incoming messages:
+            _chatSocket.OnChannelMessage += (_, message) => {
+
+                if (_chatChannel.Id == message.ChannelId) {
+                    // TODO This is naive, we can't strongly type network input so directly..
+                    _chatMessagesArea.text += message.Content.FromJson<ChatMessage>().Flatten();
+                }
+            };
+        }
+
+        public async void SendChatMessage()
+        {
+            // TMP triggers OnEndEdit callbacks when the input field was deselected; ignore those:
+            if (!Input.GetKey(KeyCode.Return) && !Input.GetKey(KeyCode.KeypadEnter))
+                return;
+            
+            ChatMessage message = new ChatMessage(_username, _chatInputField.text);
+            _chatInputField.text = "";
+            string jsonPacket = message.ToJson();
+
+            try {
+                await _chatSocket.WriteChatMessageAsync(_chatChannel.Id, jsonPacket);
+            } catch {
+                _chatMessagesArea.text += "Failed to send message..\n";
+            }
+        }
+
+        public struct ChatMessage 
+        {
+            public string Author;
+            public string Content;
+
+            public ChatMessage(string author, string content)
+            {
+                Author = author;
+                Content = content;
+            }
+
+            public string Flatten()
+            {
+                return Author + ": " + Content + "\n";
+            }
         }
     }
 }
