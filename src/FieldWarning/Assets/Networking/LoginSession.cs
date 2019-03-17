@@ -24,6 +24,7 @@ namespace PFW.Networking
         private const string SERVER_KEY = "defaultkey";
 
         private const int DEFAULT_GATEWAY_PORT = 7350;
+        private const string FAKE_EMAIL_SUFFIX = "@pfw.com";
 
         [SerializeField]
         private TMP_InputField _serverInputField;
@@ -55,7 +56,7 @@ namespace PFW.Networking
 
             try {
                 _session = await _client.AuthenticateEmailAsync(
-                        _usernameInputField.text,
+                        _usernameInputField.text + FAKE_EMAIL_SUFFIX,
                         _passwordInputField.text);
 
             } catch {
