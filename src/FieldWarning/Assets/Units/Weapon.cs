@@ -72,8 +72,11 @@ namespace PFW.Weapons
         {
 
             if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-                //Removes the Target if it went out of range
-                checkTargetDistance();
+                if (target != null && target.exists()) {
+                    //Removes the Target if it went out of range
+                    checkTargetDistance();
+                }
+               
 
                 if (target == null || !target.exists())
                     target = new TargetTuple(FindClosestEnemy());
