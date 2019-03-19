@@ -53,8 +53,6 @@ Assuming you've joined successfully, read the rules, and visit (and sign up for)
 
 We use the following platforms: [Trello](https://www.trello.com), [Discord](https://www.discordapp.com), and [Google Docs](https://docs.google.com)
 
-**NOTE**: Anyone with a tag (role) is trusted by the community.
-
 ## Documentation
 Any available documentation is available in [projectFieldWarning/documentation](https://github.com/FieldWarning/projectFieldWarning/tree/master/documentation) as well as our [Wiki](https://github.com/FieldWarning/projectFieldWarning/wiki)
 Please note [How to Contribute](https://github.com/FieldWarning/projectFieldWarning/tree/master/documentation/HOW_TO_CONTRIBUTE.md), [How to Utilize Trello](https://github.com/FieldWarning/projectFieldWarning/blob/master/documentation/TRELLO.md), and [our C# coding style](https://github.com/FieldWarning/projectFieldWarning/blob/master/documentation/coding-style.md).  
