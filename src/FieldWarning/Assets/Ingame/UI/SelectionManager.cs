@@ -273,7 +273,7 @@ namespace PFW.Ingame.UI
             _previewPosition = position;
             PositionGhostUnits(2 * _previewPosition - centerMass, false);
 
-            // Prevent short clicks from displaying preview by only showing it on the first call to RotateMoveOrderPreview call. Should maybe move the logic to UIManager, since it should be responsible for recognizing hold clicks, not this code.
+            //Prevent short clicks from displaying preview by only showing it on the first call to RotateMoveOrderPreview call. Should maybe move the logic to UIManager, since it should be responsible for recognizing hold clicks, not this code.
             _makePreviewVisible = true;
         }
 
