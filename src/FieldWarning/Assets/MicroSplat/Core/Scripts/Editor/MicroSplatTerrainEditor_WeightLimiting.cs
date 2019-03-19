@@ -61,7 +61,7 @@ public partial class MicroSplatTerrainEditor : Editor
       Terrain t = bt.GetComponent<Terrain>();
       if (t == null)
          return;
-      TerrainData td = t.terrainData;
+      UnityEngine.TerrainData td = t.terrainData;
       if (td == null)
          return;
 
