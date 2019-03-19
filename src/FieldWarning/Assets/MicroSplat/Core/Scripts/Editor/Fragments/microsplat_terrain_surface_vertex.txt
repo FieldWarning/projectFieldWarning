@@ -1,0 +1,76 @@
+
+
+#if UNITY_VERSION >= 201830 && !_TERRAINBLENDABLESHADER && !_MICROMESH
+#if defined(UNITY_INSTANCING_ENABLED) && !defined(SHADER_API_D3D11_9X)
+    sampler2D _TerrainHeightmapTexture;
+    sampler2D _TerrainNormalmapTexture;
+    float4    _TerrainHeightmapRecipSize;   // float4(1.0f/width, 1.0f/height, 1.0f/(width-1), 1.0f/(height-1))
+    float4    _TerrainHeightmapScale;       // float4(hmScale.x, hmScale.y / (float)(kMaxHeight), hmScale.z, 0.0f)
+#endif
+#endif
+
+#if UNITY_VERSION >= 201830 && !_TERRAINBLENDABLESHADER && !_MICROMESH
+UNITY_INSTANCING_BUFFER_START(Terrain)
+    UNITY_DEFINE_INSTANCED_PROP(float4, _TerrainPatchInstanceData) // float4(xBase, yBase, skipScale, ~)
+UNITY_INSTANCING_BUFFER_END(Terrain)
+#endif
+
+
+      // surface shaders + tessellation, do not pass go, or
+      // collect $500 - sucks it up and realize you can't use
+      // an Input struct, so you have to hack UV coordinates
+      // and live with only the magic keywords..
+      void vert (inout appdata i) 
+      {
+         #if UNITY_VERSION >= 201830 && !_TERRAINBLENDABLESHADER && !_MICROMESH && defined(UNITY_INSTANCING_ENABLED) && !defined(SHADER_API_D3D11_9X)
+            float2 patchVertex = i.vertex.xy;
+            float4 instanceData = UNITY_ACCESS_INSTANCED_PROP(Terrain, _TerrainPatchInstanceData);
+
+            float4 uvscale = instanceData.z * _TerrainHeightmapRecipSize;
+            float4 uvoffset = instanceData.xyxy * uvscale;
+            uvoffset.xy += 0.5f * _TerrainHeightmapRecipSize.xy;
+            float2 sampleCoords = (patchVertex.xy * uvscale.xy + uvoffset.xy);
+
+            float hm = UnpackHeightmap(tex2Dlod(_TerrainHeightmapTexture, float4(sampleCoords, 0, 0)));
+            i.vertex.xz = (patchVertex.xy + instanceData.xy) * _TerrainHeightmapScale.xz * instanceData.z;  //(x + xBase) * hmScale.x * skipScale;
+            i.vertex.y = hm * _TerrainHeightmapScale.y;
+            i.vertex.w = 1.0f;
+
+            i.texcoord.xy = (patchVertex.xy * uvscale.zw + uvoffset.zw);
+            i.texcoord2 = sampleCoords;
+            
+            i.texcoord2 = i.texcoord1 = i.texcoord;
+            
+            i.normal = float3(0,1,0);
+         #elif _PERPIXNORMAL
+            i.normal = float3(0,1,0);
+         #endif
+
+         
+         #if !_MICROMESH
+         float4 tangent;
+         tangent.xyz = cross(UnityObjectToWorldNormal( i.normal ), float3(0,0,1));
+         tangent.w = -1;
+         i.tangent = tangent;
+         #endif
+
+
+         #if _VSSHADOWMAP || _WINDSHADOWS || _SNOWSHADOWS
+         float3 N = mul((float3x3)unity_ObjectToWorld, i.normal);
+         float3 T = mul((float3x3)unity_ObjectToWorld, i.tangent.xyz);
+         float3 B = cross(N,T) * i.tangent.w;
+         float3x3 worldToTangent = float3x3(T,B,N);
+            #if _VSSHADOWMAP
+            i.color.rgb = mul( worldToTangent, gVSSunDirection.xyz ).xyz;
+            #else
+            i.color.rgb = mul( worldToTangent, normalize(_WorldSpaceLightPos0.xyz) ).xyz;
+            #endif
+
+         #endif
+
+      }
+
+
+
+
+   

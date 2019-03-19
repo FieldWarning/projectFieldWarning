@@ -1,0 +1,75 @@
+
+      #if _BDRFLAMBERT
+      void surf (Input i, inout SurfaceOutput o) 
+      #else
+      void surf (Input i, inout SurfaceOutputStandard o) 
+      #endif
+      {
+         o.Normal = float3(0,0,1);
+         float3 worldNormalVertex = WorldNormalVector(i, float3(0,0,1));
+         #if UNITY_VERSION >= 201830 && !_TERRAINBLENDABLESHADER && !_MICROMESH && defined(UNITY_INSTANCING_ENABLED) && !defined(SHADER_API_D3D11_9X)
+            float2 sampleCoords = (i.uv_Control0 / _TerrainHeightmapRecipSize.zw + 0.5f) * _TerrainHeightmapRecipSize.xy;
+            float3 geomNormal = normalize(tex2D(_TerrainNormalmapTexture, sampleCoords).xyz * 2 - 1);
+            worldNormalVertex = geomNormal;
+         #elif _PERPIXNORMAL
+            float3 geomNormal = (UnpackNormal(UNITY_SAMPLE_TEX2D_SAMPLER(_PerPixelNormal, _Diffuse, i.uv_Control0))).xzy;
+            worldNormalVertex = geomNormal;
+         #endif    
+         
+         MicroSplatLayer l = SurfImpl(i, worldNormalVertex);
+
+         // always write to o.Normal to keep i.viewDir consistent
+         o.Normal = half3(0, 0, 1);
+
+         #if _DEBUG_OUTPUT_ALBEDO
+            o.Albedo = l.Albedo;
+         #elif _DEBUG_OUTPUT_NORMAL
+            o.Albedo = float3(l.Normal.xy * 0.5 + 0.5, l.Normal.z);
+         #elif _DEBUG_OUTPUT_SMOOTHNESS
+            o.Albedo = l.Smoothness.xxx;
+         #elif _DEBUG_OUTPUT_METAL
+            o.Albedo = l.Metallic.xxx;
+         #elif _DEBUG_OUTPUT_AO
+            o.Albedo = l.Occlusion.xxx;
+         #elif _DEBUG_OUTPUT_EMISSION
+            o.Albedo = l.Emission;
+         #elif _DEBUG_OUTPUT_HEIGHT
+            o.Albedo = l.Height.xxx;
+         #else
+            #if _BDRFLAMBERT
+               o.Albedo = l.Albedo;
+               o.Normal = l.Normal;
+               o.Emission = l.Emission;
+               o.Specular = l.Occlusion;
+               o.Gloss = l.Smoothness;
+            #else
+               o.Albedo = l.Albedo;
+               o.Normal = l.Normal;
+               o.Smoothness = l.Smoothness;
+               o.Metallic = l.Metallic;
+               o.Occlusion = l.Occlusion;
+               o.Emission = l.Emission;
+            #endif
+            
+            #if _MESHOVERLAYSPLATS
+               o.Alpha = l.Alpha;
+            #endif
+         #endif
+         
+         // per pixel normal
+         #if _PERPIXNORMAL || (UNITY_VERSION >= 201830 && !_TERRAINBLENDABLESHADER && !_MICROMESH && defined(UNITY_INSTANCING_ENABLED) && !defined(SHADER_API_D3D11_9X))
+            float3 geomTangent = normalize(cross(geomNormal, float3(0, 0, 1)));
+            float3 geomBitangent = normalize(cross(geomTangent, geomNormal));
+            o.Normal = o.Normal.x * geomTangent + o.Normal.y * geomBitangent + o.Normal.z * geomNormal;
+            o.Normal = o.Normal.xzy;
+         #endif
+      }
+
+      // for debug shaders
+      half4 LightingUnlit(SurfaceOutputStandard s, half3 lightDir, half atten)
+      {
+         return half4(s.Albedo, 1);
+      }
+
+
+   
