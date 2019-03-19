@@ -272,12 +272,7 @@ namespace PFW.Ingame.UI
             Vector3 centerMass = _selection.ConvertAll(x => x as MonoBehaviour).getCenterOfMass();
             _previewPosition = position;
             PositionGhostUnits(2 * _previewPosition - centerMass, false);
-            if (_selection.Count > 0) {
-                //Show a Symbol at the position where the move order was issued
-                //TODO Move this to a maybe more appropriate place to keep this skript as clean as possible
-                GameObject marker = GameObject.Instantiate(Resources.Load("MoveMarker", typeof(GameObject)), position+ new Vector3(0,0.01f,0), Quaternion.Euler(new Vector3(90, 0, 0))) as GameObject;
-               
-            }
+
             //Prevent short clicks from displaying preview by only showing it on the first call to RotateMoveOrderPreview call. Should maybe move the logic to UIManager, since it should be responsible for recognizing hold clicks, not this code.
             _makePreviewVisible = true;
         }

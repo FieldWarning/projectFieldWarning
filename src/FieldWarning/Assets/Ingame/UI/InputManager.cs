@@ -217,6 +217,10 @@ namespace PFW.Ingame.UI
 
         void OnOrderShortClick()
         {
+            if (!_selectionManager.Empty) {
+                DisplayOrderFeedback();
+            }
+
             _selectionManager.DispatchMoveCommand(false, MoveWaypoint.MoveMode.normalMove);
         }
 
@@ -225,9 +229,23 @@ namespace PFW.Ingame.UI
             _selectionManager.DispatchMoveCommand(true, MoveWaypoint.MoveMode.normalMove);
         }
 
+        // Show a Symbol at the position where a move order was issued:
+        private void DisplayOrderFeedback()
+        {
+            RaycastHit hit;
+            if (Util.GetTerrainClickLocation(out hit))
+                GameObject.Instantiate(
+                        Resources.Load(
+                                "MoveMarker",
+                                typeof(GameObject)),
+                        hit.point + new Vector3(0, 0.01f, 0),
+                        Quaternion.Euler(new Vector3(90, 0, 0))
+                );
+        }
+
         /**
          * Called when the tank button is pressed in the buy menu.
-         */ 
+         */
         public void TankButtonCallback()
         {
             if (_currentBuyTransaction == null)
