@@ -25,10 +25,12 @@ namespace PFW.Ingame.UI
         public Material Neutral;
         //How many Points per tick this Zone gives
         public int Worth = 3;
+
         //Maybe take out all that owner stuff and simply use an int or otherwise shorten the code
         private PlayerData _owner;
         //Vehicles Currently in the Zone (Maybe exclude all non-commander vehicles),maybe replace list with Array
         private List<VehicleBehaviour> _vehicles = new List<VehicleBehaviour>();
+
         // Start is called before the first frame update
         void Start()
         {
@@ -67,6 +69,7 @@ namespace PFW.Ingame.UI
                 }
             }
         }
+
         //needs to play sound
         private void changeOwner(PlayerData newOwner)
         {
@@ -86,15 +89,16 @@ namespace PFW.Ingame.UI
             } else {
                 this.GetComponent<MeshRenderer>().material = Neutral;
             }
-
-
         }
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.transform.parent != null && other.transform.parent.GetComponent<VehicleBehaviour>() != null && other.transform.parent.GetComponent<VehicleBehaviour>().isActiveAndEnabled) {
                 _vehicles.Add(other.transform.parent.GetComponent<VehicleBehaviour>());
             }
         }
+
+        // TODO: If the unit is killed, it will never be removed from the zone:
         private void OnTriggerExit(Collider other)
         {
             if (other.transform.parent.GetComponent<VehicleBehaviour>() != null) {

@@ -1,0 +1,259 @@
+fileFormatVersion: 2
+guid: 911fa8d2ae79e9c47a7395f447ae372b
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Bumerang_LOD0
+    100002: Bumerang_LOD1
+    100004: Bumerang_LOD2
+    100006: //RootNode
+    100008: Elevation_LOD0
+    100010: Elevation_LOD0 1
+    100012: Elevation_LOD1
+    100014: Elevation_LOD1 1
+    100016: K16_Turret_LOD0
+    100018: K16_Turret_LOD1
+    100020: K17_Turret_LOD0
+    100022: K17_Turret_LOD1
+    100024: KPVT_LOD0
+    100026: KPVT_LOD1
+    100028: MainGun_LOD0
+    100030: MainGun_LOD1
+    100032: MG_LOD0
+    100034: Wheel_L_1_LOD0
+    100036: Wheel_L_1_LOD1
+    100038: Wheel_L_2_LOD0
+    100040: Wheel_L_2_LOD1
+    100042: Wheel_L_3_LOD0
+    100044: Wheel_L_3_LOD1
+    100046: Wheel_L_4_LOD0
+    100048: Wheel_L_4_LOD1
+    100050: Wheel_R_1_LOD0
+    100052: Wheel_R_1_LOD1
+    100054: Wheel_R_2_LOD0
+    100056: Wheel_R_2_LOD1
+    100058: Wheel_R_3_LOD0
+    100060: Wheel_R_3_LOD1
+    100062: Wheel_R_4_LOD0
+    100064: Wheel_R_4_LOD1
+    400000: Bumerang_LOD0
+    400002: Bumerang_LOD1
+    400004: Bumerang_LOD2
+    400006: //RootNode
+    400008: Elevation_LOD0
+    400010: Elevation_LOD0 1
+    400012: Elevation_LOD1
+    400014: Elevation_LOD1 1
+    400016: K16_Turret_LOD0
+    400018: K16_Turret_LOD1
+    400020: K17_Turret_LOD0
+    400022: K17_Turret_LOD1
+    400024: KPVT_LOD0
+    400026: KPVT_LOD1
+    400028: MainGun_LOD0
+    400030: MainGun_LOD1
+    400032: MG_LOD0
+    400034: Wheel_L_1_LOD0
+    400036: Wheel_L_1_LOD1
+    400038: Wheel_L_2_LOD0
+    400040: Wheel_L_2_LOD1
+    400042: Wheel_L_3_LOD0
+    400044: Wheel_L_3_LOD1
+    400046: Wheel_L_4_LOD0
+    400048: Wheel_L_4_LOD1
+    400050: Wheel_R_1_LOD0
+    400052: Wheel_R_1_LOD1
+    400054: Wheel_R_2_LOD0
+    400056: Wheel_R_2_LOD1
+    400058: Wheel_R_3_LOD0
+    400060: Wheel_R_3_LOD1
+    400062: Wheel_R_4_LOD0
+    400064: Wheel_R_4_LOD1
+    2100000: Bumerang
+    2100002: K16andEpoch
+    2300000: Bumerang_LOD0
+    2300002: Bumerang_LOD1
+    2300004: Bumerang_LOD2
+    2300006: Elevation_LOD0
+    2300008: Elevation_LOD0 1
+    2300010: Elevation_LOD1
+    2300012: Elevation_LOD1 1
+    2300014: K16_Turret_LOD0
+    2300016: K16_Turret_LOD1
+    2300018: K17_Turret_LOD0
+    2300020: K17_Turret_LOD1
+    2300022: KPVT_LOD0
+    2300024: KPVT_LOD1
+    2300026: MainGun_LOD0
+    2300028: MainGun_LOD1
+    2300030: MG_LOD0
+    2300032: Wheel_L_1_LOD0
+    2300034: Wheel_L_1_LOD1
+    2300036: Wheel_L_2_LOD0
+    2300038: Wheel_L_2_LOD1
+    2300040: Wheel_L_3_LOD0
+    2300042: Wheel_L_3_LOD1
+    2300044: Wheel_L_4_LOD0
+    2300046: Wheel_L_4_LOD1
+    2300048: Wheel_R_1_LOD0
+    2300050: Wheel_R_1_LOD1
+    2300052: Wheel_R_2_LOD0
+    2300054: Wheel_R_2_LOD1
+    2300056: Wheel_R_3_LOD0
+    2300058: Wheel_R_3_LOD1
+    2300060: Wheel_R_4_LOD0
+    2300062: Wheel_R_4_LOD1
+    3300000: Bumerang_LOD0
+    3300002: Bumerang_LOD1
+    3300004: Bumerang_LOD2
+    3300006: Elevation_LOD0
+    3300008: Elevation_LOD0 1
+    3300010: Elevation_LOD1
+    3300012: Elevation_LOD1 1
+    3300014: K16_Turret_LOD0
+    3300016: K16_Turret_LOD1
+    3300018: K17_Turret_LOD0
+    3300020: K17_Turret_LOD1
+    3300022: KPVT_LOD0
+    3300024: KPVT_LOD1
+    3300026: MainGun_LOD0
+    3300028: MainGun_LOD1
+    3300030: MG_LOD0
+    3300032: Wheel_L_1_LOD0
+    3300034: Wheel_L_1_LOD1
+    3300036: Wheel_L_2_LOD0
+    3300038: Wheel_L_2_LOD1
+    3300040: Wheel_L_3_LOD0
+    3300042: Wheel_L_3_LOD1
+    3300044: Wheel_L_4_LOD0
+    3300046: Wheel_L_4_LOD1
+    3300048: Wheel_R_1_LOD0
+    3300050: Wheel_R_1_LOD1
+    3300052: Wheel_R_2_LOD0
+    3300054: Wheel_R_2_LOD1
+    3300056: Wheel_R_3_LOD0
+    3300058: Wheel_R_3_LOD1
+    3300060: Wheel_R_4_LOD0
+    3300062: Wheel_R_4_LOD1
+    4300000: Bumerang_LOD0
+    4300002: K17_Turret_LOD0
+    4300004: Elevation_LOD0
+    4300006: MainGun_LOD0
+    4300008: MG_LOD0
+    4300010: Wheel_L_1_LOD0
+    4300012: Wheel_L_2_LOD0
+    4300014: Wheel_L_3_LOD0
+    4300016: Wheel_L_4_LOD0
+    4300018: Wheel_R_1_LOD0
+    4300020: Wheel_R_2_LOD0
+    4300022: Wheel_R_3_LOD0
+    4300024: Wheel_R_4_LOD0
+    4300026: K16_Turret_LOD0
+    4300028: Elevation_LOD0
+    4300030: KPVT_LOD0
+    4300032: Bumerang_LOD1
+    4300034: K16_Turret_LOD1
+    4300036: Elevation_LOD1
+    4300038: KPVT_LOD1
+    4300040: K17_Turret_LOD1
+    4300042: Elevation_LOD1
+    4300044: MainGun_LOD1
+    4300046: Wheel_L_1_LOD1
+    4300048: Wheel_L_2_LOD1
+    4300050: Wheel_L_3_LOD1
+    4300052: Wheel_L_4_LOD1
+    4300054: Wheel_R_1_LOD1
+    4300056: Wheel_R_2_LOD1
+    4300058: Wheel_R_3_LOD1
+    4300060: Wheel_R_4_LOD1
+    4300062: Bumerang_LOD2
+    20500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.01
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 0
+    keepQuads: 0
+    weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
