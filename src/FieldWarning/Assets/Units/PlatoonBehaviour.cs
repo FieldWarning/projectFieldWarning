@@ -112,10 +112,6 @@ public partial class PlatoonBehaviour : MonoBehaviour
         IsInitialized = true;
     }
 
-    public void PlayMoveCommandVoiceline()
-    {
-        Units.FirstOrDefault()?.PlayMoveCommandVoiceline();
-    }
 
     public void SetGhostPlatoon(GhostPlatoonBehaviour obj)
     {
@@ -162,6 +158,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
             foreach (var weapon in weapons)
                 weapon.setTarget(position);
         }
+        PlayAttackCommandVoiceline();
     }
 
     public void Destroy()
@@ -172,4 +169,23 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Owner.Session.RegisterPlatoonDeath(this);
         Destroy(gameObject);
     }
+
+#region PlayVoicelines
+// For the time being, always play the voiceline of the first unit
+// Until we agree on a default unit in platoon that plays 
+    public void PlaySelectionVoiceline()
+    {
+        Units[0].PlaySelectionVoiceline();
+    }
+
+    public void PlayMoveCommandVoiceline()
+    {
+        Units[0].PlayMoveCommandVoiceline();
+    }
+
+    public void PlayAttackCommandVoiceline()
+    {
+        Units[0].PlayAttackCommandVoiceline();
+    }
+#endregion
 }

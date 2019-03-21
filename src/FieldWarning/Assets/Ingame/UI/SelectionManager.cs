@@ -135,7 +135,9 @@ namespace PFW.Ingame.UI
             // Enqueue the prepared waypoints:
             _selection.ForEach(x => x.Movement.EndQueueing());
 
-            _selection.ForEach(x => x.PlayMoveCommandVoiceline());
+            // A random platoon in selection plays the move command voice line
+            int r = Random.Range(0,_selection.Count);
+            _selection[r].PlayMoveCommandVoiceline();
 
             MaybeDropSelectionAfterOrder();
         }
@@ -189,7 +191,11 @@ namespace PFW.Ingame.UI
                 if (selectable != null) {
                     var p = selectable.GetPlatoon();
                     if (p != null)
-                        _selection.Add(selectable.GetPlatoon());
+                    {
+                        p.PlaySelectionVoiceline();
+                        _selection.Add(p);
+                    }
+                        
                 }
             }
             SetSelected(_selection, false);
@@ -242,6 +248,9 @@ namespace PFW.Ingame.UI
         private void SetSelected(List<PlatoonBehaviour> l, bool justPreviewing)
         {
             l.ForEach(x => x.SetSelected(true, justPreviewing));
+            // Randomly choose one platoon to play a selected voiceline
+            int r = Random.Range(0,l.Count);
+            l[r].PlaySelectionVoiceline();
         }
 
         // Responsible for drawing the selection rectangle

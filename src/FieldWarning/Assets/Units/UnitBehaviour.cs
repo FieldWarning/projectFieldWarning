@@ -169,11 +169,6 @@ public abstract class UnitBehaviour : SelectableBehavior
             SetUnitFinalHeading(waypoint.Heading);
     }
 
-    public void PlayMoveCommandVoiceline()
-    {
-        _voiceComponent.PlayMoveCommandVoiceline();
-    }
-
     // Sets the unit's destination location, with a default heading value
     public void SetUnitDestination(Vector3 v)
     {
@@ -289,10 +284,24 @@ public abstract class UnitBehaviour : SelectableBehavior
     public void SetSelected(bool selected, bool justPreviewing)
     {
         _selectionCircle.SetActive(selected);
-        if (!justPreviewing) {
-            _voiceComponent.PlayUnitSelectionVoiceline(selected);
-        }
     }
+
+#region PlayVoicelines
+    public void PlaySelectionVoiceline()
+    {
+        _voiceComponent.PlayUnitSelectionVoiceline(true);
+    }
+
+    public void PlayMoveCommandVoiceline()
+    {
+        _voiceComponent.PlayMoveCommandVoiceline();
+    }
+
+    public void PlayAttackCommandVoiceline()
+    {
+        _voiceComponent.PlayAttackCommandVoiceline();
+    }
+#endregion
 }
 
 public enum MoveCommandType
