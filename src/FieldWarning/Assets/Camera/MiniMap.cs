@@ -29,9 +29,10 @@ public class MiniMap : MonoBehaviour
     public Texture2D TankTexture;
     private VisibilityManager _visiMan;
     private Vector2 _screenSize;
+    public Transform MiniMapCamera;
     public void Start()
     {
-        _camera = GetComponent<Camera>();
+        _camera = MiniMapCamera.GetComponent<Camera>();
         _terrainSize = Terrain.terrainData.bounds.size;
         _camera.orthographicSize = _terrainSize.x / 2f;
 
@@ -58,7 +59,6 @@ public class MiniMap : MonoBehaviour
             Vector3 pos = unit.UnitBehaviour.transform.position;
             Vector2 realPos = getMapPos(pos);
             GUI.color = _visiMan.LocalTeam.Color;
-            Debug.Log(GUI.color);
             GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), TankTexture);
             GUI.color = Color.white;
         }
@@ -73,11 +73,11 @@ public class MiniMap : MonoBehaviour
                 } else {
                     GUI.color = new Color(0.012f, 0.204f, 0.616f);
                 }
-                
+
                 GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), TankTexture);
                 GUI.color = Color.white;
             }
-            
+
         }
     }
     public void LateUpdate()
@@ -95,7 +95,7 @@ public class MiniMap : MonoBehaviour
         pos = pos - Terrain.GetPosition();
         //Scale the pos to fit the pixel size of the minimap
         pos = pos * (_minimapSize.x / _terrainSize.x);
-        //306=width 10=offset from the border
+        //306=width 10=offset from the border 
         pos = new Vector2(Screen.width - 306 * scale - 10 * scale + pos.x * scale, 306 * scale - pos.z * scale);
 
         return new Vector2(pos.x, pos.y);
