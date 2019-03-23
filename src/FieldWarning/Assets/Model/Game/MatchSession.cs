@@ -27,7 +27,7 @@ namespace PFW.Model.Game
     public class MatchSession : MonoBehaviour
     {
         private InputManager _inputManager;
-        private VisibilityManager _visibilityManager;
+        public VisibilityManager _visibilityManager;
 
         public Settings Settings { get; set; }
 
