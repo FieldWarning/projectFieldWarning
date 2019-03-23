@@ -23,8 +23,8 @@ public class VisibilityManager : MonoBehaviour
 
     public Team LocalTeam;
 
-    private List<VisibleBehavior> AllyUnits = new List<VisibleBehavior>();
-    private List<VisibleBehavior> EnemyUnits = new List<VisibleBehavior>();
+    public List<VisibleBehavior> AllyUnits = new List<VisibleBehavior>();
+    public List<VisibleBehavior> EnemyUnits = new List<VisibleBehavior>();
 
     // Old code:
 
