@@ -108,12 +108,12 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         float scale = _screenSize.x / 1920;
         Vector2 pos = eventData.position;
         pos.y = _screenSize.y - pos.y;
-        pos = new Vector2(-(Screen.width  - pos.x - 10 * scale) + 306 * scale ,  pos.y - 10 * scale);
+        pos = new Vector2(-(Screen.width - pos.x - 10 * scale) + 306 * scale, pos.y - 10 * scale);
         pos = pos / scale;
         pos.y = _minimapSize.y - pos.y;
-        pos = pos/ (_minimapSize.x / _terrainSize.x);
+        pos = pos / (_minimapSize.x / _terrainSize.x);
         pos = pos + new Vector2(Terrain.GetPosition().x, Terrain.GetPosition().z);
-        
+
         Camera.main.transform.position = new Vector3(pos.x, Camera.main.transform.position.y, pos.y);
     }
 }

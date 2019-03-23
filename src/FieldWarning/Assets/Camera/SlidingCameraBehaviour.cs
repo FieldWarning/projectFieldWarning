@@ -154,7 +154,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
         if (Input.GetMouseButton(2)) {
             RotateCamera();
         }
-        
+
     }
 
     private void LateUpdate()
@@ -182,18 +182,18 @@ public class SlidingCameraBehaviour : MonoBehaviour
         } else if (dzoom < 0) {
             ApplyZoomOut(dzoom);
         }
-    
+
 
         _leftoverZoom -= dzoom;
         TiltCameraIfNearGround(oldAltitude);
         ClampCameraAltitude();
         ClampCameraXZPosition();
-        
-            // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
-            transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
-        
-        
+
+        // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
+        transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
+
+
     }
 
     /// <summary>
@@ -302,7 +302,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 SetPanningCursor(ScreenCorner.Left);
                 _translateX += -1 * GetScaledPanSpeed();
 
-            } else if(Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
+            } else if (Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
                 && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Right screen side
                 SetPanningCursor(ScreenCorner.Right);
                 _translateX += 1 * GetScaledPanSpeed();
@@ -321,13 +321,13 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 SetPanningCursor(ScreenCorner.None);
             }
         }
-        
+
     }
 
     private void ClampCameraXZPosition()
     {
         _targetPosition.x = Mathf.Clamp(
-                _targetPosition.x, 
+                _targetPosition.x,
                 Terrain.activeTerrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
                 Terrain.activeTerrain.GetPosition().x + Terrain.activeTerrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
         _targetPosition.z = Mathf.Clamp(
