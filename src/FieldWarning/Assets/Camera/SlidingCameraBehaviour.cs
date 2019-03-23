@@ -161,7 +161,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         var dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
         var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
-
+        _targetPosition = transform.position;
         _targetPosition += transform.TransformDirection(dx * Vector3.right);
 
         // If we move forward in local space, camera will also change altitude. To properly move forward, we have to rotate the forward vector to be horizontal in world space while keeping the magnitude:
@@ -182,15 +182,18 @@ public class SlidingCameraBehaviour : MonoBehaviour
         } else if (dzoom < 0) {
             ApplyZoomOut(dzoom);
         }
+    
 
         _leftoverZoom -= dzoom;
         TiltCameraIfNearGround(oldAltitude);
         ClampCameraAltitude();
         ClampCameraXZPosition();
-
-        // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
-        transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
+        
+            // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
+            transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
+        
+        
     }
 
     /// <summary>

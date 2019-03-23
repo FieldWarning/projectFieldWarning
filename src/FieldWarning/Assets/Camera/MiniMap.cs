@@ -14,10 +14,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 using PFW.Model.Game;
 
-public class MiniMap : MonoBehaviour
+public class MiniMap : MonoBehaviour, IPointerClickHandler
 {
     public Terrain Terrain;
     private Camera _camera;
@@ -99,5 +100,20 @@ public class MiniMap : MonoBehaviour
         pos = new Vector2(Screen.width - 306 * scale - 10 * scale + pos.x * scale, 306 * scale - pos.z * scale);
 
         return new Vector2(pos.x, pos.y);
+    }
+    //Maybe make it so that the camera doesnt move directly to the position, but instead moves so that it looks at the position
+    //Move Camera to position on the minimap
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        float scale = _screenSize.x / 1920;
+        Vector2 pos = eventData.position;
+        pos.y = _screenSize.y - pos.y;
+        pos = new Vector2(-(Screen.width  - pos.x - 10 * scale) + 306 * scale ,  pos.y - 10 * scale);
+        pos = pos / scale;
+        pos.y = _minimapSize.y - pos.y;
+        pos = pos/ (_minimapSize.x / _terrainSize.x);
+        pos = pos + new Vector2(Terrain.GetPosition().x, Terrain.GetPosition().z);
+        
+        Camera.main.transform.position = new Vector3(pos.x, Camera.main.transform.position.y, pos.y);
     }
 }
