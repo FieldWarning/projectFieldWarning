@@ -119,6 +119,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         pos = pos / (_minimapSize.x / _terrainSize.x);
         pos = pos + new Vector2(_terrain.GetPosition().x, _terrain.GetPosition().z);
 
-        _mainCamera.transform.position = new Vector3(pos.x, _mainCamera.transform.position.y, pos.y);
+        _mainCamera.SetTargetPosition(
+                new Vector3(pos.x, _mainCamera.transform.position.y, pos.y));
     }
 }

@@ -77,6 +77,14 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private Camera _cam;
 
+    public void SetTargetPosition(Vector3 target)
+    {
+        _targetPosition = target;
+        _translateX = 0;
+        _translateZ = 0;
+        _leftoverZoom = 0;
+    }
+
     // If we allow the camera to get to height = 0 we would need special cases for the height scaling.
     private float GetScaledPanSpeed()
     {
@@ -92,7 +100,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         _cam = GetComponent<Camera>();
     }
-
 
     private void Start()
     {
@@ -160,7 +167,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         var dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
         var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
-        _targetPosition = transform.position;
         _targetPosition += transform.TransformDirection(dx * Vector3.right);
 
         // If we move forward in local space, camera will also change altitude. To properly move forward, we have to rotate the forward vector to be horizontal in world space while keeping the magnitude:
