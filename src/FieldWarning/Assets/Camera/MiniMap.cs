@@ -20,80 +20,84 @@ using PFW.Model.Game;
 
 public class MiniMap : MonoBehaviour, IPointerClickHandler
 {
-    public Terrain Terrain;
-    private Camera _camera;
+    [SerializeField]
+    private Terrain _terrain;
     //(x,y,z) X and Z are the important values
     private Vector3 _terrainSize;
-    public Vector2 _minimapSize;
-    public GameObject MiniMapUI;
-    public GameObject GameSession;
-    public Texture2D TankTexture;
-    private VisibilityManager _visiMan;
+    [SerializeField]
+    private Vector2 _minimapSize;
+    [SerializeField]
+    private RawImage _miniMapImage;
+    [SerializeField]
+    private Texture2D _tankTexture;
+    [SerializeField]
+    private MatchSession _matchSession;
     private Vector2 _screenSize;
-    public Transform MiniMapCamera;
+    [SerializeField]
+    private Camera _miniMapCamera;
+    [SerializeField]
+    private SlidingCameraBehaviour _mainCamera;
     public void Start()
     {
-        _camera = MiniMapCamera.GetComponent<Camera>();
-        _terrainSize = Terrain.terrainData.bounds.size;
-        _camera.orthographicSize = _terrainSize.x / 2f;
+        _terrainSize = _terrain.terrainData.bounds.size;
+        _miniMapCamera.orthographicSize = _terrainSize.x / 2f;
 
         //convert camera to a texture
-        RenderTexture.active = _camera.targetTexture;
-        _camera.Render();
-        Texture2D image = new Texture2D(_camera.targetTexture.width, _camera.targetTexture.height);
-        image.ReadPixels(new Rect(0, 0, _camera.targetTexture.width, _camera.targetTexture.height), 0, 0);
+        RenderTexture.active = _miniMapCamera.targetTexture;
+        _miniMapCamera.Render();
+        Texture2D image = new Texture2D(_miniMapCamera.targetTexture.width, _miniMapCamera.targetTexture.height);
+        image.ReadPixels(new Rect(0, 0, _miniMapCamera.targetTexture.width, _miniMapCamera.targetTexture.height), 0, 0);
         image.Apply();
-        MiniMapUI.GetComponent<RawImage>().texture = image;
-        _camera.enabled = false;
-
-        _visiMan = GameSession.GetComponent<MatchSession>()._visibilityManager;
-
-
+        _miniMapImage.texture = image;
+        _miniMapCamera.enabled = false;
     }
+
     //TODO different signs for different unit Types
     public void OnGUI()
     {
         //Draw all friendlies
         //Maybe there is a better way to have this list updated
-        List<VisibleBehavior> allys = _visiMan.AllyUnits;
-        foreach (VisibleBehavior unit in allys) {
+        List<VisibleBehavior> allies = _matchSession.AllyVisibleBehaviours;
+        foreach (VisibleBehavior unit in allies) {
             Vector3 pos = unit.UnitBehaviour.transform.position;
-            Vector2 realPos = getMapPos(pos);
-            GUI.color = _visiMan.LocalTeam.Color;
-            GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), TankTexture);
+            Vector2 realPos = GetMapPos(pos);
+            GUI.color = _matchSession.LocalPlayer.Data.Team.Color;
+            GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), _tankTexture);
             GUI.color = Color.white;
         }
+
         //Draw all enemies
-        List<VisibleBehavior> enemys = _visiMan.EnemyUnits;
-        foreach (VisibleBehavior unit in enemys) {
-            if (unit.isVisible) {
+        List<VisibleBehavior> enemies = _matchSession.EnemyVisibleBehaviours;
+        foreach (VisibleBehavior unit in enemies) {
+            if (unit.IsVisible) {
                 Vector3 pos = unit.UnitBehaviour.transform.position;
-                Vector2 realPos = getMapPos(pos);
-                if (_visiMan.LocalTeam.Color == new Color(0.012f, 0.204f, 0.616f)) {
-                    GUI.color = new Color(0.62f, 0f, 0f);
+                Vector2 realPos = GetMapPos(pos);
+                if (_matchSession.LocalPlayer.Data.Team == _matchSession.Teams[0]) {
+                    GUI.color = _matchSession.Teams[1].Color;
                 } else {
-                    GUI.color = new Color(0.012f, 0.204f, 0.616f);
+                    GUI.color = _matchSession.Teams[0].Color;
                 }
 
-                GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), TankTexture);
+                GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), _tankTexture);
                 GUI.color = Color.white;
             }
-
         }
     }
+
     public void LateUpdate()
     {
-        //For some reason,which completely eludes me, this needs to be done in LateUpdate or otherwise it always returns just the targetet resolution
+        //For some reason,which completely eludes me, this needs to be done in LateUpdate or otherwise it always returns just the targeted resolution
 
         _screenSize = new Vector2(Screen.width, Screen.height);
     }
+
     //TODO replace hardcoded numbers
     //Converts a position of an ingame Object to its position on the minimap
-    private Vector2 getMapPos(Vector3 pos)
+    private Vector2 GetMapPos(Vector3 pos)
     {
         float scale = _screenSize.x / 1920;
         //adjust the position to fit on the terrain
-        pos = pos - Terrain.GetPosition();
+        pos = pos - _terrain.GetPosition();
         //Scale the pos to fit the pixel size of the minimap
         pos = pos * (_minimapSize.x / _terrainSize.x);
         //306=width 10=offset from the border 
@@ -101,6 +105,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
 
         return new Vector2(pos.x, pos.y);
     }
+
     //Maybe make it so that the camera doesnt move directly to the position, but instead moves so that it looks at the position
     //Move Camera to position on the minimap
     public void OnPointerClick(PointerEventData eventData)
@@ -112,8 +117,8 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         pos = pos / scale;
         pos.y = _minimapSize.y - pos.y;
         pos = pos / (_minimapSize.x / _terrainSize.x);
-        pos = pos + new Vector2(Terrain.GetPosition().x, Terrain.GetPosition().z);
+        pos = pos + new Vector2(_terrain.GetPosition().x, _terrain.GetPosition().z);
 
-        Camera.main.transform.position = new Vector3(pos.x, Camera.main.transform.position.y, pos.y);
+        _mainCamera.transform.position = new Vector3(pos.x, _mainCamera.transform.position.y, pos.y);
     }
 }

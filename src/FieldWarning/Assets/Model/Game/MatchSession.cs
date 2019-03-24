@@ -27,7 +27,18 @@ namespace PFW.Model.Game
     public class MatchSession : MonoBehaviour
     {
         private InputManager _inputManager;
-        public VisibilityManager _visibilityManager;
+        private VisibilityManager _visibilityManager;
+
+        public List<VisibleBehavior> AllyVisibleBehaviours {
+            get {
+                return _visibilityManager.AllyUnits;
+            }
+        }
+        public List<VisibleBehavior> EnemyVisibleBehaviours {
+            get {
+                return _visibilityManager.EnemyUnits;
+            }
+        }
 
         public Settings Settings { get; set; }
 
@@ -37,7 +48,7 @@ namespace PFW.Model.Game
          * of their own, to minimize shared state. Instead of using these 
          * lists, supply a unit registration call and have MatchSession call
          * that in RegisterUnitBirth() (see VisibilityManager for an example): */
-        public ICollection<Team> Teams { get; } = new List<Team>();
+        public List<Team> Teams { get; } = new List<Team>();
         public ICollection<UnitBehaviour> Units { get; } = new List<UnitBehaviour>();
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
@@ -60,11 +71,11 @@ namespace PFW.Model.Game
             LocalPlayer.Data = redTeam.Players[0];
 
             GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
-       
-            _inputManager = FindObjectOfType<InputManager>() ?? 
+
+            _inputManager = FindObjectOfType<InputManager>() ??
                      gameObject.AddComponent<InputManager>();
 
-            _visibilityManager = FindObjectOfType<VisibilityManager>() ?? 
+            _visibilityManager = FindObjectOfType<VisibilityManager>() ??
                      gameObject.AddComponent<VisibilityManager>();
 
             _inputManager.Session = _inputManager.Session ?? this;

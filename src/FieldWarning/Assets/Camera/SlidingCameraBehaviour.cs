@@ -34,6 +34,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     [SerializeField] private float _borderPanningOffset = 2;    //Pixels
     [SerializeField] private float _borderPanningCornerSize = 200;    //Pixels
     [SerializeField] private float _maxCameraHorizontalDistanceFromTerrain = 5000f * TerrainConstants.MAP_SCALE;
+
     private Image _cornerArrowBottomLeft;
     private Image _cornerArrowBottomRight;
     private Image _cornerArrowTopLeft;
@@ -71,7 +72,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private float _leftoverZoom = 0f;
     private Vector3 _zoomDestination;
 
-    // All planned transforms are actually applied to a target object, which the camera then lerps to. Maybe it is pointlessly indirect and can be refactored.
+    // All planned transforms are actually applied to a target object, which the camera then lerps to.
     private Vector3 _targetPosition;
 
     private Camera _cam;
@@ -132,7 +133,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _sideArrowBottom = GameObject.Find("PanningArrowBottom").GetComponent<Image>();
         if (_sideArrowBottom == null)
             throw new Exception("No sideArrowBottom specified!");
-
     }
 
     // Update() only plans movement; position/rotation are directly changed in LateUpdate().
@@ -154,7 +154,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
         if (Input.GetMouseButton(2)) {
             RotateCamera();
         }
-
     }
 
     private void LateUpdate()
@@ -183,7 +182,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
             ApplyZoomOut(dzoom);
         }
 
-
         _leftoverZoom -= dzoom;
         TiltCameraIfNearGround(oldAltitude);
         ClampCameraAltitude();
@@ -192,8 +190,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
         // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
         transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
-
-
     }
 
     /// <summary>
@@ -321,7 +317,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 SetPanningCursor(ScreenCorner.None);
             }
         }
-
     }
 
     private void ClampCameraXZPosition()

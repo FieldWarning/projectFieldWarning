@@ -26,7 +26,7 @@ public class VisibleBehavior //: IComponentData
     private float stealth_factor = 10f;
 
     private HashSet<VisibleBehavior> _spotters = new HashSet<VisibleBehavior>();
-    public bool isVisible = true;
+    public bool IsVisible { get; private set; } = true;
 
     public UnitBehaviour UnitBehaviour;
     private GameObject _gameObject;
@@ -71,7 +71,7 @@ public class VisibleBehavior //: IComponentData
     // and make it invisible if not.
     public void MaybeHideFromEnemies()
     {
-        if (!isVisible)
+        if (!IsVisible)
             return;
 
         _spotters.RemoveWhere(s => s == null || !s.CanDetect(this));
@@ -100,7 +100,7 @@ public class VisibleBehavior //: IComponentData
 
     public void ToggleUnitVisibility(bool revealUnit)
     {
-        isVisible = revealUnit;
+        IsVisible = revealUnit;
         ToggleAllRenderers(_gameObject, revealUnit);
         MaybeTogglePlatoonVisibility(revealUnit);
     }
@@ -110,7 +110,7 @@ public class VisibleBehavior //: IComponentData
         PlatoonBehaviour platoon = UnitBehaviour.Platoon;
         ToggleAllRenderers(platoon.gameObject,
             !platoon.Units.TrueForAll(
-                u => !u.VisibleBehavior.isVisible));
+                u => !u.VisibleBehavior.IsVisible));
     }
 
     private void ToggleAllRenderers(GameObject o, bool enable)
