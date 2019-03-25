@@ -238,18 +238,22 @@ namespace PFW.Ingame.UI
             return insideX && insideY;
         }
 
-        private void UnselectAll(List<PlatoonBehaviour> l, bool justPreviewing)
+        private void UnselectAll(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
-            l.ForEach(x => x.SetSelected(false, justPreviewing));
-            l.Clear();
+            if (selectedPlatoons != null) {
+                selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
+                selectedPlatoons.Clear();
+            }
         }
 
         private void SetSelected(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
-            selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
-            // Randomly choose one platoon to play a selected voiceline
-            int randInt = Random.Range(0,selectedPlatoons.Count);
-            selectedPlatoons[randInt].PlaySelectionVoiceline();
+            if(selectedPlatoons != null) {
+                selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
+                // Randomly choose one platoon to play a selected voiceline
+                int randInt = Random.Range(0,selectedPlatoons.Count);
+                selectedPlatoons[randInt].PlaySelectionVoiceline();
+            }
         }
 
         // Responsible for drawing the selection rectangle
