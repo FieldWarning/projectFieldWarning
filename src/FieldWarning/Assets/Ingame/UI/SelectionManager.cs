@@ -25,7 +25,7 @@ namespace PFW.Ingame.UI
      * 
      * Tracks which units are currently selected, adds and removes
      * units from the selection, dispatches orders to the selected units.
-     */ 
+     */
     public class SelectionManager
     {
         private List<PlatoonBehaviour> _selection;
@@ -76,7 +76,7 @@ namespace PFW.Ingame.UI
         public void Update(MouseMode mouseMode)
         {
             _mouseMode = mouseMode;
-            
+
             if (_mouseMode == MouseMode.normal)
                 _clickManager.Update();
         }
@@ -136,7 +136,7 @@ namespace PFW.Ingame.UI
             _selection.ForEach(x => x.Movement.EndQueueing());
 
             // A random platoon in selection plays the move command voice line
-            int randInt = Random.Range(0,_selection.Count);
+            int randInt = Random.Range(0, _selection.Count);
             _selection[randInt].PlayMoveCommandVoiceline();
 
             MaybeDropSelectionAfterOrder();
@@ -144,7 +144,7 @@ namespace PFW.Ingame.UI
 
         /**
          * Create waypoints and set their destinations, one waypoint per unit.
-         */ 
+         */
         public void PrepareDestination()
         {
             var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);
@@ -190,11 +190,8 @@ namespace PFW.Ingame.UI
 
                 if (selectable != null) {
                     var selectedPlatoon = selectable.GetPlatoon();
-                    if (selectedPlatoon != null) {
-                        selectedPlatoon.PlaySelectionVoiceline();
-                        _selection.Add(selectedPlatoon);
-                    }
-                        
+                    selectedPlatoon.PlaySelectionVoiceline();
+                    _selection.Add(selectedPlatoon);
                 }
             }
             SetSelected(_selection, false);
@@ -240,18 +237,16 @@ namespace PFW.Ingame.UI
 
         private void UnselectAll(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
-            if (selectedPlatoons != null) {
-                selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
-                selectedPlatoons.Clear();
-            }
+            selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
+            selectedPlatoons.Clear();
         }
 
         private void SetSelected(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
-            if(selectedPlatoons != null) {
-                selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
-                // Randomly choose one platoon to play a selected voiceline
-                int randInt = Random.Range(0,selectedPlatoons.Count);
+            selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
+            // Randomly choose one platoon to play a selected voiceline
+            if (selectedPlatoons.Count != 0 && !justPreviewing) {
+                int randInt = Random.Range(0, selectedPlatoons.Count);
                 selectedPlatoons[randInt].PlaySelectionVoiceline();
             }
         }
