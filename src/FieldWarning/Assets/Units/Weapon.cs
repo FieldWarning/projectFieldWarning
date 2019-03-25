@@ -72,13 +72,13 @@ namespace PFW.Weapons
         {
 
             if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-                if (target != null && target.exists()) {
+                if (target != null && target.Exists()) {
                     //Removes the Target if it went out of range
-                    checkTargetDistance();
+                    CheckTargetDistance();
                 }
                
 
-                if (target == null || !target.exists())
+                if (target == null || !target.Exists())
                     target = new TargetTuple(FindClosestEnemy());
 
                 if (RotateTurret(target))
@@ -111,7 +111,7 @@ namespace PFW.Weapons
             float targetTurretAngle = 0f;
             float targetBarrelAngle = 0f;
 
-            Vector3 pos = target.enemy == null ? target.position : target.enemy.transform.position;
+            Vector3 pos = target.Position;
 
             if (pos != Vector3.zero) {
                 aimed = true;
@@ -177,16 +177,13 @@ namespace PFW.Weapons
                 // particle
                 shotEffect.Play();
 
-                if (target.enemy != null) {
+                if (target.Enemy != null) {
                     System.Random rnd = new System.Random();
                     int roll = rnd.Next(1, 100);
 
                     // HIT
                     if (roll < data.Accuracy) {
-
-
-                        target.enemy.GetComponent<UnitBehaviour>()
-                            .HandleHit(data.Damage);
+                        target.Enemy.GetComponent<UnitBehaviour>().HandleHit(data.Damage);
                         return true;
                     }
                 } else {
@@ -204,13 +201,9 @@ namespace PFW.Weapons
 
                 GameObject shell = Resources.Load<GameObject>("shell");
                 GameObject shell_new = Instantiate(shell, ShotStarterPosition.position, ShotStarterPosition.transform.rotation);
-                shell_new.GetComponent<BulletBehavior>().SetUp(ShotStarterPosition, target.position, 60);
-
-                //Debug.Break();
-
-
+                shell_new.GetComponent<BulletBehavior>().SetUp(ShotStarterPosition, target.Position, 60);
+                
                 return true;
-
             }
 
             return false;
@@ -250,32 +243,40 @@ namespace PFW.Weapons
             return Target;
         }
 
-        private void checkTargetDistance()
+        private void CheckTargetDistance()
         {
-            var distance = Vector3.Distance(unit.transform.position, target.enemy.transform.position);
+            var distance = Vector3.Distance(unit.transform.position, target.Position);
             if (distance > data.FireRange) {
                 target = null;
             }
         }
         private class TargetTuple
         {
-            public Vector3 position { get; private set; }
-            public GameObject enemy { get; private set; }
+            private Vector3 _position { get; set; }
+            public GameObject Enemy { get; private set; }
+            public Vector3 Position {
+                get {
+                    if (Enemy == null)
+                        return _position;
+                    else
+                        return Enemy.transform.position;
+                }
+            }
 
             public TargetTuple(Vector3 position)
             {
-                this.position = position;
-                enemy = null;
+                this._position = position;
+                Enemy = null;
             }
             public TargetTuple(GameObject go)
             {
-                position = Vector3.zero;
-                enemy = go;
+                _position = Vector3.zero;
+                Enemy = go;
             }
 
-            public bool exists()
+            public bool Exists()
             {
-                return enemy != null || position != Vector3.zero;
+                return Enemy != null || _position != Vector3.zero;
             }
         }
     }
