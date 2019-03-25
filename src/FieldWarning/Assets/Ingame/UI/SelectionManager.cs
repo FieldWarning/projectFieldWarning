@@ -136,8 +136,8 @@ namespace PFW.Ingame.UI
             _selection.ForEach(x => x.Movement.EndQueueing());
 
             // A random platoon in selection plays the move command voice line
-            int r = Random.Range(0,_selection.Count);
-            _selection[r].PlayMoveCommandVoiceline();
+            int randInt = Random.Range(0,_selection.Count);
+            _selection[randInt].PlayMoveCommandVoiceline();
 
             MaybeDropSelectionAfterOrder();
         }
@@ -189,11 +189,10 @@ namespace PFW.Ingame.UI
                 var selectable = go.GetComponent<SelectableBehavior>();
 
                 if (selectable != null) {
-                    var p = selectable.GetPlatoon();
-                    if (p != null)
-                    {
-                        p.PlaySelectionVoiceline();
-                        _selection.Add(p);
+                    var selectedPlatoon = selectable.GetPlatoon();
+                    if (selectedPlatoon != null) {
+                        selectedPlatoon.PlaySelectionVoiceline();
+                        _selection.Add(selectedPlatoon);
                     }
                         
                 }
@@ -245,12 +244,12 @@ namespace PFW.Ingame.UI
             l.Clear();
         }
 
-        private void SetSelected(List<PlatoonBehaviour> l, bool justPreviewing)
+        private void SetSelected(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
-            l.ForEach(x => x.SetSelected(true, justPreviewing));
+            selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
             // Randomly choose one platoon to play a selected voiceline
-            int r = Random.Range(0,l.Count);
-            l[r].PlaySelectionVoiceline();
+            int randInt = Random.Range(0,selectedPlatoons.Count);
+            selectedPlatoons[randInt].PlaySelectionVoiceline();
         }
 
         // Responsible for drawing the selection rectangle
