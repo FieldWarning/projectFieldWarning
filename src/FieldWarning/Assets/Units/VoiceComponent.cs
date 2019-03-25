@@ -12,34 +12,45 @@
  */
 
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace PFW.Units
 {
     public class VoiceComponent : MonoBehaviour
     {
         [SerializeField]
-        private AudioClip _selectAudio, _moveAudio, _attackAudio;
+        private List<AudioClip> _selectAudio, _moveAudio, _attackAudio;
+        // Randomly choose clips from list
         [SerializeField]
         private AudioSource _audioSource;
-        
+
         public void PlayUnitSelectionVoiceline(bool selected)
         {
             if (selected) {
-                _audioSource.clip = _selectAudio;
-                _audioSource.Play();
+                if (_selectAudio.Count != 0) {
+                    int r = Random.Range(0, _selectAudio.Count);
+                    _audioSource.clip = _selectAudio[r];
+                    _audioSource.Play();
+                }
             }
         }
 
         public void PlayMoveCommandVoiceline()
         {
-            _audioSource.clip = _moveAudio;
-            _audioSource.Play();
+            if (_moveAudio.Count != 0) {
+                int r = Random.Range(0, _moveAudio.Count);
+                _audioSource.clip = _moveAudio[r];
+                _audioSource.Play();
+            }
         }
 
         public void PlayAttackCommandVoiceline()
         {
-            _audioSource.clip = _attackAudio;
-            _audioSource.Play();
+            if (_attackAudio.Count != 0) {
+                int r = Random.Range(0, _attackAudio.Count);
+                _audioSource.clip = _attackAudio[r];
+                _audioSource.Play();
+            }
         }
     }
 }
