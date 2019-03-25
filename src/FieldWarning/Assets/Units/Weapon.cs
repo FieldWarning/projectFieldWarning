@@ -72,13 +72,13 @@ namespace PFW.Weapons
         {
 
             if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-                if (target != null && target.exists()) {
+                if (target != null && target.Exists()) {
                     //Removes the Target if it went out of range
-                    checkTargetDistance();
+                    CheckTargetDistance();
                 }
                
 
-                if (target == null || !target.exists())
+                if (target == null || !target.Exists())
                     target = new TargetTuple(FindClosestEnemy());
 
                 if (RotateTurret(target))
@@ -243,7 +243,7 @@ namespace PFW.Weapons
             return Target;
         }
 
-        private void checkTargetDistance()
+        private void CheckTargetDistance()
         {
             var distance = Vector3.Distance(unit.transform.position, target.Position);
             if (distance > data.FireRange) {
@@ -274,7 +274,7 @@ namespace PFW.Weapons
                 Enemy = go;
             }
 
-            public bool exists()
+            public bool Exists()
             {
                 return Enemy != null || _position != Vector3.zero;
             }
