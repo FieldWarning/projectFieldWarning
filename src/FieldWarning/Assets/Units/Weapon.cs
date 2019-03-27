@@ -22,14 +22,21 @@ namespace PFW.Weapons
         public UnitBehaviour unit { get; private set; }
         public float reloadTimeLeft { get; private set; }
         public AudioSource Source { get; private set; }
-
+        private bool _movingTowardsTarget = false;
         private TargetTuple target;
+        //Why is this method up here ?
         public void setTarget(Vector3 position)
         {
             var distance = Vector3.Distance(unit.transform.position, position);
 
-            if (distance < data.FireRange)
+            if (distance < data.FireRange) {
                 target = new TargetTuple(position);
+            } else {
+                target = new TargetTuple(position);
+                _movingTowardsTarget = true;
+                unit.SetUnitDestination(position);
+            }
+
         }
 
         // --------------- BEGIN PREFAB ----------------
@@ -70,24 +77,32 @@ namespace PFW.Weapons
 
         public void Update()
         {
+            //Check if there is still a need to move closer
+            if (_movingTowardsTarget) {
+                if (Vector3.Distance(unit.transform.position, target.Position) < data.FireRange) {
+                    _movingTowardsTarget = false;
+                    unit.SetUnitDestination(unit.transform.position);
+                }
+            }
+
 
             if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-                if (target != null && target.Exists()) {
-                    //Removes the Target if it went out of range
+                if (target != null && target.Enemy != null) {
+                    //Removes the Target if it isnt a position and went out of range
                     CheckTargetDistance();
                 }
-               
+
 
                 if (target == null || !target.Exists())
                     target = new TargetTuple(FindClosestEnemy());
 
-                if (RotateTurret(target))
+                if (RotateTurret(target) && !_movingTowardsTarget)
                     TryFireWeapon(target);
             }
 
 
             if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-                if (target != null) {
+                if (target != null && !_movingTowardsTarget) {
                     RotateTurret(target);
                     TryFireWeapon(target);
                 }
@@ -202,7 +217,7 @@ namespace PFW.Weapons
                 GameObject shell = Resources.Load<GameObject>("shell");
                 GameObject shell_new = Instantiate(shell, ShotStarterPosition.position, ShotStarterPosition.transform.rotation);
                 shell_new.GetComponent<BulletBehavior>().SetUp(ShotStarterPosition, target.Position, 60);
-                
+
                 return true;
             }
 
