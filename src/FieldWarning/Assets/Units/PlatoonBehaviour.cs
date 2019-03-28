@@ -14,11 +14,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using PFW.Weapons;
-using PFW.Ingame.Prototype;
 
+using PFW.Ingame.Prototype;
 using PFW.Ingame.UI;
 using PFW.Model.Game;
+using PFW.Units.Component.Weapon;
 
 public partial class PlatoonBehaviour : MonoBehaviour
 {
@@ -153,10 +153,10 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public void SendFirePosOrder(Vector3 position)
     {
         foreach (var unit in Units) {
-            var weapons = unit.GetComponents<Weapon>();
+            var weapons = unit.GetComponents<WeaponComponent>();
 
             foreach (var weapon in weapons)
-                weapon.setTarget(position);
+                weapon.SetTarget(position);
         }
         PlayAttackCommandVoiceline();
     }

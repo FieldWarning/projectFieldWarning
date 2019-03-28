@@ -14,29 +14,30 @@
 using AssemblyCSharp;
 using UnityEngine;
 
-namespace PFW.Weapons
+using PFW.Weapons;
+
+namespace PFW.Units.Component.Weapon
 {
-    public class Weapon : MonoBehaviour
+    public class WeaponComponent : MonoBehaviour
     {
-        public WeaponData data { get; private set; }
-        public UnitBehaviour unit { get; private set; }
-        public float reloadTimeLeft { get; private set; }
+        public WeaponData Data { get; private set; }
+        public UnitBehaviour Unit { get; private set; }
+        public float ReloadTimeLeft { get; private set; }
         public AudioSource Source { get; private set; }
         private bool _movingTowardsTarget = false;
-        private TargetTuple target;
+        private TargetTuple _target;
         //Why is this method up here ?
-        public void setTarget(Vector3 position)
+        public void SetTarget(Vector3 position)
         {
-            var distance = Vector3.Distance(unit.transform.position, position);
-
-            if (distance < data.FireRange) {
-                target = new TargetTuple(position);
+            var distance = Vector3.Distance(Unit.transform.position, position);
+            
+            if (distance < Data.FireRange) {
+                _target = new TargetTuple(position);
             } else {
-                target = new TargetTuple(position);
+                _target = new TargetTuple(position);
                 _movingTowardsTarget = true;
-                unit.SetUnitDestination(position);
+                Unit.SetUnitDestination(position);
             }
-
         }
 
         // --------------- BEGIN PREFAB ----------------
@@ -50,75 +51,69 @@ namespace PFW.Weapons
         private Transform barrel;
         [SerializeField]
         private Transform shotEmitter;
-        //-----newly added start-------------//
+        // Where the shell spawns:
         [SerializeField]
-        private Transform ShotStarterPosition;//where the shell spawns 
+        private Transform ShotStarterPosition;
+        // The shell being fired:
         [SerializeField]
-        private GameObject bullet;//The shell being Fired 
-        //-----newly added end-------------//
+        private GameObject bullet;
+        // TODO Should aim to make actual objects fire and not effects:
         [SerializeField]
-        private ParticleSystem shotEffect;//will aim to make actual objects fire and not effects 
+        private ParticleSystem shotEffect;
         [SerializeField]
         private AudioClip shotSound;
         [SerializeField]
         private float shotVolume = 1.0F;
         // ---------------- END PREFAB -----------------
 
-        public void Awake()
+        private void Awake()
         {
-            unit = gameObject.GetComponent<UnitBehaviour>();
+            Unit = gameObject.GetComponent<UnitBehaviour>();
             enabled = false;
         }
 
-        public void Start()
+        private void Start()
         {
             Source = GetComponent<AudioSource>();
         }
 
-        public void Update()
+        private void Update()
         {
             //Check if there is still a need to move closer
             if (_movingTowardsTarget) {
-                if (Vector3.Distance(unit.transform.position, target.Position) < data.FireRange) {
+                if (Vector3.Distance(Unit.transform.position, _target.Position) < Data.FireRange) {
                     _movingTowardsTarget = false;
-                    unit.SetUnitDestination(unit.transform.position);
+                    Unit.SetUnitDestination(Unit.transform.position);
                 }
             }
 
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-                if (target != null && target.Enemy != null) {
+            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
+                if (_target != null && _target.Enemy != null) {
                     //Removes the Target if it isnt a position and went out of range
                     CheckTargetDistance();
                 }
-
-
-                if (target == null || !target.Exists())
-                    target = new TargetTuple(FindClosestEnemy());
-
-                if (RotateTurret(target) && !_movingTowardsTarget)
-                    TryFireWeapon(target);
+                
+                if (RotateTurret(_target) && !_movingTowardsTarget)
+                    TryFireWeapon(_target);
             }
 
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-                if (target != null && !_movingTowardsTarget) {
-                    RotateTurret(target);
-                    TryFireWeapon(target);
+            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
+                if (_target != null && !_movingTowardsTarget) {
+                    RotateTurret(_target);
+                    TryFireWeapon(_target);
                 }
             }
-
         }
-
-
+        
         public void WakeUp()
         {
-            data = unit.Data.weaponData[dataIndex];
-            reloadTimeLeft = data.ReloadTime;
+            Data = Unit.Data.weaponData[dataIndex];
+            ReloadTimeLeft = Data.ReloadTime;
             enabled = true;
         }
-
-
+        
 
         private bool RotateTurret(TargetTuple target)
         {
@@ -137,13 +132,13 @@ namespace PFW.Weapons
                 Quaternion rotationToTarget = Quaternion.LookRotation(mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
-                if (Mathf.Abs(targetTurretAngle) > data.ArcHorizontal) {
+                if (Mathf.Abs(targetTurretAngle) > Data.ArcHorizontal) {
                     targetTurretAngle = 0f;
                     aimed = false;
                 }
 
                 targetBarrelAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
-                if (targetBarrelAngle < -data.ArcUp || targetBarrelAngle > data.ArcDown) {
+                if (targetBarrelAngle < -Data.ArcUp || targetBarrelAngle > Data.ArcDown) {
                     targetBarrelAngle = 0f;
                     aimed = false;
                 }
@@ -151,7 +146,7 @@ namespace PFW.Weapons
 
             float turretAngle = turret.localEulerAngles.y;
             float barrelAngle = barrel.localEulerAngles.x;
-            float turn = Time.deltaTime * data.RotationRate;
+            float turn = Time.deltaTime * Data.RotationRate;
             float deltaAngle;
 
             deltaAngle = (targetTurretAngle - turretAngle).unwrapDegree();
@@ -163,8 +158,8 @@ namespace PFW.Weapons
             }
 
             #region ArtyAdditionalCode
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-                targetBarrelAngle = -data.ArcUp;
+            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
+                targetBarrelAngle = -Data.ArcUp;
             }
             #endregion
 
@@ -185,7 +180,7 @@ namespace PFW.Weapons
         private bool FireWeapon(TargetTuple target)
         {
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
+            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
 
                 // sound
                 Source.PlayOneShot(shotSound, shotVolume);
@@ -197,20 +192,20 @@ namespace PFW.Weapons
                     int roll = rnd.Next(1, 100);
 
                     // HIT
-                    if (roll < data.Accuracy) {
-                        target.Enemy.GetComponent<UnitBehaviour>().HandleHit(data.Damage);
+                    if (roll < Data.Accuracy) {
+                        target.Enemy.GetComponent<UnitBehaviour>().HandleHit(Data.Damage);
                         return true;
                     }
                 } else {
                     // ensure we only fire pos once
-                    this.target = null;
+                    this._target = null;
                 }
 
                 // MISS
                 return false;
             }
 
-            if (unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
+            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
                 //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
 
 
@@ -227,31 +222,31 @@ namespace PFW.Weapons
 
         private bool TryFireWeapon(TargetTuple target)
         {
-            reloadTimeLeft -= Time.deltaTime;
-            if (reloadTimeLeft > 0)
+            ReloadTimeLeft -= Time.deltaTime;
+            if (ReloadTimeLeft > 0)
                 return false;
 
-            reloadTimeLeft = data.ReloadTime;
+            ReloadTimeLeft = Data.ReloadTime;
             return FireWeapon(target);
         }
 
         public GameObject FindClosestEnemy()
         {
             // TODO utilize precomputed distance lists from session
-            // TODO Have a global List of enemy units to prevent using FindGameobjects since it is very ressource intensive
-            // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range units
-            GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
+            // TODO Have a global List of enemy Units to prevent using FindGameobjects since it is very ressource intensive
+            // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
+            GameObject[] Units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
             GameObject Target = null;
-            var thisTeam = unit.Platoon.Owner.Team;
+            var thisTeam = Unit.Platoon.Owner.Team;
 
-            foreach (GameObject enemy in units) {
+            foreach (GameObject enemy in Units) {
                 // Filter out friendlies:
                 if (enemy.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
                     continue;
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance(unit.transform.position, enemy.transform.position);
-                if (distance < data.FireRange) {
+                var distance = Vector3.Distance(Unit.transform.position, enemy.transform.position);
+                if (distance < Data.FireRange) {
                     return enemy;
                 }
             }
@@ -260,11 +255,12 @@ namespace PFW.Weapons
 
         private void CheckTargetDistance()
         {
-            var distance = Vector3.Distance(unit.transform.position, target.Position);
-            if (distance > data.FireRange) {
-                target = null;
+            var distance = Vector3.Distance(Unit.transform.position, _target.Position);
+            if (distance > Data.FireRange) {
+                _target = null;
             }
         }
+
         private class TargetTuple
         {
             private Vector3 _position { get; set; }
@@ -280,7 +276,7 @@ namespace PFW.Weapons
 
             public TargetTuple(Vector3 position)
             {
-                this._position = position;
+                _position = position;
                 Enemy = null;
             }
             public TargetTuple(GameObject go)

@@ -12,8 +12,8 @@
  */
 
 using UnityEngine;
-using PFW.Weapons;
 using PFW.Units;
+using PFW.Units.Component.Weapon;
 
 public abstract class UnitBehaviour : SelectableBehavior
 {
@@ -249,7 +249,7 @@ public abstract class UnitBehaviour : SelectableBehavior
     {
         enabled = true;
         SetVisible(true);
-        foreach (Weapon weapon in gameObject.GetComponents<Weapon>())
+        foreach (WeaponComponent weapon in gameObject.GetComponents<WeaponComponent>())
             weapon.WakeUp();
     }
 
