@@ -11,55 +11,46 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-
-public class SpawnPointBehaviour : MonoBehaviour
-{
-    public PFW.Model.Game.Team Team;
-
+using PFW.Model.Game;
+using UnityEngine;
+public class SpawnPointBehaviour : MonoBehaviour {
     public const float MIN_SPAWN_INTERVAL = 2f;
     public const float QUEUE_DELAY = 1f;
+    /* I broke C# law by using  */
+    public Team @Team { get; private set; }
+    private Queue<GhostPlatoonBehaviour> spawnQueue { get; } = new Queue<GhostPlatoonBehaviour>();
 
-    private Vector3 oldPosition;
-    private Queue<GhostPlatoonBehaviour> spawnQueue = new Queue<GhostPlatoonBehaviour>();
-    private float spawnTime = MIN_SPAWN_INTERVAL;
+    private float _spawnTime = MIN_SPAWN_INTERVAL;
 
-    public void Awake()
-    {
-        Team = GetComponentInParent<PFW.Model.Game.Team>();
+    public void Awake() {
+        this.Team = this.GetComponentInParent<Team>();
     }
 
-    public void Start()
-    {
-        GetComponentInChildren<Renderer>().material.color = Team.Color;
+    public void Start() {
+        this.GetComponentInChildren<Renderer>().material.color = this.Team.Color;
 
-        Team.Session.AddSpawnPoint(this);
+        this.Team.Session.AddSpawnPoint(this);
     }
 
-    public void Update()
-    {
-        if (!spawnQueue.Any())
-            return;
-        
-        spawnTime -= Time.deltaTime;
-        if (spawnTime > 0)
-            return;
+    public void Update() {
+        // If there is no one in the spawn queue then don't continue.
+        if (!this.spawnQueue.Any()) return;
 
-            
-        GhostPlatoonBehaviour ghostPlatoon = spawnQueue.Dequeue();
-        ghostPlatoon.Spawn(transform.position);
+        // Check if spawn time minus the current deltaTime is > 0 then exit method;
+        if (this._spawnTime -= Time.deltaTime > 0) return;
 
-        if (spawnQueue.Count > 0)
-            spawnTime += MIN_SPAWN_INTERVAL;
-        else
-            spawnTime = QUEUE_DELAY;
-        
+        // NullReferenceException City - position is not set properly.
+        this.spawnQueue.Dequeue().Spawn(transform.position);
+
+        // Increase spawn queue time if total amount in queue is greater than zero
+        //  otherwise set to QUEUE_DELAY (1f) PS: Turnary > if statements
+        this._spawnTime = (this.spawnQueue.Count > 0) ?
+            this._spawnTime += MIN_SPAWN_INTERVAL : QUEUE_DELAY;
     }
 
-    public void BuyPlatoons(List<GhostPlatoonBehaviour> ghostPlatoons)
-    {
-        ghostPlatoons.ForEach(x => spawnQueue.Enqueue(x));
+    public void BuyPlatoons(List<GhostPlatoonBehaviour> ghostPlatoons) {
+        ghostPlatoons.ForEach (x => spawnQueue.Enqueue(x));
     }
 }
