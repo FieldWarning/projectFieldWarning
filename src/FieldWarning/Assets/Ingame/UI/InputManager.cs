@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -11,17 +11,19 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using UnityEngine.EventSystems;
-using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-
-using PFW.Ingame.Prototype;
-using PFW.Model.Game;
-
 namespace PFW.Ingame.UI
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Resources;
+
+    using PFW.Ingame.Prototype;
+    using PFW.Model.Game;
+
+    using UnityEngine;
+    using UnityEngine.EventSystems;
+
     /**
      * Handles almost all input during a match.
      * 
@@ -30,388 +32,327 @@ namespace PFW.Ingame.UI
      */
     public class InputManager : MonoBehaviour
     {
-        private Texture2D _firePosReticle;
-        private Texture2D _primedReticle;
-
-        private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
-        private ClickManager _rightClickManager;
-
-        public enum MouseMode { normal, purchasing, firePos, reverseMove, fastMove };
-        public MouseMode CurMouseMode { get; private set; } = MouseMode.normal;
-
-        private BuyTransaction _currentBuyTransaction;
-
-        private MatchSession _session;
-        public MatchSession Session {
-            get {
-                return _session;
-            }
-
-            set {
-                if (_session == null)
-                    _session = value;
-            }
-        }
-
-        private SelectionManager _selectionManager;
-
-        private PlayerData _localPlayer {
-            get {
-                return Session.LocalPlayer.Data;
-            }
-        }
+        private readonly List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
 
         private Vector3 _boxSelectStart;
 
-        void Awake()
+        private BuyTransaction _currentBuyTransaction;
+
+        private Texture2D _firePosReticle;
+
+        private Dictionary<string, Func<Commands, object>> _hotkeyActions;
+
+        private Texture2D _primedReticle;
+
+        private ClickManager _rightClickManager;
+
+        private SelectionManager _selectionManager;
+
+        private MatchSession _session;
+
+        public enum Events
         {
-            _selectionManager = new SelectionManager();
-            _selectionManager.Awake();
+            Clicked,
+            Down,
+            Released
         }
 
-        void Start()
+        public enum Modes
         {
-            _firePosReticle = (Texture2D)Resources.Load("FirePosTestTexture");
-            if (_firePosReticle == null)
-                throw new Exception("No fire pos reticle specified!");
-
-            _primedReticle = (Texture2D)Resources.Load("PrimedCursor");
-            if (_primedReticle == null)
-                throw new Exception("No primed reticle specified!");
-
-            _rightClickManager = new ClickManager(1, MoveGhostsToMouse, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
+            Normal,
+            Purchasing,
+            FirePosition,
+            ReverseMove,
+            FastMove
         }
 
-        void Update()
+        public Modes MouseState { get; private set; } = Modes.Normal;
+
+        public MatchSession Session
         {
-            _selectionManager.Update(CurMouseMode);
-
-            switch (CurMouseMode) {
-
-            case MouseMode.purchasing:
-
-                RaycastHit hit;
-                if (Util.GetTerrainClickLocation(out hit)
-                    && hit.transform.gameObject.name.Equals("Terrain")) {
-
-                    ShowGhostUnitsAndMaybePurchase(hit);
-                }
-
-                MaybeExitPurchasingMode();
-                break;
-
-            case MouseMode.normal:
-                ApplyHotkeys();
-                _rightClickManager.Update();
-                break;
-
-            case MouseMode.firePos:
-                ApplyHotkeys();
-
-                if (Input.GetMouseButtonDown(0))
-                    _selectionManager.DispatchFirePosCommand();
-
-                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
-                    || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
-
-                break;
-
-            case MouseMode.reverseMove:
-                ApplyHotkeys();
-                if (Input.GetMouseButtonDown(0)) {
-                    MoveGhostsToMouse();
-                    _selectionManager.DispatchMoveCommand(
-                            false, MoveWaypoint.MoveMode.reverseMove);
-                }
-
-                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
-                    || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
-                break;
-
-            case MouseMode.fastMove:
-                ApplyHotkeys();
-                if (Input.GetMouseButtonDown(0)) {
-                    MoveGhostsToMouse();
-                    _selectionManager.DispatchMoveCommand(
-                            false, MoveWaypoint.MoveMode.fastMove);
-                }
-
-                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift)) 
-                    || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
-                break;
-
-            default:
-                throw new Exception("impossible state");
-            }
+            get => this._session;
+            set => this._session = this._session ?? value;
         }
 
-        public void OnGUI()
+        private PlayerData LocalPlayer => this.Session.LocalPlayer.Data;
+
+        public static bool KeyDown(KeyCode keyCode)
         {
-            _selectionManager.OnGUI();
+            return Input.GetKey(keyCode);
         }
 
-        private void ShowGhostUnitsAndMaybePurchase(RaycastHit terrainHover)
+        public void AddSpawnPoint(SpawnPointBehaviour monoBehavior)
         {
-            // Show ghost units under mouse:
-            SpawnPointBehaviour closestSpawn = GetClosestSpawn(terrainHover.point);
-            _currentBuyTransaction.PreviewPurchase(
-                terrainHover.point,
-                2 * terrainHover.point - closestSpawn.transform.position);
+            if (monoBehavior is null)
+                throw new ArgumentNullException(nameof(monoBehavior), "SpawnPointBehavior cannot be null or empty.");
 
-            MaybePurchaseGhostUnits(closestSpawn);
+            if (!this._spawnPointList.Contains(monoBehavior))
+                this._spawnPointList.Add(monoBehavior);
         }
 
-        private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
+        public void AfvButtonCallback()
         {
-            if (Input.GetMouseButtonUp(0)) {
-                bool noUIcontrolsInUse = EventSystem.current.currentSelectedGameObject == null;
-
-                if (!noUIcontrolsInUse)
-                    return;
-
-                if (_currentBuyTransaction == null)
-                    return;
-
-                closestSpawn.BuyPlatoons(_currentBuyTransaction.GhostPlatoons);
-
-                if (Input.GetKey(KeyCode.LeftShift)) {
-                    // We turned the current ghosts into real units, so:
-                    _currentBuyTransaction = _currentBuyTransaction.Clone();
-                } else {
-                    ExitPurchasingMode();
-                }
-            }
-        }
-
-        private void MaybeExitPurchasingMode()
-        {
-            if (Input.GetMouseButton(1)) {
-                foreach (var g in _currentBuyTransaction.GhostPlatoons)
-                    g.GetComponent<GhostPlatoonBehaviour>().Destroy();
-
-                ExitPurchasingMode();
-            }
-        }
-
-        /**
-         * The ghost units are used to briefly hold the destination
-         * for a move order, so they need to be moved to the cursor
-         * if a move order click is issued.
-         */ 
-        void MoveGhostsToMouse()
-        {
-            RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit))
-                _selectionManager.PrepareMoveOrderPreview(hit.point);
-        }
-
-        void OnOrderHold()
-        {
-            RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit))
-                _selectionManager.RotateMoveOrderPreview(hit.point);
-        }
-
-        void OnOrderShortClick()
-        {
-            if (!_selectionManager.Empty) {
-                DisplayOrderFeedback();
-            }
-
-            _selectionManager.DispatchMoveCommand(false, MoveWaypoint.MoveMode.normalMove);
-        }
-
-        void OnOrderLongClick()
-        {
-            _selectionManager.DispatchMoveCommand(true, MoveWaypoint.MoveMode.normalMove);
-        }
-
-        // Show a Symbol at the position where a move order was issued:
-        private void DisplayOrderFeedback()
-        {
-            RaycastHit hit;
-            if (Util.GetTerrainClickLocation(out hit))
-                GameObject.Instantiate(
-                        Resources.Load(
-                                "MoveMarker",
-                                typeof(GameObject)),
-                        hit.point + new Vector3(0, 0.01f, 0),
-                        Quaternion.Euler(new Vector3(90, 0, 0))
-                );
-        }
-
-        /**
-         * Called when the tank button is pressed in the buy menu.
-         */
-        public void TankButtonCallback()
-        {
-            if (_currentBuyTransaction == null)
-                _currentBuyTransaction = new BuyTransaction(UnitType.Tank, _localPlayer);
-            else
-                _currentBuyTransaction.AddUnit();
-
-            //buildUnit(UnitType.Tank);
-            CurMouseMode = MouseMode.purchasing;
-        }
-
-        /**
-         * Called when the arty button is pressed in the buy menu.
-         */
-        public void ArtyButtonCallback()
-        {
-            if (_currentBuyTransaction == null)
-                _currentBuyTransaction = new BuyTransaction(UnitType.Arty, _localPlayer);
-            else
-                _currentBuyTransaction.AddUnit();
-            CurMouseMode = MouseMode.purchasing;
-        }
-
-        /**
-         * Called when infantry button is pressed in the buy menu.
-         */
-        public void InfantryButtonCallback()
-        {
-            BuildUnit(UnitType.Infantry);
-            CurMouseMode = MouseMode.purchasing;
-        }
-
-        /**
-         * Called when the afv button is pressed in the buy menu.
-         */
-        public void AFVButtonCallback()
-        {
-            BuildUnit(UnitType.AFV);
-            CurMouseMode = MouseMode.purchasing;
-        }
-
-        public void BuildUnit(UnitType t)
-        {
-            var behaviour = GhostPlatoonBehaviour.Build(t, _localPlayer, 4);
-            _currentBuyTransaction.GhostPlatoons.Add(behaviour);
-        }
-
-        private void ExitPurchasingMode()
-        {
-            _currentBuyTransaction.GhostPlatoons.Clear();
-
-            _currentBuyTransaction = null;
-
-            CurMouseMode = MouseMode.normal;
-        }
-
-        private SpawnPointBehaviour GetClosestSpawn(Vector3 p)
-        {
-            var pointList = _spawnPointList.Where(
-                x => x.Team == _localPlayer.Team).ToList();
-
-            SpawnPointBehaviour go = pointList.First();
-            float distance = Single.PositiveInfinity;
-
-            foreach (var s in pointList) {
-                if (Vector3.Distance(p, s.transform.position) < distance) {
-                    distance = Vector3.Distance(p, s.transform.position);
-                    go = s;
-                }
-            }
-            return go;
-        }
-
-        public void AddSpawnPoint(SpawnPointBehaviour s)
-        {
-            if (!_spawnPointList.Contains(s))
-                _spawnPointList.Add(s);
+            this.BuildUnit(UnitType.AFV);
+            this.MouseState = Modes.Purchasing;
         }
 
         public void ApplyHotkeys()
         {
-            if (Commands.Unload) {
-                _selectionManager.DispatchUnloadCommand();
+            if (Commands.Unload)
+                this._selectionManager.DispatchUnloadCommand();
 
-            } else if (Commands.Load) {
-                _selectionManager.DispatchLoadCommand();
+            if (Commands.Load)
+                this._selectionManager.DispatchLoadCommand();
 
-            } else if (Commands.FirePos && !_selectionManager.Empty) {
-                EnterFirePosMode();
+            if (Commands.FirePos && !this._selectionManager.Empty)
+                this.SetCursor(Modes.FirePosition);
 
-            } else if (Commands.ReverseMove && !_selectionManager.Empty) {
-                EnterReverseMoveMode();
+            if (Commands.ReverseMove && !this._selectionManager.Empty)
+                this.SetCursor(Modes.ReverseMove);
 
-            } else if (Commands.FastMove && !_selectionManager.Empty) {
-                EnterFastMoveMode();
+            if (Commands.FastMove && !this._selectionManager.Empty)
+                this.SetCursor(Modes.FastMove);
+        }
+
+        public void ArtyButtonCallback()
+        {
+            if (this._currentBuyTransaction is null)
+                this._currentBuyTransaction = new BuyTransaction(UnitType.Arty, this.LocalPlayer);
+            else
+                this._currentBuyTransaction.AddUnit();
+            this.MouseState = Modes.Purchasing;
+        }
+
+        public void BuildUnit(UnitType unityType)
+        {
+            GhostPlatoonBehaviour behaviour = GhostPlatoonBehaviour.Build(unityType, this.LocalPlayer, 4);
+            this._currentBuyTransaction.GhostPlatoons.Add(behaviour);
+        }
+
+        public void InfantryButtonCallback()
+        {
+            this.BuildUnit(UnitType.Infantry);
+            this.MouseState = Modes.Purchasing;
+        }
+
+        public void OnGui()
+        {
+            this._selectionManager.OnGui();
+        }
+
+        public void RegisterActor(MonoBehaviour monoBehaviour, bool birth = true)
+        {
+            if (monoBehaviour is null)
+                throw new ArgumentNullException(nameof(monoBehaviour), "Platoon cannot be null or empty.");
+            this._session.RegisterActor(monoBehaviour, birth);
+        }
+
+        public void TankButtonCallback()
+        {
+            if (this._currentBuyTransaction is null)
+                this._currentBuyTransaction = new BuyTransaction(UnitType.Tank, this.LocalPlayer);
+            else
+                this._currentBuyTransaction.AddUnit();
+
+            this.MouseState = Modes.Purchasing;
+        }
+
+        private static void DisplayOrderFeedback()
+        {
+            if (Util.GetTerrainClickLocation(out RaycastHit hit))
+                Instantiate(
+                    Resources.Load("MoveMarker", typeof(GameObject)),
+                    hit.point + new Vector3(0f, 0.01f, 0f),
+                    Quaternion.Euler(new Vector3(90f, 0f, 0f)));
+        }
+
+        private void Awake()
+        {
+            this._selectionManager = new SelectionManager();
+            this._selectionManager.Awake();
+        }
+
+        private void ExitPurchasingMode()
+        {
+            this._currentBuyTransaction.GhostPlatoons.Clear();
+            this._currentBuyTransaction = null;
+            this.MouseState = Modes.Normal;
+        }
+
+        private SpawnPointBehaviour GetClosestSpawns(Vector3 position)
+        {
+            var spawnPoints = this._spawnPointList.Where(x => x.Team.Equals(this.LocalPlayer.Team)).ToList();
+
+            SpawnPointBehaviour firstSpawn = spawnPoints.First();
+            var maxDistance = float.PositiveInfinity;
+
+            for (var i = 0; i < spawnPoints.Count; i++)
+            {
+                if (Vector3.Distance(position, spawnPoints[i].transform.position) > maxDistance) continue;
+                maxDistance = Vector3.Distance(position, spawnPoints[i].transform.position);
+                firstSpawn = spawnPoints[i];
             }
+
+            return firstSpawn;
         }
 
-        private void EnterFirePosMode()
+        private bool IsMouse(Events events, int button = 0)
         {
-            CurMouseMode = MouseMode.firePos;
-            Vector2 hotspot = new Vector2(_firePosReticle.width / 2, _firePosReticle.height / 2);
-            Cursor.SetCursor(_firePosReticle, hotspot, CursorMode.Auto);
+            return this.IsMouse(events, button);
         }
 
-        private void EnterNormalMode()
+        private void MaybeExitPurchasingMode()
         {
-            CurMouseMode = MouseMode.normal;
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            if (!this.IsMouse(Events.Clicked))
+                return;
+            this._currentBuyTransaction.GhostPlatoons.ForEach(
+                ghost => ghost.GetComponent<GhostPlatoonBehaviour>().Destroy());
+            this.ExitPurchasingMode();
         }
 
-        private void EnterFastMoveMode()
+        private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
-            CurMouseMode = MouseMode.fastMove;
-            Vector2 hotspot = new Vector2(0, 0);
-            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+            if (closestSpawn is null || this.IsMouse(Events.Released)
+                                     || EventSystem.current.currentSelectedGameObject is null
+                                     || this._currentBuyTransaction is null)
+                return;
+
+            closestSpawn.BuyPlatoons(this._currentBuyTransaction.GhostPlatoons);
+
+            if (KeyDown(KeyCode.LeftShift))
+                this._currentBuyTransaction = this._currentBuyTransaction.Clone();
+            else
+                this.ExitPurchasingMode();
         }
 
-        private void EnterReverseMoveMode()
+        private void MoveGhostsToMouse()
         {
-            CurMouseMode = MouseMode.reverseMove;
-            Vector2 hotspot = new Vector2(0, 0);
-            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+            if (Util.GetTerrainClickLocation(out RaycastHit hit))
+                this._selectionManager.PrepareMoveOrderPreview(hit.point);
         }
 
-        public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
+        private void OnOrderHold()
         {
-            _selectionManager.RegisterPlatoonBirth(platoon);
+            if (Util.GetTerrainClickLocation(out RaycastHit hit))
+                this._selectionManager.RotateMoveOrderPreview(hit.point);
         }
 
-        public void RegisterPlatoonDeath(PlatoonBehaviour platoon)
+        private void SetCursor(Modes modes)
         {
-            _selectionManager.RegisterPlatoonDeath(platoon);
+            this.MouseState = modes;
+            Vector2 nextMouseLocation = Vector2.zero;
+            Texture2D nextMouseTexture = Texture2D.whiteTexture;
+            switch (modes)
+            {
+                case Modes.FirePosition:
+                    nextMouseLocation = new Vector2(this._firePosReticle.width / 2, this._firePosReticle.height / 2);
+                    break;
+                case Modes.FastMove:
+                    nextMouseTexture = this._primedReticle;
+                    break;
+                case Modes.Normal:
+                    nextMouseTexture = null;
+                    break;
+                case Modes.ReverseMove:
+                    nextMouseTexture = this._primedReticle;
+                    break;
+                case Modes.Purchasing: break;
+                default: throw new ArgumentOutOfRangeException(nameof(modes), modes, null);
+            }
+
+            Cursor.SetCursor(nextMouseTexture, nextMouseLocation, CursorMode.Auto);
+        }
+
+        private void ShowGhostUnitsAndMaybePurchase(RaycastHit terrainHover)
+        {
+            SpawnPointBehaviour closestSpawn = this.GetClosestSpawns(terrainHover.point);
+            this._currentBuyTransaction.PreviewPurchase(
+                terrainHover.point,
+                terrainHover.point * 2 - closestSpawn.transform.position);
+
+            this.MaybePurchaseGhostUnits(closestSpawn);
+        }
+
+        private void Start()
+        {
+            this._firePosReticle = (Texture2D)Resources.Load("FirePosTestTexture");
+            if (this._firePosReticle is null)
+                throw new MissingManifestResourceException("Could not locate Texture2D named 'FirePosTestTexture'.");
+
+            this._primedReticle = (Texture2D)Resources.Load("PrimedCursor");
+            if (this._primedReticle is null)
+                throw new MissingManifestResourceException("Could not locate Texture2D named `PrimedCursor`.");
+
+            this._rightClickManager = new ClickManager(
+                1,
+                this.MoveGhostsToMouse,
+                this.OnOrderHold,
+                this.ExitPurchasingMode,
+                this.MoveGhostsToMouse);
+        }
+
+        private void Update()
+        {
+            this._selectionManager.Update(this.MouseState);
+
+            switch (this.MouseState)
+            {
+                case Modes.Purchasing:
+                    if (Util.GetTerrainClickLocation(out RaycastHit hit)
+                        && hit.transform.gameObject.name.Equals("Terrain"))
+                        this.ShowGhostUnitsAndMaybePurchase(hit);
+                    this.MaybeExitPurchasingMode();
+                    break;
+
+                case Modes.Normal:
+                    this._rightClickManager.Update();
+                    break;
+
+                case Modes.FirePosition:
+                    if (this.IsMouse(Events.Down))
+                        this._selectionManager.DispatchFirePosCommand();
+                    if (this.IsMouse(Events.Down) && !KeyDown(KeyCode.LeftShift) || this.IsMouse(Events.Down, 1))
+                        this.SetCursor(Modes.Normal);
+                    break;
+
+                case Modes.ReverseMove:
+                    if (!this.IsMouse(Events.Down))
+                        break;
+
+                    this.MoveGhostsToMouse();
+                    this._selectionManager.DispatchMoveCommand(false, MoveWaypoint.MoveMode.Reverse);
+
+                    if (this.IsMouse(Events.Down) && !KeyDown(KeyCode.LeftShift) || this.IsMouse(Events.Down))
+                        this.SetCursor(Modes.Normal);
+                    break;
+
+                case Modes.FastMove:
+                    if (!this.IsMouse(Events.Down))
+                        break;
+
+                    this.MoveGhostsToMouse();
+                    this._selectionManager.DispatchMoveCommand(false, MoveWaypoint.MoveMode.Fast);
+
+                    if (this.IsMouse(Events.Down) && !KeyDown(KeyCode.LeftShift) || this.IsMouse(Events.Down, 1))
+                        this.SetCursor(Modes.Normal);
+                    break;
+                default:
+                    this.ApplyHotkeys();
+                    break;
+            }
         }
     }
 
     public class Commands
     {
-        public static bool Unload {
-            get {
-                return Input.GetKeyDown(Hotkeys.Unload);
-            }
-        }
+        public static bool FastMove => Input.GetKeyDown(Hotkeys.FastMove);
 
-        public static bool Load {
-            get {
-                return Input.GetKeyDown(Hotkeys.Load);
-            }
-        }
+        public static bool FirePos => Input.GetKeyDown(Hotkeys.FirePos);
 
-        public static bool FirePos {
-            get {
-                return Input.GetKeyDown(Hotkeys.FirePos);
-            }
-        }
+        public static bool Load => Input.GetKeyDown(Hotkeys.Load);
 
-        public static bool ReverseMove {
-            get {
-                return Input.GetKeyDown(Hotkeys.ReverseMove);
-            }
-        }
+        public static bool ReverseMove => Input.GetKeyDown(Hotkeys.ReverseMove);
 
-        public static bool FastMove {
-            get {
-                return Input.GetKeyDown(Hotkeys.FastMove);
-            }
-        }
+        public static bool Unload => Input.GetKeyDown(Hotkeys.Unload);
     }
 }
