@@ -26,12 +26,12 @@ public class OrbitCameraBehaviour : MonoBehaviour
 
     float baseMovementspeed = 1.5f;
     float zoomFactor = 1.6f;
-    float horizontalROtationSpeed = 5;
+    float horizontalROtationSpeed = 5f;
     float verticalROtationSpeed = .1f;
-    float upperAngleLimit = 20;
-    float lowerAngleLimit = 80;
-    float maxZoom = 250;
-    float minZoom = 10;
+    float upperAngleLimit = 20f;
+    float lowerAngleLimit = 80f;
+    float maxZoom = 250f;
+    float minZoom = 10f;
 
     // Use this for initialization
     void Start()
