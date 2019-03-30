@@ -38,11 +38,15 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     private Camera _miniMapCamera;
     [SerializeField]
     private SlidingCameraBehaviour _mainCamera;
-    public void Start()
+
+    private void Start()
     {
         _minimapSize = gameObject.GetComponent<RectTransform>().rect.width;
-        _offsetFromRightSide = (-1) * (gameObject.transform.parent.GetComponent<RectTransform>().rect.width / 2 + gameObject.transform.parent.GetComponent<RectTransform>().anchoredPosition.x);
-        _targetedScreenSize = gameObject.transform.parent.parent.GetComponent<RectTransform>().rect.width;
+        _offsetFromRightSide = 
+            (-1) * (transform.parent.GetComponent<RectTransform>().rect.width / 2 
+            + transform.parent.GetComponent<RectTransform>().anchoredPosition.x);
+        _targetedScreenSize = 
+            transform.parent.parent.GetComponent<RectTransform>().rect.width;
 
         _terrainSize = _terrain.terrainData.bounds.size;
         _miniMapCamera.orthographicSize = _terrainSize.x / 2f;
@@ -58,7 +62,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     }
 
     //TODO different signs for different unit Types
-    public void OnGUI()
+    private void OnGUI()
     {
         //Draw all friendlies
         //Maybe there is a better way to have this list updated
@@ -89,17 +93,15 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void LateUpdate()
+    private void LateUpdate()
     {
         //For some reason,which completely eludes me, this needs to be done in LateUpdate or otherwise it always returns just the targeted resolution
-
         _screenSize = new Vector2(Screen.width, Screen.height);
     }
 
     //Converts a position of an ingame Object to its position on the minimap
     private Vector2 GetMapPos(Vector3 pos)
     {
-
         float scale = _screenSize.x / _targetedScreenSize;
         //adjust the position to fit on the terrain
         pos = pos - _terrain.GetPosition();
@@ -114,7 +116,6 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     //Move Camera to position on the minimap, basicly a reverse calculation of GetMapPos
     public void OnPointerClick(PointerEventData eventData)
     {
-
         float scale = _screenSize.x / _targetedScreenSize;
         Vector2 pos = eventData.position;
         pos.y = _screenSize.y - pos.y;
