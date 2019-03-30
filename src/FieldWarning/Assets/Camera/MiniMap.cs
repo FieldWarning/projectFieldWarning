@@ -24,8 +24,9 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     private Terrain _terrain;
     //(x,y,z) X and Z are the important values
     private Vector3 _terrainSize;
-    [SerializeField]
-    private Vector2 _minimapSize;
+    private float _minimapSize;
+    private float _offsetFromRightSide;
+    private float _targetedScreenSize;
     [SerializeField]
     private RawImage _miniMapImage;
     [SerializeField]
@@ -37,8 +38,16 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     private Camera _miniMapCamera;
     [SerializeField]
     private SlidingCameraBehaviour _mainCamera;
-    public void Start()
+
+    private void Start()
     {
+        _minimapSize = gameObject.GetComponent<RectTransform>().rect.width;
+        _offsetFromRightSide = 
+            (-1) * (transform.parent.GetComponent<RectTransform>().rect.width / 2 
+            + transform.parent.GetComponent<RectTransform>().anchoredPosition.x);
+        _targetedScreenSize = 
+            transform.parent.parent.GetComponent<RectTransform>().rect.width;
+
         _terrainSize = _terrain.terrainData.bounds.size;
         _miniMapCamera.orthographicSize = _terrainSize.x / 2f;
 
@@ -53,7 +62,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     }
 
     //TODO different signs for different unit Types
-    public void OnGUI()
+    private void OnGUI()
     {
         //Draw all friendlies
         //Maybe there is a better way to have this list updated
@@ -84,39 +93,36 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void LateUpdate()
+    private void LateUpdate()
     {
         //For some reason,which completely eludes me, this needs to be done in LateUpdate or otherwise it always returns just the targeted resolution
-
         _screenSize = new Vector2(Screen.width, Screen.height);
     }
 
-    //TODO replace hardcoded numbers
     //Converts a position of an ingame Object to its position on the minimap
     private Vector2 GetMapPos(Vector3 pos)
     {
-        float scale = _screenSize.x / 1920;
+        float scale = _screenSize.x / _targetedScreenSize;
         //adjust the position to fit on the terrain
         pos = pos - _terrain.GetPosition();
         //Scale the pos to fit the pixel size of the minimap
-        pos = pos * (_minimapSize.x / _terrainSize.x);
-        //306=width 10=offset from the border 
-        pos = new Vector2(Screen.width - 306 * scale - 10 * scale + pos.x * scale, 306 * scale - pos.z * scale);
+        pos = pos * (_minimapSize / _terrainSize.x);
+        pos = new Vector2(Screen.width - _minimapSize * scale - _offsetFromRightSide * scale + pos.x * scale, _minimapSize * scale - pos.z * scale);
 
         return new Vector2(pos.x, pos.y);
     }
 
     //Maybe make it so that the camera doesnt move directly to the position, but instead moves so that it looks at the position
-    //Move Camera to position on the minimap
+    //Move Camera to position on the minimap, basicly a reverse calculation of GetMapPos
     public void OnPointerClick(PointerEventData eventData)
     {
-        float scale = _screenSize.x / 1920;
+        float scale = _screenSize.x / _targetedScreenSize;
         Vector2 pos = eventData.position;
         pos.y = _screenSize.y - pos.y;
-        pos = new Vector2(-(Screen.width - pos.x - 10 * scale) + 306 * scale, pos.y - 10 * scale);
+        pos = new Vector2(-(Screen.width - pos.x - _offsetFromRightSide * scale) + _minimapSize * scale, pos.y - _offsetFromRightSide * scale);
         pos = pos / scale;
-        pos.y = _minimapSize.y - pos.y;
-        pos = pos / (_minimapSize.x / _terrainSize.x);
+        pos.y = _minimapSize - pos.y;
+        pos = pos / (_minimapSize / _terrainSize.x);
         pos = pos + new Vector2(_terrain.GetPosition().x, _terrain.GetPosition().z);
 
         _mainCamera.SetTargetPosition(
