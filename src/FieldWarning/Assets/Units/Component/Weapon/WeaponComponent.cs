@@ -26,11 +26,10 @@ namespace PFW.Units.Component.Weapon
         public AudioSource Source { get; private set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
-        //Why is this method up here ?
         public void SetTarget(Vector3 position)
         {
             var distance = Vector3.Distance(Unit.transform.position, position);
-            
+
             if (distance < Data.FireRange) {
                 _target = new TargetTuple(position);
             } else {
@@ -77,25 +76,28 @@ namespace PFW.Units.Component.Weapon
             Source = GetComponent<AudioSource>();
         }
 
-        private void Update()
+        private void StopMovingIfInRangeOfTarget()
         {
-            //Check if there is still a need to move closer
             if (_movingTowardsTarget) {
                 if (Vector3.Distance(Unit.transform.position, _target.Position) < Data.FireRange) {
                     _movingTowardsTarget = false;
                     Unit.SetUnitDestination(Unit.transform.position);
                 }
             }
+        }
 
+        private void Update()
+        {
+            StopMovingIfInRangeOfTarget();
 
             if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-                if (_target != null && _target.Enemy != null) {
-                    //Removes the Target if it isnt a position and went out of range
-                    CheckTargetDistance();
+                if (_target != null) {
+                    
+                    MaybeDropOutOfRangeTarget();
+
+                    if (RotateTurret(_target) && !_movingTowardsTarget)
+                        TryFireWeapon(_target);
                 }
-                
-                if (RotateTurret(_target) && !_movingTowardsTarget)
-                    TryFireWeapon(_target);
             }
 
 
@@ -253,12 +255,19 @@ namespace PFW.Units.Component.Weapon
             return Target;
         }
 
-        private void CheckTargetDistance()
+        /// <summary>
+        /// If the target is an enemy unit and it is out of range, 
+        /// forget about it.
+        /// </summary>
+        private void MaybeDropOutOfRangeTarget()
         {
-            var distance = Vector3.Distance(Unit.transform.position, _target.Position);
-            if (distance > Data.FireRange) {
+            // We only drop unit targets, not positions:
+            if (_target.Enemy == null)
+                return;
+
+            float distance = Vector3.Distance(Unit.transform.position, _target.Position);
+            if (distance > Data.FireRange)
                 _target = null;
-            }
         }
 
         private class TargetTuple
