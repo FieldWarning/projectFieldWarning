@@ -41,28 +41,28 @@ namespace PFW.Units.Component.Weapon
 
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
-        private int dataIndex;
+        private int _dataIndex;
         [SerializeField]
-        private Transform mount;
+        private Transform _mount;
         [SerializeField]
-        private Transform turret;
+        private Transform _turret;
         [SerializeField]
-        private Transform barrel;
+        private Transform _barrel;
         [SerializeField]
-        private Transform shotEmitter;
+        private Transform _shotEmitter;
         // Where the shell spawns:
         [SerializeField]
-        private Transform ShotStarterPosition;
+        private Transform _shotStarterPosition;
         // The shell being fired:
         [SerializeField]
-        private GameObject bullet;
+        private GameObject _bullet;
         // TODO Should aim to make actual objects fire and not effects:
         [SerializeField]
-        private ParticleSystem shotEffect;
+        private ParticleSystem _shotEffect;
         [SerializeField]
-        private AudioClip shotSound;
+        private AudioClip _shotSound;
         [SerializeField]
-        private float shotVolume = 1.0F;
+        private float _shotVolume = 1.0F;
         // ---------------- END PREFAB -----------------
 
         private void Awake()
@@ -92,7 +92,7 @@ namespace PFW.Units.Component.Weapon
 
             if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
                 if (_target != null) {
-                    
+
                     MaybeDropOutOfRangeTarget();
 
                     if (RotateTurret(_target) && !_movingTowardsTarget)
@@ -108,14 +108,14 @@ namespace PFW.Units.Component.Weapon
                 }
             }
         }
-        
+
         public void WakeUp()
         {
-            Data = Unit.Data.weaponData[dataIndex];
+            Data = Unit.Data.weaponData[_dataIndex];
             ReloadTimeLeft = Data.ReloadTime;
             enabled = true;
         }
-        
+
 
         private bool RotateTurret(TargetTuple target)
         {
@@ -127,11 +127,11 @@ namespace PFW.Units.Component.Weapon
 
             if (pos != Vector3.zero) {
                 aimed = true;
+                // comented out because arty has no shot emmiter:
                 // shotEmitter.LookAt(pos);
-                //shot emmiter was comented out because arty has no shot emmiter
 
-                Vector3 directionToTarget = pos - turret.position;
-                Quaternion rotationToTarget = Quaternion.LookRotation(mount.transform.InverseTransformDirection(directionToTarget));
+                Vector3 directionToTarget = pos - _turret.position;
+                Quaternion rotationToTarget = Quaternion.LookRotation(_mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
                 if (Mathf.Abs(targetTurretAngle) > Data.ArcHorizontal) {
@@ -146,8 +146,8 @@ namespace PFW.Units.Component.Weapon
                 }
             }
 
-            float turretAngle = turret.localEulerAngles.y;
-            float barrelAngle = barrel.localEulerAngles.x;
+            float turretAngle = _turret.localEulerAngles.y;
+            float barrelAngle = _barrel.localEulerAngles.x;
             float turn = Time.deltaTime * Data.RotationRate;
             float deltaAngle;
 
@@ -173,8 +173,8 @@ namespace PFW.Units.Component.Weapon
                 barrelAngle = targetBarrelAngle;
             }
 
-            turret.localEulerAngles = new Vector3(0, turretAngle, 0);
-            barrel.localEulerAngles = new Vector3(barrelAngle, 0, 0);
+            _turret.localEulerAngles = new Vector3(0, turretAngle, 0);
+            _barrel.localEulerAngles = new Vector3(barrelAngle, 0, 0);
 
             return aimed;
         }
@@ -185,11 +185,11 @@ namespace PFW.Units.Component.Weapon
             if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
 
                 // sound
-                Source.PlayOneShot(shotSound, shotVolume);
+                Source.PlayOneShot(_shotSound, _shotVolume);
                 // particle
-                shotEffect.Play();
+                _shotEffect.Play();
 
-                if (target.Enemy != null) {
+                if (target.IsUnit) {
                     System.Random rnd = new System.Random();
                     int roll = rnd.Next(1, 100);
 
@@ -212,8 +212,8 @@ namespace PFW.Units.Component.Weapon
 
 
                 GameObject shell = Resources.Load<GameObject>("shell");
-                GameObject shell_new = Instantiate(shell, ShotStarterPosition.position, ShotStarterPosition.transform.rotation);
-                shell_new.GetComponent<BulletBehavior>().SetUp(ShotStarterPosition, target.Position, 60);
+                GameObject shell_new = Instantiate(shell, _shotStarterPosition.position, _shotStarterPosition.transform.rotation);
+                shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
 
                 return true;
             }
@@ -274,9 +274,13 @@ namespace PFW.Units.Component.Weapon
         {
             private Vector3 _position { get; set; }
             public GameObject Enemy { get; private set; }
+            /// <summary>
+            /// The position (location) of the target, 
+            /// regardless of whether its a unit or not.
+            /// </summary>
             public Vector3 Position {
                 get {
-                    if (Enemy == null)
+                    if (IsGround)
                         return _position;
                     else
                         return Enemy.transform.position;
@@ -297,6 +301,26 @@ namespace PFW.Units.Component.Weapon
             public bool Exists()
             {
                 return Enemy != null || _position != Vector3.zero;
+            }
+
+            /// <summary>
+            /// Is the target just a position on the ground, 
+            /// as opposed to an enemy unit?
+            /// </summary>
+            public bool IsGround {
+                get {
+                    return Enemy == null;
+                }
+            }
+
+            /// <summary>
+            /// Is the target an enemy unit, 
+            /// as opposed to a position on the ground?
+            /// </summary>
+            public bool IsUnit {
+                get {
+                    return Enemy != null;
+                }
             }
         }
     }
