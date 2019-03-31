@@ -37,11 +37,21 @@ namespace PFW.Units.Component.Weapon
                 _movingTowardsTarget = true;
                 Unit.SetUnitDestination(position);
             }
+
+            _turretComponent.SetTarget(_target, _turretPriority);
         }
 
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
+        private TurretComponent _turretComponent;
+        [SerializeField]
         private int _dataIndex;
+        /// <summary>
+        /// When a unit has multiple weapons that share a turret,
+        /// the turret will prefer to rotate for the higher-priority weapon.
+        /// </summary>
+        [SerializeField]
+        private int _turretPriority;
         [SerializeField]
         private Transform _mount;
         [SerializeField]
@@ -89,23 +99,13 @@ namespace PFW.Units.Component.Weapon
         private void Update()
         {
             StopMovingIfInRangeOfTarget();
+            
+            if (_target != null) {
 
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-                if (_target != null) {
+                MaybeDropOutOfRangeTarget();
 
-                    MaybeDropOutOfRangeTarget();
-
-                    if (RotateTurret(_target) && !_movingTowardsTarget)
-                        TryFireWeapon(_target);
-                }
-            }
-
-
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-                if (_target != null && !_movingTowardsTarget) {
-                    RotateTurret(_target);
+                if (_turretComponent.IsFacingTarget && !_movingTowardsTarget)
                     TryFireWeapon(_target);
-                }
             }
         }
 
@@ -114,69 +114,6 @@ namespace PFW.Units.Component.Weapon
             Data = Unit.Data.weaponData[_dataIndex];
             ReloadTimeLeft = Data.ReloadTime;
             enabled = true;
-        }
-
-
-        private bool RotateTurret(TargetTuple target)
-        {
-            bool aimed = false;
-            float targetTurretAngle = 0f;
-            float targetBarrelAngle = 0f;
-
-            Vector3 pos = target.Position;
-
-            if (pos != Vector3.zero) {
-                aimed = true;
-                // comented out because arty has no shot emmiter:
-                // shotEmitter.LookAt(pos);
-
-                Vector3 directionToTarget = pos - _turret.position;
-                Quaternion rotationToTarget = Quaternion.LookRotation(_mount.transform.InverseTransformDirection(directionToTarget));
-
-                targetTurretAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
-                if (Mathf.Abs(targetTurretAngle) > Data.ArcHorizontal) {
-                    targetTurretAngle = 0f;
-                    aimed = false;
-                }
-
-                targetBarrelAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
-                if (targetBarrelAngle < -Data.ArcUp || targetBarrelAngle > Data.ArcDown) {
-                    targetBarrelAngle = 0f;
-                    aimed = false;
-                }
-            }
-
-            float turretAngle = _turret.localEulerAngles.y;
-            float barrelAngle = _barrel.localEulerAngles.x;
-            float turn = Time.deltaTime * Data.RotationRate;
-            float deltaAngle;
-
-            deltaAngle = (targetTurretAngle - turretAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn) {
-                turretAngle += (deltaAngle > 0 ? 1 : -1) * turn;
-                aimed = false;
-            } else {
-                turretAngle = targetTurretAngle;
-            }
-
-            #region ArtyAdditionalCode
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-                targetBarrelAngle = -Data.ArcUp;
-            }
-            #endregion
-
-            deltaAngle = (targetBarrelAngle - barrelAngle).unwrapDegree();
-            if (Mathf.Abs(deltaAngle) > turn) {
-                barrelAngle += (deltaAngle > 0 ? 1 : -1) * turn;
-                aimed = false;
-            } else {
-                barrelAngle = targetBarrelAngle;
-            }
-
-            _turret.localEulerAngles = new Vector3(0, turretAngle, 0);
-            _barrel.localEulerAngles = new Vector3(barrelAngle, 0, 0);
-
-            return aimed;
         }
 
         private bool FireWeapon(TargetTuple target)
@@ -209,7 +146,6 @@ namespace PFW.Units.Component.Weapon
 
             if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
                 //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
-
 
                 GameObject shell = Resources.Load<GameObject>("shell");
                 GameObject shell_new = Instantiate(shell, _shotStarterPosition.position, _shotStarterPosition.transform.rotation);
@@ -268,60 +204,6 @@ namespace PFW.Units.Component.Weapon
             float distance = Vector3.Distance(Unit.transform.position, _target.Position);
             if (distance > Data.FireRange)
                 _target = null;
-        }
-
-        private class TargetTuple
-        {
-            private Vector3 _position { get; set; }
-            public GameObject Enemy { get; private set; }
-            /// <summary>
-            /// The position (location) of the target, 
-            /// regardless of whether its a unit or not.
-            /// </summary>
-            public Vector3 Position {
-                get {
-                    if (IsGround)
-                        return _position;
-                    else
-                        return Enemy.transform.position;
-                }
-            }
-
-            public TargetTuple(Vector3 position)
-            {
-                _position = position;
-                Enemy = null;
-            }
-            public TargetTuple(GameObject go)
-            {
-                _position = Vector3.zero;
-                Enemy = go;
-            }
-
-            public bool Exists()
-            {
-                return Enemy != null || _position != Vector3.zero;
-            }
-
-            /// <summary>
-            /// Is the target just a position on the ground, 
-            /// as opposed to an enemy unit?
-            /// </summary>
-            public bool IsGround {
-                get {
-                    return Enemy == null;
-                }
-            }
-
-            /// <summary>
-            /// Is the target an enemy unit, 
-            /// as opposed to a position on the ground?
-            /// </summary>
-            public bool IsUnit {
-                get {
-                    return Enemy != null;
-                }
-            }
         }
     }
 }

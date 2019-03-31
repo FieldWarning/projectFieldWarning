@@ -154,7 +154,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     {
         foreach (var unit in Units) {
             var weapons = unit.GetComponents<WeaponComponent>();
-
+            
             foreach (var weapon in weapons)
                 weapon.SetTarget(position);
         }
