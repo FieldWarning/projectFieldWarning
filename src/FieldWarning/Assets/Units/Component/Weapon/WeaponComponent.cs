@@ -52,6 +52,7 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         [SerializeField]
         private int _turretPriority;
+        [SerializeField]
         private Transform _shotEmitter;
         // Where the shell spawns:
         [SerializeField]
