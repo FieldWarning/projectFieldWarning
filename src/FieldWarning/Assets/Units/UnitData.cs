@@ -12,8 +12,9 @@
  */
 
 using System.Collections.Generic;
-using PFW.Weapons;
 using UnityEngine;
+
+using PFW.Units.Component.Weapon;
 
 public class UnitData
 {

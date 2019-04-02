@@ -11,7 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-namespace PFW.Weapons
+namespace PFW.Units.Component.Weapon
 {
     //base class that is used for weapon intialization in the unit 
     //unit behavior class

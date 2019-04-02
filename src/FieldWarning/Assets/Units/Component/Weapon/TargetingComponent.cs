@@ -14,8 +14,6 @@
 using AssemblyCSharp;
 using UnityEngine;
 
-using PFW.Weapons;
-
 namespace PFW.Units.Component.Weapon
 {
     public class TargetingComponent : MonoBehaviour
@@ -40,6 +38,8 @@ namespace PFW.Units.Component.Weapon
 
             _turretComponent.SetTarget(_target, _turretPriority);
         }
+
+        private IWeapon _weapon { get; set; }
 
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
@@ -75,9 +75,33 @@ namespace PFW.Units.Component.Weapon
             enabled = false;
         }
 
+        /// <summary>
+        /// Initialization order: Awake() when a gameobject is created, 
+        /// WakeUp() enables the object, Start() runs on an enabled object.
+        /// </summary>
+        public void WakeUp()
+        {
+            Data = Unit.Data.weaponData[_dataIndex];
+            ReloadTimeLeft = Data.ReloadTime;
+            enabled = true;
+        }
+
         private void Start()
         {
             Source = GetComponent<AudioSource>();
+
+            // TODO remove:
+            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
+                _weapon = new Cannon(
+                        Data, Source, _shotEffect, _shotSound, _shotVolume);
+            else if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
+                _weapon = new Howitzer(
+                        Data,
+                        Source,
+                        _shotEffect,
+                        _shotSound,
+                        _shotStarterPosition,
+                        _shotVolume);
         }
 
         private void StopMovingIfInRangeOfTarget()
@@ -93,72 +117,16 @@ namespace PFW.Units.Component.Weapon
         private void Update()
         {
             StopMovingIfInRangeOfTarget();
-            
+
             if (_target != null) {
 
                 MaybeDropOutOfRangeTarget();
+                bool targetInRange = !_movingTowardsTarget;
 
-                if (_turretComponent.IsFacingTarget && !_movingTowardsTarget)
-                    TryFireWeapon(_target);
+                if (_turretComponent.IsFacingTarget && targetInRange)
+                    _weapon.TryShoot(_target, Time.deltaTime);
+                //TryFireWeapon(_target);
             }
-        }
-
-        public void WakeUp()
-        {
-            Data = Unit.Data.weaponData[_dataIndex];
-            ReloadTimeLeft = Data.ReloadTime;
-            enabled = true;
-        }
-
-        private bool FireWeapon(TargetTuple target)
-        {
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-
-                // sound
-                Source.PlayOneShot(_shotSound, _shotVolume);
-                // particle
-                _shotEffect.Play();
-
-                if (target.IsUnit) {
-                    System.Random rnd = new System.Random();
-                    int roll = rnd.Next(1, 100);
-
-                    // HIT
-                    if (roll < Data.Accuracy) {
-                        target.Enemy.GetComponent<UnitBehaviour>().HandleHit(Data.Damage);
-                        return true;
-                    }
-                } else {
-                    // ensure we only fire pos once
-                    this._target = null;
-                }
-
-                // MISS
-                return false;
-            }
-
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-                //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
-
-                GameObject shell = Resources.Load<GameObject>("shell");
-                GameObject shell_new = Instantiate(shell, _shotStarterPosition.position, _shotStarterPosition.transform.rotation);
-                shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
-
-                return true;
-            }
-
-            return false;
-        }
-
-
-        private bool TryFireWeapon(TargetTuple target)
-        {
-            ReloadTimeLeft -= Time.deltaTime;
-            if (ReloadTimeLeft > 0)
-                return false;
-
-            ReloadTimeLeft = Data.ReloadTime;
-            return FireWeapon(target);
         }
 
         public GameObject FindClosestEnemy()
