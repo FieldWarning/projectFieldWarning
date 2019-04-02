@@ -24,8 +24,7 @@ namespace PFW.Weapons
         public int ShotBurst; ///used to describe if the weapon fires single shell or in burst
 		public float Accuracy;
 
-        public WeaponData(float fireRange = 4000, float damage = 5, float reloadTime = 10, int shortBurst = 1, float accuracy = 40,
-            float arcHorizontal = 180, float arcUp = 40, float arcDown = 20, float rotationRate = 40f)
+        public WeaponData(float fireRange = 4000, float damage = 5, float reloadTime = 10, int shortBurst = 1, float accuracy = 40)
         //base constructor with default values
         {
             FireRange = fireRange;

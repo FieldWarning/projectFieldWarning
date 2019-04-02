@@ -153,10 +153,10 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public void SendFirePosOrder(Vector3 position)
     {
         foreach (var unit in Units) {
-            var weapons = unit.GetComponents<WeaponComponent>();
+            TargetingComponent[] targeters = unit.GetComponents<TargetingComponent>();
             
-            foreach (var weapon in weapons)
-                weapon.SetTarget(position);
+            foreach (var targeter in targeters)
+                targeter.SetTarget(position);
         }
         PlayAttackCommandVoiceline();
     }

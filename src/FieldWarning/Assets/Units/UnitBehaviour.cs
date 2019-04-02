@@ -249,8 +249,8 @@ public abstract class UnitBehaviour : SelectableBehavior
     {
         enabled = true;
         SetVisible(true);
-        foreach (WeaponComponent weapon in gameObject.GetComponents<WeaponComponent>())
-            weapon.WakeUp();
+        foreach (TargetingComponent targeter in gameObject.GetComponents<TargetingComponent>())
+            targeter.WakeUp();
     }
 
     public abstract bool OrdersComplete();

@@ -18,7 +18,7 @@ using PFW.Weapons;
 
 namespace PFW.Units.Component.Weapon
 {
-    public class WeaponComponent : MonoBehaviour
+    public class TargetingComponent : MonoBehaviour
     {
         public WeaponData Data { get; private set; }
         public UnitBehaviour Unit { get; private set; }
@@ -112,7 +112,6 @@ namespace PFW.Units.Component.Weapon
 
         private bool FireWeapon(TargetTuple target)
         {
-
             if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
 
                 // sound
