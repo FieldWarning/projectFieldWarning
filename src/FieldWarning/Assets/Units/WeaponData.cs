@@ -23,8 +23,6 @@ namespace PFW.Weapons
         public float ReloadTime;
         public int ShotBurst; ///used to describe if the weapon fires single shell or in burst
 		public float Accuracy;
-        public float ArcHorizontal, ArcUp, ArcDown;
-        public float RotationRate;
 
         public WeaponData(float fireRange = 4000, float damage = 5, float reloadTime = 10, int shortBurst = 1, float accuracy = 40,
             float arcHorizontal = 180, float arcUp = 40, float arcDown = 20, float rotationRate = 40f)
@@ -35,10 +33,6 @@ namespace PFW.Weapons
             ReloadTime = reloadTime;
             ShotBurst = shortBurst;
             Accuracy = accuracy;
-            ArcHorizontal = arcHorizontal;
-            ArcUp = arcUp;
-            ArcDown = arcDown;
-            RotationRate = rotationRate;
         }
     }
 }

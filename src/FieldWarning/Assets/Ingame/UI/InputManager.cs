@@ -82,7 +82,7 @@ namespace PFW.Ingame.UI
             _rightClickManager = new ClickManager(1, MoveGhostsToMouse, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
         }
 
-        void Update()
+        private void Update()
         {
             _selectionManager.Update(CurMouseMode);
 
@@ -360,15 +360,13 @@ namespace PFW.Ingame.UI
         private void EnterFastMoveMode()
         {
             CurMouseMode = MouseMode.fastMove;
-            Vector2 hotspot = new Vector2(0, 0);
-            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+            Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
         }
 
         private void EnterReverseMoveMode()
         {
             CurMouseMode = MouseMode.reverseMove;
-            Vector2 hotspot = new Vector2(0, 0);
-            Cursor.SetCursor(_primedReticle, hotspot, CursorMode.Auto);
+            Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)

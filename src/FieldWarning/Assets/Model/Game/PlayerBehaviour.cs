@@ -30,7 +30,9 @@ namespace PFW.Model.Game
          * Returns the money rounded to a multiple of the income tick.
          */ 
         public float Money {
-            get { return Mathf.Floor(Data.Money / Data.IncomeTick) * Data.IncomeTick; }
+            get {
+                return Mathf.Floor(Data.Money / Data.IncomeTick) * Data.IncomeTick;
+            }
         }
 
         public void Update()
