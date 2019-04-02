@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 using PFW.Units;
 using PFW.Units.Component.Weapon;
@@ -73,6 +74,14 @@ public abstract class UnitBehaviour : SelectableBehavior
         tag = UNIT_TAG;
 
         Platoon.Owner.Session.RegisterUnitBirth(this);
+    }
+
+    protected void WakeUp()
+    {
+        enabled = true;
+        SetVisible(true);
+        foreach (TargetingComponent targeter in gameObject.GetComponents<TargetingComponent>())
+            targeter.WakeUp();
     }
 
     public virtual void Update()
@@ -243,15 +252,6 @@ public abstract class UnitBehaviour : SelectableBehavior
     }
 
     public abstract void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true);
-
-
-    protected void WakeUp()
-    {
-        enabled = true;
-        SetVisible(true);
-        foreach (TargetingComponent targeter in gameObject.GetComponents<TargetingComponent>())
-            targeter.WakeUp();
-    }
 
     public abstract bool OrdersComplete();
 

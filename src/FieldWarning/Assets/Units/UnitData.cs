@@ -27,7 +27,6 @@ public class UnitData
     public float maxLateralAccel = 15f * TerrainConstants.MAP_SCALE;
     public float suspension = 0.01f / TerrainConstants.MAP_SCALE;
     public float maxHealth = 10f;
-    public List<WeaponData> weaponData;
     public float length = 12f * TerrainConstants.MAP_SCALE; // length and width are used for pivoting on terrain, and to define radius
     public float width = 7f * TerrainConstants.MAP_SCALE;
     public MobilityType mobility;
@@ -40,7 +39,6 @@ public class UnitData
 
     public UnitData()
     {
-        weaponData = new List<WeaponData>();
         mobility = MobilityType.MobilityTypes[0];
 
         radius = Mathf.Sqrt(length * width) / 2;
@@ -58,7 +56,6 @@ public class UnitData
         //d.movementSpeed = 6f;
         //d.maxRotationSpeed = 50;
         //d.maxHealth = 10f;
-        d.weaponData.Add(new WeaponData());
         return d;
     }
 
@@ -67,8 +64,6 @@ public class UnitData
         var d = new UnitData();
         //d.movementSpeed = 6f;
         //d.maxRotationSpeed = 50;
-        d.weaponData.Add(new WeaponData(200, 2, 8, 1, 30)); //will use tanks for the damage tests
-        d.weaponData.Add(new WeaponData(20, 0, 1.5f, 1, 40)); // minigun
         return d;
     }
 

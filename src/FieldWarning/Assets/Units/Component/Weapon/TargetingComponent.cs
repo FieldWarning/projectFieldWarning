@@ -21,16 +21,14 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class TargetingComponent : MonoBehaviour
     {
-        public WeaponData Data { get; private set; }
         public UnitBehaviour Unit { get; private set; }
-        public AudioSource Source { get; private set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
         public void SetTarget(Vector3 position)
         {
             var distance = Vector3.Distance(Unit.transform.position, position);
 
-            if (distance < Data.FireRange) {
+            if (distance < _data.FireRange) {
                 _target = new TargetTuple(position);
             } else {
                 _target = new TargetTuple(position);
@@ -45,9 +43,14 @@ namespace PFW.Units.Component.Weapon
 
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
-        private TurretComponent _turretComponent;
+        private WeaponData _data;
+
+        // TODO the weapon class should create its own audio source:
         [SerializeField]
-        private int _dataIndex;
+        private AudioSource _audioSource;
+
+        [SerializeField]
+        private TurretComponent _turretComponent;
         /// <summary>
         /// When a unit has multiple weapons that share a turret,
         /// the turret will prefer to rotate for the higher-priority weapon.
@@ -81,22 +84,19 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         public void WakeUp()
         {
-            Data = Unit.Data.weaponData[_dataIndex];
             enabled = true;
         }
 
         private void Start()
         {
-            Source = GetComponent<AudioSource>();
-
             // TODO remove:
             if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
                 _weapon = new Cannon(
-                        Data, Source, _shotEffect, _shotSound, _shotVolume);
+                        _data, _audioSource, _shotEffect, _shotSound, _shotVolume);
             else if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
                 _weapon = new Howitzer(
-                        Data,
-                        Source,
+                        _data,
+                        _audioSource,
                         _shotEffect,
                         _shotSound,
                         _shotStarterPosition,
@@ -106,7 +106,7 @@ namespace PFW.Units.Component.Weapon
         private void StopMovingIfInRangeOfTarget()
         {
             if (_movingTowardsTarget) {
-                if (Vector3.Distance(Unit.transform.position, _target.Position) < Data.FireRange) {
+                if (Vector3.Distance(Unit.transform.position, _target.Position) < _data.FireRange) {
                     _movingTowardsTarget = false;
                     Unit.SetUnitDestination(Unit.transform.position);
                 }
@@ -144,7 +144,7 @@ namespace PFW.Units.Component.Weapon
 
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.transform.position);
-                if (distance < Data.FireRange) {
+                if (distance < _data.FireRange) {
                     return enemy;
                 }
             }
@@ -162,7 +162,7 @@ namespace PFW.Units.Component.Weapon
                 return;
 
             float distance = Vector3.Distance(Unit.transform.position, _target.Position);
-            if (distance > Data.FireRange)
+            if (distance > _data.FireRange)
                 _target = null;
         }
     }
