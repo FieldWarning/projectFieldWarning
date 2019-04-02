@@ -16,11 +16,13 @@ using UnityEngine;
 
 namespace PFW.Units.Component.Weapon
 {
+    /// <summary>
+    /// Manages a single weapon by picking targets for it.
+    /// </summary>
     public class TargetingComponent : MonoBehaviour
     {
         public WeaponData Data { get; private set; }
         public UnitBehaviour Unit { get; private set; }
-        public float ReloadTimeLeft { get; private set; }
         public AudioSource Source { get; private set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
@@ -52,8 +54,6 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         [SerializeField]
         private int _turretPriority;
-        [SerializeField]
-        private Transform _shotEmitter;
         // Where the shell spawns:
         [SerializeField]
         private Transform _shotStarterPosition;
@@ -82,7 +82,6 @@ namespace PFW.Units.Component.Weapon
         public void WakeUp()
         {
             Data = Unit.Data.weaponData[_dataIndex];
-            ReloadTimeLeft = Data.ReloadTime;
             enabled = true;
         }
 

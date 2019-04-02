@@ -30,7 +30,7 @@ namespace PFW.Units.Component.Weapon
         // TODO Should aim to make actual objects fire and not effects:
         private ParticleSystem _shotEffect;
         private AudioClip _shotSound;
-        private float _shotVolume = 1.0F;
+        private float _shotVolume;
 
         public Cannon(
             WeaponData data, 
