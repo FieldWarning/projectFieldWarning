@@ -69,18 +69,6 @@ namespace PFW.Units.Component.Weapon
 
             // MISS
             return false;
-
-            //if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-            //    //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
-
-            //    GameObject shell = Resources.Load<GameObject>("shell");
-            //    GameObject shell_new = Instantiate(shell, _shotStarterPosition.position, _shotStarterPosition.transform.rotation);
-            //    shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
-
-            //    return true;
-            //}
-
-            return false;
         }
 
         public bool TryShoot(TargetTuple target, float deltaTime)
