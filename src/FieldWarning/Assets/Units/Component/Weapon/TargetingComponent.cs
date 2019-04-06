@@ -14,23 +14,21 @@
 using AssemblyCSharp;
 using UnityEngine;
 
-using PFW.Weapons;
-
 namespace PFW.Units.Component.Weapon
 {
-    public class WeaponComponent : MonoBehaviour
+    /// <summary>
+    /// Manages a single weapon by picking targets for it.
+    /// </summary>
+    public class TargetingComponent : MonoBehaviour
     {
-        public WeaponData Data { get; private set; }
         public UnitBehaviour Unit { get; private set; }
-        public float ReloadTimeLeft { get; private set; }
-        public AudioSource Source { get; private set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
         public void SetTarget(Vector3 position)
         {
             var distance = Vector3.Distance(Unit.transform.position, position);
 
-            if (distance < Data.FireRange) {
+            if (distance < _data.FireRange) {
                 _target = new TargetTuple(position);
             } else {
                 _target = new TargetTuple(position);
@@ -41,19 +39,24 @@ namespace PFW.Units.Component.Weapon
             _turretComponent.SetTarget(_target, _turretPriority);
         }
 
+        private IWeapon _weapon { get; set; }
+
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
-        private TurretComponent _turretComponent;
+        private WeaponData _data;
+
+        // TODO the weapon class should create its own audio source:
         [SerializeField]
-        private int _dataIndex;
+        private AudioSource _audioSource;
+
+        [SerializeField]
+        private TurretComponent _turretComponent;
         /// <summary>
         /// When a unit has multiple weapons that share a turret,
         /// the turret will prefer to rotate for the higher-priority weapon.
         /// </summary>
         [SerializeField]
         private int _turretPriority;
-        [SerializeField]
-        private Transform _shotEmitter;
         // Where the shell spawns:
         [SerializeField]
         private Transform _shotStarterPosition;
@@ -75,15 +78,35 @@ namespace PFW.Units.Component.Weapon
             enabled = false;
         }
 
+        /// <summary>
+        /// Initialization order: Awake() when a gameobject is created, 
+        /// WakeUp() enables the object, Start() runs on an enabled object.
+        /// </summary>
+        public void WakeUp()
+        {
+            enabled = true;
+        }
+
         private void Start()
         {
-            Source = GetComponent<AudioSource>();
+            // TODO remove:
+            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
+                _weapon = new Cannon(
+                        _data, _audioSource, _shotEffect, _shotSound, _shotVolume);
+            else if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
+                _weapon = new Howitzer(
+                        _data,
+                        _audioSource,
+                        _shotEffect,
+                        _shotSound,
+                        _shotStarterPosition,
+                        _shotVolume);
         }
 
         private void StopMovingIfInRangeOfTarget()
         {
             if (_movingTowardsTarget) {
-                if (Vector3.Distance(Unit.transform.position, _target.Position) < Data.FireRange) {
+                if (Vector3.Distance(Unit.transform.position, _target.Position) < _data.FireRange) {
                     _movingTowardsTarget = false;
                     Unit.SetUnitDestination(Unit.transform.position);
                 }
@@ -93,73 +116,16 @@ namespace PFW.Units.Component.Weapon
         private void Update()
         {
             StopMovingIfInRangeOfTarget();
-            
+
             if (_target != null) {
 
                 MaybeDropOutOfRangeTarget();
+                bool targetInRange = !_movingTowardsTarget;
 
-                if (_turretComponent.IsFacingTarget && !_movingTowardsTarget)
-                    TryFireWeapon(_target);
+                if (_turretComponent.IsFacingTarget && targetInRange)
+                    _weapon.TryShoot(_target, Time.deltaTime);
+                //TryFireWeapon(_target);
             }
-        }
-
-        public void WakeUp()
-        {
-            Data = Unit.Data.weaponData[_dataIndex];
-            ReloadTimeLeft = Data.ReloadTime;
-            enabled = true;
-        }
-
-        private bool FireWeapon(TargetTuple target)
-        {
-
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank) {
-
-                // sound
-                Source.PlayOneShot(_shotSound, _shotVolume);
-                // particle
-                _shotEffect.Play();
-
-                if (target.IsUnit) {
-                    System.Random rnd = new System.Random();
-                    int roll = rnd.Next(1, 100);
-
-                    // HIT
-                    if (roll < Data.Accuracy) {
-                        target.Enemy.GetComponent<UnitBehaviour>().HandleHit(Data.Damage);
-                        return true;
-                    }
-                } else {
-                    // ensure we only fire pos once
-                    this._target = null;
-                }
-
-                // MISS
-                return false;
-            }
-
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty) {
-                //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
-
-                GameObject shell = Resources.Load<GameObject>("shell");
-                GameObject shell_new = Instantiate(shell, _shotStarterPosition.position, _shotStarterPosition.transform.rotation);
-                shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
-
-                return true;
-            }
-
-            return false;
-        }
-
-
-        private bool TryFireWeapon(TargetTuple target)
-        {
-            ReloadTimeLeft -= Time.deltaTime;
-            if (ReloadTimeLeft > 0)
-                return false;
-
-            ReloadTimeLeft = Data.ReloadTime;
-            return FireWeapon(target);
         }
 
         public GameObject FindClosestEnemy()
@@ -178,7 +144,7 @@ namespace PFW.Units.Component.Weapon
 
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.transform.position);
-                if (distance < Data.FireRange) {
+                if (distance < _data.FireRange) {
                     return enemy;
                 }
             }
@@ -196,7 +162,7 @@ namespace PFW.Units.Component.Weapon
                 return;
 
             float distance = Vector3.Distance(Unit.transform.position, _target.Position);
-            if (distance > Data.FireRange)
+            if (distance > _data.FireRange)
                 _target = null;
         }
     }

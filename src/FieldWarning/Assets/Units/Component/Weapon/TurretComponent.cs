@@ -39,7 +39,7 @@ namespace PFW.Units.Component.Weapon
 
         [SerializeField]
         private TurretComponent _parentTurret;
-
+        
         [SerializeField]
         public float ArcHorizontal = 180, ArcUp = 40, ArcDown = 20, RotationRate = 40f;
 

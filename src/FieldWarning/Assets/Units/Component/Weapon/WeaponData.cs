@@ -11,27 +11,22 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-namespace PFW.Weapons
+namespace PFW.Units.Component.Weapon
 {
-    //base class that is used for weapon intialization in the unit 
-    //unit behavior class
-    //should be made into a library later on
+    [System.Serializable]
     public class WeaponData
     {
-        public float FireRange;
-        public float Damage; //will make this its own class later on so it can have HE,AP,HEAT etc...
-        public float ReloadTime;
-        public int ShotBurst; ///used to describe if the weapon fires single shell or in burst
-		public float Accuracy;
+        public float FireRange = 4000;
+        public float Damage = 5;
+        public float ReloadTime = 10;
+		public float Accuracy = 40;
 
-        public WeaponData(float fireRange = 4000, float damage = 5, float reloadTime = 10, int shortBurst = 1, float accuracy = 40,
-            float arcHorizontal = 180, float arcUp = 40, float arcDown = 20, float rotationRate = 40f)
-        //base constructor with default values
+        public WeaponData(
+            float fireRange, float damage, float reloadTime, float accuracy)
         {
             FireRange = fireRange;
             Damage = damage;
             ReloadTime = reloadTime;
-            ShotBurst = shortBurst;
             Accuracy = accuracy;
         }
     }
