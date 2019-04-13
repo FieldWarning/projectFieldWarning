@@ -261,7 +261,7 @@ public class VehicleBehaviour : UnitBehaviour
         return Mathf.Abs(_linVelocity) > 0f || Mathf.Abs(_rotVelocity) > 0f;
     }
 
-    public override bool OrdersComplete()
+    public override bool AreOrdersComplete()
     {
         return !Pathfinder.HasDestination();
     }

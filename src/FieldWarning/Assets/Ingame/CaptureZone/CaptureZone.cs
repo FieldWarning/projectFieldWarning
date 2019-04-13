@@ -45,7 +45,7 @@ namespace PFW.Ingame.UI
             PlayerData newOwner = null;
             for (int i = 0; i < _vehicles.Count; i++) {
                 VehicleBehaviour vehicle = _vehicles.ToArray()[i];
-                if (vehicle.OrdersComplete()) {
+                if (vehicle.AreOrdersComplete()) {
                     newOwner = vehicle.Platoon.Owner;
                     //Names are USSR and NATO
                     if (newOwner.Team.Name == "USSR") {

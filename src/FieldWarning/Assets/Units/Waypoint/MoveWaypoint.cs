@@ -36,7 +36,7 @@ public class MoveWaypoint : Waypoint
 
     public override bool OrderComplete()
     {
-        return platoon.Units.All(x => x.OrdersComplete());
+        return platoon.Units.All(x => x.AreOrdersComplete());
     }
 
     public override bool Interrupt()

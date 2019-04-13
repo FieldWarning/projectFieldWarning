@@ -43,7 +43,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     {
         var pos = new Vector3();
 
-        Units.ForEach(x => pos += x.transform.position);
+        Units.ForEach(x => pos += x.Transform.position);
         transform.position = pos / Units.Count;
         Modules.ForEach(x => x.Update());
 

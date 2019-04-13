@@ -33,9 +33,6 @@ namespace PFW.Units
         private HealthComponent _healthComponent;
 
         #region Potential future components
-        //private IAudioComponent _voiceComponent;
-        //private IAudioComponent _soundComponent;
-        //private IHealthComponent _healthComponent;
         //private IReconComponent _reconComponent;
         //private IStealthComponent _stealthComponent;
         //private IPlatoonComponent _platoonComponent; // Maybe contains the ILabelComponent and syncs with the platoon components of other units such that only one is visible if they are grouped
@@ -52,13 +49,17 @@ namespace PFW.Units
         // TODO remove
         private UnitBehaviour _unitBehaviour;
         public PlatoonBehaviour Platoon => _unitBehaviour.Platoon;
-        public Transform transform => _unitBehaviour.transform;
+        public Transform Transform => _unitBehaviour.transform;
         public GameObject GameObject => _unitBehaviour.gameObject;
 
 
         // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
         public VisionComponent VisionComponent;
 
+        private VoiceComponent _voiceComponent;
+        // TODO pass from some factory:
+        private static GameObject VOICE_PREFAB =
+            Resources.Load<GameObject>("VoiceComponent_US");
 
         public UnitDispatcher(UnitBehaviour unitBehaviour)
         {
@@ -69,6 +70,8 @@ namespace PFW.Units
             _targetingComponents = unitBehaviour.GetComponents<TargetingComponent>();
             _healthComponent = new HealthComponent(
                 _unitBehaviour.Data.maxHealth, Platoon, GameObject, this);
+            _voiceComponent = GameObject.Instantiate(
+                VOICE_PREFAB, Transform).GetComponent<VoiceComponent>();
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -82,12 +85,14 @@ namespace PFW.Units
             _unitBehaviour.SetSelected(selected, justPreviewing);
         }
 
+        #region PlayVoicelines
         public void PlayAttackCommandVoiceline() =>
-            _unitBehaviour.PlayAttackCommandVoiceline();
+            _voiceComponent.PlayAttackCommandVoiceline();
         public void PlayMoveCommandVoiceline() =>
-            _unitBehaviour.PlayMoveCommandVoiceline();
+            _voiceComponent.PlayMoveCommandVoiceline();
         public void PlaySelectionVoiceline() =>
-            _unitBehaviour.PlaySelectionVoiceline();
+            _voiceComponent.PlaySelectionVoiceline(true);
+        #endregion
 
         public T GetComponent<T>() => _unitBehaviour.GetComponent<T>();
 
@@ -99,7 +104,7 @@ namespace PFW.Units
         public void SetOriginalOrientation(Vector3 position, float heading) =>
             _unitBehaviour.SetOriginalOrientation(position, heading);
 
-        public bool OrdersComplete() => _unitBehaviour.OrdersComplete();
+        public bool AreOrdersComplete() => _unitBehaviour.AreOrdersComplete();
         public void SetDestination(MoveWaypoint waypoint) =>
             _unitBehaviour.SetUnitDestination(waypoint);
 

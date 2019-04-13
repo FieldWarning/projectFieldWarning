@@ -28,8 +28,6 @@ public abstract class UnitBehaviour : SelectableBehavior
 
     [SerializeField]
     private GameObject _selectionCircle;
-    [SerializeField]
-    private VoiceComponent _voiceComponent;
 
     // These are set by the subclass in DoMovement()
     protected Vector3 _position;
@@ -218,14 +216,9 @@ public abstract class UnitBehaviour : SelectableBehavior
     }
 
 
-    public float GetScore(Vector3 matchee)
-    {
-        return (matchee - transform.position).magnitude;
-    }
-
     public abstract void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true);
 
-    public abstract bool OrdersComplete();
+    public abstract bool AreOrdersComplete();
 
     // Returns the unit's speed on the current terrain
     public float GetTerrainSpeedMultiplier()
@@ -251,29 +244,12 @@ public abstract class UnitBehaviour : SelectableBehavior
     }
 
     // Called when a unit enters or leaves the player's selection.
-    // justPreviewing - true when the unit should be shaded as if selected, but the
-    //                  actual selected set has not been changed yet
+    // justPreviewing - true when the unit should be shaded as if selected,
+    // but the actual selected set has not been changed yet
     public void SetSelected(bool selected, bool justPreviewing)
     {
         _selectionCircle.SetActive(selected);
     }
-
-#region PlayVoicelines
-    public void PlaySelectionVoiceline()
-    {
-        _voiceComponent.PlayUnitSelectionVoiceline(true);
-    }
-
-    public void PlayMoveCommandVoiceline()
-    {
-        _voiceComponent.PlayMoveCommandVoiceline();
-    }
-
-    public void PlayAttackCommandVoiceline()
-    {
-        _voiceComponent.PlayAttackCommandVoiceline();
-    }
-#endregion
 }
 
 public enum MoveCommandType

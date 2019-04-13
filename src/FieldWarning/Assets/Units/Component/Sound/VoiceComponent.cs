@@ -24,7 +24,7 @@ namespace PFW.Units
         [SerializeField]
         private AudioSource _audioSource;
 
-        public void PlayUnitSelectionVoiceline(bool selected)
+        public void PlaySelectionVoiceline(bool selected)
         {
             if (selected) {
                 if (_selectAudio.Count != 0) {

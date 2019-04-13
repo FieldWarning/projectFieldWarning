@@ -293,7 +293,7 @@ public class InfantryBehaviour : UnitBehaviour {
         });
 
     }
-    public override bool OrdersComplete()
+    public override bool AreOrdersComplete()
     {
         return ordersDone;
     }
