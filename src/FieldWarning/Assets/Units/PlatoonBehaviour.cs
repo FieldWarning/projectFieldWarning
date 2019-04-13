@@ -161,7 +161,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public void Destroy()
     {
         foreach (var p in Units)
-            Destroy(p.gameObject);
+            Destroy(p.GameObject);
 
         Owner.Session.RegisterPlatoonDeath(this);
         Destroy(gameObject);

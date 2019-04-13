@@ -11,8 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PFW.Units.Component.Weapon
@@ -59,7 +57,7 @@ namespace PFW.Units.Component.Weapon
 
                 // HIT
                 if (roll < _data.Accuracy) {
-                    target.Enemy.GetComponent<UnitBehaviour>().HandleHit(_data.Damage);
+                    target.Enemy.GetComponent<UnitBehaviour>().Dispatcher.HandleHit(_data.Damage);
                     return true;
                 }
             } else {

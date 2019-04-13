@@ -14,7 +14,6 @@
 using UnityEngine;
 using PFW.Units;
 using PFW.Units.Component.Weapon;
-using PFW.Units.Component.Movement;
 
 public abstract class UnitBehaviour : SelectableBehavior
 {
@@ -26,7 +25,7 @@ public abstract class UnitBehaviour : SelectableBehavior
     public UnitData Data = UnitData.GenericUnit();
     public PlatoonBehaviour Platoon { get; private set; }
     public Pathfinder Pathfinder { get; private set; }
-    
+
     [SerializeField]
     private GameObject _selectionCircle;
     [SerializeField]
@@ -57,7 +56,6 @@ public abstract class UnitBehaviour : SelectableBehavior
     protected float _finalHeading;
 
     private Terrain _terrain;
-    private float _health;
 
     public UnitDispatcher Dispatcher;
 
@@ -70,7 +68,6 @@ public abstract class UnitBehaviour : SelectableBehavior
 
     public virtual void Start()
     {
-        _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
         tag = UNIT_TAG;
 
         Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
@@ -120,32 +117,12 @@ public abstract class UnitBehaviour : SelectableBehavior
         _right = new Vector3(_forward.z, 0f, -_forward.x);
     }
 
-    public void HandleHit(float receivedDamage)
-    {
-        if (_health <= 0)
-            return;
-
-        _health -= receivedDamage;
-        if (_health <= 0) 
-            Destroy();
-    }
-
     public abstract void UpdateMapOrientation();
 
     public void SetPlatoon(PlatoonBehaviour p)
     {
         Platoon = p;
         Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathData);
-    }
-
-    public float GetHealth()
-    {
-        return _health;
-    }
-
-    public void SetHealth(float health)
-    {
-        _health = health;
     }
 
     public override PlatoonBehaviour GetPlatoon()
@@ -190,7 +167,7 @@ public abstract class UnitBehaviour : SelectableBehavior
     public void SetFinalOrientation(Vector3 d, float heading)
     {
         if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever)
-            SetUnitFinalHeading(heading);        
+            SetUnitFinalHeading(heading);
     }
 
     // Updates the unit's final heading so that it faces the specified location
@@ -201,12 +178,12 @@ public abstract class UnitBehaviour : SelectableBehavior
             diff = v - Pathfinder.GetDestination();
         else
             diff = v - transform.position;
-        
-    
+
+
         SetUnitFinalHeading(diff.getRadianAngle());
     }
 
-    // Updates the unit's final heading to the specified value 
+    // Updates the unit's final heading to the specified value
     public virtual void SetUnitFinalHeading(float heading)
     {
         _finalHeading = heading;
@@ -231,7 +208,7 @@ public abstract class UnitBehaviour : SelectableBehavior
 
         if (vis)
             SetLayer(LayerMask.NameToLayer("Selectable"));
-        else 
+        else
             SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
     }
 
@@ -240,7 +217,7 @@ public abstract class UnitBehaviour : SelectableBehavior
         return (Pathfinder.GetDestination() - transform.position).getDegreeAngle();
     }
 
-    
+
     public float GetScore(Vector3 matchee)
     {
         return (matchee - transform.position).magnitude;
@@ -261,7 +238,7 @@ public abstract class UnitBehaviour : SelectableBehavior
     public void Destroy()
     {
         Platoon.Owner.Session.RegisterUnitDeath(Dispatcher);
-        
+
         Platoon.Units.Remove(Dispatcher);
         Destroy(this.gameObject);
 

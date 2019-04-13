@@ -14,6 +14,7 @@
 using UnityEngine;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
+using PFW.Units.Component.Health;
 
 namespace PFW.Units
 {
@@ -28,6 +29,8 @@ namespace PFW.Units
 
         // Contains weapon components which contain audio components etc:
         private TargetingComponent[] _targetingComponents;
+
+        private HealthComponent _healthComponent;
 
         #region Potential future components
         //private IAudioComponent _voiceComponent;
@@ -50,7 +53,7 @@ namespace PFW.Units
         private UnitBehaviour _unitBehaviour;
         public PlatoonBehaviour Platoon => _unitBehaviour.Platoon;
         public Transform transform => _unitBehaviour.transform;
-        public GameObject gameObject => _unitBehaviour.gameObject;
+        public GameObject GameObject => _unitBehaviour.gameObject;
 
 
         // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
@@ -61,9 +64,11 @@ namespace PFW.Units
         {
             _unitBehaviour = unitBehaviour;
             _unitBehaviour.Dispatcher = this;
-            VisionComponent = new VisionComponent(gameObject, _unitBehaviour);
+            VisionComponent = new VisionComponent(GameObject, _unitBehaviour);
 
             _targetingComponents = unitBehaviour.GetComponents<TargetingComponent>();
+            _healthComponent = new HealthComponent(
+                _unitBehaviour.Data.maxHealth, Platoon, GameObject, this);
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -86,8 +91,10 @@ namespace PFW.Units
 
         public T GetComponent<T>() => _unitBehaviour.GetComponent<T>();
 
-        public float GetHealth() => _unitBehaviour.GetHealth();
+        public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _unitBehaviour.Data.maxHealth;
+        public void HandleHit(float receivedDamage) =>
+            _healthComponent.HandleHit(receivedDamage);
 
         public void SetOriginalOrientation(Vector3 position, float heading) =>
             _unitBehaviour.SetOriginalOrientation(position, heading);
