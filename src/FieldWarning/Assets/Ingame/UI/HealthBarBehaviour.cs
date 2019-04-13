@@ -1,7 +1,4 @@
-﻿
-
-using PFW.Units;
-/**
+﻿/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -15,6 +12,8 @@ using PFW.Units;
 */
 using UnityEngine;
 
+using PFW.Units;
+
 namespace PFW.Ingame.UI
 {
     public class HealthBarBehaviour : SelectableBehavior
@@ -22,15 +21,17 @@ namespace PFW.Ingame.UI
         private UnitDispatcher _unit;
         private GameObject _bar;
 
-        void Awake()
+        private void Awake()
         {
             _bar = transform.GetChild(0).gameObject;
             _bar.AddComponent<SelectableBehavior>();
         }
 
-        void Start() { }
-        
-        void Update()
+        private void Start()
+        {
+        }
+
+        private void Update()
         {
             SetHealth(_unit.GetHealth() / _unit.MaxHealth);
         }
@@ -41,7 +42,7 @@ namespace PFW.Ingame.UI
             SetHealth(_unit.MaxHealth);
         }
 
-        void SetHealth(float h)
+        private void SetHealth(float h)
         {
             float health = Mathf.Clamp01(h);
 
