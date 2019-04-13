@@ -9,5 +9,6 @@ namespace PFW.Ingame.UI
         public static KeyCode FirePos = KeyCode.T;
         public static KeyCode ReverseMove = KeyCode.G;
         public static KeyCode FastMove = KeyCode.V;
+        public static KeyCode Split = KeyCode.K;
     }
 }

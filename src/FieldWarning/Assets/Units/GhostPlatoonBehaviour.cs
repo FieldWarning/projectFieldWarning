@@ -72,6 +72,17 @@ public class GhostPlatoonBehaviour : MonoBehaviour
             AddSingleUnit();
     }
 
+    public void SplitInitialize(UnitType t, PlayerData owner, GameObject u)
+    {
+        _owner = owner;
+        _unitType = t;
+        transform.position = 100 * Vector3.down;
+
+        InitializeIcon();
+
+        _units.Add(u);
+    }
+
     private void AddSingleUnit()
     {
         GameObject _unitPrefab = _owner.Session.Factory.FindPrefab(_unitType);

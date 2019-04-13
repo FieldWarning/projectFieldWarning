@@ -137,6 +137,47 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Owner.Session.RegisterPlatoonBirth(this);
     }
 
+    // Call when splitting a platoon
+    public void SplitInitialize(UnitType t, PlayerData owner, UnitBehaviour u)
+    {
+        Type = t;
+        Owner = owner;
+
+        var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
+        Icon = iconInstance.GetComponent<IconBehaviour>();
+        Icon.BaseColor = Owner.Team.Color;
+
+        u.SetPlatoon(this);
+        Units.Add(u);
+
+        BuildModules(t);
+
+        Movement.SetDestination(Vector3.forward);
+
+        Icon.SetSource(Units);
+
+
+        IsInitialized = true;
+    }
+
+    // Create new platoons for all units
+    public void Split(PlayerData owner)
+    {
+        foreach (var unit in Units) {
+            var ghost = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
+            var plat = Instantiate(Resources.Load<GameObject>("Platoon"));
+
+            var pBehavior = plat.GetComponent<PlatoonBehaviour>();
+            var gBehavior = ghost.GetComponent<GhostPlatoonBehaviour>();
+
+            pBehavior.SplitInitialize(Type, owner, unit);
+
+            pBehavior.GhostPlatoon = gBehavior;
+            gBehavior.SplitInitialize(Type, owner, unit.gameObject);
+        }
+        Destroy(gameObject);
+    }
+
     // Called when a platoon enters or leaves the player's selection.
     // justPreviewing - true when the unit should be shaded as if selected, but the
     //                  actual selected set has not been changed yet
