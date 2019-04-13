@@ -15,13 +15,14 @@ using System.Collections.Generic;
 using PFW.Ingame.Prototype;
 using PFW.Ingame.UI;
 using PFW.Units;
+using PFW.Units.Component.Vision;
 using UnityEngine;
 
 namespace PFW.Model.Game
 {
     /**
      * Represents the ongoing match.
-     * 
+     *
      * Holds a lot of data that would be singleton or global, but is intentionally
      * non-static (so that we can easily clean up).
      */
@@ -30,12 +31,12 @@ namespace PFW.Model.Game
         private InputManager _inputManager;
         private VisibilityManager _visibilityManager;
 
-        public List<VisibleBehavior> AllyVisibleBehaviours {
+        public List<VisionComponent> AllyVisibleBehaviours {
             get {
                 return _visibilityManager.AllyUnits;
             }
         }
-        public List<VisibleBehavior> EnemyVisibleBehaviours {
+        public List<VisionComponent> EnemyVisibleBehaviours {
             get {
                 return _visibilityManager.EnemyUnits;
             }
@@ -46,7 +47,7 @@ namespace PFW.Model.Game
         public PlayerBehaviour LocalPlayer { get; private set; }
 
         /* TODO: I think all entities that need a global list should keep one
-         * of their own, to minimize shared state. Instead of using these 
+         * of their own, to minimize shared state. Instead of using these
          * lists, supply a unit registration call and have MatchSession call
          * that in RegisterUnitBirth() (see VisibilityManager for an example): */
         public List<Team> Teams { get; } = new List<Team>();

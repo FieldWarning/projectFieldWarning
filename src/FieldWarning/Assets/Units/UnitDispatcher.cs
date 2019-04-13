@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using PFW.Units.Component.Weapon;
+using PFW.Units.Component.Vision;
 
 namespace PFW.Units
 {
@@ -53,14 +54,14 @@ namespace PFW.Units
 
 
         // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
-        public VisibleBehavior VisibleBehavior;
+        public VisionComponent VisionComponent;
 
 
         public UnitDispatcher(UnitBehaviour unitBehaviour)
         {
             _unitBehaviour = unitBehaviour;
             _unitBehaviour.Dispatcher = this;
-            VisibleBehavior = new VisibleBehavior(gameObject, _unitBehaviour);
+            VisionComponent = new VisionComponent(gameObject, _unitBehaviour);
 
             _targetingComponents = unitBehaviour.GetComponents<TargetingComponent>();
         }
