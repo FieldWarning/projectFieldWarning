@@ -29,11 +29,11 @@ public class TransporterBehaviour : MonoBehaviour
     {
         if (target != null) {
             if (target.interactsWithTransport(true)) {
-                GetComponent<UnitBehaviour>().SetUnitDestination(transform.position);
+                GetComponent<UnitBehaviour>().SetDestination(transform.position);
             }
             //target.setRally(getRallyPoint(), transform.position);//???????
             else if (GetComponent<UnitBehaviour>().Pathfinder.HasDestination()) {
-                GetComponent<UnitBehaviour>().SetUnitDestination(target.transform.position);
+                GetComponent<UnitBehaviour>().SetDestination(target.transform.position);
             }
         }
     }

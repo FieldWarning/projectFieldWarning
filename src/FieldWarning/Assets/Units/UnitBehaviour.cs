@@ -11,10 +11,10 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections.Generic;
 using UnityEngine;
 using PFW.Units;
 using PFW.Units.Component.Weapon;
+using PFW.Units.Component.Movement;
 
 public abstract class UnitBehaviour : SelectableBehavior
 {
@@ -31,8 +31,6 @@ public abstract class UnitBehaviour : SelectableBehavior
     private GameObject _selectionCircle;
     [SerializeField]
     private VoiceComponent _voiceComponent;
-    // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
-    public VisibleBehavior VisibleBehavior;
 
     // These are set by the subclass in DoMovement()
     protected Vector3 _position;
@@ -61,6 +59,8 @@ public abstract class UnitBehaviour : SelectableBehavior
     private Terrain _terrain;
     private float _health;
 
+    public UnitDispatcher Dispatcher;
+
     public virtual void Awake()
     {
         if (_selectionCircle == null)
@@ -73,7 +73,7 @@ public abstract class UnitBehaviour : SelectableBehavior
         _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
         tag = UNIT_TAG;
 
-        Platoon.Owner.Session.RegisterUnitBirth(this);
+        Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
     }
 
     protected void WakeUp()
@@ -127,7 +127,7 @@ public abstract class UnitBehaviour : SelectableBehavior
 
         _health -= receivedDamage;
         if (_health <= 0) 
-            Destroy();        
+            Destroy();
     }
 
     public abstract void UpdateMapOrientation();
@@ -179,7 +179,7 @@ public abstract class UnitBehaviour : SelectableBehavior
     }
 
     // Sets the unit's destination location, with a default heading value
-    public void SetUnitDestination(Vector3 v)
+    public void SetDestination(Vector3 v)
     {
         //var diff = (v - transform.position);
         //SetFinalOrientation(v, diff.getRadianAngle());
@@ -227,12 +227,12 @@ public abstract class UnitBehaviour : SelectableBehavior
     {
         var renderers = GetRenderers();
         foreach (var r in renderers)
-            r.enabled = vis;        
+            r.enabled = vis;
 
         if (vis)
             SetLayer(LayerMask.NameToLayer("Selectable"));
         else 
-            SetLayer(LayerMask.NameToLayer("Ignore Raycast"));        
+            SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
     }
 
     protected float getHeading()
@@ -240,12 +240,7 @@ public abstract class UnitBehaviour : SelectableBehavior
         return (Pathfinder.GetDestination() - transform.position).getDegreeAngle();
     }
 
-
-    public void SetMatch(Vector3 match)
-    {
-        SetUnitDestination(match);
-    }
-
+    
     public float GetScore(Vector3 matchee)
     {
         return (matchee - transform.position).magnitude;
@@ -265,9 +260,9 @@ public abstract class UnitBehaviour : SelectableBehavior
 
     public void Destroy()
     {
-        Platoon.Owner.Session.RegisterUnitDeath(this);
+        Platoon.Owner.Session.RegisterUnitDeath(Dispatcher);
         
-        Platoon.Units.Remove(this);
+        Platoon.Units.Remove(Dispatcher);
         Destroy(this.gameObject);
 
         Platoon.GhostPlatoon.HandleRealUnitDestroyed();

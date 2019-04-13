@@ -10,11 +10,12 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
- 
+
 using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
+using PFW.Units;
 
 //[UpdateAfter(typeof(MovementSystem))]
 public class VisibilityManager : MonoBehaviour
@@ -62,7 +63,7 @@ public class VisibilityManager : MonoBehaviour
         //}
     }
 
-    public void RegisterUnitBirth(UnitBehaviour unit)
+    public void RegisterUnitBirth(UnitDispatcher unit)
     {
         VisibleBehavior visibleBehavior = unit.VisibleBehavior;
 
@@ -75,7 +76,7 @@ public class VisibilityManager : MonoBehaviour
         }
     }
 
-    public void RegisterUnitDeath(UnitBehaviour unit)
+    public void RegisterUnitDeath(UnitDispatcher unit)
     {
         VisibleBehavior visibleBehavior = unit.VisibleBehavior;
         if (visibleBehavior == null)

@@ -14,6 +14,7 @@
 using System.Collections.Generic;
 using PFW.Ingame.Prototype;
 using PFW.Ingame.UI;
+using PFW.Units;
 using UnityEngine;
 
 namespace PFW.Model.Game
@@ -49,7 +50,7 @@ namespace PFW.Model.Game
          * lists, supply a unit registration call and have MatchSession call
          * that in RegisterUnitBirth() (see VisibilityManager for an example): */
         public List<Team> Teams { get; } = new List<Team>();
-        public ICollection<UnitBehaviour> Units { get; } = new List<UnitBehaviour>();
+        public ICollection<UnitDispatcher> Units { get; } = new List<UnitDispatcher>();
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
         public PathfinderData PathData { get; private set; }
@@ -99,13 +100,13 @@ namespace PFW.Model.Game
             _inputManager.RegisterPlatoonDeath(platoon);
         }
 
-        public void RegisterUnitBirth(UnitBehaviour unit)
+        public void RegisterUnitBirth(UnitDispatcher unit)
         {
             Units.Add(unit);
             _visibilityManager.RegisterUnitBirth(unit);
         }
 
-        public void RegisterUnitDeath(UnitBehaviour unit)
+        public void RegisterUnitDeath(UnitDispatcher unit)
         {
             Units.Remove(unit);
             _visibilityManager.RegisterUnitDeath(unit);

@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using PFW.Units;
 
 namespace PFW.Ingame.UI
 {
@@ -33,7 +34,7 @@ namespace PFW.Ingame.UI
 
         }
 
-        public void SetSource(List<UnitBehaviour> o)
+        public void SetSource(List<UnitDispatcher> o)
         {
             float FIRST_BAR_POSITION = -0.16f;
             float TOTAL_LENGTH = 1.05f;

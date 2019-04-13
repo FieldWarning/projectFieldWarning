@@ -26,18 +26,17 @@ public class TransportableWaypoint : Waypoint
     public override void ProcessWaypoint()
     {
         for (int i = 0; i < platoon.Units.Count; i++) {
-            (platoon.Units[i] as InfantryBehaviour).setTransportTarget(transporterWaypoint.platoon.Units[i].GetComponent<TransporterBehaviour>());
+            platoon.Units[i].AsInfantry().setTransportTarget(transporterWaypoint.platoon.Units[i].GetComponent<TransporterBehaviour>());
         }
-
     }
 
     public override bool OrderComplete()
     {
         if (transporterWaypoint.interrupted) {
-            platoon.Units.ForEach(x => (x as InfantryBehaviour).setTransportTarget(null));
+            platoon.Units.ForEach(x => x.AsInfantry().setTransportTarget(null));
             return true;
         } else {
-            if (!platoon.Units.Any(x => (x as InfantryBehaviour).interactsWithTransport(false))) {
+            if (!platoon.Units.Any(x => x.AsInfantry().interactsWithTransport(false))) {
 
                 return true;
             } else {
@@ -49,13 +48,9 @@ public class TransportableWaypoint : Waypoint
 
     public override bool Interrupt()
     {
-        if (!platoon.Units.Any(x => (x as InfantryBehaviour).interactsWithTransport(true))) {
-
+        if (!platoon.Units.Any(x => x.AsInfantry().interactsWithTransport(true)))
             interrupted = true;
-            return true;
-        } else {
-            return false;
-        }
 
+        return interrupted;
     }
 }

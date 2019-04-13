@@ -63,7 +63,7 @@ public class VisibleBehavior //: IComponentData
 
             /* This assumes that all selectables with colliders have a visibility manager, which may be a bad assumption: */
             if (unitBehaviour.Platoon.Owner.Team != _team)
-                unitBehaviour.VisibleBehavior.MaybeReveal(this);
+                unitBehaviour.Dispatcher.VisibleBehavior.MaybeReveal(this);
         }
     }
 

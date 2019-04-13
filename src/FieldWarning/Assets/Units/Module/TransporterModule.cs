@@ -47,7 +47,7 @@ public class TransporterModule : PlatoonModule, Matchable<TransportableModule>
             {
                 if (i == p.Units.Count)
                     break;
-                Platoon.Units[i].GetComponent<TransporterBehaviour>().transported = p.Units[i] as InfantryBehaviour;
+                Platoon.Units[i].GetComponent<TransporterBehaviour>().transported = p.Units[i].AsInfantry();
             }
             else
             {

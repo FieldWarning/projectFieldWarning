@@ -33,7 +33,7 @@ namespace PFW.Units.Component.Weapon
             } else {
                 _target = new TargetTuple(position);
                 _movingTowardsTarget = true;
-                Unit.SetUnitDestination(position);
+                Unit.SetDestination(position);
             }
 
             _turretComponent.SetTarget(_target, _turretPriority);
@@ -108,7 +108,7 @@ namespace PFW.Units.Component.Weapon
             if (_movingTowardsTarget) {
                 if (Vector3.Distance(Unit.transform.position, _target.Position) < _data.FireRange) {
                     _movingTowardsTarget = false;
-                    Unit.SetUnitDestination(Unit.transform.position);
+                    Unit.SetDestination(Unit.transform.position);
                 }
             }
         }
