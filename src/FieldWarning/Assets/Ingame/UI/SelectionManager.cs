@@ -143,6 +143,17 @@ namespace PFW.Ingame.UI
         }
 
         /**
+         * Send a split command to all currently selected platoons
+         */
+        public void DispatchSplitCommand(PlayerData owner)
+        {
+            for (int i = 0; i < _selection.Count; i++) {
+                _selection[i].Split(owner);
+            }
+            _selection.Clear();
+        }
+
+        /**
          * Create waypoints and set their destinations, one waypoint per unit.
          */
         public void PrepareDestination()
