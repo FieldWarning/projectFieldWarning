@@ -57,9 +57,15 @@ namespace PFW.Units
         public VisionComponent VisionComponent;
 
         private VoiceComponent _voiceComponent;
+
+        // TODO move to a component class:
+        private GameObject _selectionCircle;
+
         // TODO pass from some factory:
         private static GameObject VOICE_PREFAB =
             Resources.Load<GameObject>("VoiceComponent_US");
+        public static GameObject SELECTION_CIRCLE_PREFAB =
+            Resources.Load<GameObject>("SelectionCircle");
 
         public UnitDispatcher(UnitBehaviour unitBehaviour)
         {
@@ -72,6 +78,8 @@ namespace PFW.Units
                 _unitBehaviour.Data.maxHealth, Platoon, GameObject, this);
             _voiceComponent = GameObject.Instantiate(
                 VOICE_PREFAB, Transform).GetComponent<VoiceComponent>();
+            _selectionCircle = GameObject.Instantiate(
+                SELECTION_CIRCLE_PREFAB, Transform);
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -80,9 +88,17 @@ namespace PFW.Units
                 targeter.SetTarget(position);
         }
 
+        /// <summary>
+        /// Called when a unit enters or leaves the player's selection.
+        /// </summary>
+        /// <param name="selected"></param>
+        /// <param name="justPreviewing">
+        /// True when the unit should be shaded as if selected,
+        /// but the actual selected set has not been changed yet.
+        /// </param>
         public void SetSelected(bool selected, bool justPreviewing)
         {
-            _unitBehaviour.SetSelected(selected, justPreviewing);
+            _selectionCircle.SetActive(selected && !justPreviewing);
         }
 
         #region PlayVoicelines

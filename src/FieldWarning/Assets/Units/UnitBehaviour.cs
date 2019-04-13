@@ -26,9 +26,6 @@ public abstract class UnitBehaviour : SelectableBehavior
     public PlatoonBehaviour Platoon { get; private set; }
     public Pathfinder Pathfinder { get; private set; }
 
-    [SerializeField]
-    private GameObject _selectionCircle;
-
     // These are set by the subclass in DoMovement()
     protected Vector3 _position;
     protected Vector3 _rotation;
@@ -59,9 +56,6 @@ public abstract class UnitBehaviour : SelectableBehavior
 
     public virtual void Awake()
     {
-        if (_selectionCircle == null)
-            throw new System.Exception(
-                "unitBehaviour: Must have a reference to selection circle object");
     }
 
     public virtual void Start()
@@ -226,29 +220,6 @@ public abstract class UnitBehaviour : SelectableBehavior
         float terrainSpeed = Data.mobility.GetUnitSpeed(Pathfinder.data.terrain, Pathfinder.data.map, transform.position, 0f, -transform.forward);
         //terrainSpeed = Mathf.Max(terrainSpeed, 0.5f * TerrainConstants.MAP_SCALE); // Never let the speed to go exactly 0, just so units don't get stuck
         return terrainSpeed;
-    }
-
-    public void Destroy()
-    {
-        Platoon.Owner.Session.RegisterUnitDeath(Dispatcher);
-
-        Platoon.Units.Remove(Dispatcher);
-        Destroy(this.gameObject);
-
-        Platoon.GhostPlatoon.HandleRealUnitDestroyed();
-
-        if (Platoon.Units.Count == 0) {
-            Destroy(Platoon.gameObject);
-            Platoon.Owner.Session.RegisterPlatoonDeath(Platoon);
-        }
-    }
-
-    // Called when a unit enters or leaves the player's selection.
-    // justPreviewing - true when the unit should be shaded as if selected,
-    // but the actual selected set has not been changed yet
-    public void SetSelected(bool selected, bool justPreviewing)
-    {
-        _selectionCircle.SetActive(selected);
     }
 }
 
