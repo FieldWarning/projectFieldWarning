@@ -128,7 +128,7 @@ namespace PFW.Units.Component.Weapon
             }
         }
 
-        public GameObject FindClosestEnemy()
+        private GameObject FindClosestEnemy()
         {
             // TODO utilize precomputed distance lists from session
             // TODO Have a global List of enemy Units to prevent using FindGameobjects since it is very ressource intensive
