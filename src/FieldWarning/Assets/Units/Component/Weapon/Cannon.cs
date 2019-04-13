@@ -26,17 +26,17 @@ namespace PFW.Units.Component.Weapon
         private float _reloadTimeLeft { get; set; }
         private AudioSource _source { get; }
         private TargetTuple _target;
-        
+
         // TODO Should aim to make actual objects fire and not effects:
         private ParticleSystem _shotEffect;
         private AudioClip _shotSound;
         private float _shotVolume;
 
         public Cannon(
-            WeaponData data, 
-            AudioSource source, 
+            WeaponData data,
+            AudioSource source,
             ParticleSystem shotEffect,
-            AudioClip shotSound, 
+            AudioClip shotSound,
             float shotVolume = 1.0F)
         {
             _data = data;

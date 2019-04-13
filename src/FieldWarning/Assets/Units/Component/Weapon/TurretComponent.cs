@@ -19,11 +19,11 @@ namespace PFW.Units.Component.Weapon
 {
     /// <summary>
     /// Manages the weapon rotation for a unit.
-    /// 
-    /// A turret is any rotatable part of a weapon. This includes things like 
-    /// cannon barrels (vertical laying) and machine gun bodies. 
+    ///
+    /// A turret is any rotatable part of a weapon. This includes things like
+    /// cannon barrels (vertical laying) and machine gun bodies.
     /// </summary>
-    /// 
+    ///
     /// Turrets are generally held by a weapon and nested in a reverse hierarchy
     /// starting from the turret the weapon sits directly on and ending at a root
     /// turret that may be shared by multiple weapons/smaller turrets that sit on it.
@@ -39,7 +39,7 @@ namespace PFW.Units.Component.Weapon
 
         [SerializeField]
         private TurretComponent _parentTurret;
-        
+
         [SerializeField]
         public float ArcHorizontal = 180, ArcUp = 40, ArcDown = 20, RotationRate = 40f;
 
@@ -47,8 +47,8 @@ namespace PFW.Units.Component.Weapon
         private int _curTargetPriority = 0;
 
         /// <summary>
-        /// Set a target that the turret shall rotate to. 
-        /// 
+        /// Set a target that the turret shall rotate to.
+        ///
         /// Does nothing if there is already a higher-priority target.
         /// </summary>
         /// <param name="target"></param>
@@ -62,15 +62,14 @@ namespace PFW.Units.Component.Weapon
 
             _parentTurret?.SetTarget(target, priority);
         }
-        
+
         public bool IsFacingTarget { get; private set; } = false;
 
 
         private void Update()
         {
-            if (_target == null) {
+            if (_target == null)
                 return;
-            }
 
             bool aimed = false;
             float targetHorizontalAngle = 0f;
@@ -128,7 +127,7 @@ namespace PFW.Units.Component.Weapon
             _turret.localEulerAngles = new Vector3(verticalAngle, horizontalAngle, 0);
 
             IsFacingTarget = aimed;
-            
+
             #region ArtyAdditionalCode
             if (_isHowitzer)
                 IsFacingTarget = true;

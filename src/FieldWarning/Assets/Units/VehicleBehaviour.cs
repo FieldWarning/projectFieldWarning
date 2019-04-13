@@ -25,7 +25,7 @@ public class VehicleBehaviour : UnitBehaviour
 
     private float _terrainTiltForward, _terrainTiltRight;
     private float _terrainHeight;
-    
+
     new void Awake()
     {
         base.Awake();
@@ -61,7 +61,7 @@ public class VehicleBehaviour : UnitBehaviour
         }
         bool isReverse = ShouldReverse(_linVelocity, distanceToWaypoint, rotationSpeed, turnForward, turnReverse);
         float remainingTurn = isReverse ? turnReverse : turnForward;
-        
+
         float targetSpeed = CalculateTargetSpeed(distanceToWaypoint, remainingTurn, linSpeed, rotationSpeed);
         if (isReverse)
             targetSpeed = -targetSpeed;
