@@ -29,14 +29,14 @@ public class MoveWaypoint : Waypoint
     public override void ProcessWaypoint()
     {
         var destinations = Formations.GetLineFormation(Destination, Heading, platoon.Units.Count);
-        platoon.Units.ForEach(x => x.SetUnitDestination(this));
+        platoon.Units.ForEach(x => x.SetDestination(this));
         //platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
         //platoon.Units.ForEach(x => x.SetUnitFinalHeading(Heading));
     }
 
     public override bool OrderComplete()
     {
-        return platoon.Units.All(x => x.OrdersComplete());
+        return platoon.Units.All(x => x.AreOrdersComplete());
     }
 
     public override bool Interrupt()

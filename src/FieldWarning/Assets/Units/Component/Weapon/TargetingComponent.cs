@@ -11,8 +11,8 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using AssemblyCSharp;
 using UnityEngine;
+using PFW.Model.Game;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -24,16 +24,19 @@ namespace PFW.Units.Component.Weapon
         public UnitBehaviour Unit { get; private set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
-        public void SetTarget(Vector3 position)
+        public void SetTarget(Vector3 position, bool autoApproach = true)
         {
-            var distance = Vector3.Distance(Unit.transform.position, position);
+            SetTarget(new TargetTuple(position), autoApproach);
+        }
+        private void SetTarget(TargetTuple target, bool autoApproach)
+        {
+            var distance = Vector3.Distance(Unit.transform.position, target.Position);
 
-            if (distance < _data.FireRange) {
-                _target = new TargetTuple(position);
-            } else {
-                _target = new TargetTuple(position);
+            _target = target;
+
+            if (distance > _data.FireRange && autoApproach) {
                 _movingTowardsTarget = true;
-                Unit.SetUnitDestination(position);
+                Unit.SetDestination(target.Position);
             }
 
             _turretComponent.SetTarget(_target, _turretPriority);
@@ -79,7 +82,7 @@ namespace PFW.Units.Component.Weapon
         }
 
         /// <summary>
-        /// Initialization order: Awake() when a gameobject is created, 
+        /// Initialization order: Awake() when a gameobject is created,
         /// WakeUp() enables the object, Start() runs on an enabled object.
         /// </summary>
         public void WakeUp()
@@ -108,7 +111,7 @@ namespace PFW.Units.Component.Weapon
             if (_movingTowardsTarget) {
                 if (Vector3.Distance(Unit.transform.position, _target.Position) < _data.FireRange) {
                     _movingTowardsTarget = false;
-                    Unit.SetUnitDestination(Unit.transform.position);
+                    Unit.SetDestination(Unit.transform.position);
                 }
             }
         }
@@ -124,18 +127,19 @@ namespace PFW.Units.Component.Weapon
 
                 if (_turretComponent.IsFacingTarget && targetInRange)
                     _weapon.TryShoot(_target, Time.deltaTime);
-                //TryFireWeapon(_target);
+
+            } else {
+                FindAndTargetClosestEnemy();
             }
         }
 
-        public GameObject FindClosestEnemy()
+        private void FindAndTargetClosestEnemy()
         {
             // TODO utilize precomputed distance lists from session
             // TODO Have a global List of enemy Units to prevent using FindGameobjects since it is very ressource intensive
             // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
             GameObject[] Units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
-            GameObject Target = null;
-            var thisTeam = Unit.Platoon.Owner.Team;
+            Team thisTeam = Unit.Platoon.Owner.Team;
 
             foreach (GameObject enemy in Units) {
                 // Filter out friendlies:
@@ -145,14 +149,14 @@ namespace PFW.Units.Component.Weapon
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.transform.position);
                 if (distance < _data.FireRange) {
-                    return enemy;
+                    SetTarget(new TargetTuple(enemy), false);
+                    break;
                 }
             }
-            return Target;
         }
 
         /// <summary>
-        /// If the target is an enemy unit and it is out of range, 
+        /// If the target is an enemy unit and it is out of range,
         /// forget about it.
         /// </summary>
         private void MaybeDropOutOfRangeTarget()

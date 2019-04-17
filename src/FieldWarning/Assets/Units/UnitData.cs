@@ -14,12 +14,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using PFW.Units.Component.Weapon;
-
 public class UnitData
 {
     //create from xml file or something
-    public float movementSpeed = 50f * TerrainConstants.MAP_SCALE;
+    public float movementSpeed = 500f * TerrainConstants.MAP_SCALE;
     public float reverseSpeed = 15f * TerrainConstants.MAP_SCALE;
     public float accelRate = 13f * TerrainConstants.MAP_SCALE;
     public float maxRotationSpeed = 50f;  // Units of degrees per second
@@ -27,7 +25,8 @@ public class UnitData
     public float maxLateralAccel = 15f * TerrainConstants.MAP_SCALE;
     public float suspension = 0.01f / TerrainConstants.MAP_SCALE;
     public float maxHealth = 10f;
-    public float length = 12f * TerrainConstants.MAP_SCALE; // length and width are used for pivoting on terrain, and to define radius
+    // length and width are used for pivoting on terrain, and to define radius
+    public float length = 12f * TerrainConstants.MAP_SCALE;
     public float width = 7f * TerrainConstants.MAP_SCALE;
     public MobilityType mobility;
 
@@ -43,7 +42,7 @@ public class UnitData
 
         radius = Mathf.Sqrt(length * width) / 2;
         optimumTurnSpeed = Mathf.Sqrt(maxLateralAccel*minTurnRadius);
-        
+
         suspensionForward = suspension * radius / length;
         suspensionSide = suspension * radius / width;
 

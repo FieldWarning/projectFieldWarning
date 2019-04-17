@@ -13,33 +13,37 @@
 
 using UnityEngine;
 
+using PFW.Units;
+
 namespace PFW.Ingame.UI
 {
     public class HealthBarBehaviour : SelectableBehavior
     {
-        private UnitBehaviour _unit;
+        private UnitDispatcher _unit;
         private GameObject _bar;
 
-        void Awake()
+        private void Awake()
         {
             _bar = transform.GetChild(0).gameObject;
             _bar.AddComponent<SelectableBehavior>();
         }
 
-        void Start() { }
-        
-        void Update()
+        private void Start()
         {
-            SetHealth(_unit.GetHealth() / _unit.Data.maxHealth);
         }
 
-        public void SetUnit(UnitBehaviour o)
+        private void Update()
+        {
+            SetHealth(_unit.GetHealth() / _unit.MaxHealth);
+        }
+
+        public void SetUnit(UnitDispatcher o)
         {
             _unit = o;
-            SetHealth(_unit.Data.maxHealth);
+            SetHealth(_unit.MaxHealth);
         }
 
-        void SetHealth(float h)
+        private void SetHealth(float h)
         {
             float health = Mathf.Clamp01(h);
 

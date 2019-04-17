@@ -30,21 +30,22 @@ public class InfantryBehaviour : UnitBehaviour {
     List<Man> men = new List<Man>();
 	public override void Start () {
         initialize();
-        
+
 	}
     void initialize()
     {
         if (!init)
         {
             Data = UnitData.Infantry();
-			base.SetHealth(Data.maxHealth); //health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
+            // health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
+            // base.SetHealth(Data.maxHealth);
             buildMen();
             init = true;
         }
     }
     public  void buildMen()
     {
-        
+
         for (int i = 0; i < menCount; i++)
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -70,7 +71,7 @@ public class InfantryBehaviour : UnitBehaviour {
                 else
                 {
                     men.ForEach(x => x.setDestination(Pathfinder.GetDestination()));
-                }   
+                }
                 break;
             case InfantryBehaviourState.Unloading:
                 unloading();
@@ -93,8 +94,8 @@ public class InfantryBehaviour : UnitBehaviour {
                 break;
         }
         //WRONG
-        
-        
+
+
 	}
 
     private void updatePosition()
@@ -151,7 +152,7 @@ public class InfantryBehaviour : UnitBehaviour {
             loadCooldown = interval;
 
             if(unloadIndex<menCount)men[unloadIndex++].SetMatch(transporter.transform.position);
-            
+
             foreach (var man in men.Where((x, i) => i < unloadIndex))
             {
                 if (man.reachedDestination)
@@ -184,7 +185,7 @@ public class InfantryBehaviour : UnitBehaviour {
     }
     /*public bool setRally(Vector3 pos,Vector3 vehicle)
     {
-        
+
         if (men.All(x => x.reachedDestination))
         {
             unloadIndex = 0;
@@ -197,7 +198,7 @@ public class InfantryBehaviour : UnitBehaviour {
             men.ForEach(x => x.setDestination(pos));
             return false;
         }
-        
+
     }*/
     protected override void DoMovement()
     {
@@ -220,7 +221,7 @@ public class InfantryBehaviour : UnitBehaviour {
         {
             setLineFormation();
         }
-        
+
     }
     private void setRingFormation()
     {
@@ -239,7 +240,7 @@ public class InfantryBehaviour : UnitBehaviour {
         var seperation = .4f;
         List<Vector3> destinations = new List<Vector3>();
 
-        
+
         var left = Quaternion.AngleAxis(-Mathf.Rad2Deg*_finalHeading, Vector3.up) * (seperation*Vector3.forward);
         for (int i = 0; i < menCount; i++)
         {
@@ -292,13 +293,13 @@ public class InfantryBehaviour : UnitBehaviour {
         });
 
     }
-    public override bool OrdersComplete()
+    public override bool AreOrdersComplete()
     {
         return ordersDone;
     }
     public override void UpdateMapOrientation()
     {
-        
+
     }
     public bool interactsWithTransport(bool directly)
     {

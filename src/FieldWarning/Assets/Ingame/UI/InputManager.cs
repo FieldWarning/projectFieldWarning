@@ -63,13 +63,13 @@ namespace PFW.Ingame.UI
 
         private Vector3 _boxSelectStart;
 
-        void Awake()
+        private void Awake()
         {
             _selectionManager = new SelectionManager();
             _selectionManager.Awake();
         }
 
-        void Start()
+        private void Start()
         {
             _firePosReticle = (Texture2D)Resources.Load("FirePosTestTexture");
             if (_firePosReticle == null)
@@ -148,7 +148,7 @@ namespace PFW.Ingame.UI
             }
         }
 
-        public void OnGUI()
+        private void OnGUI()
         {
             _selectionManager.OnGUI();
         }

@@ -10,11 +10,13 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
- 
+
 using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
+using PFW.Units;
+using PFW.Units.Component.Vision;
 
 //[UpdateAfter(typeof(MovementSystem))]
 public class VisibilityManager : MonoBehaviour
@@ -23,8 +25,8 @@ public class VisibilityManager : MonoBehaviour
 
     public Team LocalTeam;
 
-    public List<VisibleBehavior> AllyUnits { get; private set; } = new List<VisibleBehavior>();
-    public List<VisibleBehavior> EnemyUnits { get; private set; } = new List<VisibleBehavior>();
+    public List<VisionComponent> AllyUnits { get; private set; } = new List<VisionComponent>();
+    public List<VisionComponent> EnemyUnits { get; private set; } = new List<VisionComponent>();
 
     // Old code:
 
@@ -35,7 +37,7 @@ public class VisibilityManager : MonoBehaviour
 
     void Update()
     {
-        foreach (var unit in AllyUnits) 
+        foreach (var unit in AllyUnits)
             unit.ScanForEnemies();
 
         foreach (var unit in EnemyUnits) {
@@ -62,9 +64,9 @@ public class VisibilityManager : MonoBehaviour
         //}
     }
 
-    public void RegisterUnitBirth(UnitBehaviour unit)
+    public void RegisterUnitBirth(UnitDispatcher unit)
     {
-        VisibleBehavior visibleBehavior = unit.VisibleBehavior;
+        VisionComponent visibleBehavior = unit.VisionComponent;
 
         if (unit.Platoon.Owner.Team == LocalTeam) {
             AllyUnits.Add(visibleBehavior);
@@ -75,9 +77,9 @@ public class VisibilityManager : MonoBehaviour
         }
     }
 
-    public void RegisterUnitDeath(UnitBehaviour unit)
+    public void RegisterUnitDeath(UnitDispatcher unit)
     {
-        VisibleBehavior visibleBehavior = unit.VisibleBehavior;
+        VisionComponent visibleBehavior = unit.VisionComponent;
         if (visibleBehavior == null)
             return;
 
@@ -88,7 +90,7 @@ public class VisibilityManager : MonoBehaviour
             EnemyUnits.Remove(visibleBehavior);
     }
 
-    public static void UpdateUnitRegion(VisibleBehavior unit, Point newRegion)
+    public static void UpdateUnitRegion(VisionComponent unit, Point newRegion)
     {
         //var currentPoint = unit.GetRegion();
     }

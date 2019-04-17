@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 using PFW.Model.Game;
+using PFW.Units.Component.Vision;
 
 public class MiniMap : MonoBehaviour, IPointerClickHandler
 {
@@ -42,10 +43,10 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         _minimapSize = gameObject.GetComponent<RectTransform>().rect.width;
-        _offsetFromRightSide = 
-            (-1) * (transform.parent.GetComponent<RectTransform>().rect.width / 2 
+        _offsetFromRightSide =
+            (-1) * (transform.parent.GetComponent<RectTransform>().rect.width / 2
             + transform.parent.GetComponent<RectTransform>().anchoredPosition.x);
-        _targetedScreenSize = 
+        _targetedScreenSize =
             transform.parent.parent.GetComponent<RectTransform>().rect.width;
 
         _terrainSize = _terrain.terrainData.bounds.size;
@@ -66,8 +67,8 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     {
         //Draw all friendlies
         //Maybe there is a better way to have this list updated
-        List<VisibleBehavior> allies = _matchSession.AllyVisibleBehaviours;
-        foreach (VisibleBehavior unit in allies) {
+        List<VisionComponent> allies = _matchSession.AllyVisibleBehaviours;
+        foreach (VisionComponent unit in allies) {
             Vector3 pos = unit.UnitBehaviour.transform.position;
             Vector2 realPos = GetMapPos(pos);
             GUI.color = _matchSession.LocalPlayer.Data.Team.Color;
@@ -76,8 +77,8 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         }
 
         //Draw all enemies
-        List<VisibleBehavior> enemies = _matchSession.EnemyVisibleBehaviours;
-        foreach (VisibleBehavior unit in enemies) {
+        List<VisionComponent> enemies = _matchSession.EnemyVisibleBehaviours;
+        foreach (VisionComponent unit in enemies) {
             if (unit.IsVisible) {
                 Vector3 pos = unit.UnitBehaviour.transform.position;
                 Vector2 realPos = GetMapPos(pos);

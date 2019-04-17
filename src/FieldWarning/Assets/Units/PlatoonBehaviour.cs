@@ -19,6 +19,7 @@ using PFW.Ingame.Prototype;
 using PFW.Ingame.UI;
 using PFW.Model.Game;
 using PFW.Units.Component.Weapon;
+using PFW.Units;
 
 public partial class PlatoonBehaviour : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public TransportableModule Transportable;
     public GhostPlatoonBehaviour GhostPlatoon;
     public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
-    public List<UnitBehaviour> Units = new List<UnitBehaviour>();
+    public List<UnitDispatcher> Units = new List<UnitDispatcher>();
     public List<PlatoonModule> Modules = new List<PlatoonModule>();
     public bool IsInitialized = false;
 
@@ -42,7 +43,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     {
         var pos = new Vector3();
 
-        Units.ForEach(x => pos += x.transform.position);
+        Units.ForEach(x => pos += x.Transform.position);
         transform.position = pos / Units.Count;
         Modules.ForEach(x => x.Update());
 
@@ -86,11 +87,12 @@ public partial class PlatoonBehaviour : MonoBehaviour
         var unitPrefab = Owner.Session.Factory.FindPrefab(t);
 
         for (int i = 0; i < n; i++) {
-            var unitInstance = 
+            var unitInstance =
                 Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
             var unitBehaviour = unitInstance.GetComponent<UnitBehaviour>();
             unitBehaviour.SetPlatoon(this);
-            Units.Add(unitBehaviour);
+            UnitDispatcher unit = new UnitDispatcher(unitBehaviour);
+            Units.Add(unit);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
             collider.enabled = true;
@@ -152,19 +154,14 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
     public void SendFirePosOrder(Vector3 position)
     {
-        foreach (var unit in Units) {
-            TargetingComponent[] targeters = unit.GetComponents<TargetingComponent>();
-            
-            foreach (var targeter in targeters)
-                targeter.SetTarget(position);
-        }
+        Units.ForEach(u => u.SendFirePosOrder(position));
         PlayAttackCommandVoiceline();
     }
 
     public void Destroy()
     {
         foreach (var p in Units)
-            Destroy(p.gameObject);
+            Destroy(p.GameObject);
 
         Owner.Session.RegisterPlatoonDeath(this);
         Destroy(gameObject);
@@ -172,7 +169,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
 #region PlayVoicelines
 // For the time being, always play the voiceline of the first unit
-// Until we agree on a default unit in platoon that plays 
+// Until we agree on a default unit in platoon that plays
     public void PlaySelectionVoiceline()
     {
         Units[0].PlaySelectionVoiceline();

@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using PFW.Units;
 
 namespace PFW.Ingame.UI
 {
@@ -60,7 +61,7 @@ namespace PFW.Ingame.UI
             gameObject.layer = l;
         }
 
-        public void SetSource(List<UnitBehaviour> list)
+        public void SetSource(List<UnitDispatcher> list)
         {
             _billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
         }

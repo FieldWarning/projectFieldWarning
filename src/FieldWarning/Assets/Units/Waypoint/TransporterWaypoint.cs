@@ -31,7 +31,8 @@ public class TransporterWaypoint : Waypoint
             if (transportableWaypoint == null)
                 return;
             for (int i = 0; i < transportableWaypoint.platoon.Units.Count; i++) {
-                platoon.Units[i].GetComponent<TransporterBehaviour>().load(transportableWaypoint.platoon.Units[i] as InfantryBehaviour);
+                platoon.Units[i].GetComponent<TransporterBehaviour>().load(
+                        transportableWaypoint.platoon.Units[i].AsInfantry());
             }
         } else {
             if (module.transported == null)

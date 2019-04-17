@@ -11,7 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections.Generic;
 using UnityEngine;
 using PFW.Units;
 using PFW.Units.Component.Weapon;
@@ -26,13 +25,6 @@ public abstract class UnitBehaviour : SelectableBehavior
     public UnitData Data = UnitData.GenericUnit();
     public PlatoonBehaviour Platoon { get; private set; }
     public Pathfinder Pathfinder { get; private set; }
-    
-    [SerializeField]
-    private GameObject _selectionCircle;
-    [SerializeField]
-    private VoiceComponent _voiceComponent;
-    // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
-    public VisibleBehavior VisibleBehavior;
 
     // These are set by the subclass in DoMovement()
     protected Vector3 _position;
@@ -59,21 +51,18 @@ public abstract class UnitBehaviour : SelectableBehavior
     protected float _finalHeading;
 
     private Terrain _terrain;
-    private float _health;
+
+    public UnitDispatcher Dispatcher;
 
     public virtual void Awake()
     {
-        if (_selectionCircle == null)
-            throw new System.Exception(
-                "unitBehaviour: Must have a reference to selection circle object");
     }
 
     public virtual void Start()
     {
-        _health = Data.maxHealth; //set the health to 10 (from UnitData.cs)
         tag = UNIT_TAG;
 
-        Platoon.Owner.Session.RegisterUnitBirth(this);
+        Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
     }
 
     protected void WakeUp()
@@ -120,32 +109,12 @@ public abstract class UnitBehaviour : SelectableBehavior
         _right = new Vector3(_forward.z, 0f, -_forward.x);
     }
 
-    public void HandleHit(float receivedDamage)
-    {
-        if (_health <= 0)
-            return;
-
-        _health -= receivedDamage;
-        if (_health <= 0) 
-            Destroy();        
-    }
-
     public abstract void UpdateMapOrientation();
 
     public void SetPlatoon(PlatoonBehaviour p)
     {
         Platoon = p;
         Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathData);
-    }
-
-    public float GetHealth()
-    {
-        return _health;
-    }
-
-    public void SetHealth(float health)
-    {
-        _health = health;
     }
 
     public override PlatoonBehaviour GetPlatoon()
@@ -179,7 +148,7 @@ public abstract class UnitBehaviour : SelectableBehavior
     }
 
     // Sets the unit's destination location, with a default heading value
-    public void SetUnitDestination(Vector3 v)
+    public void SetDestination(Vector3 v)
     {
         //var diff = (v - transform.position);
         //SetFinalOrientation(v, diff.getRadianAngle());
@@ -190,7 +159,7 @@ public abstract class UnitBehaviour : SelectableBehavior
     public void SetFinalOrientation(Vector3 d, float heading)
     {
         if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever)
-            SetUnitFinalHeading(heading);        
+            SetUnitFinalHeading(heading);
     }
 
     // Updates the unit's final heading so that it faces the specified location
@@ -201,12 +170,12 @@ public abstract class UnitBehaviour : SelectableBehavior
             diff = v - Pathfinder.GetDestination();
         else
             diff = v - transform.position;
-        
-    
+
+
         SetUnitFinalHeading(diff.getRadianAngle());
     }
 
-    // Updates the unit's final heading to the specified value 
+    // Updates the unit's final heading to the specified value
     public virtual void SetUnitFinalHeading(float heading)
     {
         _finalHeading = heading;
@@ -227,12 +196,12 @@ public abstract class UnitBehaviour : SelectableBehavior
     {
         var renderers = GetRenderers();
         foreach (var r in renderers)
-            r.enabled = vis;        
+            r.enabled = vis;
 
         if (vis)
             SetLayer(LayerMask.NameToLayer("Selectable"));
-        else 
-            SetLayer(LayerMask.NameToLayer("Ignore Raycast"));        
+        else
+            SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
     }
 
     protected float getHeading()
@@ -241,19 +210,9 @@ public abstract class UnitBehaviour : SelectableBehavior
     }
 
 
-    public void SetMatch(Vector3 match)
-    {
-        SetUnitDestination(match);
-    }
-
-    public float GetScore(Vector3 matchee)
-    {
-        return (matchee - transform.position).magnitude;
-    }
-
     public abstract void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true);
 
-    public abstract bool OrdersComplete();
+    public abstract bool AreOrdersComplete();
 
     // Returns the unit's speed on the current terrain
     public float GetTerrainSpeedMultiplier()
@@ -262,46 +221,6 @@ public abstract class UnitBehaviour : SelectableBehavior
         //terrainSpeed = Mathf.Max(terrainSpeed, 0.5f * TerrainConstants.MAP_SCALE); // Never let the speed to go exactly 0, just so units don't get stuck
         return terrainSpeed;
     }
-
-    public void Destroy()
-    {
-        Platoon.Owner.Session.RegisterUnitDeath(this);
-        
-        Platoon.Units.Remove(this);
-        Destroy(this.gameObject);
-
-        Platoon.GhostPlatoon.HandleRealUnitDestroyed();
-
-        if (Platoon.Units.Count == 0) {
-            Destroy(Platoon.gameObject);
-            Platoon.Owner.Session.RegisterPlatoonDeath(Platoon);
-        }
-    }
-
-    // Called when a unit enters or leaves the player's selection.
-    // justPreviewing - true when the unit should be shaded as if selected, but the
-    //                  actual selected set has not been changed yet
-    public void SetSelected(bool selected, bool justPreviewing)
-    {
-        _selectionCircle.SetActive(selected);
-    }
-
-#region PlayVoicelines
-    public void PlaySelectionVoiceline()
-    {
-        _voiceComponent.PlayUnitSelectionVoiceline(true);
-    }
-
-    public void PlayMoveCommandVoiceline()
-    {
-        _voiceComponent.PlayMoveCommandVoiceline();
-    }
-
-    public void PlayAttackCommandVoiceline()
-    {
-        _voiceComponent.PlayAttackCommandVoiceline();
-    }
-#endregion
 }
 
 public enum MoveCommandType
