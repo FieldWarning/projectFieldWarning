@@ -138,7 +138,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     }
 
     // Call when splitting a platoon
-    public void SplitInitialize(UnitType t, PlayerData owner, UnitBehaviour u)
+    public void SplitInitialize(UnitType t, PlayerData owner, UnitDispatcher u)
     {
         Type = t;
         Owner = owner;
@@ -173,7 +173,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
             pBehavior.SplitInitialize(Type, owner, unit);
 
             pBehavior.GhostPlatoon = gBehavior;
-            gBehavior.SplitInitialize(Type, owner, unit.gameObject);
+            gBehavior.SplitInitialize(Type, owner, unit.GameObject);
         }
         Destroy(gameObject);
     }

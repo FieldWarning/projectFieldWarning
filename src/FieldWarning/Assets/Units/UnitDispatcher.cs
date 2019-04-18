@@ -101,6 +101,7 @@ namespace PFW.Units
             _selectionCircle.SetActive(selected && !justPreviewing);
         }
 
+        public void SetPlatoon(PlatoonBehaviour p) => _unitBehaviour.SetPlatoon(p);
         #region PlayVoicelines
         public void PlayAttackCommandVoiceline() =>
             _voiceComponent.PlayAttackCommandVoiceline();
