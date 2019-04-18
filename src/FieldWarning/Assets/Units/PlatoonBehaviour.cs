@@ -173,7 +173,8 @@ public partial class PlatoonBehaviour : MonoBehaviour
             pBehavior.SplitInitialize(Type, owner, unit);
 
             pBehavior.GhostPlatoon = gBehavior;
-            gBehavior.SplitInitialize(Type, owner, unit.GameObject);
+
+            gBehavior.SplitInitialize(Type, owner, unit.gameObject);
         }
         Destroy(gameObject);
     }
