@@ -24,7 +24,7 @@ namespace PFW.Ingame.UI
 {
     /**
      * Handles almost all input during a match.
-     * 
+     *
      * Some input, particularly for to selecting and deselecting units,
      * is handled in SelectionManager instead.
      */
@@ -138,7 +138,7 @@ namespace PFW.Ingame.UI
                             false, MoveWaypoint.MoveMode.fastMove);
                 }
 
-                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift)) 
+                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
                 break;
@@ -210,7 +210,7 @@ namespace PFW.Ingame.UI
          * The ghost units are used to briefly hold the destination
          * for a move order, so they need to be moved to the cursor
          * if a move order click is issued.
-         */ 
+         */
         void MoveGhostsToMouse()
         {
             RaycastHit hit;

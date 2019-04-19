@@ -138,7 +138,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     }
 
     // Call when splitting a platoon
-    public void SplitInitialize(UnitType t, PlayerData owner, UnitDispatcher u)
+    public void InitializeAfterSplit(UnitType t, PlayerData owner, UnitDispatcher unit)
     {
         Type = t;
         Owner = owner;
@@ -147,8 +147,8 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
 
-        u.SetPlatoon(this);
-        Units.Add(u);
+        unit.SetPlatoon(this);
+        Units.Add(unit);
 
         BuildModules(t);
 
@@ -163,18 +163,18 @@ public partial class PlatoonBehaviour : MonoBehaviour
     // Create new platoons for all units
     public void Split(PlayerData owner)
     {
-        foreach (var unit in Units) {
+        foreach (UnitDispatcher unit in Units) {
             var ghost = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
-            var plat = Instantiate(Resources.Load<GameObject>("Platoon"));
+            var platoon = Instantiate(Resources.Load<GameObject>("Platoon"));
 
-            var pBehavior = plat.GetComponent<PlatoonBehaviour>();
+            var pBehavior = platoon.GetComponent<PlatoonBehaviour>();
             var gBehavior = ghost.GetComponent<GhostPlatoonBehaviour>();
 
-            pBehavior.SplitInitialize(Type, owner, unit);
+            pBehavior.InitializeAfterSplit(Type, owner, unit);
 
             pBehavior.GhostPlatoon = gBehavior;
 
-            gBehavior.SplitInitialize(Type, owner, unit.gameObject);
+            gBehavior.InitializeAfterSplit(Type, owner, unit.GameObject);
         }
         Destroy(gameObject);
     }
