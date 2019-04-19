@@ -18,7 +18,6 @@ using System.Linq;
 using PFW.Ingame.Prototype;
 using PFW.Ingame.UI;
 using PFW.Model.Game;
-using PFW.Units.Component.Weapon;
 using PFW.Units;
 
 public partial class PlatoonBehaviour : MonoBehaviour
@@ -32,7 +31,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public GhostPlatoonBehaviour GhostPlatoon;
     public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
     public List<UnitDispatcher> Units = new List<UnitDispatcher>();
-    public List<PlatoonModule> Modules = new List<PlatoonModule>();
+    private List<PlatoonModule> _modules = new List<PlatoonModule>();
     public bool IsInitialized = false;
 
     public static readonly float UNIT_DISTANCE = 40*TerrainConstants.MAP_SCALE;
@@ -45,7 +44,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         Units.ForEach(x => pos += x.Transform.position);
         transform.position = pos / Units.Count;
-        Modules.ForEach(x => x.Update());
+        _modules.ForEach(x => x.Update());
 
         if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
             if (Waypoints.Any()) {
@@ -62,16 +61,15 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public void BuildModules(UnitType t)
     {
         Movement = new MovementModule(this);
-        Modules.Add(Movement);
 
         if (t == UnitType.AFV) {
             Transporter = new TransporterModule(this);
-            Modules.Add(Transporter);
+            _modules.Add(Transporter);
         }
 
         if (t == UnitType.Infantry) {
             Transportable = new TransportableModule(this);
-            Modules.Add(Transportable);
+            _modules.Add(Transportable);
         }
     }
 
@@ -138,7 +136,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     }
 
     // Call when splitting a platoon
-    public void InitializeAfterSplit(UnitType t, PlayerData owner, UnitDispatcher unit)
+    public void InitializeAfterSplit(UnitType t, PlayerData owner, UnitDispatcher unit, MoveWaypoint destination)
     {
         Type = t;
         Owner = owner;
@@ -152,9 +150,14 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         BuildModules(t);
 
-        Movement.SetDestination(Vector3.forward);
+        Movement.BeginQueueing(false);
+        Movement.SetDestination(destination.Destination);
+        Movement.EndQueueing();
 
         Icon.SetSource(Units);
+
+        Owner.Session.RegisterPlatoonBirth(this);
+        GhostPlatoon.SetVisible(false);
 
 
         IsInitialized = true;
@@ -170,12 +173,14 @@ public partial class PlatoonBehaviour : MonoBehaviour
             var pBehavior = platoon.GetComponent<PlatoonBehaviour>();
             var gBehavior = ghost.GetComponent<GhostPlatoonBehaviour>();
 
-            pBehavior.InitializeAfterSplit(Type, owner, unit);
-
             pBehavior.GhostPlatoon = gBehavior;
 
             gBehavior.InitializeAfterSplit(Type, owner, unit.GameObject);
+
+            pBehavior.InitializeAfterSplit(Type, owner, unit, Movement.Waypoint);
         }
+
+        Destroy(GhostPlatoon);
         DestroyWithoutUnits();
     }
 
