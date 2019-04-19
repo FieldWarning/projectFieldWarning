@@ -176,7 +176,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
             gBehavior.InitializeAfterSplit(Type, owner, unit.GameObject);
         }
-        Destroy(gameObject);
+        DestroyWithoutUnits();
     }
 
     // Called when a platoon enters or leaves the player's selection.
@@ -200,13 +200,24 @@ public partial class PlatoonBehaviour : MonoBehaviour
         PlayAttackCommandVoiceline();
     }
 
+    /// <summary>
+    /// Destroy just the platoon object, without touching its units.
+    /// </summary>
+    private void DestroyWithoutUnits()
+    {
+        Owner.Session.RegisterPlatoonDeath(this);
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Destroy the platoon and all units in it.
+    /// </summary>
     public void Destroy()
     {
         foreach (var p in Units)
             Destroy(p.GameObject);
 
-        Owner.Session.RegisterPlatoonDeath(this);
-        Destroy(gameObject);
+        DestroyWithoutUnits();
     }
 
 #region PlayVoicelines
