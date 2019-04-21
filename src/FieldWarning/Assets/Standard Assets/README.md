@@ -1,0 +1,1 @@
+The name of this folder is misleading. We use it to store scripts that change rarely, which may be standard assets but may also be own scripts. The real 'standard assets' we store under 3DParty.
