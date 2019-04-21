@@ -156,10 +156,9 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         Icon.SetSource(Units);
 
-        Owner.Session.RegisterPlatoonBirth(this);
         GhostPlatoon.SetVisible(false);
 
-
+        Owner.Session.RegisterPlatoonBirth(this);
         IsInitialized = true;
     }
 
@@ -175,7 +174,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
             pBehavior.GhostPlatoon = gBehavior;
 
-            gBehavior.InitializeAfterSplit(Type, owner, unit.GameObject);
+            gBehavior.InitializeAfterSplit(Type, owner);
 
             pBehavior.InitializeAfterSplit(Type, owner, unit, Movement.Waypoint);
         }

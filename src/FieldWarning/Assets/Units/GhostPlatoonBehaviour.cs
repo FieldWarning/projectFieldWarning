@@ -73,7 +73,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     }
 
     public void InitializeAfterSplit(
-        UnitType t, PlayerData owner, GameObject unit)
+        UnitType t, PlayerData owner)
     {
         _owner = owner;
         _unitType = t;
@@ -81,7 +81,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
         InitializeIcon();
 
-        _units.Add(unit);
+        AddSingleUnit();
     }
 
     private void AddSingleUnit()

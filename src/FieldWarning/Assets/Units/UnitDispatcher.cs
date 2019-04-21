@@ -102,6 +102,7 @@ namespace PFW.Units
         }
 
         public void SetPlatoon(PlatoonBehaviour p) => _unitBehaviour.SetPlatoon(p);
+
         #region PlayVoicelines
         public void PlayAttackCommandVoiceline() =>
             _voiceComponent.PlayAttackCommandVoiceline();
