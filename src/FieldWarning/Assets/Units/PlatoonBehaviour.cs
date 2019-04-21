@@ -15,8 +15,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-using PFW.Ingame.Prototype;
-using PFW.Ingame.UI;
+using PFW.UI.Prototype;
+using PFW.UI.Ingame;
 using PFW.Model.Game;
 using PFW.Units;
 

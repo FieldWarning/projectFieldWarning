@@ -10,39 +10,29 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
-
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-
-namespace PFW.Ingame.UI
+namespace PFW.UI.Ingame
 {
-    /*
-     * A billboard is a 2d texture that is always facing the camera.
-     */
-    public class BillboardBehavior : SelectableBehavior
+    public class MoveMarker : MonoBehaviour
     {
-        [SerializeField]
-        private float ALTITUDE = 10f * TerrainConstants.MAP_SCALE;
-        [SerializeField]
-        private float SIZE = 0.1f;
-
-        // Use this for initialization
+        private Transform _camera;
+        public float TimeTillDeath = 1;
+        // Start is called before the first frame update
         void Start()
         {
-
+            _camera = Camera.main.transform;
         }
 
         // Update is called once per frame
         void Update()
         {
-            transform.localPosition = ALTITUDE * Camera.main.transform.up;
-            faceCamera();
-        }
-
-        private void faceCamera()
-        {
-            transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-            var distance = (Camera.main.transform.position - transform.position).magnitude;
-            transform.localScale = SIZE * distance * Vector3.one;
+            transform.localScale = new Vector3(1, 1, 1) * ((_camera.position.y / 300) * 10 + 1);
+            TimeTillDeath -= Time.deltaTime;
+            if (TimeTillDeath < 0) {
+                Destroy(this.gameObject);
+            }
         }
     }
 }

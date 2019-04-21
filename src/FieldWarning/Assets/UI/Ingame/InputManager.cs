@@ -17,10 +17,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-using PFW.Ingame.Prototype;
+using PFW.UI.Prototype;
 using PFW.Model.Game;
 
-namespace PFW.Ingame.UI
+namespace PFW.UI.Ingame
 {
     /**
      * Handles almost all input during a match.

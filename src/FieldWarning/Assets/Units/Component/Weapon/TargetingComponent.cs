@@ -93,10 +93,10 @@ namespace PFW.Units.Component.Weapon
         private void Start()
         {
             // TODO remove:
-            if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Tank)
+            if (Unit.Platoon.Type == UI.Prototype.UnitType.Tank)
                 _weapon = new Cannon(
                         _data, _audioSource, _shotEffect, _shotSound, _shotVolume);
-            else if (Unit.Platoon.Type == Ingame.Prototype.UnitType.Arty)
+            else if (Unit.Platoon.Type == UI.Prototype.UnitType.Arty)
                 _weapon = new Howitzer(
                         _data,
                         _audioSource,

@@ -20,7 +20,7 @@ using PFW.Service;
 
 using PFW.Model.Game;
 
-namespace PFW.Ingame.UI
+namespace PFW.UI.Ingame
 {
     /**
      * Creates the interface for purchasing units within a match.
