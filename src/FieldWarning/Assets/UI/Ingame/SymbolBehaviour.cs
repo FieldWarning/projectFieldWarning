@@ -11,10 +11,34 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-namespace PFW.Ingame.UI
+using PFW.UI.Prototype;
+using UnityEngine;
+
+public class SymbolBehaviour : MonoBehaviour
 {
-    public static class Constants
+    public Material iconMaterial;
+    public Material[] textures;
+
+    void Start() { }
+
+    void Update() { }
+
+    public void SetIcon(UnitType t)
     {
-        public static readonly float MOUSE_DRAG_THRESHOLD = 10.0f;
+        int i = 0;
+        switch (t) {
+        case UnitType.Infantry:
+            i = 0;
+            break;
+        case UnitType.Tank:
+            i = 1;
+            break;
+        case UnitType.AFV:
+            i = 2;
+            break;
+        }
+
+        var mat = textures[i];
+        GetComponent<Renderer>().material = mat;
     }
 }

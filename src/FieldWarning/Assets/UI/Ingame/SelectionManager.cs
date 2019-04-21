@@ -15,10 +15,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using PFW.Model.Game;
-using static PFW.Ingame.UI.InputManager;
+using static PFW.UI.Ingame.InputManager;
 using System.Linq;
 
-namespace PFW.Ingame.UI
+namespace PFW.UI.Ingame
 {
     /**
      * Responsible for the set of selected units.

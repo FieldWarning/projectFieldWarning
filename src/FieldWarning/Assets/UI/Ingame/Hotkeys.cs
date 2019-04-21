@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PFW.Ingame.UI
+namespace PFW.UI.Ingame
 {
     public class Hotkeys
     {

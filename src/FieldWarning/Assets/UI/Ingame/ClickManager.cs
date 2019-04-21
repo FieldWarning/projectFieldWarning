@@ -14,7 +14,7 @@
 using UnityEngine;
 using System;
 
-using static PFW.Ingame.UI.Constants;
+using static PFW.UI.Ingame.Constants;
 
 /*
  * The purpose of this class is to distinguish between short clicks

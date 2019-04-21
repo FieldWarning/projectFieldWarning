@@ -14,7 +14,7 @@ using UnityEngine;
 
 using PFW.Model.Game;
 
-namespace PFW.Ingame.Prototype
+namespace PFW.UI.Prototype
 {
     public class UnitFactory
     {

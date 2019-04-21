@@ -16,7 +16,7 @@ using PFW.Model.Game;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace PFW.Ingame.UI
+namespace PFW.UI.Ingame
 {
     public class CaptureZone : MonoBehaviour
     {

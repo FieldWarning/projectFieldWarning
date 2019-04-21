@@ -13,8 +13,8 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using PFW.Ingame.Prototype;
-using PFW.Ingame.UI;
+using PFW.UI.Prototype;
+using PFW.UI.Ingame;
 
 using PFW.Model.Game;
 

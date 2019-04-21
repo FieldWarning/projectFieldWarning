@@ -12,12 +12,12 @@
 */
 
 using System.Collections.Generic;
-using PFW.Ingame.Prototype;
+using PFW.UI.Prototype;
 using UnityEngine;
 
 using PFW.Model.Game;
 
-namespace PFW.Ingame.UI
+namespace PFW.UI.Ingame
 {
     public class BuyTransaction
     {
