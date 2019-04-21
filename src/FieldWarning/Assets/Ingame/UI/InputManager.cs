@@ -24,7 +24,7 @@ namespace PFW.Ingame.UI
 {
     /**
      * Handles almost all input during a match.
-     * 
+     *
      * Some input, particularly for to selecting and deselecting units,
      * is handled in SelectionManager instead.
      */
@@ -36,7 +36,7 @@ namespace PFW.Ingame.UI
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
-        public enum MouseMode { normal, purchasing, firePos, reverseMove, fastMove };
+        public enum MouseMode { normal, purchasing, firePos, reverseMove, fastMove, split };
         public MouseMode CurMouseMode { get; private set; } = MouseMode.normal;
 
         private BuyTransaction _currentBuyTransaction;
@@ -138,11 +138,21 @@ namespace PFW.Ingame.UI
                             false, MoveWaypoint.MoveMode.fastMove);
                 }
 
-                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift)) 
+                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
                     EnterNormalMode();
                 break;
 
+            case MouseMode.split:
+                ApplyHotkeys();
+                if (Input.GetMouseButtonDown(0)) {
+                    _selectionManager.DispatchSplitCommand(_localPlayer);
+                }
+
+                if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
+                    || Input.GetMouseButtonDown(1))
+                    EnterNormalMode();
+                break;
             default:
                 throw new Exception("impossible state");
             }
@@ -200,7 +210,7 @@ namespace PFW.Ingame.UI
          * The ghost units are used to briefly hold the destination
          * for a move order, so they need to be moved to the cursor
          * if a move order click is issued.
-         */ 
+         */
         void MoveGhostsToMouse()
         {
             RaycastHit hit;
@@ -341,6 +351,8 @@ namespace PFW.Ingame.UI
 
             } else if (Commands.FastMove && !_selectionManager.Empty) {
                 EnterFastMoveMode();
+            } else if (Commands.Split && !_selectionManager.Empty) {
+                EnterSplitMode();
             }
         }
 
@@ -366,6 +378,12 @@ namespace PFW.Ingame.UI
         private void EnterReverseMoveMode()
         {
             CurMouseMode = MouseMode.reverseMove;
+            Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
+        }
+
+        private void EnterSplitMode()
+        {
+            CurMouseMode = MouseMode.split;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
         }
 
@@ -409,6 +427,12 @@ namespace PFW.Ingame.UI
         public static bool FastMove {
             get {
                 return Input.GetKeyDown(Hotkeys.FastMove);
+            }
+        }
+
+        public static bool Split {
+            get {
+                return Input.GetKeyDown(Hotkeys.Split);
             }
         }
     }

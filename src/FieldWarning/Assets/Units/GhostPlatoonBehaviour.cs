@@ -21,7 +21,7 @@ using PFW.Model.Game;
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
     public float FinalHeading;
-    
+
     private bool _raycastIgnore;
     private bool _raycastIgnoreChange = false;
     private GameObject _icon;
@@ -30,7 +30,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private PlatoonBehaviour _platoonBehaviour;
     private PlayerData _owner;
     private List<GameObject> _units = new List<GameObject>();
-    
+
     void Update()
     {
         if (_raycastIgnoreChange) {
@@ -43,7 +43,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     {
         _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
         _icon.GetComponent<IconBehaviour>().BaseColor = _owner.Team.Color;
-        _icon.transform.parent = transform;        
+        _icon.transform.parent = transform;
     }
 
     public PlatoonBehaviour GetRealPlatoon()
@@ -72,10 +72,22 @@ public class GhostPlatoonBehaviour : MonoBehaviour
             AddSingleUnit();
     }
 
+    public void InitializeAfterSplit(
+        UnitType t, PlayerData owner)
+    {
+        _owner = owner;
+        _unitType = t;
+        transform.position = 100 * Vector3.down;
+
+        InitializeIcon();
+
+        AddSingleUnit();
+    }
+
     private void AddSingleUnit()
     {
         GameObject _unitPrefab = _owner.Session.Factory.FindPrefab(_unitType);
-        GameObject unit = _owner.Session.Factory.MakeGhostUnit(_unitPrefab);        
+        GameObject unit = _owner.Session.Factory.MakeGhostUnit(_unitPrefab);
         _units.Add(unit);
     }
 

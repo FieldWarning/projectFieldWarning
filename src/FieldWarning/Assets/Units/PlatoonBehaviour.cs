@@ -18,7 +18,6 @@ using System.Linq;
 using PFW.Ingame.Prototype;
 using PFW.Ingame.UI;
 using PFW.Model.Game;
-using PFW.Units.Component.Weapon;
 using PFW.Units;
 
 public partial class PlatoonBehaviour : MonoBehaviour
@@ -32,7 +31,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public GhostPlatoonBehaviour GhostPlatoon;
     public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
     public List<UnitDispatcher> Units = new List<UnitDispatcher>();
-    public List<PlatoonModule> Modules = new List<PlatoonModule>();
+    private List<PlatoonModule> _modules = new List<PlatoonModule>();
     public bool IsInitialized = false;
 
     public static readonly float UNIT_DISTANCE = 40*TerrainConstants.MAP_SCALE;
@@ -45,7 +44,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         Units.ForEach(x => pos += x.Transform.position);
         transform.position = pos / Units.Count;
-        Modules.ForEach(x => x.Update());
+        _modules.ForEach(x => x.Update());
 
         if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
             if (Waypoints.Any()) {
@@ -62,16 +61,15 @@ public partial class PlatoonBehaviour : MonoBehaviour
     public void BuildModules(UnitType t)
     {
         Movement = new MovementModule(this);
-        Modules.Add(Movement);
 
         if (t == UnitType.AFV) {
             Transporter = new TransporterModule(this);
-            Modules.Add(Transporter);
+            _modules.Add(Transporter);
         }
 
         if (t == UnitType.Infantry) {
             Transportable = new TransportableModule(this);
-            Modules.Add(Transportable);
+            _modules.Add(Transportable);
         }
     }
 
@@ -137,6 +135,54 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Owner.Session.RegisterPlatoonBirth(this);
     }
 
+    // Call when splitting a platoon
+    public void InitializeAfterSplit(UnitType t, PlayerData owner, UnitDispatcher unit, MoveWaypoint destination)
+    {
+        Type = t;
+        Owner = owner;
+
+        var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
+        Icon = iconInstance.GetComponent<IconBehaviour>();
+        Icon.BaseColor = Owner.Team.Color;
+
+        unit.SetPlatoon(this);
+        Units.Add(unit);
+
+        BuildModules(t);
+
+        Movement.BeginQueueing(false);
+        Movement.SetDestination(destination.Destination);
+        Movement.EndQueueing();
+
+        Icon.SetSource(Units);
+
+        GhostPlatoon.SetVisible(false);
+
+        Owner.Session.RegisterPlatoonBirth(this);
+        IsInitialized = true;
+    }
+
+    // Create new platoons for all units
+    public void Split(PlayerData owner)
+    {
+        foreach (UnitDispatcher unit in Units) {
+            var ghost = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
+            var platoon = Instantiate(Resources.Load<GameObject>("Platoon"));
+
+            var pBehavior = platoon.GetComponent<PlatoonBehaviour>();
+            var gBehavior = ghost.GetComponent<GhostPlatoonBehaviour>();
+
+            pBehavior.GhostPlatoon = gBehavior;
+
+            gBehavior.InitializeAfterSplit(Type, owner);
+
+            pBehavior.InitializeAfterSplit(Type, owner, unit, Movement.Waypoint);
+        }
+
+        Destroy(GhostPlatoon);
+        DestroyWithoutUnits();
+    }
+
     // Called when a platoon enters or leaves the player's selection.
     // justPreviewing - true when the unit should be shaded as if selected, but the
     //                  actual selected set has not been changed yet
@@ -158,13 +204,24 @@ public partial class PlatoonBehaviour : MonoBehaviour
         PlayAttackCommandVoiceline();
     }
 
+    /// <summary>
+    /// Destroy just the platoon object, without touching its units.
+    /// </summary>
+    private void DestroyWithoutUnits()
+    {
+        Owner.Session.RegisterPlatoonDeath(this);
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Destroy the platoon and all units in it.
+    /// </summary>
     public void Destroy()
     {
         foreach (var p in Units)
             Destroy(p.GameObject);
 
-        Owner.Session.RegisterPlatoonDeath(this);
-        Destroy(gameObject);
+        DestroyWithoutUnits();
     }
 
 #region PlayVoicelines

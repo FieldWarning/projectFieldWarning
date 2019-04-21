@@ -45,7 +45,7 @@ public abstract class PlatoonModule
 
         if (!isQueueing)
             Platoon.Waypoints.Clear();
-       
+
         NewWaypoint = GetModuleWaypoint();
     }
 

@@ -22,7 +22,7 @@ namespace PFW.Ingame.UI
 {
     /**
      * Responsible for the set of selected units.
-     * 
+     *
      * Tracks which units are currently selected, adds and removes
      * units from the selection, dispatches orders to the selected units.
      */
@@ -112,7 +112,7 @@ namespace PFW.Ingame.UI
 
         /**
          * Send a movement command to the currently selected platoons.
-         * 
+         *
          * \param useGhostHeading If true, the platoons will move to their sillhouettes
          * (e.g. the command was previewed using mouse drag and the units should move to
          * the positions that were shown in the preview). If false, the platoons
@@ -120,6 +120,9 @@ namespace PFW.Ingame.UI
          */
         public void DispatchMoveCommand(bool useGhostHeading, MoveWaypoint.MoveMode moveMode)
         {
+            if (Empty)
+                return;
+
             PrepareDestination();
 
             // Set the heading of the waypoints:
@@ -140,6 +143,20 @@ namespace PFW.Ingame.UI
             _selection[randInt].PlayMoveCommandVoiceline();
 
             MaybeDropSelectionAfterOrder();
+        }
+
+        /**
+         * Send a split command to all currently selected platoons
+         */
+        public void DispatchSplitCommand(PlayerData owner)
+        {
+            // Work on a shallow copy, because the actual selection gets changed
+            // every time a platoon in it is destroyed (split):
+            List<PlatoonBehaviour> selectionCopy =
+                new List<PlatoonBehaviour>(_selection);
+
+            selectionCopy.ForEach(p => p.Split(owner));
+            _selection.Clear();
         }
 
         /**

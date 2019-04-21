@@ -93,7 +93,7 @@ namespace PFW.Ingame.UI
             var positions = Formations.GetLineFormation(center, heading + Mathf.PI / 2, GhostPlatoons.Count);
             for (var i = 0; i < GhostPlatoons.Count; i++)
                 GhostPlatoons[i].SetOrientation(positions[i], heading);
-            
+
         }
     }
 }
