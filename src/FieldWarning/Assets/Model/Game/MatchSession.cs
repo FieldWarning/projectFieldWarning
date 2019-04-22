@@ -33,12 +33,19 @@ namespace PFW.Model.Game
         private VisibilityManager _visibilityManager;
         private UnitRegistry _unitRegistry;
 
+        public List<UnitDispatcher> Units =>
+                _unitRegistry.Units;
+        public List<UnitDispatcher> AllyUnits =>
+                _unitRegistry.AllyUnits;
+        public List<UnitDispatcher> EnemyUnits =>
+                _unitRegistry.EnemyUnits;
+
         public List<VisionComponent> AllyVisionComponents =>
                 _unitRegistry.AllyVisionComponents;
         public List<VisionComponent> EnemyVisionComponents =>
                 _unitRegistry.EnemyVisionComponents;
 
-        public Settings Settings { get; set; }
+        public Settings Settings { get; private set; }
 
         public PlayerBehaviour LocalPlayer { get; private set; }
 

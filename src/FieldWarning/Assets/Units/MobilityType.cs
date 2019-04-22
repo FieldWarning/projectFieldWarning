@@ -10,9 +10,11 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
- 
+
 using UnityEngine;
 using System.Collections.Generic;
+
+using PFW.Units;
 
 // The purpose of having MobilityType as a separate class from UnitData is
 //     so that only a few pathfinding graphs are needed, instead of having a separate
@@ -22,8 +24,7 @@ public sealed class MobilityType
     // This list needs to be instantiated before the PathfinderData
     public static readonly List<MobilityType> MobilityTypes = new List<MobilityType>();
 
-    // This obvously needs to be removed once a way to read in the data is finalized:
-    public static MobilityType temp = new MobilityType();
+    private static MobilityType _tmp = new MobilityType();
 
     public readonly int Index;
 
@@ -57,9 +58,10 @@ public sealed class MobilityType
         if (unitRadius > 0f) {
             // TODO use unit list from game/match session
             // TODO maybe move this logic into its own method?
-            GameObject[] units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
-            foreach (GameObject unit in units) {
-                float dist = Vector3.Distance(location, unit.transform.position);
+            var session = GameObject.FindObjectOfType<PFW.Model.Game.MatchSession>();
+
+            foreach (UnitDispatcher unit in session.Units) {
+                float dist = Vector3.Distance(location, unit.Transform.position);
                 if (dist < unitRadius + unit.GetComponent<UnitBehaviour>().Data.radius)
                     return 0f;
             }
@@ -67,7 +69,7 @@ public sealed class MobilityType
 
         // Find unit speed on terrain
         int terrainType = map.GetTerrainType(location);
-        
+
         float speed = 0f;
         if (terrainType == TerrainMap.BRIDGE) {
             speed = 1.0f;

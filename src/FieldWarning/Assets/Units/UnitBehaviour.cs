@@ -17,7 +17,6 @@ using PFW.Units.Component.Weapon;
 
 public abstract class UnitBehaviour : SelectableBehavior
 {
-    public const string UNIT_TAG = "Unit";
     public const float NO_HEADING = float.MaxValue;
     private const float ORIENTATION_RATE = 5.0f;
     private const float TRANSLATION_RATE = 5.0f;
@@ -60,8 +59,6 @@ public abstract class UnitBehaviour : SelectableBehavior
 
     public virtual void Start()
     {
-        tag = UNIT_TAG;
-
         Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
     }
 

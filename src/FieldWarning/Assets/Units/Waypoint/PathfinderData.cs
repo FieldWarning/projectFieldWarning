@@ -119,7 +119,7 @@ public class PathfinderData
                     graph.Add(new PathNode(newPos));
             }
         }*/
-        
+
         // Remove nodes that are right on top of each other
         for (int i = 0; i < graph.Count; i++) {
             for (int j = i + 1; j < graph.Count; j++) {
@@ -129,11 +129,11 @@ public class PathfinderData
         }
 
         openSet = new FastPriorityQueue<PathNode>(graph.Count + 1);
-        
+
         // Compute arcs for all pairs of nodes within cutoff distance
         for (int i = 0; i < graph.Count; i++) {
             for (int j = i + 1; j < graph.Count; j++) {
-                if ((Position(graph[i]) - Position(graph[j])).magnitude < ArcMaxDist) 
+                if ((Position(graph[i]) - Position(graph[j])).magnitude < ArcMaxDist)
                     AddArc(graph[i], graph[j]);
             }
         }
@@ -228,7 +228,7 @@ public class PathfinderData
             neighbor.cameFrom = null;
             neighbor.gScore = Pathfinder.Forever;
             Vector3 neighborPos = Position(neighbor);
-            
+
             if ((start - neighborPos).magnitude < ArcMaxDist) {
                 float gScoreNew = Pathfinder.FindLocalPath(this, start, neighborPos, mobility, unitRadius);
                 if (gScoreNew < Pathfinder.Forever) {
@@ -238,7 +238,7 @@ public class PathfinderData
                 }
             }
         }
-        
+
         while (openSet.Count > 0) {
 
             PathNode current = openSet.Dequeue();

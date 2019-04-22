@@ -34,6 +34,11 @@ namespace PFW.Model.Game
         //public List<UnitDispatcher> BlueUnits { get; } =
         //        new List<UnitDispatcher>();
 
+        public List<UnitDispatcher> AllyUnits { get; } =
+                new List<UnitDispatcher>();
+        public List<UnitDispatcher> EnemyUnits { get; } =
+                new List<UnitDispatcher>();
+
         public List<VisionComponent> AllyVisionComponents { get; } =
                 new List<VisionComponent>();
         public List<VisionComponent> EnemyVisionComponents { get; } =
@@ -54,10 +59,13 @@ namespace PFW.Model.Game
             Units.Add(unit);
 
             VisionComponent visibleBehavior = unit.VisionComponent;
-            if (unit.Platoon.Owner.Team == _localTeam)
+            if (unit.Platoon.Owner.Team == _localTeam) {
+                AllyUnits.Add(unit);
                 AllyVisionComponents.Add(visibleBehavior);
-            else
+            } else {
+                EnemyUnits.Add(unit);
                 EnemyVisionComponents.Add(visibleBehavior);
+            }
         }
 
         /// <summary>
@@ -70,10 +78,13 @@ namespace PFW.Model.Game
             Units.Remove(unit);
 
             VisionComponent visionComponent = unit.VisionComponent;
-            if (unit.Platoon.Owner.Team == _localTeam)
+            if (unit.Platoon.Owner.Team == _localTeam) {
+                AllyUnits.Remove(unit);
                 AllyVisionComponents.Remove(visionComponent);
-            else
+            } else {
+                EnemyUnits.Remove(unit);
                 EnemyVisionComponents.Remove(visionComponent);
+            }
         }
 
         /// <summary>
@@ -90,19 +101,20 @@ namespace PFW.Model.Game
             _localTeam = newTeam;
 
             // Refresh ally/enemy-based lists:
-            var allVisionComponents = new List<VisionComponent>();
-            allVisionComponents.AddRange(EnemyVisionComponents);
-            allVisionComponents.AddRange(AllyVisionComponents);
+            AllyUnits.Clear();
+            EnemyUnits.Clear();
 
-            EnemyVisionComponents.Clear();
             AllyVisionComponents.Clear();
+            EnemyVisionComponents.Clear();
 
-            foreach (VisionComponent vis in allVisionComponents)
-            {
-                if (_localTeam == vis.UnitBehaviour.Platoon.Owner.Team)
-                    AllyVisionComponents.Add(vis);
-                else
-                    EnemyVisionComponents.Add(vis);
+            foreach (UnitDispatcher unit in Units) {
+                if (_localTeam == unit.Platoon.Owner.Team) {
+                    AllyUnits.Add(unit);
+                    AllyVisionComponents.Add(unit.VisionComponent);
+                } else {
+                    EnemyUnits.Add(unit);
+                    EnemyVisionComponents.Add(unit.VisionComponent);
+                }
             }
         }
     }

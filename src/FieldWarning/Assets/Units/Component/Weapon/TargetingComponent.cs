@@ -136,20 +136,14 @@ namespace PFW.Units.Component.Weapon
         private void FindAndTargetClosestEnemy()
         {
             // TODO utilize precomputed distance lists from session
-            // TODO Have a global List of enemy Units to prevent using FindGameobjects since it is very ressource intensive
             // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
-            GameObject[] Units = GameObject.FindGameObjectsWithTag(UnitBehaviour.UNIT_TAG);
-            Team thisTeam = Unit.Platoon.Owner.Team;
 
-            foreach (GameObject enemy in Units) {
-                // Filter out friendlies:
-                if (enemy.GetComponent<UnitBehaviour>().Platoon.Owner.Team == thisTeam)
-                    continue;
+            foreach (UnitDispatcher enemy in Unit.Platoon.Owner.Session.EnemyUnits) {
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance(Unit.transform.position, enemy.transform.position);
+                var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
                 if (distance < _data.FireRange) {
-                    SetTarget(new TargetTuple(enemy), false);
+                    SetTarget(new TargetTuple(enemy.GameObject), false);
                     break;
                 }
             }
