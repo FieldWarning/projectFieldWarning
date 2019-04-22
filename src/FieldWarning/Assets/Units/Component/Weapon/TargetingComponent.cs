@@ -12,7 +12,6 @@
  */
 
 using UnityEngine;
-using PFW.Model.Game;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -124,9 +123,14 @@ namespace PFW.Units.Component.Weapon
 
                 MaybeDropOutOfRangeTarget();
                 bool targetInRange = !_movingTowardsTarget;
+                bool shotFired = false;
 
                 if (_turretComponent.IsFacingTarget && targetInRange)
-                    _weapon.TryShoot(_target, Time.deltaTime);
+                    shotFired = _weapon.TryShoot(_target, Time.deltaTime);
+
+                // If shooting at the ground, stop after the first shot:
+                if (shotFired && _target.IsGround)
+                    _target = null;
 
             } else {
                 FindAndTargetClosestEnemy();

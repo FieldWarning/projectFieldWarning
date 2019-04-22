@@ -23,7 +23,6 @@ namespace PFW.Units.Component.Weapon
         private WeaponData _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _source { get; }
-        private TargetTuple _target;
 
         // TODO Should aim to make actual objects fire and not effects:
         private ParticleSystem _shotEffect;
@@ -44,7 +43,7 @@ namespace PFW.Units.Component.Weapon
             _shotVolume = shotVolume;
         }
 
-        private bool FireWeapon(TargetTuple target)
+        private void FireWeapon(TargetTuple target)
         {
             // sound
             _source.PlayOneShot(_shotSound, _shotVolume);
@@ -58,15 +57,10 @@ namespace PFW.Units.Component.Weapon
                 // HIT
                 if (roll < _data.Accuracy) {
                     target.Enemy.GetComponent<UnitBehaviour>().Dispatcher.HandleHit(_data.Damage);
-                    return true;
                 }
             } else {
-                // ensure we only fire pos once
-                this._target = null;
+                // TODO: fire pos damage not implemented
             }
-
-            // MISS
-            return false;
         }
 
         public bool TryShoot(TargetTuple target, float deltaTime)
@@ -76,7 +70,8 @@ namespace PFW.Units.Component.Weapon
                 return false;
 
             _reloadTimeLeft = _data.ReloadTime;
-            return FireWeapon(target);
+            FireWeapon(target);
+            return true;
         }
     }
 }

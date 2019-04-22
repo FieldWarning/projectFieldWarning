@@ -19,7 +19,7 @@ namespace PFW.Units.Component.Weapon
 {
     /// <summary>
     /// Represents a weapon firing in an arc.
-    /// 
+    ///
     /// TODO rewrite or hopefully even entirely remove, this should not require
     /// a separate class.
     /// </summary>
@@ -28,7 +28,6 @@ namespace PFW.Units.Component.Weapon
         private WeaponData _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _audioSource { get; }
-        private TargetTuple _target;
 
         // Where the shell spawns:
         private Transform _shotStarterPosition;
@@ -61,8 +60,8 @@ namespace PFW.Units.Component.Weapon
 
             GameObject shell = Resources.Load<GameObject>("shell");
             GameObject shell_new = GameObject.Instantiate(
-                    shell, 
-                    _shotStarterPosition.position, 
+                    shell,
+                    _shotStarterPosition.position,
                     _shotStarterPosition.transform.rotation);
 
             shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
