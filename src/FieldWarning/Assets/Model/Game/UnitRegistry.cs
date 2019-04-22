@@ -25,38 +25,73 @@ namespace PFW.Model.Game
     {
         private Team _localTeam;
 
+        /// <summary>
+        /// List of all active units in a match.
+        /// </summary>
         public List<UnitDispatcher> Units { get; } =
                 new List<UnitDispatcher>();
 
-        // TODO
-        //public List<UnitDispatcher> RedUnits { get; } =
-        //        new List<UnitDispatcher>();
-        //public List<UnitDispatcher> BlueUnits { get; } =
-        //        new List<UnitDispatcher>();
+        /// <summary>
+        /// List of all units that are team members
+        /// from the perspective of a given team.
+        /// </summary>
+        public Dictionary<Team, List<UnitDispatcher>> UnitsByTeam { get; } =
+                  new Dictionary<Team, List<UnitDispatcher>>();
 
-        public List<UnitDispatcher> AllyUnits { get; } =
-                new List<UnitDispatcher>();
-        public List<UnitDispatcher> EnemyUnits { get; } =
-                new List<UnitDispatcher>();
+        /// <summary>
+        /// List of all units that are enemies
+        /// from the perspective of a given team
+        /// </summary>
+        public Dictionary<Team, List<UnitDispatcher>> EnemiesByTeam { get; } =
+                  new Dictionary<Team, List<UnitDispatcher>>();
+
+        /// <summary>
+        /// List of all units that are team members
+        /// from the perspective of the local player.
+        /// </summary>
+        public List<UnitDispatcher> AllyUnits { get; private set; }
+
+        /// <summary>
+        /// List of all units that are enemies
+        /// from the perspective of the local player.
+        /// </summary>
+        public List<UnitDispatcher> EnemyUnits { get; private set; }
 
         public List<VisionComponent> AllyVisionComponents { get; } =
                 new List<VisionComponent>();
         public List<VisionComponent> EnemyVisionComponents { get; } =
                 new List<VisionComponent>();
 
-        public UnitRegistry(Team localTeam)
+        public UnitRegistry(Team localTeam, List<Team> teams)
         {
             _localTeam = localTeam;
+            teams.ForEach(
+                team => UnitsByTeam.Add(team, new List<UnitDispatcher>()));
+            teams.ForEach(
+                team => EnemiesByTeam.Add(team, new List<UnitDispatcher>()));
+
+            AllyUnits = UnitsByTeam[_localTeam];
+            EnemyUnits = EnemiesByTeam[_localTeam];
         }
 
         /// <summary>
         /// Must notify the registry every time a
         /// (real, active) unit is created.
+        /// <para></para>
+        /// Do not call outside of MatchSession.
         /// </summary>
         /// <param name="unit"></param>
         public void RegisterUnitBirth(UnitDispatcher unit)
         {
             Units.Add(unit);
+
+            Team unitTeam = unit.Platoon.Owner.Team;
+            UnitsByTeam[unitTeam].Add(unit);
+
+            // Add unit as enemy to all other teams:
+            foreach (var pair in EnemiesByTeam)
+                if (pair.Key != unitTeam)
+                    pair.Value.Add(unit);
 
             VisionComponent visibleBehavior = unit.VisionComponent;
             if (unit.Platoon.Owner.Team == _localTeam) {
@@ -71,18 +106,26 @@ namespace PFW.Model.Game
         /// <summary>
         /// Must notify the registry every time a
         /// (real, active) unit is removed.
+        /// <para></para>
+        /// Do not call outside of MatchSession.
         /// </summary>
         /// <param name="unit"></param>
         public void RegisterUnitDeath(UnitDispatcher unit)
         {
             Units.Remove(unit);
 
+            Team unitTeam = unit.Platoon.Owner.Team;
+            UnitsByTeam[unitTeam].Remove(unit);
+
+            // Add unit as enemy to all other teams:
+            foreach (var pair in EnemiesByTeam)
+                if (pair.Key != unitTeam)
+                    pair.Value.Remove(unit);
+
             VisionComponent visionComponent = unit.VisionComponent;
             if (unit.Platoon.Owner.Team == _localTeam) {
-                AllyUnits.Remove(unit);
                 AllyVisionComponents.Remove(visionComponent);
             } else {
-                EnemyUnits.Remove(unit);
                 EnemyVisionComponents.Remove(visionComponent);
             }
         }
@@ -91,6 +134,8 @@ namespace PFW.Model.Game
         /// The registry needs to know which team the locally
         /// playing player is on, as some unit lists are split
         /// on an ally/enemy basis.
+        /// <para></para>
+        /// Do not call outside of MatchSession.
         /// </summary>
         /// <param name="newTeam"></param>
         public void UpdateTeamBelonging(Team newTeam)
@@ -101,18 +146,16 @@ namespace PFW.Model.Game
             _localTeam = newTeam;
 
             // Refresh ally/enemy-based lists:
-            AllyUnits.Clear();
-            EnemyUnits.Clear();
+            AllyUnits = UnitsByTeam[_localTeam];
+            EnemyUnits = EnemiesByTeam[_localTeam];
 
             AllyVisionComponents.Clear();
             EnemyVisionComponents.Clear();
 
             foreach (UnitDispatcher unit in Units) {
                 if (_localTeam == unit.Platoon.Owner.Team) {
-                    AllyUnits.Add(unit);
                     AllyVisionComponents.Add(unit.VisionComponent);
                 } else {
-                    EnemyUnits.Add(unit);
                     EnemyVisionComponents.Add(unit.VisionComponent);
                 }
             }

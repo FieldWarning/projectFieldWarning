@@ -11,8 +11,6 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PFW.Units.Component.Weapon
@@ -26,7 +24,7 @@ namespace PFW.Units.Component.Weapon
         private Vector3 _position { get; set; }
         public GameObject Enemy { get; private set; }
         /// <summary>
-        /// The position (location) of the target, 
+        /// The position (location) of the target,
         /// regardless of whether its a unit or not.
         /// </summary>
         public Vector3 Position {
@@ -50,7 +48,7 @@ namespace PFW.Units.Component.Weapon
         }
 
         /// <summary>
-        /// Is the target just a position on the ground, 
+        /// Is the target just a position on the ground,
         /// as opposed to an enemy unit?
         /// </summary>
         public bool IsGround {
@@ -60,7 +58,7 @@ namespace PFW.Units.Component.Weapon
         }
 
         /// <summary>
-        /// Is the target an enemy unit, 
+        /// Is the target an enemy unit,
         /// as opposed to a position on the ground?
         /// </summary>
         public bool IsUnit {
@@ -71,8 +69,8 @@ namespace PFW.Units.Component.Weapon
 
         /// <summary>
         /// Is this a non-zero target?
-        /// 
-        /// Warning: Do not intentionally create zero targets, 
+        ///
+        /// Warning: Do not intentionally create zero targets,
         /// set and check for null instead.
         /// </summary>
         public bool Exists {

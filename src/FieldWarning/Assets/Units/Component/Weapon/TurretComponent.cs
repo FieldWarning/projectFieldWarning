@@ -55,7 +55,7 @@ namespace PFW.Units.Component.Weapon
         /// <param name="priority"></param>
         public void SetTarget(TargetTuple target, int priority)
         {
-            if (_target == null || priority >= _curTargetPriority) {
+            if (_target == null || !_target.Exists || priority >= _curTargetPriority) {
                 _target = target;
                 _curTargetPriority = priority;
             }
@@ -68,7 +68,7 @@ namespace PFW.Units.Component.Weapon
 
         private void Update()
         {
-            if (_target == null)
+            if (_target == null || !_target.Exists)
                 return;
 
             bool aimed = false;

@@ -35,6 +35,12 @@ namespace PFW.Model.Game
 
         public List<UnitDispatcher> Units =>
                 _unitRegistry.Units;
+
+        public Dictionary<Team, List<UnitDispatcher>> UnitsByTeam =>
+                _unitRegistry.UnitsByTeam;
+        public Dictionary<Team, List<UnitDispatcher>> EnemiesByTeam =>
+                _unitRegistry.EnemiesByTeam;
+
         public List<UnitDispatcher> AllyUnits =>
                 _unitRegistry.AllyUnits;
         public List<UnitDispatcher> EnemyUnits =>
@@ -70,7 +76,7 @@ namespace PFW.Model.Game
             LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
             LocalPlayer.Data = redTeam.Players[0];
 
-            _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team);
+            _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
 
             GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
 

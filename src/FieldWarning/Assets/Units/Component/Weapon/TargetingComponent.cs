@@ -119,7 +119,7 @@ namespace PFW.Units.Component.Weapon
         {
             StopMovingIfInRangeOfTarget();
 
-            if (_target != null) {
+            if (_target != null && _target.Exists) {
 
                 MaybeDropOutOfRangeTarget();
                 bool targetInRange = !_movingTowardsTarget;
@@ -142,7 +142,7 @@ namespace PFW.Units.Component.Weapon
             // TODO utilize precomputed distance lists from session
             // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
 
-            foreach (UnitDispatcher enemy in Unit.Platoon.Owner.Session.EnemyUnits) {
+            foreach (UnitDispatcher enemy in Unit.Platoon.Owner.Session.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
 
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
