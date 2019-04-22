@@ -15,13 +15,13 @@ namespace PFW.Model.Game
 {
     /**
      * Most players are passive data containers.
-     * 
+     *
      * For the logic behind managed players, take a look at the PlayerBehaviour class.
      */
     public class PlayerData
     {
         public Team Team;
-        
+
         private MatchSession _session;
         public MatchSession Session {
             get {

@@ -11,10 +11,32 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-namespace PFW.UI.Ingame
+namespace PFW
 {
+    /// <summary>
+    /// Intentionally put topmost, please store all constants here.
+    /// </summary>
     public static class Constants
     {
+        /// <summary>
+        /// When left/right clicking, how much does the mouse
+        /// have to be moved before release for it to count as
+        /// a drag click instead of a simple click?
+        /// </summary>
         public static readonly float MOUSE_DRAG_THRESHOLD = 10.0f;
+
+        /// <summary>
+        /// The game shall only have two teams.
+        /// </summary>
+        public enum TEAMS
+        {
+            BLUE = 0,
+            RED  = 1,
+        }
+
+        /// <summary>
+        /// Can't get the size of an enum at compile time, so:
+        /// </summary>
+        public static readonly int TEAM_COUNT = 2;
     }
 }

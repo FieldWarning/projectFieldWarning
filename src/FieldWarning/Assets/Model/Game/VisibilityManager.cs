@@ -12,35 +12,27 @@
  */
 
 using UnityEngine;
-using System.Collections.Generic;
 
 using PFW.Model.Game;
-using PFW.Units;
 using PFW.Units.Component.Vision;
 
 //[UpdateAfter(typeof(MovementSystem))]
 public class VisibilityManager : MonoBehaviour
 {
-    public MatchSession Session;
-
-    public Team LocalTeam;
-
-    public List<VisionComponent> AllyUnits { get; private set; } = new List<VisionComponent>();
-    public List<VisionComponent> EnemyUnits { get; private set; } = new List<VisionComponent>();
+    public UnitRegistry UnitRegistry;
 
     // Old code:
-
     private static readonly float MAP_SIZE = 1000;
     private static readonly float MAX_VIEW_DISTANCE = 50;
     private static readonly int REGIONS_COUNT = Mathf.CeilToInt(MAP_SIZE / MAX_VIEW_DISTANCE);
     public static readonly float MIN_VIEW_DISTANCE = 10;
 
-    void Update()
+    private void Update()
     {
-        foreach (var unit in AllyUnits)
+        foreach (var unit in UnitRegistry.AllyVisionComponents)
             unit.ScanForEnemies();
 
-        foreach (var unit in EnemyUnits) {
+        foreach (var unit in UnitRegistry.EnemyVisionComponents) {
             unit.ScanForEnemies();
             unit.MaybeHideFromEnemies();
         }
@@ -64,32 +56,6 @@ public class VisibilityManager : MonoBehaviour
         //}
     }
 
-    public void RegisterUnitBirth(UnitDispatcher unit)
-    {
-        VisionComponent visibleBehavior = unit.VisionComponent;
-
-        if (unit.Platoon.Owner.Team == LocalTeam) {
-            AllyUnits.Add(visibleBehavior);
-
-        } else {
-            EnemyUnits.Add(visibleBehavior);
-            visibleBehavior.ToggleUnitVisibility(false);
-        }
-    }
-
-    public void RegisterUnitDeath(UnitDispatcher unit)
-    {
-        VisionComponent visibleBehavior = unit.VisionComponent;
-        if (visibleBehavior == null)
-            return;
-
-
-        if (unit.Platoon.Owner.Team == LocalTeam)
-            AllyUnits.Remove(visibleBehavior);
-        else
-            EnemyUnits.Remove(visibleBehavior);
-    }
-
     public static void UpdateUnitRegion(VisionComponent unit, Point newRegion)
     {
         //var currentPoint = unit.GetRegion();
@@ -102,20 +68,12 @@ public class VisibilityManager : MonoBehaviour
         return new Point(x, y);
     }
 
-    public void UpdateTeamBelonging(Team newTeam)
+    /// <summary>
+    /// Call after UnitRegistry.UpdateTeamBelonging().
+    /// </summary>
+    public void UpdateTeamBelonging()
     {
-        if (LocalTeam == newTeam)
-            return;
-
-        var tmp = AllyUnits;
-        AllyUnits = EnemyUnits;
-        EnemyUnits = tmp;
-
-        AllyUnits.ForEach(u => u.ToggleUnitVisibility(true));
-        EnemyUnits.ForEach(u => u.ToggleUnitVisibility(false));
-        AllyUnits.ForEach(u => u.ScanForEnemies());
-
-        LocalTeam = newTeam;
+        UnitRegistry.AllyVisionComponents.ForEach(u => u.ToggleUnitVisibility(true));
     }
 }
 

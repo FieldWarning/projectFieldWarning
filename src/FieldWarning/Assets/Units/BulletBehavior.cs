@@ -16,7 +16,7 @@ using UnityEngine;
 
 public class BulletBehavior : MonoBehaviour
 {
-    public Bullet bullet; //contains attributes for the shell 
+    public Bullet bullet; //contains attributes for the shell
     [Header("Explosion you want to appear when shell hits the target or ground")]
     public GameObject ExplosionPrefab;
     [Header("Trail emitter of this shell prefab - to be disabled on hit")]
@@ -63,8 +63,8 @@ public class BulletBehavior : MonoBehaviour
         float tanAlpha = Mathf.Tan(LaunchAngle * Mathf.Deg2Rad);
         float H = TargetCoordinates.y - transform.position.y;
 
-        // calculate the local space components of the velocity 
-        // required to land the projectile on the target object 
+        // calculate the local space components of the velocity
+        // required to land the projectile on the target object
         //float Vz = Mathf.Sqrt(G * R * R / (2.0f * (H - R * tanAlpha)));
 
         float Vz = 20F;
@@ -106,8 +106,8 @@ public class BulletBehavior : MonoBehaviour
         }
         prevDistanceToTarget = distanceToTarget;
     }
-   
-    void OnTriggerEnter(Collider other) 
+
+    void OnTriggerEnter(Collider other)
     {
         Explode();
     }
@@ -131,7 +131,7 @@ public class BulletBehavior : MonoBehaviour
 
 
 
-   
+
 
     //public void setBullet(Vector3 StartPosition, Vector3 EndPosition, float Vellocity = 30, int arc = 60)
     //{

@@ -12,11 +12,12 @@
  */
 
 using System.Collections.Generic;
+using UnityEngine;
+
 using PFW.UI.Prototype;
 using PFW.UI.Ingame;
 using PFW.Units;
 using PFW.Units.Component.Vision;
-using UnityEngine;
 
 namespace PFW.Model.Game
 {
@@ -30,28 +31,18 @@ namespace PFW.Model.Game
     {
         private InputManager _inputManager;
         private VisibilityManager _visibilityManager;
+        private UnitRegistry _unitRegistry;
 
-        public List<VisionComponent> AllyVisibleBehaviours {
-            get {
-                return _visibilityManager.AllyUnits;
-            }
-        }
-        public List<VisionComponent> EnemyVisibleBehaviours {
-            get {
-                return _visibilityManager.EnemyUnits;
-            }
-        }
+        public List<VisionComponent> AllyVisionComponents =>
+                _unitRegistry.AllyVisionComponents;
+        public List<VisionComponent> EnemyVisionComponents =>
+                _unitRegistry.EnemyVisionComponents;
 
         public Settings Settings { get; set; }
 
         public PlayerBehaviour LocalPlayer { get; private set; }
 
-        /* TODO: I think all entities that need a global list should keep one
-         * of their own, to minimize shared state. Instead of using these
-         * lists, supply a unit registration call and have MatchSession call
-         * that in RegisterUnitBirth() (see VisibilityManager for an example): */
         public List<Team> Teams { get; } = new List<Team>();
-        public ICollection<UnitDispatcher> Units { get; } = new List<UnitDispatcher>();
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
         public PathfinderData PathData { get; private set; }
@@ -72,16 +63,17 @@ namespace PFW.Model.Game
             LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
             LocalPlayer.Data = redTeam.Players[0];
 
+            _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team);
+
             GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
 
             _inputManager = FindObjectOfType<InputManager>() ??
                      gameObject.AddComponent<InputManager>();
+            _inputManager.Session = _inputManager.Session ?? this;
 
             _visibilityManager = FindObjectOfType<VisibilityManager>() ??
                      gameObject.AddComponent<VisibilityManager>();
-
-            _inputManager.Session = _inputManager.Session ?? this;
-            _visibilityManager.LocalTeam = _visibilityManager.LocalTeam ?? LocalPlayer.Data.Team;
+            _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
 
             // TODO: Pass terrain from future location of starting matches (no Find)
             PathData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
@@ -101,17 +93,11 @@ namespace PFW.Model.Game
             _inputManager.RegisterPlatoonDeath(platoon);
         }
 
-        public void RegisterUnitBirth(UnitDispatcher unit)
-        {
-            Units.Add(unit);
-            _visibilityManager.RegisterUnitBirth(unit);
-        }
+        public void RegisterUnitBirth(UnitDispatcher unit) =>
+                _unitRegistry.RegisterUnitBirth(unit);
 
-        public void RegisterUnitDeath(UnitDispatcher unit)
-        {
-            Units.Remove(unit);
-            _visibilityManager.RegisterUnitDeath(unit);
-        }
+        public void RegisterUnitDeath(UnitDispatcher unit) =>
+                _unitRegistry.RegisterUnitDeath(unit);
 
         // TODO If we can refactor MatchSession to create the spawn points, we will be able to get rid of this:
         public void AddSpawnPoint(SpawnPointBehaviour spawn)
@@ -121,7 +107,8 @@ namespace PFW.Model.Game
 
         public void UpdateTeamBelonging(Team newTeam)
         {
-            _visibilityManager.UpdateTeamBelonging(newTeam);
+            _unitRegistry.UpdateTeamBelonging(newTeam);
+            _visibilityManager.UpdateTeamBelonging();
         }
     }
 }
