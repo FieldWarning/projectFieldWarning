@@ -69,11 +69,11 @@ namespace PFW.Model.Game
         {
             Units.Remove(unit);
 
-            VisionComponent visibleBehavior = unit.VisionComponent;
+            VisionComponent visionComponent = unit.VisionComponent;
             if (unit.Platoon.Owner.Team == _localTeam)
-                AllyVisionComponents.Remove(visibleBehavior);
+                AllyVisionComponents.Remove(visionComponent);
             else
-                EnemyVisionComponents.Remove(visibleBehavior);
+                EnemyVisionComponents.Remove(visionComponent);
         }
 
         /// <summary>
