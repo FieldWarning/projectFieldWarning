@@ -28,7 +28,7 @@ namespace PFW.Model.Game
             // Guard omitted intentionally - a team must always have players:
             get { return Players[0].Session; }
         }
-        
+
         public bool IsEnemy(Team t)
         {
             return Color != t.Color;

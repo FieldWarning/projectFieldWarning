@@ -76,7 +76,7 @@ namespace PFW.Units.Component.Vision
             if (!IsVisible)
                 return;
 
-            _spotters.RemoveWhere(s => s == null || !s.CanDetect(this));
+            _spotters.RemoveWhere(s => s._gameObject == null || !s.CanDetect(this));
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
         }
@@ -96,7 +96,9 @@ namespace PFW.Units.Component.Vision
 
         private bool CanDetect(VisionComponent target)
         {
-            float distance = Vector3.Distance(_gameObject.transform.position, target._gameObject.transform.position);
+            float distance = Vector3.Distance(
+                    _gameObject.transform.position,
+                    target._gameObject.transform.position);
             return distance < max_spot_range && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
         }
 
@@ -110,9 +112,10 @@ namespace PFW.Units.Component.Vision
         private void MaybeTogglePlatoonVisibility(bool unitRevealed)
         {
             PlatoonBehaviour platoon = UnitBehaviour.Platoon;
-            ToggleAllRenderers(platoon.gameObject,
-                !platoon.Units.TrueForAll(
-                    u => !u.VisionComponent.IsVisible));
+            ToggleAllRenderers(
+                    platoon.gameObject,
+                    !platoon.Units.TrueForAll(
+                            u => !u.VisionComponent.IsVisible));
         }
 
         private void ToggleAllRenderers(GameObject o, bool enable)

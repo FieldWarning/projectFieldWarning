@@ -14,13 +14,13 @@
 using UnityEngine;
 using System;
 
-using static PFW.UI.Ingame.Constants;
+using static PFW.Constants;
 
 /*
  * The purpose of this class is to distinguish between short clicks
- * and dragging movements with the mouse held down. 
- * 
- * The owner of a ClickManager initializes it with some callbacks and 
+ * and dragging movements with the mouse held down.
+ *
+ * The owner of a ClickManager initializes it with some callbacks and
  * repeatedly calls Update(). In each call, ClickManager checks the state
  * of the mouse and calls any relevant callbacks. ClickManager is
  * like a "trampoline" - when it is called its only job is to invoke
@@ -38,7 +38,7 @@ public class ClickManager
     private readonly Action _dragMouseRelease;
     private readonly Action _whileDraggingMouse;
 
-    // Prevents the firing of any events 
+    // Prevents the firing of any events
     // unless the inital mouse down event was detected.
     private bool _primed = false;
 

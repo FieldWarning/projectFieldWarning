@@ -17,8 +17,8 @@ namespace PFW.Model.Game
 {
     /**
      * Represents "managed" players.
-     * 
-     * This full-fledged player object is for players for who we 
+     *
+     * This full-fledged player object is for players for who we
      * manage lines of sight, income, and other data as opposed
      * to just getting them over the network.
      */
@@ -28,7 +28,7 @@ namespace PFW.Model.Game
 
         /**
          * Returns the money rounded to a multiple of the income tick.
-         */ 
+         */
         public float Money {
             get {
                 return Mathf.Floor(Data.Money / Data.IncomeTick) * Data.IncomeTick;

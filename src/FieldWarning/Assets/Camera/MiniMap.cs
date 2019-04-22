@@ -67,7 +67,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     {
         //Draw all friendlies
         //Maybe there is a better way to have this list updated
-        List<VisionComponent> allies = _matchSession.AllyVisibleBehaviours;
+        List<VisionComponent> allies = _matchSession.AllyVisionComponents;
         foreach (VisionComponent unit in allies) {
             Vector3 pos = unit.UnitBehaviour.transform.position;
             Vector2 realPos = GetMapPos(pos);
@@ -77,7 +77,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         }
 
         //Draw all enemies
-        List<VisionComponent> enemies = _matchSession.EnemyVisibleBehaviours;
+        List<VisionComponent> enemies = _matchSession.EnemyVisionComponents;
         foreach (VisionComponent unit in enemies) {
             if (unit.IsVisible) {
                 Vector3 pos = unit.UnitBehaviour.transform.position;
