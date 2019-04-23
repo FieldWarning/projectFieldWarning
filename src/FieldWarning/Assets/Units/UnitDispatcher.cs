@@ -15,6 +15,7 @@ using UnityEngine;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
+using PFW.Units.Component.Movement;
 
 namespace PFW.Units
 {
@@ -47,7 +48,7 @@ namespace PFW.Units
         #endregion
 
         // TODO remove
-        private UnitBehaviour _unitBehaviour;
+        private MovementComponent _unitBehaviour;
         public PlatoonBehaviour Platoon => _unitBehaviour.Platoon;
         public Transform Transform => _unitBehaviour.transform;
         public GameObject GameObject => _unitBehaviour.gameObject;
@@ -67,7 +68,7 @@ namespace PFW.Units
         public static GameObject SELECTION_CIRCLE_PREFAB =
             Resources.Load<GameObject>("SelectionCircle");
 
-        public UnitDispatcher(UnitBehaviour unitBehaviour)
+        public UnitDispatcher(MovementComponent unitBehaviour)
         {
             _unitBehaviour = unitBehaviour;
             _unitBehaviour.Dispatcher = this;
@@ -126,9 +127,9 @@ namespace PFW.Units
         public void SetDestination(MoveWaypoint waypoint) =>
             _unitBehaviour.SetUnitDestination(waypoint);
 
-        public InfantryBehaviour AsInfantry()
+        public InfantryMovementComponent AsInfantry()
         {
-            return _unitBehaviour as InfantryBehaviour;
+            return _unitBehaviour as InfantryMovementComponent;
         }
     }
 }

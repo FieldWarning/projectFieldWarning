@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using System.Linq;
+using PFW.Units.Component.Movement;
 
 public class MovementModule : PlatoonModule, Matchable<Vector3>
 {
@@ -52,7 +53,7 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
 
     public void UseDefaultHeading()
     {
-        SetFinalOrientation(Waypoint.Destination, UnitBehaviour.NO_HEADING);
+        SetFinalOrientation(Waypoint.Destination, MovementComponent.NO_HEADING);
     }
 
     private Vector3 GetFunctionalPosition()

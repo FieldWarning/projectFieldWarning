@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using Priority_Queue;
 using EasyRoads3Dv3;
 
+using PFW.Units.Component.Movement;
+
 public class PathfinderData
 {
     private const string GraphFile = "graph.dat";

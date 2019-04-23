@@ -16,6 +16,9 @@ using PFW.Model.Game;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using PFW.Units.Component.Movement;
+
 namespace PFW.UI.Ingame
 {
     public class CaptureZone : MonoBehaviour
@@ -29,7 +32,7 @@ namespace PFW.UI.Ingame
         //Maybe take out all that owner stuff and simply use an int or otherwise shorten the code
         private PlayerData _owner;
         //Vehicles Currently in the Zone (Maybe exclude all non-commander vehicles),maybe replace list with Array
-        private List<VehicleBehaviour> _vehicles = new List<VehicleBehaviour>();
+        private List<VehicleMovementComponent> _vehicles = new List<VehicleMovementComponent>();
 
         // Start is called before the first frame update
         void Start()
@@ -44,7 +47,7 @@ namespace PFW.UI.Ingame
             bool blueIncluded = false;
             PlayerData newOwner = null;
             for (int i = 0; i < _vehicles.Count; i++) {
-                VehicleBehaviour vehicle = _vehicles.ToArray()[i];
+                VehicleMovementComponent vehicle = _vehicles.ToArray()[i];
                 if (vehicle.AreOrdersComplete()) {
                     newOwner = vehicle.Platoon.Owner;
                     //Names are USSR and NATO
@@ -93,16 +96,16 @@ namespace PFW.UI.Ingame
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.transform.parent != null && other.transform.parent.GetComponent<VehicleBehaviour>() != null && other.transform.parent.GetComponent<VehicleBehaviour>().isActiveAndEnabled) {
-                _vehicles.Add(other.transform.parent.GetComponent<VehicleBehaviour>());
+            if (other.transform.parent != null && other.transform.parent.GetComponent<VehicleMovementComponent>() != null && other.transform.parent.GetComponent<VehicleMovementComponent>().isActiveAndEnabled) {
+                _vehicles.Add(other.transform.parent.GetComponent<VehicleMovementComponent>());
             }
         }
 
         // TODO: If the unit is killed, it will never be removed from the zone:
         private void OnTriggerExit(Collider other)
         {
-            if (other.transform.parent.GetComponent<VehicleBehaviour>() != null) {
-                _vehicles.Remove(other.transform.parent.GetComponent<VehicleBehaviour>());
+            if (other.transform.parent.GetComponent<VehicleMovementComponent>() != null) {
+                _vehicles.Remove(other.transform.parent.GetComponent<VehicleMovementComponent>());
             }
         }
     }

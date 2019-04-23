@@ -12,12 +12,13 @@
  */
 
 using UnityEngine;
+using PFW.Units.Component.Movement;
 
 public class TransporterBehaviour : MonoBehaviour
 {
     // Use this for initialization
-    public InfantryBehaviour transported;
-    public InfantryBehaviour target;
+    public InfantryMovementComponent transported;
+    public InfantryMovementComponent target;
 
     void Start()
     {
@@ -29,11 +30,11 @@ public class TransporterBehaviour : MonoBehaviour
     {
         if (target != null) {
             if (target.interactsWithTransport(true)) {
-                GetComponent<UnitBehaviour>().SetDestination(transform.position);
+                GetComponent<MovementComponent>().SetDestination(transform.position);
             }
             //target.setRally(getRallyPoint(), transform.position);//???????
-            else if (GetComponent<UnitBehaviour>().Pathfinder.HasDestination()) {
-                GetComponent<UnitBehaviour>().SetDestination(target.transform.position);
+            else if (GetComponent<MovementComponent>().Pathfinder.HasDestination()) {
+                GetComponent<MovementComponent>().SetDestination(target.transform.position);
             }
         }
     }
@@ -53,7 +54,7 @@ public class TransporterBehaviour : MonoBehaviour
         return rallyPoint;
     }
 
-    public void load(InfantryBehaviour t)
+    public void load(InfantryMovementComponent t)
     {
         target = t;
         //GetComponent<UnitBehaviour>().gotDestination = true;

@@ -15,6 +15,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
+using PFW.Units.Component.Movement;
 
 namespace PFW.Units.Component.Vision
 {
@@ -30,7 +31,7 @@ namespace PFW.Units.Component.Vision
         private HashSet<VisionComponent> _spotters = new HashSet<VisionComponent>();
         public bool IsVisible { get; private set; } = true;
 
-        public UnitBehaviour UnitBehaviour;
+        public MovementComponent UnitBehaviour;
         private GameObject _gameObject;
 
         private Team _team {
@@ -43,7 +44,7 @@ namespace PFW.Units.Component.Vision
 
         private VisionComponent() { }
 
-        public VisionComponent(GameObject unit, UnitBehaviour unitBehaviour)
+        public VisionComponent(GameObject unit, MovementComponent unitBehaviour)
         {
             _gameObject = unit;
             UnitBehaviour = unitBehaviour;
@@ -59,7 +60,7 @@ namespace PFW.Units.Component.Vision
                 GameObject go = c.gameObject;
 
                 // this finds colliders, health bars and all other crap except units
-                var unitBehaviour = go.GetComponentInParent<UnitBehaviour>();
+                var unitBehaviour = go.GetComponentInParent<MovementComponent>();
                 if (unitBehaviour == null || !unitBehaviour.enabled)
                     continue;
 

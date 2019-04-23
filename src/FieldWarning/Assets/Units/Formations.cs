@@ -14,13 +14,15 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+using PFW.Units.Component.Movement;
+
 public class Formations
 {
-    
+
     public static List<Vector3> GetLineFormation(Vector3 center, float heading, int nUnits)
     {
         Vector3 v = Vector3.forward;
-        if (heading != UnitBehaviour.NO_HEADING) 
+        if (heading != MovementComponent.NO_HEADING)
             v = new Vector3(-Mathf.Sin(heading), 0, Mathf.Cos(heading));
 
         center += (nUnits - 1) * (PlatoonBehaviour.UNIT_DISTANCE / 2) * v;

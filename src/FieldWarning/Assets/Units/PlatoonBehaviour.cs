@@ -20,6 +20,8 @@ using PFW.UI.Ingame;
 using PFW.Model.Game;
 using PFW.Units;
 
+using PFW.Units.Component.Movement;
+
 public partial class PlatoonBehaviour : MonoBehaviour
 {
     public UnitType Type;
@@ -87,7 +89,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
         for (int i = 0; i < n; i++) {
             var unitInstance =
                 Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
-            var unitBehaviour = unitInstance.GetComponent<UnitBehaviour>();
+            var unitBehaviour = unitInstance.GetComponent<MovementComponent>();
             unitBehaviour.SetPlatoon(this);
             UnitDispatcher unit = new UnitDispatcher(unitBehaviour);
             Units.Add(unit);

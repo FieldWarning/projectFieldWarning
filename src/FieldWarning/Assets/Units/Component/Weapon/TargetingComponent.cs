@@ -13,6 +13,8 @@
 
 using UnityEngine;
 
+using PFW.Units.Component.Movement;
+
 namespace PFW.Units.Component.Weapon
 {
     /// <summary>
@@ -20,7 +22,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class TargetingComponent : MonoBehaviour
     {
-        public UnitBehaviour Unit { get; private set; }
+        public MovementComponent Unit { get; private set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
         public void SetTarget(Vector3 position, bool autoApproach = true)
@@ -76,7 +78,7 @@ namespace PFW.Units.Component.Weapon
 
         private void Awake()
         {
-            Unit = gameObject.GetComponent<UnitBehaviour>();
+            Unit = gameObject.GetComponent<MovementComponent>();
             enabled = false;
         }
 

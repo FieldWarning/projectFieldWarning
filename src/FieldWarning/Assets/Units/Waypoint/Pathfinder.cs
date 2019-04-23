@@ -14,6 +14,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+using PFW.Units.Component.Movement;
+
 public class Pathfinder
 {
     public const float Forever = float.MaxValue/2;
@@ -31,13 +33,13 @@ public class Pathfinder
     public MoveCommandType command { get; private set; }
     public readonly float finalCompletionDist;
 
-    private UnitBehaviour unit;
+    private MovementComponent unit;
     private List<PathNode> path;  // path[0] is the final destination
     private PathNode previousNode;
     private Vector3 waypoint;
     private float nextUpdateTime;
 
-    public Pathfinder(UnitBehaviour unit, PathfinderData data)
+    public Pathfinder(MovementComponent unit, PathfinderData data)
     {
         this.unit = unit;
         this.data = data;

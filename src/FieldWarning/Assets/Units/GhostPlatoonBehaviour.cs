@@ -17,6 +17,7 @@ using PFW.UI.Prototype;
 using PFW.UI.Ingame;
 
 using PFW.Model.Game;
+using PFW.Units.Component.Movement;
 
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
@@ -98,14 +99,14 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
         var positions = Formations.GetLineFormation(center, heading, _units.Count);
         for (int i = 0; i < _units.Count; i++) {
-            _units[i].GetComponent<UnitBehaviour>().SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading, false);
+            _units[i].GetComponent<MovementComponent>().SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading, false);
         }
     }
 
     public void SetVisible(bool vis)
     {
         _icon.GetComponent<IconBehaviour>().SetVisible(vis);
-        _units.ForEach(x => x.GetComponent<UnitBehaviour>().SetVisible(vis));
+        _units.ForEach(x => x.GetComponent<MovementComponent>().SetVisible(vis));
 
         _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
     }

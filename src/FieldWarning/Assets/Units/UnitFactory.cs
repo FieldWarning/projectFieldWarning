@@ -13,6 +13,7 @@
 using UnityEngine;
 
 using PFW.Model.Game;
+using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Prototype
 {
@@ -39,7 +40,7 @@ namespace PFW.UI.Prototype
                 break;
             case UnitType.Infantry:
                 var obj = new GameObject();
-                var b = obj.AddComponent<InfantryBehaviour>();
+                var b = obj.AddComponent<InfantryMovementComponent>();
                 b.enabled = false;
                 unit = obj;
                 break;
@@ -67,7 +68,7 @@ namespace PFW.UI.Prototype
         public GameObject MakeGhostUnit(GameObject prefab)
         {
             GameObject unit = Object.Instantiate(prefab);
-            unit.GetComponent<UnitBehaviour>().enabled = false;
+            unit.GetComponent<MovementComponent>().enabled = false;
 
             Shader shader = Resources.Load<Shader>("Ghost");
             unit.ApplyShaderRecursively(shader);

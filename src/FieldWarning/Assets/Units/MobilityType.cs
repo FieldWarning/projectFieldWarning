@@ -15,6 +15,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Units;
+using PFW.Units.Component.Movement;
 
 // The purpose of having MobilityType as a separate class from UnitData is
 //     so that only a few pathfinding graphs are needed, instead of having a separate
@@ -62,7 +63,7 @@ public sealed class MobilityType
 
             foreach (UnitDispatcher unit in session.Units) {
                 float dist = Vector3.Distance(location, unit.Transform.position);
-                if (dist < unitRadius + unit.GetComponent<UnitBehaviour>().Data.radius)
+                if (dist < unitRadius + unit.GetComponent<MovementComponent>().Data.radius)
                     return 0f;
             }
         }
