@@ -58,7 +58,7 @@ namespace PFW.Units.Component.Weapon
 
                 // HIT
                 if (roll < _data.Accuracy) {
-                    target.Enemy.GetComponent<MovementComponent>().Dispatcher.HandleHit(_data.Damage);
+                    target.Enemy.HandleHit(_data.Damage);
                 }
             } else {
                 // TODO: fire pos damage not implemented

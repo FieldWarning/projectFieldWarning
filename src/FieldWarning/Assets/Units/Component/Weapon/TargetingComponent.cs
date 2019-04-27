@@ -146,7 +146,7 @@ namespace PFW.Units.Component.Weapon
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
                 if (distance < _data.FireRange) {
-                    SetTarget(new TargetTuple(enemy.GameObject), false);
+                    SetTarget(enemy.TargetTuple, false);
                     break;
                 }
             }

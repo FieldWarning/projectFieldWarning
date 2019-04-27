@@ -47,12 +47,16 @@ namespace PFW.Units
         // more
         #endregion
 
-        // TODO remove
-        private MovementComponent _unitBehaviour;
-        public PlatoonBehaviour Platoon => _unitBehaviour.Platoon;
-        public Transform Transform => _unitBehaviour.transform;
-        public GameObject GameObject => _unitBehaviour.gameObject;
+        private MovementComponent _movementComponent;
+        public PlatoonBehaviour Platoon => _movementComponent.Platoon;
+        public Transform Transform => _movementComponent.transform;
+        public GameObject GameObject => _movementComponent.gameObject;
 
+        /// <summary>
+        /// The target tuple for targeting this unit. Do NOT manually
+        /// create additional target tuples.
+        /// </summary>
+        public readonly TargetTuple TargetTuple;
 
         // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
         public VisionComponent VisionComponent;
@@ -70,17 +74,28 @@ namespace PFW.Units
 
         public UnitDispatcher(MovementComponent unitBehaviour)
         {
-            _unitBehaviour = unitBehaviour;
-            _unitBehaviour.Dispatcher = this;
-            VisionComponent = new VisionComponent(GameObject, _unitBehaviour);
+            TargetTuple = new TargetTuple(this);
+
+            _movementComponent = unitBehaviour;
+            _movementComponent.Dispatcher = this;
+            VisionComponent = new VisionComponent(GameObject, _movementComponent);
 
             _targetingComponents = unitBehaviour.GetComponents<TargetingComponent>();
+
             _healthComponent = new HealthComponent(
-                _unitBehaviour.Data.maxHealth, Platoon, GameObject, this);
+                    _movementComponent.Data.maxHealth,
+                    Platoon,
+                    GameObject,
+                    this,
+                    TargetTuple);
+
             _voiceComponent = GameObject.Instantiate(
-                VOICE_PREFAB, Transform).GetComponent<VoiceComponent>();
+                    VOICE_PREFAB,
+                    Transform).GetComponent<VoiceComponent>();
+
             _selectionCircle = GameObject.Instantiate(
-                SELECTION_CIRCLE_PREFAB, Transform);
+                    SELECTION_CIRCLE_PREFAB,
+                    Transform);
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -102,7 +117,7 @@ namespace PFW.Units
             _selectionCircle.SetActive(selected && !justPreviewing);
         }
 
-        public void SetPlatoon(PlatoonBehaviour p) => _unitBehaviour.SetPlatoon(p);
+        public void SetPlatoon(PlatoonBehaviour p) => _movementComponent.SetPlatoon(p);
 
         #region PlayVoicelines
         public void PlayAttackCommandVoiceline() =>
@@ -113,23 +128,23 @@ namespace PFW.Units
             _voiceComponent.PlaySelectionVoiceline(true);
         #endregion
 
-        public T GetComponent<T>() => _unitBehaviour.GetComponent<T>();
+        public T GetComponent<T>() => _movementComponent.GetComponent<T>();
 
         public float GetHealth() => _healthComponent.Health;
-        public float MaxHealth => _unitBehaviour.Data.maxHealth;
+        public float MaxHealth => _movementComponent.Data.maxHealth;
         public void HandleHit(float receivedDamage) =>
             _healthComponent.HandleHit(receivedDamage);
 
         public void SetOriginalOrientation(Vector3 position, float heading) =>
-            _unitBehaviour.SetOriginalOrientation(position, heading);
+            _movementComponent.SetOriginalOrientation(position, heading);
 
-        public bool AreOrdersComplete() => _unitBehaviour.AreOrdersComplete();
+        public bool AreOrdersComplete() => _movementComponent.AreOrdersComplete();
         public void SetDestination(MoveWaypoint waypoint) =>
-            _unitBehaviour.SetUnitDestination(waypoint);
+            _movementComponent.SetUnitDestination(waypoint);
 
         public InfantryMovementComponent AsInfantry()
         {
-            return _unitBehaviour as InfantryMovementComponent;
+            return _movementComponent as InfantryMovementComponent;
         }
     }
 }

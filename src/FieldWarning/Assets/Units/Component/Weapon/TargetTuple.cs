@@ -22,7 +22,8 @@ namespace PFW.Units.Component.Weapon
     public class TargetTuple
     {
         private Vector3 _position { get; set; }
-        public GameObject Enemy { get; private set; }
+        public UnitDispatcher Enemy { get; private set; }
+
         /// <summary>
         /// The position (location) of the target,
         /// regardless of whether its a unit or not.
@@ -32,7 +33,7 @@ namespace PFW.Units.Component.Weapon
                 if (IsGround)
                     return _position;
                 else
-                    return Enemy.transform.position;
+                    return Enemy.Transform.position;
             }
         }
 
@@ -41,10 +42,15 @@ namespace PFW.Units.Component.Weapon
             _position = position;
             Enemy = null;
         }
-        public TargetTuple(GameObject go)
+
+        /// <summary>
+        /// Do not call this constructor outside of the UnitDispatcher class!
+        /// </summary>
+        /// <param name="unit"></param>
+        public TargetTuple(UnitDispatcher unit)
         {
             _position = Vector3.zero;
-            Enemy = go;
+            Enemy = unit;
         }
 
         /// <summary>
@@ -77,6 +83,15 @@ namespace PFW.Units.Component.Weapon
             get {
                 return Enemy != null || _position != Vector3.zero;
             }
+        }
+
+        /// <summary>
+        /// Allows UnitDispatcher to remove references to itself when destroyed.
+        /// </summary>
+        public void Reset()
+        {
+            Enemy = null;
+            _position = Vector3.zero;
         }
     }
 }
