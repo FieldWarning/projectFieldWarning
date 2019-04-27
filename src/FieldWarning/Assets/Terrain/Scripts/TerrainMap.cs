@@ -101,7 +101,7 @@ public class TerrainMap
                 }
             }
             
-            float boundaryWidth = BRIDGE_WIDTH + Pathfinder.StepSize;
+            float boundaryWidth = BRIDGE_WIDTH + Pathfinder.STEP_SIZE;
             Vector3 inset = (boundaryWidth + MAP_SPACING) * (end - start).normalized;
             AssignRectanglarPatch(start + inset, end - inset, boundaryWidth, BUILDING);
             AssignRectanglarPatch(start, end, BRIDGE_WIDTH, BRIDGE);

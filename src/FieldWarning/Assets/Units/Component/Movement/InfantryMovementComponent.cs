@@ -159,7 +159,7 @@ namespace PFW.Units.Component.Movement
         public void setTransportTarget(TransporterBehaviour transport)
         {
             if (transport == null) {
-                Pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Fast);
+                Pathfinder.SetPath(Pathfinder.NO_POSITION, MoveCommandType.Fast);
                 setRingFormation();
             } else {
                 transporter = transport;
@@ -266,7 +266,7 @@ namespace PFW.Units.Component.Movement
             var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
             pos = new Vector3(p.x, y, p.z);
             transform.position = pos;
-            Pathfinder.SetPath(Pathfinder.NoPosition, MoveCommandType.Slow);
+            Pathfinder.SetPath(Pathfinder.NO_POSITION, MoveCommandType.Slow);
             setRingFormation();
             men.ForEach(x => {
                 x.teleport();

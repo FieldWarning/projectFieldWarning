@@ -153,7 +153,7 @@ public class PathfinderData
 
                 bool necessary = false;
                 foreach (MobilityType mobility in MobilityType.MobilityTypes) {
-                    if (arc.time[mobility.Index] == Pathfinder.Forever)
+                    if (arc.time[mobility.Index] == Pathfinder.FOREVER)
                         continue;
 
                     float time = FindPath(path,
@@ -217,7 +217,7 @@ public class PathfinderData
         PathNode cameFromDest = null;
         float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, unitRadius);
 
-        if (gScoreDest < Pathfinder.Forever) {
+        if (gScoreDest < Pathfinder.FOREVER) {
             if (command == MoveCommandType.Slow || command == MoveCommandType.Reverse)
                 return gScoreDest;
         }
@@ -228,12 +228,12 @@ public class PathfinderData
         foreach (PathNode neighbor in graph) {
             neighbor.isClosed = false;
             neighbor.cameFrom = null;
-            neighbor.gScore = Pathfinder.Forever;
+            neighbor.gScore = Pathfinder.FOREVER;
             Vector3 neighborPos = Position(neighbor);
 
             if ((start - neighborPos).magnitude < ArcMaxDist) {
                 float gScoreNew = Pathfinder.FindLocalPath(this, start, neighborPos, mobility, unitRadius);
-                if (gScoreNew < Pathfinder.Forever) {
+                if (gScoreNew < Pathfinder.FOREVER) {
                     neighbor.gScore = gScoreNew;
                     float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
                     openSet.Enqueue(neighbor, fScoreNew);
@@ -256,7 +256,7 @@ public class PathfinderData
                     continue;
 
                 float arcTime = arc.time[mobility.Index];
-                if (arcTime >= Pathfinder.Forever)
+                if (arcTime >= Pathfinder.FOREVER)
                     continue;
 
                 float gScoreNew = current.gScore + arcTime;
@@ -274,13 +274,13 @@ public class PathfinderData
                 neighbor.cameFrom = current;
             }
 
-            float arcTimeDest = Pathfinder.Forever;
+            float arcTimeDest = Pathfinder.FOREVER;
             if (Vector3.Distance(Position(current), destination) < ArcMaxDist)
                 arcTimeDest = Pathfinder.FindLocalPath(this, Position(current), destination, mobility, unitRadius);
            // Debug.Log(openSet.Count + " " + Position(current) + " " + current.isRoad + " " + Vector3.Distance(Position(current), destination) + " " + (current.gScore + arcTimeDest) + " " + gScoreDest);
-            if (arcTimeDest >= Pathfinder.Forever)
+            if (arcTimeDest >= Pathfinder.FOREVER)
                 continue;
-            if (arcTimeDest < Pathfinder.Forever && command == MoveCommandType.Slow)
+            if (arcTimeDest < Pathfinder.FOREVER && command == MoveCommandType.Slow)
                 arcTimeDest = 0f;
 
             float gScoreDestNew = current.gScore + arcTimeDest;

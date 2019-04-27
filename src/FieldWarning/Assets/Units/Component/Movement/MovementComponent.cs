@@ -142,7 +142,7 @@ namespace PFW.Units.Component.Movement
             }
 
             float a = Pathfinder.SetPath(waypoint.Destination, moveType);
-            if (a < Pathfinder.Forever)
+            if (a < Pathfinder.FOREVER)
                 SetUnitFinalHeading(waypoint.Heading);
         }
 
@@ -157,7 +157,7 @@ namespace PFW.Units.Component.Movement
         // Sets the unit's destination location, with a specific given heading value
         public void SetFinalOrientation(Vector3 d, float heading)
         {
-            if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.Forever)
+            if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.FOREVER)
                 SetUnitFinalHeading(heading);
         }
 
@@ -216,7 +216,7 @@ namespace PFW.Units.Component.Movement
         // Returns the unit's speed on the current terrain
         public float GetTerrainSpeedMultiplier()
         {
-            float terrainSpeed = Data.mobility.GetUnitSpeed(Pathfinder.data.terrain, Pathfinder.data.map, transform.position, 0f, -transform.forward);
+            float terrainSpeed = Data.mobility.GetUnitSpeed(Pathfinder.Data.terrain, Pathfinder.Data.map, transform.position, 0f, -transform.forward);
             //terrainSpeed = Mathf.Max(terrainSpeed, 0.5f * TerrainConstants.MAP_SCALE); // Never let the speed to go exactly 0, just so units don't get stuck
             return terrainSpeed;
         }
