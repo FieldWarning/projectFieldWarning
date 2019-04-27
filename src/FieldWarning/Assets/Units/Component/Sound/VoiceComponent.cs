@@ -19,10 +19,13 @@ namespace PFW.Units
     public class VoiceComponent : MonoBehaviour
     {
         [SerializeField]
-        private List<AudioClip> _selectAudio, _moveAudio, _attackAudio;
+        private List<AudioClip>
+            _selectAudio = null,
+            _moveAudio = null,
+            _attackAudio = null;
         // Randomly choose clips from list
         [SerializeField]
-        private AudioSource _audioSource;
+        private AudioSource _audioSource = null;
 
         public void PlaySelectionVoiceline(bool selected)
         {

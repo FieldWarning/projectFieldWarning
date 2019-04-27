@@ -22,23 +22,24 @@ using PFW.Units.Component.Vision;
 public class MiniMap : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private Terrain _terrain;
+    private Terrain _terrain = null;
     //(x,y,z) X and Z are the important values
     private Vector3 _terrainSize;
     private float _minimapSize;
     private float _offsetFromRightSide;
     private float _targetedScreenSize;
-    [SerializeField]
-    private RawImage _miniMapImage;
-    [SerializeField]
-    private Texture2D _tankTexture;
-    [SerializeField]
-    private MatchSession _matchSession;
     private Vector2 _screenSize;
+
     [SerializeField]
-    private Camera _miniMapCamera;
+    private RawImage _miniMapImage = null;
     [SerializeField]
-    private SlidingCameraBehaviour _mainCamera;
+    private Texture2D _tankTexture = null;
+    [SerializeField]
+    private MatchSession _matchSession = null;
+    [SerializeField]
+    private Camera _miniMapCamera = null;
+    [SerializeField]
+    private SlidingCameraBehaviour _mainCamera = null;
 
     private void Start()
     {

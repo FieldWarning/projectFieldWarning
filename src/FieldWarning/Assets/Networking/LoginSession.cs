@@ -28,18 +28,18 @@ namespace PFW.Networking
         private const string FAKE_EMAIL_SUFFIX = "@pfw.com";
 
         [SerializeField]
-        private TMP_InputField _serverInputField;
+        private TMP_InputField _serverInputField = null;
         [SerializeField]
-        private TMP_InputField _portInputField;
+        private TMP_InputField _portInputField = null;
         [SerializeField]
-        private TMP_InputField _usernameInputField;
+        private TMP_InputField _usernameInputField = null;
         [SerializeField]
-        private TMP_InputField _passwordInputField;
+        private TMP_InputField _passwordInputField = null;
 
         [SerializeField]
-        private GameObject _loginModal;
+        private GameObject _loginModal = null;
         [SerializeField]
-        private GameObject _failedNotification;
+        private GameObject _failedNotification = null;
 
         private string _username;
         private IClient _client;
@@ -51,9 +51,9 @@ namespace PFW.Networking
         const bool CHAT_ROOM_HIDDEN = false;
 
         [SerializeField]
-        private TMP_Text _chatMessagesArea;
+        private TMP_Text _chatMessagesArea = null;
         [SerializeField]
-        private TMP_InputField _chatInputField;
+        private TMP_InputField _chatInputField = null;
         private ISocket _chatSocket;
         private IChannel _chatChannel;
 
@@ -87,7 +87,7 @@ namespace PFW.Networking
             await _chatSocket.ConnectAsync(_session);
             _chatChannel = await _chatSocket.JoinChatAsync(
                     CHAT_ROOM, ChannelType.Room, CHAT_ROOM_PERSISTENT, CHAT_ROOM_HIDDEN);
-            
+
             _chatMessagesArea.text += $"Welcome {_username}, you have connected with session {_session} to {_chatChannel.Id}.\n";
 
             // Handle any incoming messages:
@@ -105,7 +105,7 @@ namespace PFW.Networking
             // TMP triggers OnEndEdit callbacks when the input field was deselected; ignore those:
             if (!Input.GetKey(KeyCode.Return) && !Input.GetKey(KeyCode.KeypadEnter))
                 return;
-            
+
             ChatMessage message = new ChatMessage(_username, _chatInputField.text);
             _chatInputField.text = "";
             string jsonPacket = message.ToJson();
@@ -117,7 +117,7 @@ namespace PFW.Networking
             }
         }
 
-        public struct ChatMessage 
+        public struct ChatMessage
         {
             public string Author;
             public string Content;

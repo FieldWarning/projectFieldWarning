@@ -47,31 +47,28 @@ namespace PFW.Units.Component.Weapon
 
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
-        private WeaponData _data;
+        private WeaponData _data = null;
 
         // TODO the weapon class should create its own audio source:
         [SerializeField]
-        private AudioSource _audioSource;
+        private AudioSource _audioSource = null;
 
         [SerializeField]
-        private TurretComponent _turretComponent;
+        private TurretComponent _turretComponent = null;
         /// <summary>
         /// When a unit has multiple weapons that share a turret,
         /// the turret will prefer to rotate for the higher-priority weapon.
         /// </summary>
         [SerializeField]
-        private int _turretPriority;
+        private int _turretPriority = 0;
         // Where the shell spawns:
         [SerializeField]
-        private Transform _shotStarterPosition;
-        // The shell being fired:
-        [SerializeField]
-        private GameObject _bullet;
+        private Transform _shotStarterPosition = null;
         // TODO Should aim to make actual objects fire and not effects:
         [SerializeField]
-        private ParticleSystem _shotEffect;
+        private ParticleSystem _shotEffect = null;
         [SerializeField]
-        private AudioClip _shotSound;
+        private AudioClip _shotSound = null;
         [SerializeField]
         private float _shotVolume = 1.0F;
         // ---------------- END PREFAB -----------------

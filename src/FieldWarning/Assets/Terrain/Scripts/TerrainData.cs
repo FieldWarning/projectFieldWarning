@@ -12,7 +12,7 @@ public class TerrainData
         width = alphaMap.GetLength(0);
         height = alphaMap.GetLength(1);
         var data = GameObject.Find("Terrain").GetComponent<Terrain>().terrainData;
-        
+
         size = data.size;*/
     }
 

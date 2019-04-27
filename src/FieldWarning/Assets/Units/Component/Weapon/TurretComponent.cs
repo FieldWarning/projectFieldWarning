@@ -33,12 +33,12 @@ namespace PFW.Units.Component.Weapon
         private bool _isHowitzer = false;
 
         [SerializeField]
-        private Transform _mount;
+        private Transform _mount = null;
         [SerializeField]
-        private Transform _turret;
+        private Transform _turret = null;
 
         [SerializeField]
-        private TurretComponent _parentTurret;
+        private TurretComponent _parentTurret = null;
 
         [SerializeField]
         public float ArcHorizontal = 180, ArcUp = 40, ArcDown = 20, RotationRate = 40f;

@@ -13,17 +13,20 @@
 
 using UnityEngine;
 
-public class MiniMapIcon : MonoBehaviour
+namespace PFW.UI.Ingame
 {
-    private Quaternion _rotation;
-
-    public void Start()
+    public class MiniMapIcon : MonoBehaviour
     {
-        _rotation = Quaternion.AngleAxis(90, Vector3.right);
-    }
+        private Quaternion _rotation;
 
-    public void LateUpdate()
-    {
-        transform.rotation = _rotation;
+        public void Start()
+        {
+            _rotation = Quaternion.AngleAxis(90, Vector3.right);
+        }
+
+        public void LateUpdate()
+        {
+            transform.rotation = _rotation;
+        }
     }
 }

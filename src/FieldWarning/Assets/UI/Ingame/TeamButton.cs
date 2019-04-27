@@ -18,13 +18,14 @@ using PFW.Model.Game;
 public class TeamButton : MonoBehaviour
 {
     [SerializeField]
-    private Team _team;
+    private Team _team = null;
     [SerializeField]
-    private MatchSession _session;
+    private MatchSession _session = null;
 
-    // We do this instead of just setting the position in inspector because otherwise the button graphics interfere with working on the map in edit mode:
+    // We set the position at runtime instead of in the inspector because
+    // otherwise the button graphics interfere with working on the map in edit mode:
     [SerializeField]
-    private int _position;
+    private int _position = 0;
 
     public void Awake()
     {
