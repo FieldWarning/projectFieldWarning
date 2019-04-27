@@ -23,31 +23,41 @@ using PFW.Units.Component.Movement;
 
 public class PathfinderData
 {
-    private const string GraphFile = "graph.dat";
+    private const string GRAPH_FILE = "graph.dat";
 
-    private static PathArc InvalidArc = new PathArc(null, null);
-    private const float SparseGridSpacing = 1000f * TerrainConstants.MAP_SCALE;
-    private const float RoadGridSpacing = 200f * TerrainConstants.MAP_SCALE;
-    private const float NodePruneDistThresh = 10f * TerrainConstants.MAP_SCALE;
-    private const float ArcMaxDist = 2500f * TerrainConstants.MAP_SCALE;
+    private static PathArc INVALID_ARC = new PathArc(null, null);
+    private const float SPARSE_GRID_SPACING = 1000f * TerrainConstants.MAP_SCALE;
+    private const float ROAD_GRID_SPACING = 200f * TerrainConstants.MAP_SCALE;
+    private const float NODE_PRUNE_DIST_THRESH = 10f * TerrainConstants.MAP_SCALE;
+    private const float ARC_MAX_DIST = 2500f * TerrainConstants.MAP_SCALE;
 
-    public Terrain terrain;
-    public TerrainMap map;
-    public List<PathNode> graph;
-    FastPriorityQueue<PathNode> openSet;
+    public Terrain Terrain;
+    public TerrainMap Map;
+    public List<PathNode> Graph;
+
+    /// <summary>
+    /// If a node is in the open set, it has been seen
+    /// but it hasn't been visited yet.
+    /// </summary>
+    private FastPriorityQueue<PathNode> _openSet;
 
     public PathfinderData(Terrain terrain)
     {
-        this.terrain = terrain;
-        map = new TerrainMap(terrain);
-        graph = new List<PathNode>();
+        this.Terrain = terrain;
+        Map = new TerrainMap(terrain);
+        Graph = new List<PathNode>();
 
-        if (!ReadGraph(GraphFile)) {
+        if (!ReadGraph(GRAPH_FILE)) {
             BuildGraph();
-            WriteGraph(GraphFile);
+            WriteGraph(GRAPH_FILE);
         }
     }
 
+    /// <summary>
+    /// Load the precomputed pathfinding graph from file.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns></returns>
     private bool ReadGraph(string file)
     {
         if (!File.Exists(file))
@@ -57,10 +67,10 @@ public class PathfinderData
             Stream stream = File.Open(file, FileMode.Open);
             BinaryFormatter formatter = new BinaryFormatter();
 
-            graph = (List<PathNode>)formatter.Deserialize(stream);
+            Graph = (List<PathNode>)formatter.Deserialize(stream);
             stream.Close();
 
-            openSet = new FastPriorityQueue<PathNode>(graph.Count + 1);
+            _openSet = new FastPriorityQueue<PathNode>(Graph.Count + 1);
             return true;
         } catch (Exception exception) {
             Debug.Log("Error reading graph file: " + exception.Message);
@@ -73,14 +83,14 @@ public class PathfinderData
         Stream stream = File.Open(file, FileMode.Create);
         BinaryFormatter formatter = new BinaryFormatter();
 
-        formatter.Serialize(stream, graph);
+        formatter.Serialize(stream, Graph);
         stream.Close();
     }
 
     private void BuildGraph()
     {
-        graph.Clear();
-        Vector3 size = terrain.terrainData.size;
+        Graph.Clear();
+        Vector3 size = Terrain.terrainData.size;
 
         // TODO: Add nodes for terrain features
 
@@ -90,18 +100,24 @@ public class PathfinderData
             for (int i = 0; i < road.middleIndentVecs.Count; i++) {
                 Vector3 roadVert = road.middleIndentVecs[i];
                 if (Mathf.Abs(roadVert.x) < size.x/2 && Mathf.Abs(roadVert.z) < size.z/2)
-                    graph.Add(new PathNode(roadVert, true));
+                    Graph.Add(new PathNode(roadVert, true));
 
                 if (i < road.middleIndentVecs.Count - 1) {
                     Vector3 nextRoadVert = road.middleIndentVecs[i+1];
                     Vector3 stretch = nextRoadVert - roadVert;
-                    int nIntermediate = (int)(stretch.magnitude / RoadGridSpacing);
+                    int nIntermediate = (int)(stretch.magnitude / ROAD_GRID_SPACING);
                     stretch /= 1 + nIntermediate;
                     Vector3 intermediatePosition = roadVert;
+
                     for (int j = 0; j < nIntermediate; j++) {
                         intermediatePosition += stretch;
-                        if (Mathf.Abs(intermediatePosition.x) < size.x / 2 && Mathf.Abs(intermediatePosition.z) < size.z / 2)
-                            graph.Add(new PathNode(intermediatePosition, true));
+
+                        bool mysteryComparison =
+                            Mathf.Abs(intermediatePosition.x) < size.x / 2
+                            &&
+                            Mathf.Abs(intermediatePosition.z) < size.z / 2;
+                        if (mysteryComparison)
+                            Graph.Add(new PathNode(intermediatePosition, true));
                     }
                 }
             }
@@ -123,74 +139,75 @@ public class PathfinderData
         }*/
 
         // Remove nodes that are right on top of each other
-        for (int i = 0; i < graph.Count; i++) {
-            for (int j = i + 1; j < graph.Count; j++) {
-                if ((Position(graph[i]) - Position(graph[j])).magnitude < NodePruneDistThresh)
-                    graph.RemoveAt(j);
+        for (int i = 0; i < Graph.Count; i++) {
+            for (int j = i + 1; j < Graph.Count; j++) {
+                if ((Position(Graph[i]) - Position(Graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
+                    Graph.RemoveAt(j);
             }
         }
 
-        openSet = new FastPriorityQueue<PathNode>(graph.Count + 1);
+        _openSet = new FastPriorityQueue<PathNode>(Graph.Count + 1);
 
         // Compute arcs for all pairs of nodes within cutoff distance
-        for (int i = 0; i < graph.Count; i++) {
-            for (int j = i + 1; j < graph.Count; j++) {
-                if ((Position(graph[i]) - Position(graph[j])).magnitude < ArcMaxDist)
-                    AddArc(graph[i], graph[j]);
+        for (int i = 0; i < Graph.Count; i++) {
+            for (int j = i + 1; j < Graph.Count; j++) {
+                if ((Position(Graph[i]) - Position(Graph[j])).magnitude < ARC_MAX_DIST)
+                    AddArc(Graph[i], Graph[j]);
             }
         }
 
-        // Remove unnecessary arcs
-        // An arc in necessary if for any MobilityType, the direct path between the nodes is at least
-        // as good as the optimal global path. This is a brute force approach and it might be too slow
+        // Remove unnecessary arcs.
+        // An arc in necessary if for any MobilityType, the direct path
+        // between the nodes is at least as good as the optimal global path.
+        // This is a brute force approach and it might be too slow.
         List<PathNode> path = new List<PathNode>();
-        for (int i = 0; i < graph.Count; i++) {
-            for (int j = i + 1; j < graph.Count; j++) {
+        for (int i = 0; i < Graph.Count; i++) {
+            for (int j = i + 1; j < Graph.Count; j++) {
 
-                PathArc arc = GetArc(graph[i], graph[j]);
-                if (arc.Equals(InvalidArc))
+                PathArc arc = GetArc(Graph[i], Graph[j]);
+                if (arc.Equals(INVALID_ARC))
                     continue;
 
                 bool necessary = false;
                 foreach (MobilityType mobility in MobilityType.MobilityTypes) {
-                    if (arc.time[mobility.Index] == Pathfinder.FOREVER)
+                    if (arc.Time[mobility.Index] == Pathfinder.FOREVER)
                         continue;
 
                     float time = FindPath(path,
-                        Position(graph[i]), Position(graph[j]),
+                        Position(Graph[i]), Position(Graph[j]),
                         mobility, 0f, MoveCommandType.Fast);
 
-                    if (arc.time[mobility.Index] < 1.5 * time) {
+                    if (arc.Time[mobility.Index] < 1.5 * time) {
                         necessary = true;
                         break;
                     }
                 }
 
                 if (!necessary)
-                    RemoveArc(graph[i], graph[j]);
+                    RemoveArc(Graph[i], Graph[j]);
             }
         }
     }
 
     public PathArc GetArc(PathNode node1, PathNode node2)
     {
-        for (int i = 0; i < node1.arcs.Count; i++) {
-            PathArc arc = node1.arcs[i];
-            if (arc.node1 == node2 || arc.node2 == node2)
+        for (int i = 0; i < node1.Arcs.Count; i++) {
+            PathArc arc = node1.Arcs[i];
+            if (arc.Node1 == node2 || arc.Node2 == node2)
                 return arc;
         }
-        return InvalidArc;
+        return INVALID_ARC;
     }
 
     public void AddArc(PathNode node1, PathNode node2)
     {
         PathArc arc = new PathArc(node1, node2);
-        node1.arcs.Add(arc);
-        node2.arcs.Add(arc);
+        node1.Arcs.Add(arc);
+        node2.Arcs.Add(arc);
 
         // Compute the arc's traversal time for each MobilityType
         foreach (MobilityType mobility in MobilityType.MobilityTypes) {
-            arc.time[mobility.Index] = Pathfinder.FindLocalPath(
+            arc.Time[mobility.Index] = Pathfinder.FindLocalPath(
                 this, Position(node1), Position(node2), mobility, 0f);
         }
     }
@@ -198,8 +215,8 @@ public class PathfinderData
     public void RemoveArc(PathNode node1, PathNode node2)
     {
         PathArc arc = GetArc(node1, node2);
-        node1.arcs.Remove(arc);
-        node2.arcs.Remove(arc);
+        node1.Arcs.Remove(arc);
+        node2.Arcs.Remove(arc);
     }
 
     // Run the A* algorithm and put the result in path
@@ -207,8 +224,10 @@ public class PathfinderData
     // Returns the total path time
     public float FindPath(
         List<PathNode> path,
-        Vector3 start, Vector3 destination,
-        MobilityType mobility, float unitRadius,
+        Vector3 start,
+        Vector3 destination,
+        MobilityType mobility,
+        float unitRadius,
         MoveCommandType command)
     {
         path.Clear();
@@ -224,58 +243,58 @@ public class PathfinderData
 
         // Initialize with all nodes accessible from the starting point
         // (this can be optimized later by throwing out some from the start)
-        openSet.Clear();
-        foreach (PathNode neighbor in graph) {
-            neighbor.isClosed = false;
-            neighbor.cameFrom = null;
-            neighbor.gScore = Pathfinder.FOREVER;
+        _openSet.Clear();
+        foreach (PathNode neighbor in Graph) {
+            neighbor.IsClosed = false;
+            neighbor.CameFrom = null;
+            neighbor.GScore = Pathfinder.FOREVER;
             Vector3 neighborPos = Position(neighbor);
 
-            if ((start - neighborPos).magnitude < ArcMaxDist) {
+            if ((start - neighborPos).magnitude < ARC_MAX_DIST) {
                 float gScoreNew = Pathfinder.FindLocalPath(this, start, neighborPos, mobility, unitRadius);
                 if (gScoreNew < Pathfinder.FOREVER) {
-                    neighbor.gScore = gScoreNew;
+                    neighbor.GScore = gScoreNew;
                     float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
-                    openSet.Enqueue(neighbor, fScoreNew);
+                    _openSet.Enqueue(neighbor, fScoreNew);
                 }
             }
         }
 
-        while (openSet.Count > 0) {
+        while (_openSet.Count > 0) {
 
-            PathNode current = openSet.Dequeue();
-            current.isClosed = true;
+            PathNode current = _openSet.Dequeue();
+            current.IsClosed = true;
 
             if (gScoreDest < current.Priority)
                 break;
 
-            foreach (PathArc arc in current.arcs) {
-                PathNode neighbor = arc.node1 == current ? arc.node2 : arc.node1;
+            foreach (PathArc arc in current.Arcs) {
+                PathNode neighbor = arc.Node1 == current ? arc.Node2 : arc.Node1;
 
-                if (neighbor.isClosed)
+                if (neighbor.IsClosed)
                     continue;
 
-                float arcTime = arc.time[mobility.Index];
+                float arcTime = arc.Time[mobility.Index];
                 if (arcTime >= Pathfinder.FOREVER)
                     continue;
 
-                float gScoreNew = current.gScore + arcTime;
-                if (gScoreNew >= neighbor.gScore)
+                float gScoreNew = current.GScore + arcTime;
+                if (gScoreNew >= neighbor.GScore)
                     continue;
 
                 float fScoreNew = gScoreNew + TimeHeuristic(Position(neighbor), destination, mobility);
 
-                if (!openSet.Contains(neighbor)) {
-                    openSet.Enqueue(neighbor, fScoreNew);
+                if (!_openSet.Contains(neighbor)) {
+                    _openSet.Enqueue(neighbor, fScoreNew);
                 } else {
-                    openSet.UpdatePriority(neighbor, fScoreNew);
+                    _openSet.UpdatePriority(neighbor, fScoreNew);
                 }
-                neighbor.gScore = gScoreNew;
-                neighbor.cameFrom = current;
+                neighbor.GScore = gScoreNew;
+                neighbor.CameFrom = current;
             }
 
             float arcTimeDest = Pathfinder.FOREVER;
-            if (Vector3.Distance(Position(current), destination) < ArcMaxDist)
+            if (Vector3.Distance(Position(current), destination) < ARC_MAX_DIST)
                 arcTimeDest = Pathfinder.FindLocalPath(this, Position(current), destination, mobility, unitRadius);
            // Debug.Log(openSet.Count + " " + Position(current) + " " + current.isRoad + " " + Vector3.Distance(Position(current), destination) + " " + (current.gScore + arcTimeDest) + " " + gScoreDest);
             if (arcTimeDest >= Pathfinder.FOREVER)
@@ -283,7 +302,7 @@ public class PathfinderData
             if (arcTimeDest < Pathfinder.FOREVER && command == MoveCommandType.Slow)
                 arcTimeDest = 0f;
 
-            float gScoreDestNew = current.gScore + arcTimeDest;
+            float gScoreDestNew = current.GScore + arcTimeDest;
             if (gScoreDestNew < gScoreDest) {
                 gScoreDest = gScoreDestNew;
                 cameFromDest = current;
@@ -295,7 +314,7 @@ public class PathfinderData
         PathNode node = cameFromDest;
         while (node != null) {
             path.Add(node);
-            node = node.cameFrom;
+            node = node.CameFrom;
         }
         return gScoreDest;
     }
@@ -316,13 +335,20 @@ public class PathfinderData
 public class PathNode : FastPriorityQueueNode
 {
     //public readonly Vector3 position;
-    public readonly bool isRoad;
-    public readonly List<PathArc> arcs;
+    public readonly bool IsRoad;
+    public readonly List<PathArc> Arcs;
     public readonly float x, y, z;
 
-    public float gScore;
-    public bool isClosed;
-    public PathNode cameFrom;
+    /// <summary>
+    /// Cost from the start node to this node.
+    /// </summary>
+    public float GScore;
+
+    /// <summary>
+    /// A closed node is a node that has already been visited (evaluated).
+    /// </summary>
+    public bool IsClosed;
+    public PathNode CameFrom;
 
     public PathNode(Vector3 position, bool isRoad)
     {
@@ -330,21 +356,21 @@ public class PathNode : FastPriorityQueueNode
         x = position.x;
         y = position.y;
         z = position.z;
-        this.isRoad = isRoad;
-        arcs = new List<PathArc>(4);
+        IsRoad = isRoad;
+        Arcs = new List<PathArc>(4);
     }
 }
 
 [Serializable()]
 public struct PathArc
 {
-    public PathNode node1, node2;
-    public float[] time;
+    public PathNode Node1, Node2;
+    public float[] Time;
 
     public PathArc(PathNode node1, PathNode node2)
     {
-        time = new float[MobilityType.MobilityTypes.Count];
-        this.node1 = node1;
-        this.node2 = node2;
+        Time = new float[MobilityType.MobilityTypes.Count];
+        this.Node1 = node1;
+        this.Node2 = node2;
     }
 }

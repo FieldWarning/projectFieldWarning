@@ -51,7 +51,7 @@ public class Pathfinder
     /// <summary>
     /// Did the most recent call to TakeStep return a straight forward step?
     /// </summary>
-    private static bool _straightStep;
+    private static bool _s_straightStep;
 
     public PathfinderData Data { get; private set; }
     public MoveCommandType Command { get; private set; }
@@ -130,7 +130,7 @@ public class Pathfinder
 
         Vector3 targetPosition = PathfinderData.Position(targetNode);
         //Debug.Log(targetNode.isRoad + (previousNode != null ? " "+previousNode.isRoad : ""));
-        if (targetNode.isRoad && _previousNode != null && _previousNode.isRoad)
+        if (targetNode.IsRoad && _previousNode != null && _previousNode.IsRoad)
             targetPosition = GetRoadIntersection(
                     PathfinderData.Position(targetNode),
                     PathfinderData.Position(_previousNode),
@@ -140,7 +140,7 @@ public class Pathfinder
             Data, _unit.transform.position, targetPosition, _unit.Data.mobility, _unit.Data.radius);
 
         if (newWaypoint != NO_POSITION) {
-            _waypoint = _straightStep ? targetPosition : newWaypoint;
+            _waypoint = _s_straightStep ? targetPosition : newWaypoint;
         } else {
 
             // The unit has gotten stuck when following the previously computed path.
@@ -204,10 +204,10 @@ public class Pathfinder
             waypoint = TakeStep(data, waypoint, destination, mobility, radius);
             if (waypoint == NO_POSITION)
                 return FOREVER;
-            time += STEP_SIZE / mobility.GetUnitSpeed(data.terrain, data.map, waypoint, radius, (waypoint - previous).normalized);
+            time += STEP_SIZE / mobility.GetUnitSpeed(data.Terrain, data.Map, waypoint, radius, (waypoint - previous).normalized);
             distance = (destination - waypoint).magnitude;
         }
-        time += distance / mobility.GetUnitSpeed(data.terrain, data.map, waypoint, radius, (destination - waypoint).normalized);
+        time += distance / mobility.GetUnitSpeed(data.Terrain, data.Map, waypoint, radius, (destination - waypoint).normalized);
 
         return time;
     }
@@ -221,7 +221,7 @@ public class Pathfinder
         float radius)
     {
         Vector3 straight = (destination - start).normalized;
-        _straightStep = false;
+        _s_straightStep = false;
 
         // Fan out in a two-point horizontal pattern to find a way forward
         for (float ang1 = 0f; ang1 <= MAX_ANGLE; ang1 += ANGLE_SEARCH_INC) {
@@ -230,18 +230,18 @@ public class Pathfinder
 
                 Vector3 direction1 = ang1 > 0f ? Quaternion.AngleAxis(ang1 * direction, Vector3.up) * straight : straight;
                 Vector3 midpoint = start + direction1 * STEP_SIZE;
-                float midspeed = mobility.GetUnitSpeed(data.terrain, data.map, midpoint, radius, direction1);
+                float midspeed = mobility.GetUnitSpeed(data.Terrain, data.Map, midpoint, radius, direction1);
 
                 if (midspeed > 0f) {
                     for (float ang2 = 0f; ang2 <= ang1; ang2 += ANGLE_SEARCH_INC) {
 
                         Vector3 direction2 = ang2 > 0f ? Quaternion.AngleAxis(ang2 * direction, Vector3.up) * straight : straight;
                         Vector3 endpoint = midpoint + straight * STEP_SIZE;
-                        float endspeed = mobility.GetUnitSpeed(data.terrain, data.map, endpoint, radius, direction2);
+                        float endspeed = mobility.GetUnitSpeed(data.Terrain, data.Map, endpoint, radius, direction2);
 
                         if (endspeed > 0f) {
-                            _straightStep = ang1 == 0f && ang2 == 0f;
-                            return _straightStep ? endpoint : midpoint;
+                            _s_straightStep = ang1 == 0f && ang2 == 0f;
+                            return _s_straightStep ? endpoint : midpoint;
                         }
                     }
                 }
