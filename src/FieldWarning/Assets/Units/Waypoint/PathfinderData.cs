@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Priority_Queue;
 using EasyRoads3Dv3;
@@ -23,7 +24,7 @@ using PFW.Units.Component.Movement;
 
 public class PathfinderData
 {
-    private const string GRAPH_FILE = "graph.dat";
+    private const string GRAPH_FILE_SUFFIX = "_pathfinder_graph.dat";
 
     private static PathArc INVALID_ARC = new PathArc(null, null);
     private const float SPARSE_GRID_SPACING = 1000f * TerrainConstants.MAP_SCALE;
@@ -43,13 +44,18 @@ public class PathfinderData
 
     public PathfinderData(Terrain terrain)
     {
-        this.Terrain = terrain;
+        Terrain = terrain;
         Map = new TerrainMap(terrain);
         Graph = new List<PathNode>();
 
-        if (!ReadGraph(GRAPH_FILE)) {
+        string sceneName = SceneManager.GetActiveScene().name;
+        string scenePathWithFilename = SceneManager.GetActiveScene().path;
+        string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
+        string graphFile = Path.Combine(sceneDirectory, sceneName + GRAPH_FILE_SUFFIX);
+
+        if (!ReadGraph(graphFile)) {
             BuildGraph();
-            WriteGraph(GRAPH_FILE);
+            WriteGraph(graphFile);
         }
     }
 
