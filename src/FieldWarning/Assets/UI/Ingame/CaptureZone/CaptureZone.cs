@@ -13,7 +13,6 @@
 
 using PFW.Model.Game;
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +20,9 @@ using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Ingame
 {
+    /// <summary>
+    /// A capturable area on the ground.
+    /// </summary>
     public class CaptureZone : MonoBehaviour
     {
         public Material Red;
@@ -35,12 +37,8 @@ namespace PFW.UI.Ingame
 
         // Vehicles currently in the zone
         // (Maybe exclude all non-commander vehicles)
-        private List<VehicleMovementComponent> _vehicles = new List<VehicleMovementComponent>();
-
-        // Start is called before the first frame update
-        private void Start()
-        {
-        }
+        private List<VehicleMovementComponent> _vehicles =
+            new List<VehicleMovementComponent>();
 
         // Update is called once per frame
         private void Update()
@@ -99,17 +97,23 @@ namespace PFW.UI.Ingame
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.transform.parent != null && other.transform.parent.GetComponent<VehicleMovementComponent>() != null && other.transform.parent.GetComponent<VehicleMovementComponent>().isActiveAndEnabled) {
-                _vehicles.Add(other.transform.parent.GetComponent<VehicleMovementComponent>());
-            }
+            if (other.transform.parent == null)
+                return;
+
+            VehicleMovementComponent component =
+                    other.transform.parent.GetComponent<VehicleMovementComponent>();
+            if (component != null && component.isActiveAndEnabled)
+                _vehicles.Add(component);
         }
 
         // TODO: If the unit is killed, it will never be removed from the zone:
         private void OnTriggerExit(Collider other)
         {
-            if (other.transform.parent.GetComponent<VehicleMovementComponent>() != null) {
-                _vehicles.Remove(other.transform.parent.GetComponent<VehicleMovementComponent>());
-            }
+            VehicleMovementComponent component =
+                    other.transform.parent.GetComponent<VehicleMovementComponent>();
+
+            if (component != null)
+                _vehicles.Remove(component);
         }
     }
 }
