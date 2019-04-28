@@ -59,7 +59,7 @@ public class BulletBehavior : MonoBehaviour
 
         // formula
         float R = Vector3.Distance(projectileXZPos, targetXZPos);
-        float G = 9.8F;     //TODO Readjust for our scale usinga utility class
+        //float G = 9.8F;     //TODO Readjust for our scale usinga utility class
         float tanAlpha = Mathf.Tan(LaunchAngle * Mathf.Deg2Rad);
         float H = TargetCoordinates.y - transform.position.y;
 

@@ -30,7 +30,7 @@ public class TerrainMap
 
     private const float ROAD_WIDTH_MULT = 0.5f;
     private const float TREE_RADIUS = 7f * TerrainConstants.MAP_SCALE;
-    
+
     public const float BRIDGE_WIDTH = 3f * TerrainConstants.MAP_SCALE;
     public const float BRIDGE_HEIGHT = 1.0f; // temporary
 
@@ -100,7 +100,7 @@ public class TerrainMap
                     }
                 }
             }
-            
+
             float boundaryWidth = BRIDGE_WIDTH + Pathfinder.STEP_SIZE;
             Vector3 inset = (boundaryWidth + MAP_SPACING) * (end - start).normalized;
             AssignRectanglarPatch(start + inset, end - inset, boundaryWidth, BUILDING);

@@ -3,8 +3,8 @@
 public class TerrainData
 {
     public static Vector3 Size;
-    static float[,,] alphaMap;
-    static int width, height;
+    static float[,,] alphaMap = null;
+    static int width = 0, height = 0;
 
     public static void initialize(float[,,] alphaMap)
     {

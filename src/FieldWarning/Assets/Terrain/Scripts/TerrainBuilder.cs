@@ -18,7 +18,7 @@ using System;
 public class TerrainBuilder : MonoBehaviour
 {
     static int fractalSize = 100;
-    int treeCount = 1;
+    //int treeCount = 1;
     static int[,] map;
     static Terrain terrain;
     public static Vector3 size;
@@ -151,7 +151,7 @@ public class TerrainBuilder : MonoBehaviour
     void BuildRoads()
     {
         int n = 5;
-        float edgePadding = 0.1f;
+        //float edgePadding = 0.1f;
         //float padding = 0.1f;
         var size = terrain.terrainData.size;
         //var dx = size.x * (1 - 2 * edgePadding) / (n);
