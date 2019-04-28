@@ -94,11 +94,9 @@ namespace PFW.Model.Game
                     pair.Value.Add(unit);
 
             VisionComponent visibleBehavior = unit.VisionComponent;
-            if (unit.Platoon.Owner.Team == _localTeam) {
-                AllyUnits.Add(unit);
+            if (unitTeam == _localTeam) {
                 AllyVisionComponents.Add(visibleBehavior);
             } else {
-                EnemyUnits.Add(unit);
                 EnemyVisionComponents.Add(visibleBehavior);
             }
         }
@@ -116,14 +114,12 @@ namespace PFW.Model.Game
 
             Team unitTeam = unit.Platoon.Owner.Team;
             UnitsByTeam[unitTeam].Remove(unit);
-
-            // Add unit as enemy to all other teams:
             foreach (var pair in EnemiesByTeam)
                 if (pair.Key != unitTeam)
                     pair.Value.Remove(unit);
 
             VisionComponent visionComponent = unit.VisionComponent;
-            if (unit.Platoon.Owner.Team == _localTeam) {
+            if (unitTeam == _localTeam) {
                 AllyVisionComponents.Remove(visionComponent);
             } else {
                 EnemyVisionComponents.Remove(visionComponent);
