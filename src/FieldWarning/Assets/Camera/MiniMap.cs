@@ -18,6 +18,7 @@ using UnityEngine.EventSystems;
 
 using PFW.Model.Game;
 using PFW.Units.Component.Vision;
+using PFW.Units;
 
 public class MiniMap : MonoBehaviour, IPointerClickHandler
 {
@@ -68,9 +69,9 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     {
         //Draw all friendlies
         //Maybe there is a better way to have this list updated
-        List<VisionComponent> allies = _matchSession.AllyVisionComponents;
-        foreach (VisionComponent unit in allies) {
-            Vector3 pos = unit.UnitBehaviour.transform.position;
+        List<UnitDispatcher> allies = _matchSession.AllyUnits;
+        foreach (UnitDispatcher unit in allies) {
+            Vector3 pos = unit.Transform.position;
             Vector2 realPos = GetMapPos(pos);
             GUI.color = _matchSession.LocalPlayer.Data.Team.Color;
             GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), _tankTexture);
@@ -78,10 +79,10 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         }
 
         //Draw all enemies
-        List<VisionComponent> enemies = _matchSession.EnemyVisionComponents;
-        foreach (VisionComponent unit in enemies) {
+        List<UnitDispatcher> enemies = _matchSession.EnemyUnits;
+        foreach (UnitDispatcher unit in enemies) {
             if (unit.IsVisible) {
-                Vector3 pos = unit.UnitBehaviour.transform.position;
+                Vector3 pos = unit.Transform.position;
                 Vector2 realPos = GetMapPos(pos);
                 if (_matchSession.LocalPlayer.Data.Team == _matchSession.Teams[0]) {
                     GUI.color = _matchSession.Teams[1].Color;

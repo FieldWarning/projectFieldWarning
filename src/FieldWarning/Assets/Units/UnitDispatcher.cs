@@ -16,6 +16,7 @@ using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
+using PFW.Model.Game;
 
 namespace PFW.Units
 {
@@ -48,7 +49,6 @@ namespace PFW.Units
         #endregion
 
         private MovementComponent _movementComponent;
-        public PlatoonBehaviour Platoon => _movementComponent.Platoon;
         public Transform Transform => _movementComponent.transform;
         public GameObject GameObject => _movementComponent.gameObject;
 
@@ -68,23 +68,35 @@ namespace PFW.Units
 
         // TODO pass from some factory:
         private static GameObject VOICE_PREFAB =
-            Resources.Load<GameObject>("VoiceComponent_US");
+                Resources.Load<GameObject>("VoiceComponent_US");
         public static GameObject SELECTION_CIRCLE_PREFAB =
-            Resources.Load<GameObject>("SelectionCircle");
+                Resources.Load<GameObject>("SelectionCircle");
 
-        public UnitDispatcher(MovementComponent unitBehaviour)
+        public PlatoonBehaviour Platoon {
+            get {
+                return _movementComponent.Platoon;
+            }
+            set {
+                _movementComponent.Platoon = value;
+            }
+        }
+
+        public UnitDispatcher(
+            MovementComponent movementComponent,
+            PlatoonBehaviour platoon)
         {
             TargetTuple = new TargetTuple(this);
 
-            _movementComponent = unitBehaviour;
+            _movementComponent = movementComponent;
             _movementComponent.Dispatcher = this;
-            VisionComponent = new VisionComponent(GameObject, _movementComponent);
 
-            _targetingComponents = unitBehaviour.GetComponents<TargetingComponent>();
+            VisionComponent = new VisionComponent(GameObject, this);
+
+            _targetingComponents = movementComponent.GetComponents<TargetingComponent>();
 
             _healthComponent = new HealthComponent(
                     _movementComponent.Data.maxHealth,
-                    Platoon,
+                    platoon,
                     GameObject,
                     this,
                     TargetTuple);
@@ -96,6 +108,8 @@ namespace PFW.Units
             _selectionCircle = GameObject.Instantiate(
                     SELECTION_CIRCLE_PREFAB,
                     Transform);
+
+            Platoon = platoon;
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -117,15 +131,13 @@ namespace PFW.Units
             _selectionCircle.SetActive(selected && !justPreviewing);
         }
 
-        public void SetPlatoon(PlatoonBehaviour p) => _movementComponent.SetPlatoon(p);
-
         #region PlayVoicelines
         public void PlayAttackCommandVoiceline() =>
-            _voiceComponent.PlayAttackCommandVoiceline();
+                _voiceComponent.PlayAttackCommandVoiceline();
         public void PlayMoveCommandVoiceline() =>
-            _voiceComponent.PlayMoveCommandVoiceline();
+                _voiceComponent.PlayMoveCommandVoiceline();
         public void PlaySelectionVoiceline() =>
-            _voiceComponent.PlaySelectionVoiceline(true);
+                _voiceComponent.PlaySelectionVoiceline(true);
         #endregion
 
         public T GetComponent<T>() => _movementComponent.GetComponent<T>();
@@ -133,18 +145,20 @@ namespace PFW.Units
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _movementComponent.Data.maxHealth;
         public void HandleHit(float receivedDamage) =>
-            _healthComponent.HandleHit(receivedDamage);
+                _healthComponent.HandleHit(receivedDamage);
 
         public void SetOriginalOrientation(Vector3 position, float heading) =>
-            _movementComponent.SetOriginalOrientation(position, heading);
+                _movementComponent.SetOriginalOrientation(position, heading);
 
         public bool AreOrdersComplete() => _movementComponent.AreOrdersComplete();
         public void SetDestination(MoveWaypoint waypoint) =>
-            _movementComponent.SetUnitDestination(waypoint);
+                _movementComponent.SetUnitDestination(waypoint);
 
         public InfantryMovementComponent AsInfantry()
         {
             return _movementComponent as InfantryMovementComponent;
         }
+
+        public bool IsVisible => VisionComponent.IsVisible;
     }
 }

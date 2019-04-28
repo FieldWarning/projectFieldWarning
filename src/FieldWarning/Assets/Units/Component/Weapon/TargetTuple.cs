@@ -46,11 +46,11 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Do not call this constructor outside of the UnitDispatcher class!
         /// </summary>
-        /// <param name="unit"></param>
-        public TargetTuple(UnitDispatcher unit)
+        /// <param name="enemy"></param>
+        public TargetTuple(UnitDispatcher enemy)
         {
             _position = Vector3.zero;
-            Enemy = unit;
+            Enemy = enemy;
         }
 
         /// <summary>

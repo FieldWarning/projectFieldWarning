@@ -26,23 +26,26 @@ namespace PFW.UI.Ingame
         public Material Red;
         public Material Blue;
         public Material Neutral;
-        //How many Points per tick this Zone gives
+        // How many points per tick this zone gives
         public int Worth = 3;
 
-        //Maybe take out all that owner stuff and simply use an int or otherwise shorten the code
+        // Maybe take out all that owner stuff and simply use
+        // an int or otherwise shorten the code
         private PlayerData _owner;
-        //Vehicles Currently in the Zone (Maybe exclude all non-commander vehicles),maybe replace list with Array
+
+        // Vehicles currently in the zone
+        // (Maybe exclude all non-commander vehicles)
         private List<VehicleMovementComponent> _vehicles = new List<VehicleMovementComponent>();
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-            //Check if Blue Red None or Both Occupy the Zone
+            // Check if Blue Red None or Both occupy the zone
             bool redIncluded = false;
             bool blueIncluded = false;
             PlayerData newOwner = null;
@@ -50,7 +53,7 @@ namespace PFW.UI.Ingame
                 VehicleMovementComponent vehicle = _vehicles.ToArray()[i];
                 if (vehicle.AreOrdersComplete()) {
                     newOwner = vehicle.Platoon.Owner;
-                    //Names are USSR and NATO
+                    // Names are USSR and NATO
                     if (newOwner.Team.Name == "USSR") {
                         redIncluded = true;
                     } else {
@@ -73,7 +76,7 @@ namespace PFW.UI.Ingame
             }
         }
 
-        //needs to play sound
+        // Needs to play sound
         private void changeOwner(PlayerData newOwner)
         {
             if (_owner != null) {

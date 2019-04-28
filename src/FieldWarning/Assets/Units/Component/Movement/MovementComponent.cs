@@ -24,7 +24,7 @@ namespace PFW.Units.Component.Movement
         private const float TRANSLATION_RATE = 5.0f;
 
         public UnitData Data = UnitData.GenericUnit();
-        public PlatoonBehaviour Platoon { get; private set; }
+        public PlatoonBehaviour Platoon { get; set; }
         public Pathfinder Pathfinder { get; private set; }
 
         // These are set by the subclass in DoMovement()
@@ -70,6 +70,8 @@ namespace PFW.Units.Component.Movement
             SetVisible(true);
             foreach (TargetingComponent targeter in gameObject.GetComponents<TargetingComponent>())
                 targeter.WakeUp();
+
+            Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathData);
         }
 
         public virtual void Update()
@@ -109,12 +111,6 @@ namespace PFW.Units.Component.Movement
         }
 
         public abstract void UpdateMapOrientation();
-
-        public void SetPlatoon(PlatoonBehaviour p)
-        {
-            Platoon = p;
-            Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathData);
-        }
 
         public override PlatoonBehaviour GetPlatoon()
         {

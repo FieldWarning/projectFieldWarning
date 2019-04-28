@@ -31,23 +31,23 @@ namespace PFW.Units.Component.Vision
         private HashSet<VisionComponent> _spotters = new HashSet<VisionComponent>();
         public bool IsVisible { get; private set; } = true;
 
-        public MovementComponent UnitBehaviour;
+        public UnitDispatcher Unit;
         private GameObject _gameObject;
 
         private Team _team {
-            get { return UnitBehaviour.Platoon.Owner.Team; }
+            get { return Unit.Platoon.Owner.Team; }
         }
 
         private MatchSession _session {
-            get { return UnitBehaviour.Platoon.Owner.Session; }
+            get { return Unit.Platoon.Owner.Session; }
         }
 
         private VisionComponent() { }
 
-        public VisionComponent(GameObject unit, MovementComponent unitBehaviour)
+        public VisionComponent(GameObject unitGO, UnitDispatcher unit)
         {
-            _gameObject = unit;
-            UnitBehaviour = unitBehaviour;
+            _gameObject = unitGO;
+            Unit = unit;
         }
 
         // Alert all nearby enemy units that they may have to show themselves.
@@ -112,7 +112,7 @@ namespace PFW.Units.Component.Vision
 
         private void MaybeTogglePlatoonVisibility(bool unitRevealed)
         {
-            PlatoonBehaviour platoon = UnitBehaviour.Platoon;
+            PlatoonBehaviour platoon = Unit.Platoon;
             ToggleAllRenderers(
                     platoon.gameObject,
                     !platoon.Units.TrueForAll(

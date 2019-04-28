@@ -23,6 +23,7 @@ namespace PFW.Units.Component.Weapon
     public class TargetingComponent : MonoBehaviour
     {
         public MovementComponent Unit { get; private set; }
+        public PlatoonBehaviour Platoon { get; set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
         public void SetTarget(Vector3 position, bool autoApproach = true)
@@ -142,7 +143,6 @@ namespace PFW.Units.Component.Weapon
             // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
 
             foreach (UnitDispatcher enemy in Unit.Platoon.Owner.Session.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
-
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
                 if (distance < _data.FireRange) {

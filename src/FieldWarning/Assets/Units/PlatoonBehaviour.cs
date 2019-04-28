@@ -42,7 +42,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
     public void Update()
     {
-        var pos = new Vector3();
+        Vector3 pos = new Vector3();
 
         Units.ForEach(x => pos += x.Transform.position);
         transform.position = pos / Units.Count;
@@ -90,8 +90,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
             var unitInstance =
                 Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
             var unitBehaviour = unitInstance.GetComponent<MovementComponent>();
-            unitBehaviour.SetPlatoon(this);
-            UnitDispatcher unit = new UnitDispatcher(unitBehaviour);
+            UnitDispatcher unit = new UnitDispatcher(unitBehaviour, this);
             Units.Add(unit);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
@@ -147,7 +146,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
 
-        unit.SetPlatoon(this);
+        unit.Platoon = this;
         Units.Add(unit);
 
         BuildModules(t);
