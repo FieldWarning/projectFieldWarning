@@ -16,15 +16,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using PFW.Model.Armory;
-using PFW.Service;
-
 using PFW.Model.Game;
+using PFW.Service;
 
 namespace PFW.UI.Ingame
 {
-    /**
-     * Creates the interface for purchasing units within a match.
-     */ 
+    /// <summary>
+    /// Creates the interface for purchasing units within a match.
+    /// </summary>
     public class DeploymentMenu : MonoBehaviour
     {
         public GameObject MenuButtonPrefab;

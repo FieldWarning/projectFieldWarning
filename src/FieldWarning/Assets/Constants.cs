@@ -38,5 +38,17 @@ namespace PFW
         /// Can't get the size of an enum at compile time, so:
         /// </summary>
         public static readonly int TEAM_COUNT = 2;
+
+        public enum CATEGORIES
+        {
+            LOG = 0,
+            SUP = 1,
+            INF = 2,
+            TNK = 3,
+            REC = 4,
+            VHC = 5,
+            HEL = 6,
+            _SIZE = 7
+        }
     }
 }

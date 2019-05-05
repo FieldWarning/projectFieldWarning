@@ -12,18 +12,20 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using UnityEngine;
 
 namespace PFW.Model.Armory
 {
+    [Serializable]
     public class Unit
     {
         public string Name { get; set; }
 
         public UnitCategory Category { get; set; }
         public Coalition Coalition { get; set; }
+
+        [Tooltip("The gameobject this will be cloned from.")]
+        public GameObject UnitArchetype;
     }
 }
