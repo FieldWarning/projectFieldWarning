@@ -14,7 +14,6 @@
 using System.Collections.Generic;
 
 using PFW.Model.Armory;
-using static PFW.Constants;
 
 namespace PFW.Model.Profile
 {
@@ -22,7 +21,7 @@ namespace PFW.Model.Profile
     {
         public string Name { get; }
 
-        public List<Unit>[] Units = new List<Unit>[(int)CATEGORIES._SIZE];
+        public List<Unit>[] Units = new List<Unit>[(int)UnitCategory._SIZE];
 
         public Deck(string name)
         {

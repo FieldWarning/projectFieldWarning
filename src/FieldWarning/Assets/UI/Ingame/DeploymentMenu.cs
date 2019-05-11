@@ -17,7 +17,6 @@ using UnityEngine.UI;
 
 using PFW.Model.Armory;
 using PFW.Model.Game;
-using PFW.Service;
 
 namespace PFW.UI.Ingame
 {
@@ -36,14 +35,10 @@ namespace PFW.UI.Ingame
         private Text _menuButton;
         private CanvasGroup _categoryButtonsPanel;
         private CanvasGroup _unitCardsPanel;
-        private IUnitCategoryService _unitCategoryService;
-        private IUnitService _unitService;
 
         private void Start()
         {
             var service = GameObject.Find("Service");
-            _unitCategoryService = service.GetComponent<UnitCategoryService>();
-            _unitService = service.GetComponent<UnitService>();
 
             _menuButton = GameObject.Find("OpenMenuButton").GetComponentInChildren<Text>();
 
@@ -52,10 +47,13 @@ namespace PFW.UI.Ingame
 
             CloseMenu();
 
-            foreach (var cat in _unitCategoryService.All()) {
-                var btn = Instantiate(MenuButtonPrefab, _categoryButtonsPanel.transform);
-                btn.GetComponentInChildren<Text>().text = cat.Name;
-                btn.GetComponentInChildren<Button>().onClick.AddListener(delegate { CategorySelected(cat); });
+            for (UnitCategory cat = 0; cat < UnitCategory._SIZE; cat++) {
+                UnitCategory categoryForDelegate = cat;  // C# is bad
+                GameObject btn = Instantiate(
+                        MenuButtonPrefab, _categoryButtonsPanel.transform);
+                btn.GetComponentInChildren<Text>().text = cat.ToString();
+                btn.GetComponentInChildren<Button>().onClick.AddListener(
+                        delegate { CategorySelected(categoryForDelegate); });
             }
         }
 
@@ -66,22 +64,22 @@ namespace PFW.UI.Ingame
             foreach (var c in allUnitCards)
                 Destroy(c.gameObject);
 
-            // TODO Get units from Deck not just all units.
-            var allUnitsOfCat = _unitService.All().Where(u => u.Category.Name == cat.Name).ToList();
+            var allUnitsOfCat = LocalPlayer.Data.Deck.ByCategory(cat);
 
-            foreach (var unit in allUnitsOfCat) {
-                var card = Instantiate(UnitCardDeploymentPrefab, _unitCardsPanel.transform);
+            foreach (Unit unit in allUnitsOfCat) {
+                var card = Instantiate(
+                        UnitCardDeploymentPrefab, _unitCardsPanel.transform);
                 card.GetComponentInChildren<Text>().text = unit.Name;
 
                 // this is very hacky and WIP just to keep the current spawning system working
                 var session = GameObject.Find("GameSession");
 
                 // See above, we need to either make this fully dynamic or put the cat names in the type system:
-                switch (cat.Name) {
-                case "TNK":
+                switch (cat) {
+                case UnitCategory.TNK:
                     card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().TankButtonCallback);
                     break;
-                case "SUP":
+                case UnitCategory.SUP:
                     card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().ArtyButtonCallback);
                     break;
                 default:

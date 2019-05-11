@@ -11,6 +11,8 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using PFW.Model.Armory;
+
 namespace PFW.Model.Game
 {
     /**
@@ -33,6 +35,8 @@ namespace PFW.Model.Game
                     _session = value;
             }
         }
+
+        public Deck Deck { get; private set; } = new Deck();
 
         public float Money = 1000;
         public float IncomeTick = 7;

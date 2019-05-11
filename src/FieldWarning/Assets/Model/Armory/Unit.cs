@@ -20,12 +20,14 @@ namespace PFW.Model.Armory
     [Serializable]
     public class Unit
     {
-        public string Name { get; set; }
-
-        public UnitCategory Category { get; set; }
-        public Coalition Coalition { get; set; }
+        public string Name { get; }
 
         [Tooltip("The gameobject this will be cloned from.")]
         public GameObject UnitArchetype;
+
+        public Unit(string name)
+        {
+            Name = name;
+        }
     }
 }
