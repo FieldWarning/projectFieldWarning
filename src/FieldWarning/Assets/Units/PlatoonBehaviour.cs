@@ -21,10 +21,11 @@ using PFW.Model.Game;
 using PFW.Units;
 
 using PFW.Units.Component.Movement;
+using PFW.Model.Armory;
 
 public partial class PlatoonBehaviour : MonoBehaviour
 {
-    public UnitType Type;
+    public Unit Unit;
     public IconBehaviour Icon;
     public MovementModule Movement;
     public Waypoint ActiveWaypoint;
@@ -60,51 +61,52 @@ public partial class PlatoonBehaviour : MonoBehaviour
         }
     }
 
-    public void BuildModules(UnitType t)
+    public void BuildModules()
     {
         Movement = new MovementModule(this);
 
-        if (t == UnitType.AFV) {
-            Transporter = new TransporterModule(this);
-            _modules.Add(Transporter);
-        }
+        //if (t == UnitType.AFV) {
+        //    Transporter = new TransporterModule(this);
+        //    _modules.Add(Transporter);
+        //}
 
-        if (t == UnitType.Infantry) {
-            Transportable = new TransportableModule(this);
-            _modules.Add(Transportable);
-        }
+        //if (t == UnitType.Infantry) {
+        //    Transportable = new TransportableModule(this);
+        //    _modules.Add(Transportable);
+        //}
     }
 
-    public void Initialize(UnitType t, PlayerData owner, int n)
+    public void Initialize(Unit unit, PlayerData owner, int n)
     {
-        Type = t;
+        Unit = unit;
         Owner = owner;
 
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
 
-        var unitPrefab = Owner.Session.Factory.FindPrefab(t);
+        var unitPrefab = Unit.Prefab;
 
         for (int i = 0; i < n; i++) {
             var unitInstance =
                 Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
             var unitBehaviour = unitInstance.GetComponent<MovementComponent>();
-            UnitDispatcher unit = new UnitDispatcher(unitBehaviour, this);
-            Units.Add(unit);
+            UnitDispatcher unitDispatcher =
+                    new UnitDispatcher(unitBehaviour, this);
+            Units.Add(unitDispatcher);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
             collider.enabled = true;
         }
 
-        BuildModules(t);
+        BuildModules();
 
-        if (t == UnitType.AFV) {
-            var ghost = GhostPlatoonBehaviour.Build(UnitType.Infantry, owner, n);
-            Transporter.SetTransported(ghost.GetRealPlatoon());
-            ghost.SetOrientation(100 * Vector3.down, 0);
-            ghost.SetVisible(false);
-        }
+        //if (t == UnitType.AFV) {
+        //    var ghost = GhostPlatoonBehaviour.Build(UnitType.Infantry, owner, n);
+        //    Transporter.SetTransported(ghost.GetRealPlatoon());
+        //    ghost.SetOrientation(100 * Vector3.down, 0);
+        //    ghost.SetVisible(false);
+        //}
 
         Movement.SetDestination(Vector3.forward);
 
@@ -137,19 +139,23 @@ public partial class PlatoonBehaviour : MonoBehaviour
     }
 
     // Call when splitting a platoon
-    public void InitializeAfterSplit(UnitType t, PlayerData owner, UnitDispatcher unit, MoveWaypoint destination)
+    public void InitializeAfterSplit(
+            Unit unit,
+            PlayerData owner,
+            UnitDispatcher unitDispatcher,
+            MoveWaypoint destination)
     {
-        Type = t;
+        Unit = unit;
         Owner = owner;
 
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
 
-        unit.Platoon = this;
-        Units.Add(unit);
+        unitDispatcher.Platoon = this;
+        Units.Add(unitDispatcher);
 
-        BuildModules(t);
+        BuildModules();
 
         Movement.BeginQueueing(false);
         Movement.SetDestination(destination.Destination);
@@ -175,9 +181,9 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
             pBehavior.GhostPlatoon = gBehavior;
 
-            gBehavior.InitializeAfterSplit(Type, owner);
+            gBehavior.InitializeAfterSplit(Unit, owner);
 
-            pBehavior.InitializeAfterSplit(Type, owner, unit, Movement.Waypoint);
+            pBehavior.InitializeAfterSplit(Unit, owner, unit, Movement.Waypoint);
         }
 
         Destroy(GhostPlatoon);

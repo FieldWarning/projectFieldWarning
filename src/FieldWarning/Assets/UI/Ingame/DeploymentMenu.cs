@@ -36,6 +36,8 @@ namespace PFW.UI.Ingame
         private CanvasGroup _categoryButtonsPanel;
         private CanvasGroup _unitCardsPanel;
 
+        private InputManager _inputManager;
+
         private void Start()
         {
             var service = GameObject.Find("Service");
@@ -55,6 +57,10 @@ namespace PFW.UI.Ingame
                 btn.GetComponentInChildren<Button>().onClick.AddListener(
                         delegate { CategorySelected(categoryForDelegate); });
             }
+
+            // TODO Hacky way to set it, FIX!:
+            _inputManager = GameObject.Find(
+                    "GameSession").GetComponent<InputManager>();
         }
 
         private void CategorySelected(UnitCategory cat)
@@ -70,21 +76,10 @@ namespace PFW.UI.Ingame
                 var card = Instantiate(
                         UnitCardDeploymentPrefab, _unitCardsPanel.transform);
                 card.GetComponentInChildren<Text>().text = unit.Name;
-
-                // this is very hacky and WIP just to keep the current spawning system working
-                var session = GameObject.Find("GameSession");
-
-                // See above, we need to either make this fully dynamic or put the cat names in the type system:
-                switch (cat) {
-                case UnitCategory.TNK:
-                    card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().TankButtonCallback);
-                    break;
-                case UnitCategory.SUP:
-                    card.GetComponentInChildren<Button>().onClick.AddListener(session.GetComponent<InputManager>().ArtyButtonCallback);
-                    break;
-                default:
-                    break;
-                }
+                card.GetComponentInChildren<Button>().onClick.AddListener(
+                        delegate {
+                                _inputManager.BuyCallback(unit);
+                        });
 
                 // TODO Set picture too
                 // TODO Transports?

@@ -16,6 +16,7 @@ using PFW.UI.Prototype;
 using UnityEngine;
 
 using PFW.Model.Game;
+using PFW.Model.Armory;
 
 namespace PFW.UI.Ingame
 {
@@ -28,18 +29,19 @@ namespace PFW.UI.Ingame
 
         private int _smallestPlatoonSize;
 
-        public UnitType UnitType { get; }
+        public Unit Unit { get; }
         public PlayerData Owner { get; }
         public List<GhostPlatoonBehaviour> GhostPlatoons { get; }
 
-        public BuyTransaction(UnitType type, PlayerData owner)
+        public BuyTransaction(Unit unit, PlayerData owner)
         {
-            UnitType = type;
+            Unit = unit;
             Owner = owner;
 
             _smallestPlatoonSize = MIN_PLATOON_SIZE;
             _ghostPlatoonBehaviour =
-                GhostPlatoonBehaviour.Build(type, owner, _smallestPlatoonSize);
+                    GhostPlatoonBehaviour.Build(
+                            unit, owner, _smallestPlatoonSize);
 
             GhostPlatoons = new List<GhostPlatoonBehaviour>();
             GhostPlatoons.Add(_ghostPlatoonBehaviour);
@@ -54,22 +56,25 @@ namespace PFW.UI.Ingame
 
                 _smallestPlatoonSize++;
                 _ghostPlatoonBehaviour =
-                    GhostPlatoonBehaviour.Build(UnitType, Owner, _smallestPlatoonSize);
+                        GhostPlatoonBehaviour.Build(
+                                Unit, Owner, _smallestPlatoonSize);
                 GhostPlatoons.Add(_ghostPlatoonBehaviour);
             } else {
 
                 // If all platoons in the transaction are max size, we add a new one and update the size counter:
                 _smallestPlatoonSize = MIN_PLATOON_SIZE;
-                _ghostPlatoonBehaviour = GhostPlatoonBehaviour.Build(UnitType, Owner, _smallestPlatoonSize);
+                _ghostPlatoonBehaviour = GhostPlatoonBehaviour.Build(
+                        Unit, Owner, _smallestPlatoonSize);
                 GhostPlatoons.Add(_ghostPlatoonBehaviour);
             }
         }
 
         public BuyTransaction Clone()
         {
-            BuyTransaction clone = new BuyTransaction(UnitType, Owner);
+            BuyTransaction clone = new BuyTransaction(Unit, Owner);
 
-            int unitCount = (GhostPlatoons.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
+            int unitCount =
+                    (GhostPlatoons.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
 
             while (unitCount-- > 1)
                 clone.AddUnit();
@@ -90,7 +95,8 @@ namespace PFW.UI.Ingame
             Vector3 diff = facingPoint - center;
             float heading = diff.getRadianAngle();
 
-            var positions = Formations.GetLineFormation(center, heading + Mathf.PI / 2, GhostPlatoons.Count);
+            var positions = Formations.GetLineFormation(
+                    center, heading + Mathf.PI / 2, GhostPlatoons.Count);
             for (var i = 0; i < GhostPlatoons.Count; i++)
                 GhostPlatoons[i].SetOrientation(positions[i], heading);
 

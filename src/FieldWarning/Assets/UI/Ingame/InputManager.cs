@@ -19,6 +19,7 @@ using System;
 
 using PFW.UI.Prototype;
 using PFW.Model.Game;
+using PFW.Model.Armory;
 
 namespace PFW.UI.Ingame
 {
@@ -254,53 +255,17 @@ namespace PFW.UI.Ingame
         }
 
         /**
-         * Called when the tank button is pressed in the buy menu.
+         * Called when a unit card from the buy menu is pressed.
          */
-        public void TankButtonCallback()
+        public void BuyCallback(Unit unit)
         {
             if (_currentBuyTransaction == null)
-                _currentBuyTransaction = new BuyTransaction(UnitType.Tank, _localPlayer);
+                _currentBuyTransaction = new BuyTransaction(unit, _localPlayer);
             else
                 _currentBuyTransaction.AddUnit();
 
             //buildUnit(UnitType.Tank);
             CurMouseMode = MouseMode.purchasing;
-        }
-
-        /**
-         * Called when the arty button is pressed in the buy menu.
-         */
-        public void ArtyButtonCallback()
-        {
-            if (_currentBuyTransaction == null)
-                _currentBuyTransaction = new BuyTransaction(UnitType.Arty, _localPlayer);
-            else
-                _currentBuyTransaction.AddUnit();
-            CurMouseMode = MouseMode.purchasing;
-        }
-
-        /**
-         * Called when infantry button is pressed in the buy menu.
-         */
-        public void InfantryButtonCallback()
-        {
-            BuildUnit(UnitType.Infantry);
-            CurMouseMode = MouseMode.purchasing;
-        }
-
-        /**
-         * Called when the afv button is pressed in the buy menu.
-         */
-        public void AFVButtonCallback()
-        {
-            BuildUnit(UnitType.AFV);
-            CurMouseMode = MouseMode.purchasing;
-        }
-
-        public void BuildUnit(UnitType t)
-        {
-            var behaviour = GhostPlatoonBehaviour.Build(t, _localPlayer, 4);
-            _currentBuyTransaction.GhostPlatoons.Add(behaviour);
         }
 
         private void ExitPurchasingMode()

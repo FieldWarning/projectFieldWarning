@@ -17,17 +17,18 @@ using UnityEngine;
 
 namespace PFW.Model.Armory
 {
-    [Serializable]
+    //[Serializable]
     public class Unit
     {
         public string Name { get; }
 
-        [Tooltip("The gameobject this will be cloned from.")]
-        public GameObject UnitArchetype;
+        //[Tooltip("The gameobject this will be cloned from.")]
+        public GameObject Prefab { get; }
 
-        public Unit(string name)
+        public Unit(string name, GameObject prefab)
         {
             Name = name;
+            Prefab = prefab;
         }
     }
 }

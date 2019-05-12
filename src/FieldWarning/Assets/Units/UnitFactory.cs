@@ -26,37 +26,6 @@ namespace PFW.UI.Prototype
             _session = session;
         }
 
-        public GameObject FindPrefab(UnitType type)
-        {
-            GameObject unit;
-
-            switch (type) {
-            case UnitType.Tank:
-                unit = Resources.Load<GameObject>("Tank");
-                //label.GetComponentInChildren<Text>().text = "M1A2 Abrams";
-                break;
-            case UnitType.AFV:
-                unit = Resources.Load<GameObject>("AFV");
-                break;
-            case UnitType.Infantry:
-                var obj = new GameObject();
-                var b = obj.AddComponent<InfantryMovementComponent>();
-                b.enabled = false;
-                unit = obj;
-                break;
-            case UnitType.Arty:
-                unit = Resources.Load<GameObject>("Arty");
-                break;
-            default:
-                unit = null;
-                break;
-            }
-
-            //unit.GetComponent<UnitLabelAttacher>().Label = label;
-
-            return unit;
-        }
-
         public GameObject MakeUnit(GameObject prefab, Color minimapColor)
         {
             GameObject unit = Object.Instantiate(prefab);

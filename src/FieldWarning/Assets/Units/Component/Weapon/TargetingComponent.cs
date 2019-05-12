@@ -72,6 +72,9 @@ namespace PFW.Units.Component.Weapon
         private AudioClip _shotSound = null;
         [SerializeField]
         private float _shotVolume = 1.0F;
+
+        [SerializeField]
+        private WeaponType _weaponType;
         // ---------------- END PREFAB -----------------
 
         private void Awake()
@@ -92,10 +95,10 @@ namespace PFW.Units.Component.Weapon
         private void Start()
         {
             // TODO remove:
-            if (Unit.Platoon.Type == UI.Prototype.UnitType.Tank)
+            if (_weaponType == WeaponType.CANNON)
                 _weapon = new Cannon(
                         _data, _audioSource, _shotEffect, _shotSound, _shotVolume);
-            else if (Unit.Platoon.Type == UI.Prototype.UnitType.Arty)
+            else if (_weaponType == WeaponType.HOWITZER)
                 _weapon = new Howitzer(
                         _data,
                         _audioSource,
@@ -166,6 +169,12 @@ namespace PFW.Units.Component.Weapon
             if (distance > _data.FireRange)
                 _target = null;
         }
+    }
+
+    enum WeaponType
+    {
+        CANNON,
+        HOWITZER
     }
 }
 

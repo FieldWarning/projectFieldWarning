@@ -18,6 +18,7 @@ using PFW.UI.Ingame;
 
 using PFW.Model.Game;
 using PFW.Units.Component.Movement;
+using PFW.Model.Armory;
 
 public class GhostPlatoonBehaviour : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     private bool _raycastIgnore;
     private bool _raycastIgnoreChange = false;
     private GameObject _icon;
-    private UnitType _unitType;
+    private Unit _unit;
     private GameObject _realPlatoon;
     private PlatoonBehaviour _platoonBehaviour;
     private PlayerData _owner;
@@ -57,15 +58,15 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
 
         _platoonBehaviour = _realPlatoon.GetComponent<PlatoonBehaviour>();
-        _platoonBehaviour.Initialize(_unitType, _owner, _units.Count);
+        _platoonBehaviour.Initialize(_unit, _owner, _units.Count);
 
         _platoonBehaviour.SetGhostPlatoon(this);
     }
 
-    public void Initialize(UnitType t, PlayerData owner, int unitCount)
+    public void Initialize(Unit unit, PlayerData owner, int unitCount)
     {
         _owner = owner;
-        _unitType = t;
+        _unit = unit;
         transform.position = 100 * Vector3.down;
 
         // Create units:
@@ -74,10 +75,10 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     }
 
     public void InitializeAfterSplit(
-        UnitType t, PlayerData owner)
+        Unit unit, PlayerData owner)
     {
         _owner = owner;
-        _unitType = t;
+        _unit = unit;
         transform.position = 100 * Vector3.down;
 
         InitializeIcon();
@@ -87,7 +88,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
     private void AddSingleUnit()
     {
-        GameObject _unitPrefab = _owner.Session.Factory.FindPrefab(_unitType);
+        GameObject _unitPrefab = _unit.Prefab;
         GameObject unit = _owner.Session.Factory.MakeGhostUnit(_unitPrefab);
         _units.Add(unit);
     }
@@ -138,11 +139,11 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public static GhostPlatoonBehaviour Build(UnitType t, PlayerData owner, int count)
+    public static GhostPlatoonBehaviour Build(Unit unit, PlayerData owner, int count)
     {
         GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
         var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
-        behaviour.Initialize(t, owner, count);
+        behaviour.Initialize(unit, owner, count);
         behaviour.InitializeIcon();
 
         go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
