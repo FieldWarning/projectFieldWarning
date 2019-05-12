@@ -13,7 +13,6 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using PFW.UI.Prototype;
 using PFW.UI.Ingame;
 
 using PFW.Model.Game;
@@ -24,22 +23,12 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 {
     public float FinalHeading;
 
-    private bool _raycastIgnore;
-    private bool _raycastIgnoreChange = false;
     private GameObject _icon;
     private Unit _unit;
     private GameObject _realPlatoon;
     private PlatoonBehaviour _platoonBehaviour;
     private PlayerData _owner;
     private List<GameObject> _units = new List<GameObject>();
-
-    void Update()
-    {
-        if (_raycastIgnoreChange) {
-            _raycastIgnoreChange = false;
-            _setIgnoreRaycast(_raycastIgnore);
-        }
-    }
 
     private void InitializeIcon()
     {
@@ -75,7 +64,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     }
 
     public void InitializeAfterSplit(
-        Unit unit, PlayerData owner)
+            Unit unit, PlayerData owner)
     {
         _owner = owner;
         _unit = unit;
@@ -100,7 +89,8 @@ public class GhostPlatoonBehaviour : MonoBehaviour
 
         var positions = Formations.GetLineFormation(center, heading, _units.Count);
         for (int i = 0; i < _units.Count; i++) {
-            _units[i].GetComponent<MovementComponent>().SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading, false);
+            _units[i].GetComponent<MovementComponent>()
+                    .SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading, false);
         }
     }
 
@@ -110,25 +100,6 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _units.ForEach(x => x.GetComponent<MovementComponent>().SetVisible(vis));
 
         _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
-    }
-
-    public void SetIgnoreRaycast(bool ignore)
-    {
-        _raycastIgnore = ignore;
-        _raycastIgnoreChange = true;
-    }
-
-    public void _setIgnoreRaycast(bool ignore)
-    {
-        var layer = 0;
-        if (ignore)
-            layer = 2;
-
-        Debug.Log(layer);
-        gameObject.layer = layer;
-        _icon.layer = layer;
-        foreach (var u in _units)
-            u.layer = layer;
     }
 
     public void Destroy()
