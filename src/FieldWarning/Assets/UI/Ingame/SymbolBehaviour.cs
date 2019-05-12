@@ -19,7 +19,7 @@ using UnityEngine;
 public class SymbolBehaviour : MonoBehaviour
 {
     [SerializeField]
-    private Material[] _materials;
+    private Material[] _materials = null;
 
     public void SetIcon(UnitType t)
     {

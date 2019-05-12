@@ -19,13 +19,6 @@ namespace PFW.UI.Prototype
 {
     public class UnitFactory
     {
-        private MatchSession _session { get; }
-
-        public UnitFactory(MatchSession session)
-        {
-            _session = session;
-        }
-
         public GameObject MakeUnit(GameObject prefab, Color minimapColor)
         {
             GameObject unit = Object.Instantiate(prefab);
@@ -51,7 +44,7 @@ namespace PFW.UI.Prototype
             var minimapIcon = GameObject.Instantiate(Resources.Load<GameObject>("MiniMapIcon"));
             minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
             minimapIcon.transform.parent = unit.transform;
-            //The icon is placed slightly above ground to prevent flickering
+            // The icon is placed slightly above ground to prevent flickering
             minimapIcon.transform.localPosition = new Vector3(0,0.01f,0);
         }
     }

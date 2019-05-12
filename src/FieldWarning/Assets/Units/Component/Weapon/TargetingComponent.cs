@@ -73,8 +73,9 @@ namespace PFW.Units.Component.Weapon
         [SerializeField]
         private float _shotVolume = 1.0F;
 
+        // TODO remove, only used for initialization which should not be done here
         [SerializeField]
-        private WeaponType _weaponType;
+        private WeaponType _weaponType = WeaponType.CANNON;
         // ---------------- END PREFAB -----------------
 
         private void Awake()

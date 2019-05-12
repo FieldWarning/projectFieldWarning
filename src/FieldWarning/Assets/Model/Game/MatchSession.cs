@@ -90,7 +90,7 @@ namespace PFW.Model.Game
 
             // TODO: Pass terrain from future location of starting matches (no Find)
             PathData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
-            Factory = new UnitFactory(this);
+            Factory = new UnitFactory();
             Settings = new Settings();
         }
 
