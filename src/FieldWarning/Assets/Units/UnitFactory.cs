@@ -55,12 +55,4 @@ namespace PFW.UI.Prototype
             minimapIcon.transform.localPosition = new Vector3(0,0.01f,0);
         }
     }
-
-    public enum UnitType
-    {
-        Tank,
-        Infantry,
-        AFV,
-        Arty
-    }
 }

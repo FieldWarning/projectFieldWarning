@@ -25,7 +25,7 @@ namespace PFW.UI.Ingame
 
         private SymbolBehaviour _symbol;
         private Transform _billboard;
-        
+
         private Color _baseColor = DEFAULT_COLOR;
         public Color BaseColor {
             set {

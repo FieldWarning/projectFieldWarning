@@ -11,17 +11,15 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using PFW.UI.Prototype;
 using UnityEngine;
 
+/**
+ * Responsible for the NATO symbol on the platoon icons.
+ */
 public class SymbolBehaviour : MonoBehaviour
 {
-    public Material iconMaterial;
-    public Material[] textures;
-
-    void Start() { }
-
-    void Update() { }
+    [SerializeField]
+    private Material[] _materials;
 
     public void SetIcon(UnitType t)
     {
@@ -38,7 +36,15 @@ public class SymbolBehaviour : MonoBehaviour
             break;
         }
 
-        var mat = textures[i];
+        Material mat = _materials[i];
         GetComponent<Renderer>().material = mat;
+    }
+
+    public enum UnitType
+    {
+        Tank,
+        Infantry,
+        AFV,
+        Arty
     }
 }
