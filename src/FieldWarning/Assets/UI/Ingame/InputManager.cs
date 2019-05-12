@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-using PFW.UI.Prototype;
 using PFW.Model.Game;
 using PFW.Model.Armory;
 
@@ -294,7 +293,7 @@ namespace PFW.UI.Ingame
             return go;
         }
 
-        public void AddSpawnPoint(SpawnPointBehaviour s)
+        public void RegisterSpawnPoint(SpawnPointBehaviour s)
         {
             if (!_spawnPointList.Contains(s))
                 _spawnPointList.Add(s);

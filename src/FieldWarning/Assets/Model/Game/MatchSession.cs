@@ -113,9 +113,9 @@ namespace PFW.Model.Game
                 _unitRegistry.RegisterUnitDeath(unit);
 
         // TODO If we can refactor MatchSession to create the spawn points, we will be able to get rid of this:
-        public void AddSpawnPoint(SpawnPointBehaviour spawn)
+        public void RegisterSpawnPoint(SpawnPointBehaviour spawn)
         {
-            _inputManager.AddSpawnPoint(spawn);
+            _inputManager.RegisterSpawnPoint(spawn);
         }
 
         public void UpdateTeamBelonging(Team newTeam)

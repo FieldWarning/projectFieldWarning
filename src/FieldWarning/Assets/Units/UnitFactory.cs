@@ -12,7 +12,6 @@
 */
 using UnityEngine;
 
-using PFW.Model.Game;
 using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Prototype

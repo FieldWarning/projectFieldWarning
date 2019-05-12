@@ -15,51 +15,46 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+using PFW.Model.Game;
+
 public class SpawnPointBehaviour : MonoBehaviour
 {
-    public PFW.Model.Game.Team Team;
+    public Team Team;
 
     public const float MIN_SPAWN_INTERVAL = 2f;
     public const float QUEUE_DELAY = 1f;
 
-    private Vector3 oldPosition;
-    private Queue<GhostPlatoonBehaviour> spawnQueue = new Queue<GhostPlatoonBehaviour>();
-    private float spawnTime = MIN_SPAWN_INTERVAL;
+    private Queue<GhostPlatoonBehaviour> _spawnQueue = new Queue<GhostPlatoonBehaviour>();
+    private float _spawnTime = MIN_SPAWN_INTERVAL;
 
-    public void Awake()
-    {
-        Team = GetComponentInParent<PFW.Model.Game.Team>();
-    }
-
-    public void Start()
+    private void Start()
     {
         GetComponentInChildren<Renderer>().material.color = Team.Color;
 
-        Team.Session.AddSpawnPoint(this);
+        Team.Session.RegisterSpawnPoint(this);
     }
 
-    public void Update()
+    private void Update()
     {
-        if (!spawnQueue.Any())
-            return;
-        
-        spawnTime -= Time.deltaTime;
-        if (spawnTime > 0)
+        if (!_spawnQueue.Any())
             return;
 
-            
-        GhostPlatoonBehaviour ghostPlatoon = spawnQueue.Dequeue();
+        _spawnTime -= Time.deltaTime;
+        if (_spawnTime > 0)
+            return;
+
+
+        GhostPlatoonBehaviour ghostPlatoon = _spawnQueue.Dequeue();
         ghostPlatoon.Spawn(transform.position);
 
-        if (spawnQueue.Count > 0)
-            spawnTime += MIN_SPAWN_INTERVAL;
+        if (_spawnQueue.Count > 0)
+            _spawnTime += MIN_SPAWN_INTERVAL;
         else
-            spawnTime = QUEUE_DELAY;
-        
+            _spawnTime = QUEUE_DELAY;
     }
 
     public void BuyPlatoons(List<GhostPlatoonBehaviour> ghostPlatoons)
     {
-        ghostPlatoons.ForEach(x => spawnQueue.Enqueue(x));
+        ghostPlatoons.ForEach(x => _spawnQueue.Enqueue(x));
     }
 }
