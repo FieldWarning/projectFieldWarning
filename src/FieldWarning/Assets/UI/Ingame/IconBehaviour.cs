@@ -37,13 +37,13 @@ namespace PFW.UI.Ingame
 
         private bool _visible = true;
 
-        void Awake()
+        private void Awake()
         {
             _symbol = transform.GetChild(1).GetComponent<SymbolBehaviour>();
             _billboard = transform.GetChild(0);
         }
 
-        void Start()
+        private void Start()
         {
             _billboard.GetComponent<Renderer>().material.color = _baseColor;
             if (_layer != -1)
@@ -67,7 +67,7 @@ namespace PFW.UI.Ingame
         /// <param name="list"></param>
         public void AssociateToRealUnits(List<UnitDispatcher> list)
         {
-            _billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
+            _billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().AssociateToRealUnits(list);
 
             // Make selectable:
             transform.gameObject.AddComponent<SelectableBehavior>().Platoon =

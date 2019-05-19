@@ -28,10 +28,6 @@ namespace PFW.UI.Ingame
             _bar.AddComponent<SelectableBehavior>();
         }
 
-        private void Start()
-        {
-        }
-
         private void Update()
         {
             SetHealth(_unit.GetHealth() / _unit.MaxHealth);

@@ -105,8 +105,10 @@ namespace PFW.Units.Component.Movement
                 _currentRotation += ORIENTATION_RATE * Time.deltaTime * diff;
             }
 
-            transform.localEulerAngles = Mathf.Rad2Deg * new Vector3(-_currentRotation.x, -_currentRotation.y, _currentRotation.z);
-            _forward = new Vector3(-Mathf.Sin(_currentRotation.y), 0f, Mathf.Cos(_currentRotation.y));
+            transform.localEulerAngles = Mathf.Rad2Deg * new Vector3(
+                    -_currentRotation.x, -_currentRotation.y, _currentRotation.z);
+            _forward = new Vector3(
+                    -Mathf.Sin(_currentRotation.y), 0f, Mathf.Cos(_currentRotation.y));
             _right = new Vector3(_forward.z, 0f, -_forward.x);
         }
 
@@ -161,7 +163,6 @@ namespace PFW.Units.Component.Movement
             else
                 diff = v - transform.position;
 
-
             SetUnitFinalHeading(diff.getRadianAngle());
         }
 
@@ -175,7 +176,7 @@ namespace PFW.Units.Component.Movement
 
         protected abstract bool IsMoving();
 
-        public void SetLayer(int l)
+        private void SetLayer(int l)
         {
             gameObject.layer = l;
         }
@@ -207,7 +208,12 @@ namespace PFW.Units.Component.Movement
         // Returns the unit's speed on the current terrain
         public float GetTerrainSpeedMultiplier()
         {
-            float terrainSpeed = Data.mobility.GetUnitSpeed(Pathfinder.Data.Terrain, Pathfinder.Data.Map, transform.position, 0f, -transform.forward);
+            float terrainSpeed = Data.mobility.GetUnitSpeed(
+                    Pathfinder.Data.Terrain,
+                    Pathfinder.Data.Map,
+                    transform.position,
+                    0f,
+                    -transform.forward);
             //terrainSpeed = Mathf.Max(terrainSpeed, 0.5f * TerrainConstants.MAP_SCALE); // Never let the speed to go exactly 0, just so units don't get stuck
             return terrainSpeed;
         }

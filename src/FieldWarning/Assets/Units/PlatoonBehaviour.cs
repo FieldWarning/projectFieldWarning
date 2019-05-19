@@ -15,7 +15,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-using PFW.UI.Prototype;
 using PFW.UI.Ingame;
 using PFW.Model.Game;
 using PFW.Units;
@@ -113,12 +112,6 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Icon.AssociateToRealUnits(Units);
 
         IsInitialized = true;
-    }
-
-
-    public void SetGhostPlatoon(GhostPlatoonBehaviour obj)
-    {
-        GhostPlatoon = obj;
     }
 
     public void Spawn(Vector3 center)

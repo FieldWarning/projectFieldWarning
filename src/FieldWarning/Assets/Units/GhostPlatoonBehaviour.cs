@@ -49,7 +49,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _platoonBehaviour = _realPlatoon.GetComponent<PlatoonBehaviour>();
         _platoonBehaviour.Initialize(_unit, _owner, _units.Count);
 
-        _platoonBehaviour.SetGhostPlatoon(this);
+        _platoonBehaviour.GhostPlatoon = this;
     }
 
     public void Initialize(Unit unit, PlayerData owner, int unitCount)

@@ -22,19 +22,13 @@ namespace PFW.UI.Ingame
         List<GameObject> objects;
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
             transform.localScale = new Vector3(0.85f, 1, 1);
             transform.localPosition = new Vector3(0.116f, 0.441f, 0);
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        public void SetSource(List<UnitDispatcher> o)
+        public void AssociateToRealUnits(List<UnitDispatcher> o)
         {
             float FIRST_BAR_POSITION = -0.16f;
             float TOTAL_LENGTH = 1.05f;

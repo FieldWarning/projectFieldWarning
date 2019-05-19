@@ -15,9 +15,9 @@ using UnityEngine;
 
 namespace PFW.UI.Ingame
 {
-    /*
-     * A billboard is a 2d texture that is always facing the camera.
-     */
+    /// <summary>
+    /// A billboard is a 2d texture that is always facing the camera.
+    /// </summary>
     public class BillboardBehavior : MonoBehaviour
     {
         [SerializeField]
@@ -25,20 +25,14 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private float SIZE = 0.1f;
 
-        // Use this for initialization
-        void Start()
-        {
-
-        }
-
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             transform.localPosition = ALTITUDE * Camera.main.transform.up;
-            faceCamera();
+            FaceCamera();
         }
 
-        private void faceCamera()
+        private void FaceCamera()
         {
             transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
             var distance = (Camera.main.transform.position - transform.position).magnitude;
