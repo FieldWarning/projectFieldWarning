@@ -17,7 +17,7 @@ using PFW.Units.Component.Weapon;
 
 namespace PFW.Units.Component.Movement
 {
-    public abstract class MovementComponent : SelectableBehavior
+    public abstract class MovementComponent : MonoBehaviour
     {
         public const float NO_HEADING = float.MaxValue;
         private const float ORIENTATION_RATE = 5.0f;
@@ -111,11 +111,6 @@ namespace PFW.Units.Component.Movement
         }
 
         public abstract void UpdateMapOrientation();
-
-        public override PlatoonBehaviour GetPlatoon()
-        {
-            return Platoon;
-        }
 
         // Waypoint-aware path setting. TODO there are like 5 methods for this,
         // perhaps some can be cut?

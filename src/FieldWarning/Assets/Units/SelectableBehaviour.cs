@@ -13,12 +13,7 @@
 
 using UnityEngine;
 
-public class SelectableBehavior : MonoBehaviour
+public sealed class SelectableBehavior : MonoBehaviour
 {
-    public virtual PlatoonBehaviour GetPlatoon()
-    {
-        return transform
-            .parent
-            .GetComponent<PlatoonBehaviour>();
-    }
+    public PlatoonBehaviour Platoon { get; set; }
 }

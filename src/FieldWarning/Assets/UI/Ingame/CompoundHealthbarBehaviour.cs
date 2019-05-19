@@ -17,7 +17,7 @@ using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
-    public class CompoundHealthbarBehaviour : SelectableBehavior
+    public class CompoundHealthbarBehaviour : MonoBehaviour
     {
         List<GameObject> objects;
 

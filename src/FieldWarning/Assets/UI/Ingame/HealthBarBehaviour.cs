@@ -17,7 +17,7 @@ using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
-    public class HealthBarBehaviour : SelectableBehavior
+    public class HealthBarBehaviour : MonoBehaviour
     {
         private UnitDispatcher _unit;
         private GameObject _bar;

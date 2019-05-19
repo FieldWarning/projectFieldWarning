@@ -109,6 +109,8 @@ namespace PFW.Units
                     SELECTION_CIRCLE_PREFAB,
                     Transform);
 
+            Transform.gameObject.AddComponent<SelectableBehavior>().Platoon = Platoon;
+
             Platoon = platoon;
         }
 

@@ -18,7 +18,7 @@ namespace PFW.UI.Ingame
     /*
      * A billboard is a 2d texture that is always facing the camera.
      */
-    public class BillboardBehavior : SelectableBehavior
+    public class BillboardBehavior : MonoBehaviour
     {
         [SerializeField]
         private float ALTITUDE = 10f * TerrainConstants.MAP_SCALE;

@@ -206,7 +206,7 @@ namespace PFW.UI.Ingame
                 var selectable = go.GetComponent<SelectableBehavior>();
 
                 if (selectable != null) {
-                    var selectedPlatoon = selectable.GetPlatoon();
+                    var selectedPlatoon = selectable.Platoon;
                     selectedPlatoon.PlaySelectionVoiceline();
                     _selection.Add(selectedPlatoon);
                 }

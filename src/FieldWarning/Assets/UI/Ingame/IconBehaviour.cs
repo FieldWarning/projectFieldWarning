@@ -17,7 +17,7 @@ using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
-    public class IconBehaviour : SelectableBehavior
+    public class IconBehaviour : MonoBehaviour
     {
         private static Color DEFAULT_COLOR = Color.cyan;
 
@@ -51,6 +51,11 @@ namespace PFW.UI.Ingame
 
             SetSelected(false);
             SetVisible(_visible);
+
+            transform.gameObject.AddComponent<SelectableBehavior>().Platoon =
+                    transform
+                            .parent
+                            .GetComponent<PlatoonBehaviour>();
         }
 
         public void SetLayer(int l)
