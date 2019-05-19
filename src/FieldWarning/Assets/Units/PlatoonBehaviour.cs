@@ -110,7 +110,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
 
         Movement.SetDestination(Vector3.forward);
 
-        Icon.SetSource(Units);
+        Icon.AssociateToRealUnits(Units);
 
         IsInitialized = true;
     }
@@ -161,7 +161,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
         Movement.SetDestination(destination.Destination);
         Movement.EndQueueing();
 
-        Icon.SetSource(Units);
+        Icon.AssociateToRealUnits(Units);
 
         GhostPlatoon.SetVisible(false);
 

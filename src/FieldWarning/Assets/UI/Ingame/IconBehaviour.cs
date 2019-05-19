@@ -51,11 +51,6 @@ namespace PFW.UI.Ingame
 
             SetSelected(false);
             SetVisible(_visible);
-
-            transform.gameObject.AddComponent<SelectableBehavior>().Platoon =
-                    transform
-                            .parent
-                            .GetComponent<PlatoonBehaviour>();
         }
 
         public void SetLayer(int l)
@@ -66,9 +61,19 @@ namespace PFW.UI.Ingame
             gameObject.layer = l;
         }
 
-        public void SetSource(List<UnitDispatcher> list)
+        /// <summary>
+        /// Mark as associated to a set of non-ghost units.
+        /// </summary>
+        /// <param name="list"></param>
+        public void AssociateToRealUnits(List<UnitDispatcher> list)
         {
             _billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().SetSource(list);
+
+            // Make selectable:
+            transform.gameObject.AddComponent<SelectableBehavior>().Platoon =
+                    transform
+                            .parent
+                            .GetComponent<PlatoonBehaviour>();
         }
 
         public void SetVisible(bool vis)
@@ -102,6 +107,7 @@ namespace PFW.UI.Ingame
             _billboard.GetComponent<Renderer>().material.color = color;
             _symbol.GetComponent<Renderer>().material.color = color;// (color + Color.white) / 2;
         }
+
 
         public void SetGhost()
         {
