@@ -69,7 +69,7 @@ namespace PFW.Units.Component.Weapon
             return true;
         }
 
-        public bool TryShoot(TargetTuple target, float deltaTime)
+        public bool TryShoot(TargetTuple target, float deltaTime, float distanceToTarget)
         {
             _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)

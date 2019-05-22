@@ -11,23 +11,41 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using PFW.Units.Component.Damage;
+using System.Collections.Generic;
+
 namespace PFW.Units.Component.Weapon
 {
     [System.Serializable]
     public class WeaponData
     {
         public float FireRange = 4000;
-        public float Damage = 5;
         public float ReloadTime = 10;
 		public float Accuracy = 40;
+        public readonly WeaponDamage Damage;
+
+        /// <summary>
+        /// A set of damage data structs representing the power of the weapon
+        /// and the type of the damage it deals
+        /// </summary>
+        public struct WeaponDamage
+        {
+            // TODO: add weapon with multiple types of damage
+            public DamageData.KineticData? KineticData;
+            public DamageData.HeatData? HeatData;
+            public DamageData.HEData? HEData;
+            public DamageData.FireData? FireData;
+            public DamageData.SmallarmsData? LightarmsData;
+            public DamageTypes DamageType;
+        }
 
         public WeaponData(
-            float fireRange, float damage, float reloadTime, float accuracy)
+            float fireRange, float reloadTime, float accuracy, WeaponDamage damage)
         {
             FireRange = fireRange;
-            Damage = damage;
             ReloadTime = reloadTime;
             Accuracy = accuracy;
+            Damage = damage;
         }
     }
 }
