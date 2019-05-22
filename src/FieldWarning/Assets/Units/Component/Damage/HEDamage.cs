@@ -1,31 +1,27 @@
-﻿using System;
+﻿/**
+ * Copyright (c) 2017-present, PFW Contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace PFW.Damage
+namespace PFW.Units.Component.Damage
 {
     class HEDamage : Damage
     {
-        public struct HEData
-        {
-            /// <summary>
-            /// The power of the shot
-            /// </summary>
-            public float Power;
-            /// <summary>
-            /// The radius of the explosion
-            /// Beyond the effective radius, the value {Remaining damage}/{Initial damage} is less than CUTOF_FFRACTION
-            /// </summary>
-            public float EffectiveRadius;
-            /// <summary>
-            /// Multiplier for health damage
-            /// </summary>
-            public float HealthDamageFactor;
-        }
-
-        private HEData _heData;
+        private DamageData.HEData _heData;
         private float _distanceToCentre;
 
         /// <summary>
@@ -44,7 +40,7 @@ namespace PFW.Damage
 
         private const int ARMOR_CUTOFF = 4;
 
-        public HEDamage(HEData data, Target target, float distanceToCentre) : base(DamageTypes.HE, target)
+        public HEDamage(DamageData.HEData data, Target target, float distanceToCentre) : base(DamageTypes.HE, target)
         {
             _heData = data;
             _distanceToCentre = distanceToCentre;
@@ -53,7 +49,7 @@ namespace PFW.Damage
         public override Target CalculateDamage()
         {
             Target finalState = this.CurrentTarget;
-            HEData he = _heData;
+            DamageData.HEData he = _heData;
             he.Power = CalculatedPowerDropoff(he.Power, he.EffectiveRadius, _distanceToCentre);
 
             // Does not consider ERA

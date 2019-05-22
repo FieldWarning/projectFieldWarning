@@ -13,6 +13,7 @@
 using UnityEngine;
 
 using PFW.Units.Component.Weapon;
+using PFW.Units.Component.Damage;
 
 namespace PFW.Units.Component.Health
 {
@@ -38,7 +39,7 @@ namespace PFW.Units.Component.Health
             _targetTuple = targetTuple;
         }
 
-        public void HandleHit(float receivedDamage)
+/*        public void HandleHit(WeaponData.WeaponDamage receivedDamage)
         {
             if (Health <= 0)
                 return;
@@ -46,6 +47,15 @@ namespace PFW.Units.Component.Health
             Health -= receivedDamage;
             if (Health <= 0)
                 Destroy();
+        }
+*/
+
+        public void UpdateHealth(float newHealth)
+        {
+            if (newHealth <= 0)
+                Destroy();
+            else
+                Health = newHealth;
         }
 
         public void Destroy()

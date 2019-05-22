@@ -1,54 +1,45 @@
+/**
+ * Copyright (c) 2017-present, PFW Contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace PFW.Damage
+namespace PFW.Units.Component.Damage
 {
     class KEDamage:Damage
     {
-        public struct KineticData
-        {
-            /// <summary>
-            /// The power of the shot
-            /// </summary>
-            public float Power;
-            /// <summary>
-            /// Distance between the firing unit and target unit
-            /// </summary>
-            public float Distance;
-            /// <summary>
-            /// Multiplier for armor degradation
-            /// </summary>
-            public float Degradation;
-            /// <summary>
-            /// Multiplier for health damage
-            /// </summary>
-            public float HealthDamageFactor;
-            /// <summary>
-            /// Air friction constant used in calculation of attenuation
-            /// </summary>
-            public float Friction;
-        }
+        private DamageData.KineticData _keData;
+        private float _distance;
 
-        private KineticData _keData;
-
-        public KEDamage(KineticData data, Target target)
+        public KEDamage(DamageData.KineticData data, Target target, float distance)
             : base(DamageTypes.KE, target)
         {
             _keData = data;
+            _distance = distance;
         }
 
         public override Target CalculateDamage()
         {
             Target finalState = this.CurrentTarget;
-            KineticData ke = _keData;
+            DamageData.KineticData ke = _keData;
 
             // Calculate attenuation of air friction
             ke.Power = CalculateKEAttenuationSimple(
                 ke.Power,
-                ke.Distance,
+                _distance,
                 ke.Friction
             );
 

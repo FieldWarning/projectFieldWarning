@@ -57,7 +57,7 @@ namespace PFW.Units.Component.Weapon
                 int roll = rnd.Next(1, 100);
 
                 // HIT
-                if (roll < _data.Accuracy) {
+                if (roll <= _data.Accuracy) {
                     target.Enemy.HandleHit(_data.Damage);
                 }
             } else {

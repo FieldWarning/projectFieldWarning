@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using PFW.Units.Component.Weapon;
+using PFW.Units.Component.Damage;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
@@ -146,8 +147,53 @@ namespace PFW.Units
 
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _movementComponent.Data.maxHealth;
-        public void HandleHit(float receivedDamage) =>
-                _healthComponent.HandleHit(receivedDamage);
+        
+        /// <summary>
+        /// Calculate the total damage dealt within a successful hit, then update health, armor and ERA values accordingly
+        /// </summary>
+        /// <param name="receivedDamage"></param>
+        public void HandleHit(WeaponData.WeaponDamage receivedDamage, float distanceToTarget, float distanceToCentre)
+        {
+            // First we put up a Target struct to be used in the damage calculations
+            Damage.Target unitAsTarget = new Damage.Target();
+
+            // TODO: implement armor and ERA systems
+            unitAsTarget.Armor = 0.0f;
+            unitAsTarget.EraData = new Damage.Era();
+
+            unitAsTarget.Health = _healthComponent.Health;
+
+            Damage.Target finalState = unitAsTarget;
+
+            // Calculate its damage using its damage type
+            switch (receivedDamage.DamageType)
+            {
+                case DamageTypes.KE:
+                    KEDamage keDamage = new KEDamage(receivedDamage.KineticData.GetValueOrDefault(), unitAsTarget, distanceToTarget);
+                    finalState = keDamage.CalculateDamage();
+                    break;
+                case DamageTypes.HEAT:
+                    HeatDamage heatDamage = new HeatDamage(receivedDamage.HeatData.GetValueOrDefault(), unitAsTarget);
+                    finalState = heatDamage.CalculateDamage();
+                    break;
+                case DamageTypes.HE:
+                    HEDamage heDamage = new HEDamage(receivedDamage.HEData.GetValueOrDefault(), unitAsTarget, distanceToCentre);
+                    finalState = heDamage.CalculateDamage();
+                    break;
+                case DamageTypes.FIRE:
+                    FireDamage fireDamage = new FireDamage(receivedDamage.FireData.GetValueOrDefault(), unitAsTarget);
+                    finalState = fireDamage.CalculateDamage();
+                    break;
+                case DamageTypes.LIGHTARMS:
+                    LightarmsDamage lightarmsDamage = new LightarmsDamage(receivedDamage.LightarmsData.GetValueOrDefault(), unitAsTarget);
+                    break;
+                default:
+                    Debug.LogError("Not a valid damage type!");
+                    break;
+            }
+
+            _healthComponent.UpdateHealth(finalState.Health);
+        }
 
         public void SetOriginalOrientation(Vector3 position, float heading) =>
                 _movementComponent.SetOriginalOrientation(position, heading);
