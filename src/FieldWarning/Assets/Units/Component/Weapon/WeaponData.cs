@@ -35,7 +35,7 @@ namespace PFW.Units.Component.Weapon
             public DamageData.HeatData? HeatData;
             public DamageData.HEData? HEData;
             public DamageData.FireData? FireData;
-            public DamageData.LightArmsData? LightarmsData;
+            public DamageData.SmallarmsData? LightarmsData;
             public DamageTypes DamageType;
         }
 

@@ -99,7 +99,7 @@ namespace PFW.Units.Component.Damage
             public float HealthDamageFactor;
         }
 
-        public struct LightArmsData
+        public struct SmallarmsData
         {
             /// <summary>
             /// The power of the shot

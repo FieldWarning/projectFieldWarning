@@ -18,11 +18,11 @@ using System.Text;
 
 namespace PFW.Units.Component.Damage
 {
-    class LightarmsDamage : Damage
+    class SmallarmsDamage : Damage
     {
-        private DamageData.LightArmsData _lightarmsData;
+        private DamageData.SmallarmsData _lightarmsData;
 
-        public LightarmsDamage(DamageData.LightArmsData data, Target target) : base(DamageTypes.LIGHTARMS, target)
+        public SmallarmsDamage(DamageData.SmallarmsData data, Target target) : base(DamageTypes.SMALLARMS, target)
         {
             _lightarmsData = data; 
         }

@@ -97,6 +97,6 @@ namespace PFW.Units.Component.Damage
         /// <summary>
         /// Light arms damage
         /// </summary>
-        LIGHTARMS
+        SMALLARMS
     }
 }

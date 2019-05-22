@@ -192,8 +192,8 @@ namespace PFW.Units
                     FireDamage fireDamage = new FireDamage(receivedDamage.FireData.GetValueOrDefault(), unitAsTarget);
                     finalState = fireDamage.CalculateDamage();
                     break;
-                case DamageTypes.LIGHTARMS:
-                    LightarmsDamage lightarmsDamage = new LightarmsDamage(receivedDamage.LightarmsData.GetValueOrDefault(), unitAsTarget);
+                case DamageTypes.SMALLARMS:
+                    SmallarmsDamage lightarmsDamage = new SmallarmsDamage(receivedDamage.LightarmsData.GetValueOrDefault(), unitAsTarget);
                     break;
                 default:
                     Debug.LogError("Not a valid damage type!");
