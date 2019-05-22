@@ -12,10 +12,6 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 
 namespace PFW.Units.Component.Damage
 {
@@ -43,7 +39,7 @@ namespace PFW.Units.Component.Damage
                     finalState.EraData.Value - heat.Power * finalState.EraData.HeatFractionMultiplier
                 );
                 finalState.EraData.Value = finalEra;
-                
+
                 heat.Power = CalculatePostEraPower(
                     heat.Power,
                     finalState.EraData.HeatFractionMultiplier
@@ -67,7 +63,7 @@ namespace PFW.Units.Component.Damage
                 finalState.Health - finalDamage
             );
             finalState.Health = finalHealth;
-            
+
             return finalState;
         }
 

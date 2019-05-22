@@ -12,10 +12,6 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 
 namespace PFW.Units.Component.Damage
 {
@@ -74,7 +70,7 @@ namespace PFW.Units.Component.Damage
                 finalState.Health - finalDamage
             );
             finalState.Health = finalHealth;
-            
+
             return finalState;
         }
 
@@ -83,7 +79,7 @@ namespace PFW.Units.Component.Damage
         {
             return  (float)Math.Exp(-friction * distance) * power;
         }
-        
+
         private static float CalculatePostEraPower(float power, float eraFractionMultiplier)
         {
             return power * (1 - eraFractionMultiplier);

@@ -147,7 +147,7 @@ namespace PFW.Units
 
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _movementComponent.Data.maxHealth;
-        
+
         // TODO: move HandelHit to ArmorComponent
 
         /// <summary>
@@ -161,7 +161,8 @@ namespace PFW.Units
 
             // TODO: implement armor and ERA systems
             unitAsTarget.Armor = 0.0f;
-            unitAsTarget.EraData = new Damage.Era();
+            unitAsTarget.EraData = new Damage.Era {
+                    Value = 0, KEFractionMultiplier = 0, HeatFractionMultiplier = 0};
 
             unitAsTarget.Health = _healthComponent.Health;
 
@@ -172,28 +173,35 @@ namespace PFW.Units
             {
                 case DamageTypes.KE:
                     KEDamage keDamage = new KEDamage (
-                        receivedDamage.KineticData.GetValueOrDefault(),
-                        unitAsTarget, distanceToTarget.GetValueOrDefault()
+                            receivedDamage.KineticData.GetValueOrDefault(),
+                            unitAsTarget,
+                            distanceToTarget.GetValueOrDefault()
                     );
                     finalState = keDamage.CalculateDamage();
                     break;
                 case DamageTypes.HEAT:
-                    HeatDamage heatDamage = new HeatDamage(receivedDamage.HeatData.GetValueOrDefault(), unitAsTarget);
+                    HeatDamage heatDamage = new HeatDamage(
+                            receivedDamage.HeatData.GetValueOrDefault(),
+                            unitAsTarget);
                     finalState = heatDamage.CalculateDamage();
                     break;
                 case DamageTypes.HE:
                     HEDamage heDamage = new HEDamage (
-                        receivedDamage.HEData.GetValueOrDefault(),
-                        unitAsTarget, distanceToCentre.GetValueOrDefault()
+                            receivedDamage.HEData.GetValueOrDefault(),
+                            unitAsTarget, distanceToCentre.GetValueOrDefault()
                     );
                     finalState = heDamage.CalculateDamage();
                     break;
                 case DamageTypes.FIRE:
-                    FireDamage fireDamage = new FireDamage(receivedDamage.FireData.GetValueOrDefault(), unitAsTarget);
+                    FireDamage fireDamage = new FireDamage(
+                            receivedDamage.FireData.GetValueOrDefault(),
+                            unitAsTarget);
                     finalState = fireDamage.CalculateDamage();
                     break;
                 case DamageTypes.SMALLARMS:
-                    SmallarmsDamage lightarmsDamage = new SmallarmsDamage(receivedDamage.LightarmsData.GetValueOrDefault(), unitAsTarget);
+                    SmallarmsDamage lightarmsDamage = new SmallarmsDamage(
+                            receivedDamage.LightarmsData.GetValueOrDefault(),
+                            unitAsTarget);
                     break;
                 default:
                     Debug.LogError("Not a valid damage type!");

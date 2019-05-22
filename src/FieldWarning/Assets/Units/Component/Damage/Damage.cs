@@ -11,18 +11,17 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-
 namespace PFW.Units.Component.Damage
 {
     /// <summary>
     /// The base class Damage, on which all damage classes are constructed
-    /// This class represents a damage dealt in an update, for one-time instant damage (e.g. KEDamage or HeatDamage), the class will be instantiated once
-    /// For continuous damage (e.g. FireDamage), the class will be instantiated once and the CalculateDamage will be called at every update (controlled by another script inherenting MonoBehaviour)
+    ///
+    /// This class represents a damage dealt in an update, for one-time instant damage
+    /// (e.g. KEDamage or HeatDamage), the class will be instantiated once
+    ///
+    /// For continuous damage (e.g. FireDamage), the class will be instantiated once and
+    /// the CalculateDamage will be called at every update (controlled by another
+    /// script inherenting MonoBehaviour)
     /// </summary>
     internal abstract class Damage
     {
