@@ -130,7 +130,10 @@ namespace PFW.Units.Component.Weapon
                 bool shotFired = false;
 
                 if (_turretComponent.IsFacingTarget && targetInRange)
-                    shotFired = _weapon.TryShoot(_target, Time.deltaTime);
+                {
+                    float distance = Vector3.Distance(Unit.transform.position, _target.Position);
+                    shotFired = _weapon.TryShoot(_target, Time.deltaTime, distance);
+                }
 
                 // If shooting at the ground, stop after the first shot:
                 if (shotFired && _target.IsGround)

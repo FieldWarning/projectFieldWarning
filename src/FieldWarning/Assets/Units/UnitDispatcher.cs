@@ -152,7 +152,7 @@ namespace PFW.Units
         /// Calculate the total damage dealt within a successful hit, then update health, armor and ERA values accordingly
         /// </summary>
         /// <param name="receivedDamage"></param>
-        public void HandleHit(WeaponData.WeaponDamage receivedDamage, float distanceToTarget, float distanceToCentre)
+        public void HandleHit(WeaponData.WeaponDamage receivedDamage, float? distanceToTarget, float? distanceToCentre)
         {
             // First we put up a Target struct to be used in the damage calculations
             Damage.Target unitAsTarget = new Damage.Target();
@@ -169,7 +169,10 @@ namespace PFW.Units
             switch (receivedDamage.DamageType)
             {
                 case DamageTypes.KE:
-                    KEDamage keDamage = new KEDamage(receivedDamage.KineticData.GetValueOrDefault(), unitAsTarget, distanceToTarget);
+                    KEDamage keDamage = new KEDamage (
+                        receivedDamage.KineticData.GetValueOrDefault(),
+                        unitAsTarget, distanceToTarget.GetValueOrDefault()
+                    );
                     finalState = keDamage.CalculateDamage();
                     break;
                 case DamageTypes.HEAT:
@@ -177,7 +180,10 @@ namespace PFW.Units
                     finalState = heatDamage.CalculateDamage();
                     break;
                 case DamageTypes.HE:
-                    HEDamage heDamage = new HEDamage(receivedDamage.HEData.GetValueOrDefault(), unitAsTarget, distanceToCentre);
+                    HEDamage heDamage = new HEDamage (
+                        receivedDamage.HEData.GetValueOrDefault(),
+                        unitAsTarget, distanceToCentre.GetValueOrDefault()
+                    );
                     finalState = heDamage.CalculateDamage();
                     break;
                 case DamageTypes.FIRE:
@@ -193,6 +199,7 @@ namespace PFW.Units
             }
 
             _healthComponent.UpdateHealth(finalState.Health);
+            // Update armor and ERA values as well when the mechanisms are implemented
         }
 
         public void SetOriginalOrientation(Vector3 position, float heading) =>

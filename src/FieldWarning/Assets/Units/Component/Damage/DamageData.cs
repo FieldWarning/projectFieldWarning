@@ -19,6 +19,10 @@ using System.Diagnostics;
 
 namespace PFW.Units.Component.Damage
 {
+    /// <summary>
+    /// A collection of data structures to be used in damage calculations
+    /// made public to be used both inside and outside the current assemble
+    /// </summary>
     public class DamageData
     {
         public struct KineticData

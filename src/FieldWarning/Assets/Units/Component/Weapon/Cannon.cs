@@ -25,6 +25,7 @@ namespace PFW.Units.Component.Weapon
         private WeaponData _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _source { get; }
+        private float _distance { get; set; }
 
         // TODO Should aim to make actual objects fire and not effects:
         private ParticleSystem _shotEffect;
@@ -58,20 +59,22 @@ namespace PFW.Units.Component.Weapon
 
                 // HIT
                 if (roll <= _data.Accuracy) {
-                    target.Enemy.HandleHit(_data.Damage);
+                    Debug.LogWarning("Cannon shell dispersion is not implemented yet");
+                    target.Enemy.HandleHit(_data.Damage, _distance, null);
                 }
             } else {
                 // TODO: fire pos damage not implemented
             }
         }
 
-        public bool TryShoot(TargetTuple target, float deltaTime)
+        public bool TryShoot(TargetTuple target, float deltaTime, float distanceToTarget)
         {
             _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
                 return false;
 
             _reloadTimeLeft = _data.ReloadTime;
+            _distance = distanceToTarget;
             FireWeapon(target);
             return true;
         }
