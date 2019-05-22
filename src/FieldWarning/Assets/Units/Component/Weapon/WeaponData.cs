@@ -30,6 +30,7 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         public struct WeaponDamage
         {
+            // TODO: add weapon with multiple types of damage
             public DamageData.KineticData? KineticData;
             public DamageData.HeatData? HeatData;
             public DamageData.HEData? HEData;

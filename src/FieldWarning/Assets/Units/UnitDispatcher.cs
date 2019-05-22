@@ -148,6 +148,8 @@ namespace PFW.Units
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _movementComponent.Data.maxHealth;
         
+        // TODO: move HandelHit to ArmorComponent
+
         /// <summary>
         /// Calculate the total damage dealt within a successful hit, then update health, armor and ERA values accordingly
         /// </summary>

@@ -39,17 +39,6 @@ namespace PFW.Units.Component.Health
             _targetTuple = targetTuple;
         }
 
-/*        public void HandleHit(WeaponData.WeaponDamage receivedDamage)
-        {
-            if (Health <= 0)
-                return;
-
-            Health -= receivedDamage;
-            if (Health <= 0)
-                Destroy();
-        }
-*/
-
         public void UpdateHealth(float newHealth)
         {
             if (newHealth <= 0)
