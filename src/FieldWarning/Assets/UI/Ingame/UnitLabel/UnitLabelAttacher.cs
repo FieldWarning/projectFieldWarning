@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -9,57 +9,42 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
+ *
  */
 
-using UnityEngine;
-
-public class UnitLabelAttacher : MonoBehaviour
+namespace Assets.UI.Ingame.UnitLabel
 {
-    public GameObject Label;
-    private Canvas _canvas;
-    private Collider _collider;
-    private Vector3 _paddingVector;
+    using UnityEngine;
 
-    public void Start()
+    public class UnitLabelAttacher : MonoBehaviour
     {
-        _canvas = GameObject.Find("UIWrapper").GetComponent<Canvas>();
-        _collider = GetComponentInChildren<Collider>();
+        public GameObject Label { get; private set; }
 
-        Label = Instantiate(Resources.Load<GameObject>("UnitLabel"), _canvas.transform);
+        public bool Visible
+        {
+            get => this.Visible;
+            set => this.Label.SetActive(value);
+        }
 
-        _paddingVector = new Vector3(0, 5, 0);
-    }
+        public Vector3 GetScreenPosition()
+        {
+            // new Vector3(x, y, z = 0) - that's why we can just use (0, 5). :)
+            return Camera.main.WorldToScreenPoint(this.transform.position + new Vector3(0f, 5f));
+        }
 
-    public void LateUpdate()
-    {
-        Label.transform.position = GetScreenPosition(_canvas, Camera.main);
-    }
+        /* LateUpdate is called after all Update functions have been called. 
+           This is useful to order script execution. For example a follow camera should 
+           always be implemented in LateUpdate because it tracks objects that might have moved inside Update. */
+        public void LateUpdate()
+        {
+            this.Label.transform.position = this.GetScreenPosition();
+        }
 
-    public void Hide()
-    {
-        Label.SetActive(false);
-    }
-
-    public void Show()
-    {
-        Label.SetActive(true);
-    }
-
-    public void SetVisibility(bool visible)
-    {
-        if (visible)
-            Show();
-        else
-            Hide();
-    }
-
-    public Vector3 GetScreenPosition(Canvas canvas, Camera cam = null)
-    {
-        if (cam == null)
-            cam = Camera.main;
-
-        var labelPos = cam.WorldToScreenPoint(transform.position + _paddingVector);
-
-        return labelPos;
+        public void Start()
+        {
+            this.Label = Instantiate(
+                Resources.Load<GameObject>("UnitLabel"),
+                GameObject.Find("UIWrapper").GetComponent<Canvas>().transform);
+        }
     }
 }
