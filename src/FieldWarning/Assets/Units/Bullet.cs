@@ -11,17 +11,16 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
 using UnityEngine;
 
 namespace AssemblyCSharp
 {
     public class Bullet
     {
-        public Vector3 _startPosition;
-        public Vector3 _endPosition;
-        public float _vellocity;       
-        public int _arc;
+        private Vector3 _startPosition;
+        private Vector3 _endPosition;
+        private float _velocity;
+        private int _arc;
 
         public Bullet() { }
 
@@ -29,12 +28,12 @@ namespace AssemblyCSharp
         {
             _startPosition = start_position;
             _endPosition = end_position;
-            _vellocity = vellocity;
+            _velocity = vellocity;
             _arc = arc;
 
             //If the shell is a miss end position will be recalculated into a
             //random yet close position to the enemy unit
-            //should be implemneted into a dispersion circle later on 
+            //should be implemneted into a dispersion circle later on
 
             if (!isHit) {
                 end_position.x = UnityEngine.Random.Range(-20.0f, 20.0f);
