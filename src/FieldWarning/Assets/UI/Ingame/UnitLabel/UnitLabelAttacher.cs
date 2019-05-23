@@ -22,27 +22,17 @@ namespace Assets.UI.Ingame.UnitLabel
 
         public bool Visible
         {
-            get => this.Visible;
-            set => this.Label.SetActive(value);
+            get => Visible;
+            set => Label.SetActive(value);
         }
 
-        public Vector3 GetScreenPosition()
-        {
-            // new Vector3(x, y, z = 0) - that's why we can just use (0, 5). :)
-            return Camera.main.WorldToScreenPoint(this.transform.position + new Vector3(0f, 5f));
-        }
+        public Vector3 GetScreenPosition() => Camera.main.WorldToScreenPoint(transform.position + new Vector3(0f, 5f));
 
-        /* LateUpdate is called after all Update functions have been called. 
-           This is useful to order script execution. For example a follow camera should 
-           always be implemented in LateUpdate because it tracks objects that might have moved inside Update. */
-        public void LateUpdate()
-        {
-            this.Label.transform.position = this.GetScreenPosition();
-        }
+        public void LateUpdate() => Label.transform.position = GetScreenPosition();
 
         public void Start()
         {
-            this.Label = Instantiate(
+            Label = Instantiate(
                 Resources.Load<GameObject>("UnitLabel"),
                 GameObject.Find("UIWrapper").GetComponent<Canvas>().transform);
         }
