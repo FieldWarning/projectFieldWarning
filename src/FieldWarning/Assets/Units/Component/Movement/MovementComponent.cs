@@ -23,7 +23,7 @@ namespace PFW.Units.Component.Movement
         private const float ORIENTATION_RATE = 5.0f;
         private const float TRANSLATION_RATE = 5.0f;
 
-        public UnitData Data = UnitData.GenericUnit();
+        public UnitData Data { get; set; } = UnitData.GenericUnit();
         public PlatoonBehaviour Platoon { get; set; }
         public Pathfinder Pathfinder { get; private set; }
 

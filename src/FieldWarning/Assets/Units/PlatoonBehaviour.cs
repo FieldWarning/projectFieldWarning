@@ -79,7 +79,6 @@ public partial class PlatoonBehaviour : MonoBehaviour
     {
         Unit = unit;
         Owner = owner;
-
         var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
         Icon = iconInstance.GetComponent<IconBehaviour>();
         Icon.BaseColor = Owner.Team.Color;
@@ -89,9 +88,9 @@ public partial class PlatoonBehaviour : MonoBehaviour
         for (int i = 0; i < n; i++) {
             var unitInstance =
                 Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
-            var unitBehaviour = unitInstance.GetComponent<MovementComponent>();
+            MovementComponent moveComponent = unitInstance.GetComponent<MovementComponent>();
             UnitDispatcher unitDispatcher =
-                    new UnitDispatcher(unitBehaviour, this);
+                    new UnitDispatcher(moveComponent, this);
             Units.Add(unitDispatcher);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
