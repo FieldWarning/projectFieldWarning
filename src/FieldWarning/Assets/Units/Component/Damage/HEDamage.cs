@@ -84,7 +84,10 @@ namespace PFW.Units.Component.Damage
             }
             else
             {
-                float finalPower = (float)(power / (4 * Math.PI * distance * distance));
+                float fractionRemain = (float)(power / (4 * Math.PI * distance * distance));
+
+                float finalPower = Math.Min(1.0f, fractionRemain) * power;
+                
                 return finalPower;
             }
         }
