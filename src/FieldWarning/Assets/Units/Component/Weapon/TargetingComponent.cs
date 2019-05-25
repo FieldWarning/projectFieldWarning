@@ -26,10 +26,12 @@ namespace PFW.Units.Component.Weapon
         public PlatoonBehaviour Platoon { get; set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
+
         public void SetTarget(Vector3 position, bool autoApproach = true)
         {
             SetTarget(new TargetTuple(position), autoApproach);
         }
+
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
             var distance = Vector3.Distance(Unit.transform.position, target.Position);
@@ -95,11 +97,12 @@ namespace PFW.Units.Component.Weapon
 
         private void Start()
         {
+            bool forExample 
             // TODO remove:
-            if (_weaponType == WeaponType.CANNON)
+            if (_weaponType is WeaponType.CANNON)
                 _weapon = new Cannon(
                         _data, _audioSource, _shotEffect, _shotSound, _shotVolume);
-            else if (_weaponType == WeaponType.HOWITZER)
+            else if (_weaponType is WeaponType.HOWITZER)
                 _weapon = new Howitzer(
                         _data,
                         _audioSource,

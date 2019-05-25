@@ -11,18 +11,18 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
 using PFW.Units.Component.Damage;
-using System.Collections.Generic;
 
 namespace PFW.Units.Component.Weapon
 {
-    [System.Serializable]
+    [Serializable]
     public class WeaponData
     {
-        public float FireRange = 4000;
-        public float ReloadTime = 10;
-		public float Accuracy = 40;
-        public readonly WeaponDamage Damage;
+        public float FireRange { get; set; } = 4000;
+        public float ReloadTime { get; set; } = 10;
+		public float Accuracy { get; set; } = 40;
+        public WeaponDamage Damage { get; private set; }
 
         /// <summary>
         /// A set of damage data structs representing the power of the weapon

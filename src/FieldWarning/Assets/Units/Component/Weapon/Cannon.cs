@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
 using UnityEngine;
 
 using PFW.Units.Component.Movement;
@@ -30,19 +31,21 @@ namespace PFW.Units.Component.Weapon
         private ParticleSystem _shotEffect;
         private AudioClip _shotSound;
         private float _shotVolume;
+        private System.Random _random;
 
         public Cannon(
             WeaponData data,
             AudioSource source,
             ParticleSystem shotEffect,
             AudioClip shotSound,
-            float shotVolume = 1.0F)
+            float shotVolume = 1.0f)
         {
             _data = data;
             _source = source;
             _shotEffect = shotEffect;
             _shotSound = shotSound;
             _shotVolume = shotVolume;
+            _random = new System.Random(Environment.TickCount);
         }
 
         private void FireWeapon(TargetTuple target, float distance)
@@ -53,9 +56,7 @@ namespace PFW.Units.Component.Weapon
             _shotEffect.Play();
 
             if (target.IsUnit) {
-                System.Random rnd = new System.Random();
-                int roll = rnd.Next(1, 100);
-
+                float roll = _random.NextFloat(0.0, 100.0);
                 // HIT
                 if (roll <= _data.Accuracy) {
                     Debug.LogWarning("Cannon shell dispersion is not implemented yet");
