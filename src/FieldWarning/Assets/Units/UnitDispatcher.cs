@@ -17,7 +17,6 @@ using PFW.Units.Component.Damage;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
-using PFW.Model.Game;
 
 namespace PFW.Units
 {
