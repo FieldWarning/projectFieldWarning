@@ -23,37 +23,33 @@ public static class Extensions
     }*/
     public static void Match<T>(this List<Matchable<T>> matchers, List<T> matchees)
     {
-        Dictionary<T, MatchStruct<T>> matches = new Dictionary<T, MatchStruct<T>>();
+        var matches = new Dictionary<T, MatchStruct<T>>();
+
         while (matchers.Count > 0) {
-            bool breaking = false;
             var matcher = matchers[0];
+
             matchees.Sort((x, y) => matcher.Compare(x, y));
 
             for (int i = 0; i < matchees.Count; i++) {
-                breaking = true;
                 var score = matcher.GetScore(matchees[i]);
+
                 if (!matches.ContainsKey(matchees[i])) {
                     matches.Add(matchees[i], new MatchStruct<T>());
                 }
 
                 if (matches[matchees[i]].score > score) {
-
                     matchers.RemoveAt(0);
-                    if (matches[matchees[i]].indivdual != null) matchers.Add(matches[matchees[i]].indivdual);
+                    if (matches[matchees[i]].indivdual != null) 
+                        matchers.Add(matches[matchees[i]].indivdual);
                     matches[matchees[i]] = new MatchStruct<T>(matcher, score);
-                    breaking = false;
                     break;
                 }
-
             }
-            if (breaking) {
-                break;
-            }
-
         }
 
         foreach (var p in matchees) {
-            if (!matches.ContainsKey(p)) return;
+            if (!matches.ContainsKey(p)) 
+                return;
             matches[p].indivdual.SetMatch(p);
 
         }
@@ -180,6 +176,10 @@ public static class Extensions
         return taggedGameObjects;
     }
 
+    public static float NextFloat(this System.Random random, double minimum, double maximum)
+    {
+        return (float)(random.NextDouble() * (maximum - minimum) + minimum);
+    }
 }
 public interface Matchable<T>
 {

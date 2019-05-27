@@ -26,10 +26,12 @@ namespace PFW.Units.Component.Weapon
         public PlatoonBehaviour Platoon { get; set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
+
         public void SetTarget(Vector3 position, bool autoApproach = true)
         {
             SetTarget(new TargetTuple(position), autoApproach);
         }
+
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
             var distance = Vector3.Distance(Unit.transform.position, target.Position);
