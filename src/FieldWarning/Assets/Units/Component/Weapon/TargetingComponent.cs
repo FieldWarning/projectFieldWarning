@@ -97,12 +97,11 @@ namespace PFW.Units.Component.Weapon
 
         private void Start()
         {
-            bool forExample 
             // TODO remove:
-            if (_weaponType is WeaponType.CANNON)
+            if (_weaponType == WeaponType.CANNON)
                 _weapon = new Cannon(
                         _data, _audioSource, _shotEffect, _shotSound, _shotVolume);
-            else if (_weaponType is WeaponType.HOWITZER)
+            else if (_weaponType == WeaponType.HOWITZER)
                 _weapon = new Howitzer(
                         _data,
                         _audioSource,

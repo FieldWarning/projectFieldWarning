@@ -31,7 +31,7 @@ namespace PFW.Units.Component.Weapon
         private ParticleSystem _shotEffect;
         private AudioClip _shotSound;
         private float _shotVolume;
-        private System.Random _random;
+        private static System.Random _random;
 
         public Cannon(
             WeaponData data,
