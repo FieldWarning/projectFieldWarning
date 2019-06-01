@@ -40,15 +40,15 @@ namespace PFW.Units.Component.Damage
 
         private const int ARMOR_CUTOFF = 4;
 
-        public HEDamage(DamageData.HEData data, Target target, float distanceToCentre) : base(DamageTypes.HE, target)
+        public HEDamage(DamageData.HEData data, DamageData.Target target, float distanceToCentre) : base(DamageTypes.HE, target)
         {
             _heData = data;
             _distanceToCentre = distanceToCentre;
         }
 
-        public override Target CalculateDamage()
+        public override DamageData.Target CalculateDamage()
         {
-            Target finalState = this.CurrentTarget;
+            DamageData.Target finalState = this.CurrentTarget;
             DamageData.HEData he = _heData;
             he.Power = CalculatedPowerDropoff(he.Power, he.EffectiveRadius, _distanceToCentre);
 
@@ -84,11 +84,24 @@ namespace PFW.Units.Component.Damage
             }
             else
             {
-                float fractionRemain = (float)(power / (4 * Math.PI * distance * distance));
+                if (distance > 0)
+                {
+                    float fractionRemain = (float)(power / (4 * Math.PI * distance * distance));
 
-                float finalPower = Math.Min(1.0f, fractionRemain) * power;
-                
-                return finalPower;
+                    float finalPower = Math.Min(1.0f, fractionRemain) * power;
+
+                    return finalPower;
+                }
+                else if (distance == 0)
+                {
+                    // Direct hit, use full HE power
+                    return power;
+                }
+                else
+                {
+                    // distance < 0, there must be a bug
+                    throw new Exception("Distance to centre must be non-negative");
+                }
             }
         }
     }

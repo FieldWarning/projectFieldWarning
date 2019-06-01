@@ -26,11 +26,11 @@ namespace PFW.Units.Component.Damage
     internal abstract class Damage
     {
         /// <summary>
-        /// Damage type always take a Target struct representing the initial state of the target unit
+        /// Damage type always take a DamageData.Target struct representing the initial state of the target unit
         /// </summary>
         /// <param name="damageType"></param>
         /// <param name="currentTarget"></param>
-        protected Damage(DamageTypes damageType, Target currentTarget)
+        protected Damage(DamageTypes damageType, DamageData.Target currentTarget)
         {
             this.DamageType = damageType;
             this.CurrentTarget = currentTarget;
@@ -39,7 +39,7 @@ namespace PFW.Units.Component.Damage
         /// <Summary>
         ///  A struct containing the data of the target of the damage
         /// </Summary>
-        public Target CurrentTarget { get; private set; }
+        public DamageData.Target CurrentTarget { get; private set; }
 
         /// <Summary>
         ///  The type of the damage, indicated by a enum
@@ -50,24 +50,10 @@ namespace PFW.Units.Component.Damage
         /// Use this method to calculate damage.
         /// Override this method in the child classes
         /// </Summary>
-        public virtual Target CalculateDamage()
+        public virtual DamageData.Target CalculateDamage()
         {
             // Override this function to specify damage algorithm
             return this.CurrentTarget; // No damage dealt thus return the original state of the target
-        }
-
-        public struct Era
-        {
-            public float Value;
-            public float KEFractionMultiplier;
-            public float HeatFractionMultiplier;
-        }
-
-        public struct Target
-        {
-            public float Armor;
-            public Era EraData;
-            public float Health;
         }
     }
 

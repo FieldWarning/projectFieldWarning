@@ -12,6 +12,7 @@
  */
 
 using UnityEngine;
+using PFW.Units.Component.Damage;
 
 public class UnitData
 {
@@ -34,6 +35,14 @@ public class UnitData
     public float optimumTurnSpeed; // The linear speed which allows for the highest turn rate
     public float suspensionForward, suspensionSide;
     public float accelDampTime;
+
+    public struct ArmorAttributes
+    {
+        public float Armor;
+        public DamageData.Era EraData;
+    }
+
+    public ArmorAttributes[] armorData = new ArmorAttributes[4];
 
     public UnitData()
     {
@@ -74,14 +83,4 @@ public class UnitData
         return d;
     }
 }
-
-/*public enum MobilityType
-{
-    Inf,
-    InfAmphib,
-    Wheel,
-    WheelAmphib,
-    Track,
-    TrackAmphib
-};*/
 

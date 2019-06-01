@@ -22,14 +22,14 @@ namespace PFW.Units.Component.Damage
     {
         private DamageData.SmallarmsData _lightarmsData;
 
-        public SmallarmsDamage(DamageData.SmallarmsData data, Target target) : base(DamageTypes.SMALLARMS, target)
+        public SmallarmsDamage(DamageData.SmallarmsData data, DamageData.Target target) : base(DamageTypes.SMALLARMS, target)
         {
             _lightarmsData = data; 
         }
 
-        public override Target CalculateDamage()
+        public override DamageData.Target CalculateDamage()
         {
-            Target finalState = CurrentTarget;
+            DamageData.Target finalState = CurrentTarget;
             if (finalState.Armor == 0)
             {
                 // Deal full damage to light targets / infantry targets

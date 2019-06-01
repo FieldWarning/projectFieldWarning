@@ -19,14 +19,14 @@ namespace PFW.Units.Component.Damage
     {
         private DamageData.FireData _fireData;
 
-        public FireDamage(DamageData.FireData data, Target target) : base(DamageTypes.FIRE, target)
+        public FireDamage(DamageData.FireData data, DamageData.Target target) : base(DamageTypes.FIRE, target)
         {
             _fireData = data;
         }
 
-        public override Target CalculateDamage()
+        public override DamageData.Target CalculateDamage()
         {
-            Target finalState = this.CurrentTarget;
+            DamageData.Target finalState = this.CurrentTarget;
 
             // Armor degradation
             float finalArmor = Math.Max(

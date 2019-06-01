@@ -32,8 +32,8 @@ namespace PFW.Units.Component.Movement
         protected Vector3 _rotation;
 
         // Forward and right directions on the horizontal plane
-        protected Vector3 _forward { get; private set; }
-        protected Vector3 _right { get; private set; }
+        public Vector3 Forward { get; private set; }
+        public Vector3 Right { get; private set; }
 
         // This is redundant with transform.rotation.localEulerAngles, but it is necessary because
         // the localEulerAngles will sometimes automatically change to some new equivalent angles
@@ -107,9 +107,9 @@ namespace PFW.Units.Component.Movement
 
             transform.localEulerAngles = Mathf.Rad2Deg * new Vector3(
                     -_currentRotation.x, -_currentRotation.y, _currentRotation.z);
-            _forward = new Vector3(
+            Forward = new Vector3(
                     -Mathf.Sin(_currentRotation.y), 0f, Mathf.Cos(_currentRotation.y));
-            _right = new Vector3(_forward.z, 0f, -_forward.x);
+            Right = new Vector3(Forward.z, 0f, -Forward.x);
         }
 
         public abstract void UpdateMapOrientation();
