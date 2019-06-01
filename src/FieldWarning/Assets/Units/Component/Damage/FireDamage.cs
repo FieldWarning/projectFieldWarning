@@ -38,9 +38,11 @@ namespace PFW.Units.Component.Damage
             // If the power is less than the armor, deal a minimum amount of damage
             // This represents the damage dealt to the crew due to high temperature and suffocation
             float finalDamage = Math.Max(
-                _fireData.SuffocationDamage,
+                0.0f,
                 (_fireData.Power - finalState.Armor) * _fireData.HealthDamageFactor
             );
+
+            finalDamage += _fireData.SuffocationDamage;
 
             finalState.Health -= finalDamage;
             return finalState;

@@ -22,7 +22,7 @@ using PFW.Units.Component.Health;
 
 namespace PFW.Units.Component.Armor
 {
-    class ArmorComponent : MonoBehaviour
+    class ArmorComponent
     {
         /// <summary>
         /// The movement component where we obtain the front and right vectors

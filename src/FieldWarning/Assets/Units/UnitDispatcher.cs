@@ -155,10 +155,8 @@ namespace PFW.Units
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _movementComponent.Data.maxHealth;
         
-        public void HandleHit(WeaponData.WeaponDamage receivedDamage, Vector3? displacementToTarget, float? distanceToCentre)
-        {
+        public void HandleHit(WeaponData.WeaponDamage receivedDamage, Vector3? displacementToTarget, float? distanceToCentre) =>
             _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
-        }
 
         public void SetOriginalOrientation(Vector3 position, float heading) =>
                 _movementComponent.SetOriginalOrientation(position, heading);
