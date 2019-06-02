@@ -107,7 +107,8 @@ namespace PFW.Units
             _armorComponent = new ArmorComponent(
                 _movementComponent,
                 platoon,
-                _movementComponent.Data.armorData);
+                _movementComponent.Data.armorData,
+                _healthComponent);
 
             _voiceComponent = GameObject.Instantiate(
                     VOICE_PREFAB,

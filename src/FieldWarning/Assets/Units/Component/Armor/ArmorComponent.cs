@@ -43,11 +43,13 @@ namespace PFW.Units.Component.Armor
         public ArmorComponent(
             MovementComponent unit,
             PlatoonBehaviour platoon,
-            UnitData.ArmorAttributes[] armorData)
+            UnitData.ArmorAttributes[] armorData,
+            HealthComponent healthComponent)
         {
             Unit = unit;
             _platoon = platoon;
             ArmorData = armorData;
+            _healthComponent = healthComponent;
         }
 
         /// <summary>
