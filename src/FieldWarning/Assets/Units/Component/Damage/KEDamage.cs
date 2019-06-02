@@ -20,16 +20,16 @@ namespace PFW.Units.Component.Damage
         private DamageData.KineticData _keData;
         private float _distance;
 
-        public KEDamage(DamageData.KineticData data, Target target, float distance)
+        public KEDamage(DamageData.KineticData data, DamageData.Target target, float distance)
             : base(DamageTypes.KE, target)
         {
             _keData = data;
             _distance = distance;
         }
 
-        public override Target CalculateDamage()
+        public override DamageData.Target CalculateDamage()
         {
-            Target finalState = this.CurrentTarget;
+            DamageData.Target finalState = this.CurrentTarget;
             DamageData.KineticData ke = _keData;
 
             // Calculate attenuation of air friction

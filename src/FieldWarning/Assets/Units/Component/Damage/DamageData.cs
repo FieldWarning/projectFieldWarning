@@ -10,12 +10,7 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
+ 
 
 namespace PFW.Units.Component.Damage
 {
@@ -25,6 +20,23 @@ namespace PFW.Units.Component.Damage
     /// </summary>
     public class DamageData
     {
+        /// <summary>
+        /// The data structure for Reactive Explosion Armor
+        /// </summary>
+        public struct Era
+        {
+            public float Value;
+            public float KEFractionMultiplier;
+            public float HeatFractionMultiplier;
+        }
+
+        public struct Target
+        {
+            public float Armor;
+            public DamageData.Era EraData;
+            public float Health;
+        }
+
         public struct KineticData
         {
             /// <summary>

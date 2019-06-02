@@ -28,8 +28,8 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         /// <param name="target"></param>
         /// <param name="deltaTime">Time since the last invocation.</param>
-        /// <param name="distanceToTarget">Distance from the firing unit to the target unit</param>
+        /// <param name="displacement">Distance from the firing unit to the target unit</param>
         /// <returns>True if a shot was fired, false otherwise.</returns>
-        bool TryShoot(TargetTuple target, float deltatime, float distanceToTarget);
+        bool TryShoot(TargetTuple target, float deltatime, Vector3 displacement);
     }
 }

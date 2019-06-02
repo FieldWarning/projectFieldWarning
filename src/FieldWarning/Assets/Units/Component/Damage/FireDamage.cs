@@ -19,14 +19,14 @@ namespace PFW.Units.Component.Damage
     {
         private DamageData.FireData _fireData;
 
-        public FireDamage(DamageData.FireData data, Target target) : base(DamageTypes.FIRE, target)
+        public FireDamage(DamageData.FireData data, DamageData.Target target) : base(DamageTypes.FIRE, target)
         {
             _fireData = data;
         }
 
-        public override Target CalculateDamage()
+        public override DamageData.Target CalculateDamage()
         {
-            Target finalState = this.CurrentTarget;
+            DamageData.Target finalState = this.CurrentTarget;
 
             // Armor degradation
             float finalArmor = Math.Max(
@@ -38,9 +38,11 @@ namespace PFW.Units.Component.Damage
             // If the power is less than the armor, deal a minimum amount of damage
             // This represents the damage dealt to the crew due to high temperature and suffocation
             float finalDamage = Math.Max(
-                _fireData.SuffocationDamage,
+                0.0f,
                 (_fireData.Power - finalState.Armor) * _fireData.HealthDamageFactor
             );
+
+            finalDamage += _fireData.SuffocationDamage;
 
             finalState.Health -= finalDamage;
             return finalState;

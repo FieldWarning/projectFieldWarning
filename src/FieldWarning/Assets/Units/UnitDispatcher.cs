@@ -17,6 +17,7 @@ using PFW.Units.Component.Damage;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
+using PFW.Units.Component.Armor;
 
 namespace PFW.Units
 {
@@ -33,6 +34,8 @@ namespace PFW.Units
         private TargetingComponent[] _targetingComponents;
 
         private HealthComponent _healthComponent;
+
+        private ArmorComponent _armorComponent;
 
         #region Potential future components
         //private IReconComponent _reconComponent;
@@ -101,6 +104,12 @@ namespace PFW.Units
                     this,
                     TargetTuple);
 
+            _armorComponent = new ArmorComponent(
+                _movementComponent,
+                platoon,
+                _movementComponent.Data.armorData,
+                _healthComponent);
+
             _voiceComponent = GameObject.Instantiate(
                     VOICE_PREFAB,
                     Transform).GetComponent<VoiceComponent>();
@@ -146,70 +155,9 @@ namespace PFW.Units
 
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _movementComponent.Data.maxHealth;
-
-        // TODO: move HandelHit to ArmorComponent
-
-        /// <summary>
-        /// Calculate the total damage dealt within a successful hit, then update health, armor and ERA values accordingly
-        /// </summary>
-        /// <param name="receivedDamage"></param>
-        public void HandleHit(WeaponData.WeaponDamage receivedDamage, float? distanceToTarget, float? distanceToCentre)
-        {
-            // First we put up a Target struct to be used in the damage calculations
-            Damage.Target unitAsTarget = new Damage.Target();
-
-            // TODO: implement armor and ERA systems
-            unitAsTarget.Armor = 0.0f;
-            unitAsTarget.EraData = new Damage.Era {
-                    Value = 0, KEFractionMultiplier = 0, HeatFractionMultiplier = 0};
-
-            unitAsTarget.Health = _healthComponent.Health;
-
-            Damage.Target finalState = unitAsTarget;
-
-            // Calculate its damage using its damage type
-            switch (receivedDamage.DamageType)
-            {
-                case DamageTypes.KE:
-                    KEDamage keDamage = new KEDamage (
-                            receivedDamage.KineticData.GetValueOrDefault(),
-                            unitAsTarget,
-                            distanceToTarget.GetValueOrDefault()
-                    );
-                    finalState = keDamage.CalculateDamage();
-                    break;
-                case DamageTypes.HEAT:
-                    HeatDamage heatDamage = new HeatDamage(
-                            receivedDamage.HeatData.GetValueOrDefault(),
-                            unitAsTarget);
-                    finalState = heatDamage.CalculateDamage();
-                    break;
-                case DamageTypes.HE:
-                    HEDamage heDamage = new HEDamage (
-                            receivedDamage.HEData.GetValueOrDefault(),
-                            unitAsTarget, distanceToCentre.GetValueOrDefault()
-                    );
-                    finalState = heDamage.CalculateDamage();
-                    break;
-                case DamageTypes.FIRE:
-                    FireDamage fireDamage = new FireDamage(
-                            receivedDamage.FireData.GetValueOrDefault(),
-                            unitAsTarget);
-                    finalState = fireDamage.CalculateDamage();
-                    break;
-                case DamageTypes.SMALLARMS:
-                    SmallarmsDamage lightarmsDamage = new SmallarmsDamage(
-                            receivedDamage.LightarmsData.GetValueOrDefault(),
-                            unitAsTarget);
-                    break;
-                default:
-                    Debug.LogError("Not a valid damage type!");
-                    break;
-            }
-
-            _healthComponent.UpdateHealth(finalState.Health);
-            // Update armor and ERA values as well when the mechanisms are implemented
-        }
+        
+        public void HandleHit(WeaponData.WeaponDamage receivedDamage, Vector3? displacementToTarget, float? distanceToCentre) =>
+            _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
 
         public void SetOriginalOrientation(Vector3 position, float heading) =>
                 _movementComponent.SetOriginalOrientation(position, heading);

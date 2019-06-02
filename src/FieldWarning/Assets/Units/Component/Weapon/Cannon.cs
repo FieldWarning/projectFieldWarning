@@ -48,7 +48,7 @@ namespace PFW.Units.Component.Weapon
             _random = new System.Random(Environment.TickCount);
         }
 
-        private void FireWeapon(TargetTuple target, float distance)
+        private void FireWeapon(TargetTuple target, Vector3 displacement)
         {
             // sound
             _source.PlayOneShot(_shotSound, _shotVolume);
@@ -60,21 +60,21 @@ namespace PFW.Units.Component.Weapon
                 // HIT
                 if (roll <= _data.Accuracy) {
                     Debug.LogWarning("Cannon shell dispersion is not implemented yet");
-                    target.Enemy.HandleHit(_data.Damage, distance, null);
+                    target.Enemy.HandleHit(_data.Damage, displacement, null);
                 }
             } else {
                 // TODO: fire pos damage not implemented
             }
         }
 
-        public bool TryShoot(TargetTuple target, float deltaTime, float distanceToTarget)
+        public bool TryShoot(TargetTuple target, float deltaTime, Vector3 displacement)
         {
             _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
                 return false;
 
             _reloadTimeLeft = _data.ReloadTime;
-            FireWeapon(target, distanceToTarget);
+            FireWeapon(target, displacement);
             return true;
         }
     }

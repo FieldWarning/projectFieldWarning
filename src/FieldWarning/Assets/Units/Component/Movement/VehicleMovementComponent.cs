@@ -247,10 +247,10 @@ namespace PFW.Units.Component.Movement
                 //      much assuming length and width are set correctly, but it is not very fast
 
                 // Apparently our forward and backward are opposite of the Unity convention
-                float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + _forward * Data.length / 2);
-                float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - _forward * Data.length / 2);
-                float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - _right * Data.width / 2);
-                float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + _right * Data.width / 2);
+                float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + Forward * Data.length / 2);
+                float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - Forward * Data.length / 2);
+                float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - Right * Data.width / 2);
+                float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + Right * Data.width / 2);
 
                 _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
                 _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.length);

@@ -19,15 +19,15 @@ namespace PFW.Units.Component.Damage
     {
         private DamageData.HeatData _heatData;
 
-        public HeatDamage(DamageData.HeatData data, Target target)
+        public HeatDamage(DamageData.HeatData data, DamageData.Target target)
             : base(DamageTypes.HEAT, target)
         {
             _heatData = data;
         }
 
-        public override Target CalculateDamage()
+        public override DamageData.Target CalculateDamage()
         {
-            Target finalState = this.CurrentTarget;
+            DamageData.Target finalState = this.CurrentTarget;
             DamageData.HeatData heat = _heatData;
 
             // No air friction attenuation as HEAT round detonates on surface of the armor
