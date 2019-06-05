@@ -258,9 +258,9 @@ namespace PFW.Units.Component.Movement
         {
             return men.ConvertAll(x => x.gameObject.GetComponent<Renderer>()).ToArray();
         }
-        public override void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true)
+
+        public override void SetOriginalOrientation(Vector3 pos, float heading)
         {
-            if (wake) WakeUp();
             initialize();
             var p = pos;
             var y = Ground.terrainData.GetInterpolatedHeight(p.x, p.z);
@@ -278,7 +278,7 @@ namespace PFW.Units.Component.Movement
         {
             return ordersDone;
         }
-        public override void UpdateMapOrientation()
+        protected override void UpdateMapOrientation()
         {
 
         }

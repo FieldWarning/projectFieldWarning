@@ -119,8 +119,9 @@ public partial class PlatoonBehaviour : MonoBehaviour
         var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
 
         var positions = Formations.GetLineFormation(center, heading, Units.Count);
+        Units.ForEach(u => u.WakeUp());
         for (int i = 0; i < Units.Count; i++)
-            Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI/2);
+            Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI / 2);
 
         Movement.BeginQueueing(false);
         Movement.GetDestinationFromGhost();
