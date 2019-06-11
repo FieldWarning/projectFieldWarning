@@ -1,58 +1,81 @@
-﻿using System;
-using System.Collections;
+﻿/**
+ * Copyright (c) 2017-present, PFW Contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// The loading screen handles the creation of thread for the workers and
+/// querying for how much work is left. This displays the current work performed to the UI.
+/// </summary>
 public class LoadingScreen : MonoBehaviour
 {
+    static public Queue<Loading> SWorkers = new Queue<Loading>();
 
-    private Slider slider;
-    private Text descLbl;
+    private Slider _slider;
+    private Text _descLbl;
 
-    static public Queue<Loading> workers = new Queue<Loading>();
+    // the thread which runs all the workers.
+    // NOTE: some mono specific processes cannot run inside other threads.
     private Thread _thread;
-
-
-
+    private Loading _currentWorker = null;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        slider = transform.Find("Slider").GetComponent<Slider>();
-        descLbl = transform.Find("LoadingLbl").GetComponent<Text>();
-
+        _slider = transform.Find("Slider").GetComponent<Slider>();
+        _descLbl = transform.Find("LoadingLbl").GetComponent<Text>();
 
     }
 
-
-    void Update()
+    private void Update()
     {
-        if (workers.Count > 0) 
+        
+        if (SWorkers.Count > 0) 
         {
-            var current = workers.Peek();
-            if (! current.started)
+            if (_currentWorker == null)
             {
-                _thread = new Thread(current.Load);
+                _currentWorker = SWorkers.Peek();
+            }
+
+            if (!_currentWorker.Started)
+            {
+                _thread = new Thread(_currentWorker.Load);
                 _thread.Start();
                 
             }
-            descLbl.text = current.name;
-            if (current.currentWorker != null)
+
+            _descLbl.text = _currentWorker.Name;
+
+            if (_currentWorker.CurrentWorker != null)
             {
-                descLbl.text = current.name + "\t" + current.currentWorker.Item2;
+                // TODO: change formatting to make it look a bit better
+                _descLbl.text = _currentWorker.Name + "\t" + _currentWorker.CurrentWorker.Item2;
             }
 
-            slider.value = (float)current.percent_done;
+            _slider.value = (float)_currentWorker.PercentDone;
 
-            if (current.finished)
+            if (_currentWorker.Finished)
             {
-                workers.Dequeue();
-                slider.value = slider.maxValue;
+                SWorkers.Dequeue();
+                _slider.value = _slider.maxValue;
+                _currentWorker = null;
             }
         } else
         {
+            // dispose of the screen when no more workers in queue
             gameObject.SetActive(false);
         }
 
