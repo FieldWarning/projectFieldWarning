@@ -42,8 +42,8 @@ public class LoadingScreen : MonoBehaviour
 
     private void Update()
     {
-        
-        if (SWorkers.Count > 0) 
+
+        if (SWorkers.Count > 0)
         {
             if (_currentWorker == null)
             {
@@ -54,7 +54,6 @@ public class LoadingScreen : MonoBehaviour
             {
                 _thread = new Thread(_currentWorker.Load);
                 _thread.Start();
-                
             }
 
             _descLbl.text = _currentWorker.Name;
@@ -73,7 +72,8 @@ public class LoadingScreen : MonoBehaviour
                 _slider.value = _slider.maxValue;
                 _currentWorker = null;
             }
-        } else
+        }
+        else
         {
             // dispose of the screen when no more workers in queue
             gameObject.SetActive(false);
