@@ -37,7 +37,6 @@ public class LoadingScreen : MonoBehaviour
     {
         _slider = transform.Find("Slider").GetComponent<Slider>();
         _descLbl = transform.Find("LoadingLbl").GetComponent<Text>();
-
     }
 
     private void Update()
@@ -78,7 +77,5 @@ public class LoadingScreen : MonoBehaviour
             // dispose of the screen when no more workers in queue
             gameObject.SetActive(false);
         }
-
-
     }
 }

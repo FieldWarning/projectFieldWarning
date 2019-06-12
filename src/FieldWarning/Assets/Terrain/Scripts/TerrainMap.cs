@@ -279,7 +279,7 @@ public class TerrainMap
     }
 
 
-    public void LoadTrees()
+    private void LoadTrees()
     {
         // assign tree positions
         var currIdx = 0;
@@ -293,7 +293,7 @@ public class TerrainMap
         }
     }
 
-    public void LoadRoads()
+    private void LoadRoads()
     {
         var currRoadIdx = 0;
         foreach (ERModularRoad road in _roads)
@@ -315,7 +315,7 @@ public class TerrainMap
         }
     }
 
-    public void LoadBridges()
+    private void LoadBridges()
     {
         for (int i = 0; i < _bridges.Length; i++)
         {
@@ -360,7 +360,7 @@ public class TerrainMap
         }
     }
 
-    public void LoadHeightMap()
+    private void LoadHeightMap()
     {
         ReadHeightMap(_HEIGHT_MAP_PATH);
     }
