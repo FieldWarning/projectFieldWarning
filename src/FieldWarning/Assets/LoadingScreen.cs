@@ -35,6 +35,9 @@ public class LoadingScreen : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        // need to deactivate camera so its not moved by the player.. since this is a loading screen
+        GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().enabled = false;
+
         _slider = transform.Find("Slider").GetComponent<Slider>();
         _descLbl = transform.Find("LoadingLbl").GetComponent<Text>();
 
@@ -75,8 +78,14 @@ public class LoadingScreen : MonoBehaviour
             }
         } else
         {
+            // this stuff only gets ran once because we set this object to inactive
+
+            GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().enabled = true;
+            GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().SetTargetPosition(new Vector3(0, 80, -200));
+            GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().LookAt(new Vector3(0, 0f, -50));
+            
             // dispose of the screen when no more workers in queue
-            gameObject.SetActive(false);
+            gameObject.SetActive(false);           
         }
 
 

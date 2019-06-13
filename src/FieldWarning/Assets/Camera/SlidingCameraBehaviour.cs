@@ -85,6 +85,16 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _leftoverZoom = 0;
     }
 
+    public void LookAt(Vector3 target)
+    {
+
+        var toTarget = target - _targetPosition;
+        var rotFromX = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)), Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
+        var rotFromY = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)), Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
+        _rotateX += rotFromX;
+        _rotateY += rotFromY;
+    }
+
     // If we allow the camera to get to height = 0 we would need special cases for the height scaling.
     private float GetScaledPanSpeed()
     {
@@ -149,16 +159,20 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
         _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
 
-        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
+        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+        {
             //Try border panning with mouse
             PanFromScreenBorder();
-        } else {
+        }
+        else
+        {
             SetPanningCursor(ScreenCorner.None);
         }
 
         AimedZoom();
 
-        if (Input.GetMouseButton(2)) {
+        if (Input.GetMouseButton(2))
+        {
             RotateCamera();
         }
     }
