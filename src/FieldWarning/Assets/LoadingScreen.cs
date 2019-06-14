@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -31,22 +32,33 @@ public class LoadingScreen : MonoBehaviour
     // NOTE: some mono specific processes cannot run inside other threads.
     private Thread _thread;
     private Loading _currentWorker = null;
+    private GameObject _HUD;
+    private GameObject _managers;
 
     // Start is called before the first frame update
     private void Start()
     {
+
         // need to deactivate camera so its not moved by the player.. since this is a loading screen
+        var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        GetComponent<Canvas>().worldCamera = mainCamera.GetComponent<Camera>();
         GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().enabled = false;
 
+        _managers = GameObject.Find("Managers");
+        _managers.SetActive(false);
+
+        _HUD = GameObject.FindGameObjectWithTag("HUD");
+        _HUD.SetActive(false);
+
         _slider = transform.Find("Slider").GetComponent<Slider>();
-        _descLbl = transform.Find("LoadingLbl").GetComponent<Text>();
+        _descLbl = GameObject.Find("LoadingLbl").GetComponent<Text>();
 
     }
 
     private void Update()
     {
-        
-        if (SWorkers.Count > 0) 
+
+        if (SWorkers.Count > 0)
         {
             if (_currentWorker == null)
             {
@@ -57,7 +69,6 @@ public class LoadingScreen : MonoBehaviour
             {
                 _thread = new Thread(_currentWorker.Load);
                 _thread.Start();
-                
             }
 
             _descLbl.text = _currentWorker.Name;
@@ -76,18 +87,19 @@ public class LoadingScreen : MonoBehaviour
                 _slider.value = _slider.maxValue;
                 _currentWorker = null;
             }
-        } else
+        }
+        else
         {
             // this stuff only gets ran once because we set this object to inactive
 
             GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().enabled = true;
             GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().SetTargetPosition(new Vector3(0, 80, -200));
             GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().LookAt(new Vector3(0, 0f, -50));
-            
+
+            _HUD.SetActive(true);
+            _managers.SetActive(true);
             // dispose of the screen when no more workers in queue
             gameObject.SetActive(false);           
         }
-
-
     }
 }

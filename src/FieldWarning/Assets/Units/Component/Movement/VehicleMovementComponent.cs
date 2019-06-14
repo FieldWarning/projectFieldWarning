@@ -241,7 +241,7 @@ namespace PFW.Units.Component.Movement
             } else if (terrainType == TerrainMap.WATER) {
                 _terrainTiltForward = 0f;
                 _terrainTiltRight = 0f;
-                _terrainHeight = Pathfinder.Data.Map.waterHeight;
+                _terrainHeight = Pathfinder.Data.Map.WATER_HEIGHT;
             } else {
                 // This way of doing the rotation should look nice because the unit won't sink into the ground
                 //      much assuming length and width are set correctly, but it is not very fast

@@ -64,6 +64,8 @@ namespace PFW.Model.Game
 
         public void Awake()
         {
+            
+
             var blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
             var redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
@@ -92,6 +94,7 @@ namespace PFW.Model.Game
             PathData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
             Factory = new UnitFactory();
             Settings = new Settings();
+            
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
