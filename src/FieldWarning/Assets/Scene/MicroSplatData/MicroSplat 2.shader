@@ -62,6 +62,9 @@ Shader "MicroSplat/Terrain" {
       #define _USEGRADMIP 1
       #define _MAX32TEXTURES 1
       #define _PERTEXUVSCALEOFFSET 1
+      #define _PERTEXHEIGHTOFFSET 1
+      #define _PERTEXHEIGHTCONTRAST 1
+      #define _PERTEXINTERPCONTRAST 1
       #define _PERTEXTINT 1
       #define _PERTEXBRIGHTNESS 1
       #define _PERTEXCONTRAST 1
@@ -1615,7 +1618,7 @@ ENDCG
 
    }
    Dependency "AddPassShader" = "Hidden/MicroSplat/AddPass"
-   Dependency "BaseMapShader" = "Hidden/MicroSplat/Terrain_Base1581308544"
+   Dependency "BaseMapShader" = "Hidden/MicroSplat/Terrain_Base3202685"
    CustomEditor "MicroSplatShaderGUI"
    Fallback "Nature/Terrain/Diffuse"
 }
