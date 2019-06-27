@@ -12,3 +12,5 @@
 | Red flag (armory)  | scene/Mainmenu/Texture/Comecon.png | yes | no copyright | https://commons.wikimedia.org/wiki/File:CAME.png
 | MicroSplat         | Assets/MicroSplat         | yes      | FREE (store) | https://assetstore.unity.com/packages/tools/terrain/microsplat-96478 |
 | Forest Materials   | Assets/Terrain | yes| FREE (Poliigon) | https://www.poliigon.com/search?is_free=true |
+| Sean's Water 	     | Assets/Terrain | yes | FREE (Sean) | https://www.reddit.com/r/Unity3D/comments/9684rh/seans_water_shader_download_it_for_free_see/?st=JLH8SEFT&sh=df4ca7f3|
+|Free HDR Sky|Assets/Skybox|yes| FREE (store)| https://assetstore.unity.com/packages/2d/textures-materials/sky/free-hdr-sky-61217|
