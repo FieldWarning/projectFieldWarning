@@ -19,10 +19,10 @@ namespace PFW.Units.Component.Weapon
     [Serializable]
     public class WeaponData
     {
-        public float FireRange { get; set; } = 4000;
-        public float ReloadTime { get; set; } = 10;
-		public float Accuracy { get; set; } = 40;
-        public WeaponDamage Damage { get; private set; }
+        public float FireRange = 4000;
+        public float ReloadTime = 10;
+		public float Accuracy = 40;
+        public WeaponDamage Damage { get; private set; } // TODO : make this visible in inspector
 
         /// <summary>
         /// A set of damage data structs representing the power of the weapon
@@ -37,15 +37,6 @@ namespace PFW.Units.Component.Weapon
             public DamageData.FireData? FireData;
             public DamageData.SmallarmsData? LightarmsData;
             public DamageTypes DamageType;
-        }
-
-        public WeaponData(
-            float fireRange, float reloadTime, float accuracy, WeaponDamage damage)
-        {
-            FireRange = fireRange;
-            ReloadTime = reloadTime;
-            Accuracy = accuracy;
-            Damage = damage;
         }
     }
 }
