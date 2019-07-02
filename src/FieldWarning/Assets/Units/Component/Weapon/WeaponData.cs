@@ -21,7 +21,7 @@ namespace PFW.Units.Component.Weapon
     {
         public float FireRange = 4000;
         public float ReloadTime = 10;
-		public float Accuracy = 40;
+        public float Accuracy = 40;
         public WeaponDamage Damage { get; private set; } // TODO : make this visible in inspector
 
         /// <summary>
