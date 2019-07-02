@@ -17,8 +17,11 @@ namespace PFW
 {
     /// <summary>
     /// To enable logging for a subsystem, go to file->build settings->player settings,
-    //  then add the respective define name (e.g. PFW_LOG_NETWORKING)
-    //  to 'Scripting Define Symbols'
+    /// then add the respective define name (e.g. PFW_LOG_NETWORKING)
+    /// to 'Scripting Define Symbols'
+    ///
+    /// Alternatively, you can write '#define PFW_LOG_NETWORKING' at the top of all
+    /// files that call the relevant logging function (LogNetworking).
     /// </summary>
     public static class Logging
     {
