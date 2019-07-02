@@ -33,6 +33,12 @@ namespace PFW.UI.Ingame
         public PlayerData Owner { get; }
         public List<GhostPlatoonBehaviour> GhostPlatoons { get; }
 
+        public int UnitCount {
+            get {
+                return _smallestPlatoonSize + (GhostPlatoons.Count - 1) * MAX_PLATOON_SIZE;
+            }
+        }
+
         public BuyTransaction(Unit unit, PlayerData owner)
         {
             Unit = unit;
