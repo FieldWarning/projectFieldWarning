@@ -11,9 +11,10 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System.Collections.Generic;
+
 using UnityEngine;
 using PFW.Units.Component.Weapon;
-using PFW.Units.Component.Damage;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
@@ -156,7 +157,11 @@ namespace PFW.Units
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _movementComponent.Data.maxHealth;
 
-        public void HandleHit(WeaponData.WeaponDamage receivedDamage, Vector3? displacementToTarget, float? distanceToCentre) =>
+        public void HandleHit(
+            List<WeaponData.WeaponDamage> receivedDamage,
+            Vector3? displacementToTarget,
+            float? distanceToCentre)
+            =>
             _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
 
         public void WakeUp() => _movementComponent.WakeUp();

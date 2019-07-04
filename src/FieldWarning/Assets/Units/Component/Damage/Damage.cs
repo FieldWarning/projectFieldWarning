@@ -30,10 +30,10 @@ namespace PFW.Units.Component.Damage
         /// </summary>
         /// <param name="damageType"></param>
         /// <param name="currentTarget"></param>
-        protected Damage(DamageTypes damageType, DamageData.Target currentTarget)
+        protected Damage(DamageType damageType, DamageData.Target currentTarget)
         {
-            this.DamageType = damageType;
-            this.CurrentTarget = currentTarget;
+            DamageType = damageType;
+            CurrentTarget = currentTarget;
         }
 
         /// <Summary>
@@ -44,7 +44,7 @@ namespace PFW.Units.Component.Damage
         /// <Summary>
         ///  The type of the damage, indicated by a enum
         /// </Summary>
-        public DamageTypes DamageType { get; private set; }
+        public DamageType DamageType { get; private set; }
 
         /// <Summary>
         /// Use this method to calculate damage.
@@ -53,11 +53,11 @@ namespace PFW.Units.Component.Damage
         public virtual DamageData.Target CalculateDamage()
         {
             // Override this function to specify damage algorithm
-            return this.CurrentTarget; // No damage dealt thus return the original state of the target
+            return CurrentTarget; // No damage dealt thus return the original state of the target
         }
     }
 
-    public enum DamageTypes
+    public enum DamageType
     {
         /// <summary>
         /// Kinetic energy
@@ -68,7 +68,7 @@ namespace PFW.Units.Component.Damage
         /// </summary>
         HEAT,
         /// <summary>
-        /// High-explosive none shaped-charge
+        /// High-explosive non-shaped-charge
         /// </summary>
         HE,
         /// <summary>
