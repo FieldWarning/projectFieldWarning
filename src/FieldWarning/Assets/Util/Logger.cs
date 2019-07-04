@@ -23,7 +23,7 @@ namespace PFW
     /// Alternatively, you can write '#define PFW_LOG_NETWORKING' at the top of all
     /// files that call the relevant logging function (LogNetworking).
     /// </summary>
-    public static class Logging
+    public static class Logger
     {
         [System.Diagnostics.Conditional("PFW_LOG_NETWORKING")]
         public static void LogNetworking(string logMsg)
@@ -49,28 +49,16 @@ namespace PFW
             Debug.Log($"Targeting: {logMsg}", context);
         }
 
-        [System.Diagnostics.Conditional("PFW_LOG_VISION")]
-        public static void LogVision(string logMsg)
+        [System.Diagnostics.Conditional("PFW_LOG_DAMAGE")]
+        public static void LogDamage(string logMsg)
         {
-            Debug.Log($"Vision: {logMsg}");
+            Debug.Log($"Damage: {logMsg}");
         }
 
-        [System.Diagnostics.Conditional("PFW_LOG_VISION")]
-        public static void LogVision(string logMsg, Object context)
+        [System.Diagnostics.Conditional("PFW_LOG_DAMAGE")]
+        public static void LogDamage(string logMsg, Object context)
         {
-            Debug.Log($"Vision: {logMsg}", context);
-        }
-
-        [System.Diagnostics.Conditional("PFW_LOG_SPAWN")]
-        public static void LogSpawn(string logMsg)
-        {
-            Debug.Log($"Spawn: {logMsg}");
-        }
-
-        [System.Diagnostics.Conditional("PFW_LOG_SPAWN")]
-        public static void LogSpawn(string logMsg, Object context)
-        {
-            Debug.Log($"Spawn: {logMsg}", context);
+            Debug.Log($"Damage: {logMsg}", context);
         }
     }
 }
