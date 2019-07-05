@@ -1,23 +1,26 @@
 ﻿/**
- * Copyright (c) 2017-present, PFW Contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
- * the License for the specific language governing permissions and limitations under the License.
- */
- 
+* Copyright (c) 2017-present, PFW Contributors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+* compliance with the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software distributed under the License is
+* distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+* the License for the specific language governing permissions and limitations under the License.
+*/
+
+using System;
+
+using static PFW.Units.Component.Weapon.WeaponData;
 
 namespace PFW.Units.Component.Damage
 {
     /// <summary>
     /// A collection of data structures to be used in damage calculations
-    /// made public to be used both inside and outside the current assemble
     /// </summary>
+    [Serializable]
     public class DamageData
     {
         /// <summary>
@@ -39,6 +42,13 @@ namespace PFW.Units.Component.Damage
 
         public struct KineticData
         {
+            public KineticData(WeaponDamage d) {
+                Power = d.Power;
+                Degradation = d.ArmorDegradation;
+                HealthDamageFactor = d.HealthDamageFactor;
+                Friction = d.AirFriction;
+            }
+
             /// <summary>
             /// The power of the shot
             /// </summary>
@@ -59,6 +69,13 @@ namespace PFW.Units.Component.Damage
 
         public struct HeatData
         {
+            public HeatData(WeaponDamage d)
+            {
+                Power = d.Power;
+                Degradation = d.ArmorDegradation;
+                HealthDamageFactor = d.HealthDamageFactor;
+            }
+
             /// <summary>
             /// The power of the shot
             /// </summary>
@@ -75,6 +92,14 @@ namespace PFW.Units.Component.Damage
 
         public struct FireData
         {
+            public FireData(WeaponDamage d)
+            {
+                Power = d.Power;
+                Degradation = d.ArmorDegradation;
+                HealthDamageFactor = d.HealthDamageFactor;
+                SuffocationDamage = d.SuffocationDamage;
+            }
+
             /// <summary>
             /// Power of the burning effect
             /// </summary>
@@ -96,6 +121,13 @@ namespace PFW.Units.Component.Damage
 
         public struct HEData
         {
+            public HEData(WeaponDamage d)
+            {
+                Power = d.Power;
+                EffectiveRadius = d.EffectiveRadius;
+                HealthDamageFactor = d.HealthDamageFactor;
+            }
+
             /// <summary>
             /// The power of the shot
             /// </summary>
@@ -111,8 +143,14 @@ namespace PFW.Units.Component.Damage
             public float HealthDamageFactor;
         }
 
-        public struct SmallarmsData
+        public struct SmallArmsData
         {
+            public SmallArmsData(WeaponDamage d)
+            {
+                Power = d.Power;
+                HealthDamageFactor = d.HealthDamageFactor;
+            }
+
             /// <summary>
             /// The power of the shot
             /// </summary>

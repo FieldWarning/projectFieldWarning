@@ -21,13 +21,15 @@ namespace PFW.Model.Armory
     public class Unit
     {
         public string Name { get; }
+        public int Price { get;  }
 
         //[Tooltip("The gameobject this will be cloned from.")]
         public GameObject Prefab { get; }
 
-        public Unit(string name, GameObject prefab)
+        public Unit(string name, int price, GameObject prefab)
         {
             Name = name;
+            Price = price;
             Prefab = prefab;
         }
     }

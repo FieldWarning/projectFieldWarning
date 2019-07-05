@@ -29,27 +29,27 @@ namespace PFW.Model.Armory
             }
 
             Units[(int)UnitCategory.LOG].Add(
-                    new Unit("HEMIT", Resources.Load<GameObject>("Tank")));
+                    new Unit("HEMIT", 20, Resources.Load<GameObject>("Tank")));
             Units[(int)UnitCategory.INF].Add(
-                    new Unit("Riflemen", Resources.Load<GameObject>("Tank")));
+                    new Unit("Riflemen", 20, Resources.Load<GameObject>("Tank")));
             Units[(int)UnitCategory.INF].Add(
-                    new Unit("Marines", Resources.Load<GameObject>("AFV")));
+                    new Unit("Marines", 20, Resources.Load<GameObject>("AFV")));
             Units[(int)UnitCategory.SUP].Add(
-                    new Unit("PLZ-5", Resources.Load<GameObject>("Arty")));
+                    new Unit("PLZ-5", 20, Resources.Load<GameObject>("Arty")));
 
             Units[(int)UnitCategory.TNK].Add(
-                    new Unit("M1A2 Abrams", Resources.Load<GameObject>("Tank")));
+                    new Unit("M1A2 Abrams", 20, Resources.Load<GameObject>("Tank")));
             Units[(int)UnitCategory.TNK].Add(
-                    new Unit("M1A1 Abrams", Resources.Load<GameObject>("Tank")));
+                    new Unit("M1A1 Abrams", 5, Resources.Load<GameObject>("Tank")));
 
             Units[(int)UnitCategory.REC].Add(
-                    new Unit("Army Rangers", Resources.Load<GameObject>("Tank")));
+                    new Unit("Army Rangers", 20, Resources.Load<GameObject>("Tank")));
 
             Units[(int)UnitCategory.SUP].Add(
-                    new Unit("ARTY", Resources.Load<GameObject>("Arty")));
+                    new Unit("ARTY", 500, Resources.Load<GameObject>("Arty")));
 
             Units[(int)UnitCategory.HEL].Add(
-                    new Unit("AH-64D Apache", Resources.Load<GameObject>("Tank")));
+                    new Unit("AH-64D Apache", 20, Resources.Load<GameObject>("Tank")));
         }
 
         public List<Unit> ByCategory(UnitCategory cat) => Units[(int)cat];

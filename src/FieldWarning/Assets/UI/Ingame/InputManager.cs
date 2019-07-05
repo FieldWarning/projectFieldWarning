@@ -97,7 +97,7 @@ namespace PFW.UI.Ingame
                     ShowGhostUnitsAndMaybePurchase(hit);
                 }
 
-                MaybeExitPurchasingMode();
+                MaybeExitPurchasingModeAndRefund();
                 break;
 
             case MouseMode.normal:
@@ -196,11 +196,15 @@ namespace PFW.UI.Ingame
             }
         }
 
-        private void MaybeExitPurchasingMode()
+        private void MaybeExitPurchasingModeAndRefund()
         {
             if (Input.GetMouseButton(1)) {
-                foreach (var g in _currentBuyTransaction.GhostPlatoons)
-                    g.GetComponent<GhostPlatoonBehaviour>().Destroy();
+                foreach (var g in _currentBuyTransaction.GhostPlatoons) {
+                    g.Destroy();
+                }
+
+                int unitPrice = _currentBuyTransaction.Unit.Price;
+                Session.LocalPlayer.Refund(unitPrice * _currentBuyTransaction.UnitCount);
 
                 ExitPurchasingMode();
             }
@@ -258,6 +262,10 @@ namespace PFW.UI.Ingame
          */
         public void BuyCallback(Unit unit)
         {
+            bool paid = Session.LocalPlayer.TryPay(unit.Price);
+            if (!paid)
+                return;
+
             if (_currentBuyTransaction == null)
                 _currentBuyTransaction = new BuyTransaction(unit, _localPlayer);
             else

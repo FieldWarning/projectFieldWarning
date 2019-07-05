@@ -11,14 +11,15 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+
 using PFW.Units.Component.Movement;
 using PFW.Units.Component.Damage;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Health;
-
+using static PFW.Units.Component.Damage.DamageData;
 
 namespace PFW.Units.Component.Armor
 {
@@ -53,8 +54,12 @@ namespace PFW.Units.Component.Armor
         /// <summary>
         /// Calculate the total damage dealt within a successful hit, then update health, armor and ERA values accordingly
         /// </summary>
-        public void HandleHit(WeaponData.WeaponDamage receivedDamage, Vector3? displacementToThis, float? distanceToCentre)
+        public void HandleHit(
+            List<WeaponData.WeaponDamage> receivedDamage,
+            Vector3? displacementToThis,
+            float? distanceToCentre)
         {
+            Logger.LogDamage($"ArmorComponent::HandleHit() called");
             UnitData.ArmorAttributes armorOfImpact = new UnitData.ArmorAttributes();
             int armorIndex;
 
@@ -65,56 +70,58 @@ namespace PFW.Units.Component.Armor
             }
             else
             {
-                armorOfImpact = DetermineSideOfImpact(displacementToThis.GetValueOrDefault(), out armorIndex);
+                armorOfImpact = DetermineSideOfImpact(
+                    displacementToThis.GetValueOrDefault(),
+                    out armorIndex);
             }
 
             DamageData.Target unitAsTarget = ConstructTargetStruct(armorOfImpact);
 
-            DamageData.Target finalState = unitAsTarget;
-
             // Calculate its damage using its damage type
-            switch (receivedDamage.DamageType)
-            {
-                case DamageTypes.KE:
-                    KEDamage keDamage = new KEDamage(
-                            receivedDamage.KineticData.GetValueOrDefault(),
-                            unitAsTarget,
-                            displacementToThis.GetValueOrDefault().magnitude
-                    );
-                    finalState = keDamage.CalculateDamage();
-                    break;
-                case DamageTypes.HEAT:
-                    HeatDamage heatDamage = new HeatDamage(
-                            receivedDamage.HeatData.GetValueOrDefault(),
-                            unitAsTarget);
-                    finalState = heatDamage.CalculateDamage();
-                    break;
-                case DamageTypes.HE:
-                    HEDamage heDamage = new HEDamage(
-                            receivedDamage.HEData.GetValueOrDefault(),
-                            unitAsTarget, distanceToCentre.GetValueOrDefault()
-                    );
-                    finalState = heDamage.CalculateDamage();
-                    break;
-                case DamageTypes.FIRE:
-                    FireDamage fireDamage = new FireDamage(
-                            receivedDamage.FireData.GetValueOrDefault(),
-                            unitAsTarget);
-                    finalState = fireDamage.CalculateDamage();
-                    break;
-                case DamageTypes.SMALLARMS:
-                    SmallarmsDamage lightarmsDamage = new SmallarmsDamage(
-                            receivedDamage.LightarmsData.GetValueOrDefault(),
-                            unitAsTarget);
-                    break;
-                default:
-                    Debug.LogError("Not a valid damage type!");
-                    break;
-            }
+            foreach (WeaponData.WeaponDamage damageInstance in receivedDamage) {
 
-            _healthComponent.UpdateHealth(finalState.Health);
-            ArmorData[armorIndex].Armor = finalState.Armor;
-            ArmorData[armorIndex].EraData = finalState.EraData;
+                switch (damageInstance.DamageType) {
+                    case DamageType.KE:
+                        KEDamage keDamage = new KEDamage(
+                                new KineticData(damageInstance),
+                                unitAsTarget,
+                                displacementToThis.GetValueOrDefault().magnitude
+                        );
+                        unitAsTarget = keDamage.CalculateDamage();
+                        break;
+                    case DamageType.HEAT:
+                        HeatDamage heatDamage = new HeatDamage(
+                                new HeatData(damageInstance),
+                                unitAsTarget);
+                        unitAsTarget = heatDamage.CalculateDamage();
+                        break;
+                    case DamageType.HE:
+                        HEDamage heDamage = new HEDamage(
+                                new HEData(damageInstance),
+                                unitAsTarget, distanceToCentre.GetValueOrDefault()
+                        );
+                        unitAsTarget = heDamage.CalculateDamage();
+                        break;
+                    case DamageType.FIRE:
+                        FireDamage fireDamage = new FireDamage(
+                                new FireData(damageInstance),
+                                unitAsTarget);
+                        unitAsTarget = fireDamage.CalculateDamage();
+                        break;
+                    case DamageType.SMALLARMS:
+                        SmallArmsDamage lightarmsDamage = new SmallArmsDamage(
+                                new SmallArmsData(damageInstance),
+                                unitAsTarget);
+                        break;
+                    default:
+                        Debug.LogError("Not a valid damage type!");
+                        break;
+                }
+
+                _healthComponent.UpdateHealth(unitAsTarget.Health);
+                ArmorData[armorIndex].Armor = unitAsTarget.Armor;
+                ArmorData[armorIndex].EraData = unitAsTarget.EraData;
+            }
         }
 
         /// <summary>

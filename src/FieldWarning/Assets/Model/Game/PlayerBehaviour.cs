@@ -35,6 +35,27 @@ namespace PFW.Model.Game
             }
         }
 
+        /// <summary>
+        /// Refund the player some points, perhaps because he cancelled a buy transaction.
+        /// </summary>
+        /// <param name="moneySum"></param>
+        public void Refund(int moneySum)
+        {
+            Data.Money += moneySum;
+        }
+
+        /// <summary>
+        /// Take points from the player, to pay for buying units.
+        /// <param name="moneySum"></param>
+        public bool TryPay(int moneySum) {
+            if (moneySum <= Data.Money) {
+                Data.Money -= moneySum;
+                return true;
+            }
+
+            return false;
+        }
+
         public void Update()
         {
             Data.Money += Data.IncomeTick * Time.deltaTime;

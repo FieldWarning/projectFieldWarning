@@ -40,7 +40,7 @@ namespace PFW.Units.Component.Damage
 
         private const int ARMOR_CUTOFF = 4;
 
-        public HEDamage(DamageData.HEData data, DamageData.Target target, float distanceToCentre) : base(DamageTypes.HE, target)
+        public HEDamage(DamageData.HEData data, DamageData.Target target, float distanceToCentre) : base(DamageType.HE, target)
         {
             _heData = data;
             _distanceToCentre = distanceToCentre;

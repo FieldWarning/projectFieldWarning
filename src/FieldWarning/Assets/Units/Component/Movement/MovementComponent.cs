@@ -64,7 +64,7 @@ namespace PFW.Units.Component.Movement
             Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
         }
 
-        protected void WakeUp()
+        public void WakeUp()
         {
             enabled = true;
             SetVisible(true);
@@ -112,7 +112,7 @@ namespace PFW.Units.Component.Movement
             Right = new Vector3(Forward.z, 0f, -Forward.x);
         }
 
-        public abstract void UpdateMapOrientation();
+        protected abstract void UpdateMapOrientation();
 
         // Waypoint-aware path setting. TODO there are like 5 methods for this,
         // perhaps some can be cut?
@@ -201,7 +201,7 @@ namespace PFW.Units.Component.Movement
         }
 
 
-        public abstract void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true);
+        public abstract void SetOriginalOrientation(Vector3 pos, float heading);
 
         public abstract bool AreOrdersComplete();
 

@@ -18,13 +18,13 @@ using System.Text;
 
 namespace PFW.Units.Component.Damage
 {
-    class SmallarmsDamage : Damage
+    class SmallArmsDamage : Damage
     {
-        private DamageData.SmallarmsData _lightarmsData;
+        private DamageData.SmallArmsData _smallArmsData;
 
-        public SmallarmsDamage(DamageData.SmallarmsData data, DamageData.Target target) : base(DamageTypes.SMALLARMS, target)
+        public SmallArmsDamage(DamageData.SmallArmsData data, DamageData.Target target) : base(DamageType.SMALLARMS, target)
         {
-            _lightarmsData = data; 
+            _smallArmsData = data;
         }
 
         public override DamageData.Target CalculateDamage()
@@ -33,7 +33,7 @@ namespace PFW.Units.Component.Damage
             if (finalState.Armor == 0)
             {
                 // Deal full damage to light targets / infantry targets
-                finalState.Health -= _lightarmsData.Power * _lightarmsData.HealthDamageFactor;
+                finalState.Health -= _smallArmsData.Power * _smallArmsData.HealthDamageFactor;
                 return finalState;
             }
             else

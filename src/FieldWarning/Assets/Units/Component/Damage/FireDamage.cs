@@ -19,7 +19,7 @@ namespace PFW.Units.Component.Damage
     {
         private DamageData.FireData _fireData;
 
-        public FireDamage(DamageData.FireData data, DamageData.Target target) : base(DamageTypes.FIRE, target)
+        public FireDamage(DamageData.FireData data, DamageData.Target target) : base(DamageType.FIRE, target)
         {
             _fireData = data;
         }

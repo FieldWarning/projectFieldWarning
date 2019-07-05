@@ -29,7 +29,17 @@ namespace PFW.Units.Component.Vision
         private float stealth_factor = 10f;
 
         private HashSet<VisionComponent> _spotters = new HashSet<VisionComponent>();
+
+        /// <summary>
+        /// Is the unit visible to the player? Note that own units are always visible.
+        /// </summary>
         public bool IsVisible { get; private set; } = true;
+
+        /// <summary>
+        /// Is the unit spotted by any enemy units?
+        /// The difference from IsVisible is that this also works for our own units.
+        /// </summary>
+        public bool IsSpotted { get { return _spotters.Count != 0; } }
 
         public UnitDispatcher Unit;
         private GameObject _gameObject;

@@ -34,6 +34,7 @@ namespace PFW.Units.Component.Weapon
 
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
+            Logger.LogTargeting("Received target from the outside.", gameObject);
             var distance = Vector3.Distance(Unit.transform.position, target.Position);
 
             _target = target;
@@ -109,6 +110,8 @@ namespace PFW.Units.Component.Weapon
                         _shotSound,
                         _shotStarterPosition,
                         _shotVolume);
+
+            Logger.LogTargeting("Created a weapon in TargetingComponent.Start().", gameObject);
         }
 
         private void StopMovingIfInRangeOfTarget()
@@ -117,6 +120,9 @@ namespace PFW.Units.Component.Weapon
                 if (Vector3.Distance(Unit.transform.position, _target.Position) < _data.FireRange) {
                     _movingTowardsTarget = false;
                     Unit.SetDestination(Unit.transform.position);
+
+                    Logger.LogTargeting(
+                        "Stopped moving because a targeted enemy unit is in range.", gameObject);
                 }
             }
         }
@@ -126,8 +132,17 @@ namespace PFW.Units.Component.Weapon
             StopMovingIfInRangeOfTarget();
 
             if (_target != null && _target.Exists) {
-
                 MaybeDropOutOfRangeTarget();
+
+                if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted) {
+                    Logger.LogTargeting(
+                        "Dropping a target because it is no longer spotted.", gameObject);
+                    _target = null;
+                }
+            }
+
+            if (_target != null && _target.Exists) {
+
                 bool targetInRange = !_movingTowardsTarget;
                 bool shotFired = false;
 
@@ -149,13 +164,19 @@ namespace PFW.Units.Component.Weapon
 
         private void FindAndTargetClosestEnemy()
         {
+            Logger.LogTargeting("Scanning for a target.", gameObject);
+
             // TODO utilize precomputed distance lists from session
             // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
 
             foreach (UnitDispatcher enemy in Unit.Platoon.Owner.Session.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
+                if (!enemy.VisionComponent.IsSpotted)
+                    continue;
+
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
                 if (distance < _data.FireRange) {
+                    Logger.LogTargeting("Target found and selected after scanning.", gameObject);
                     SetTarget(enemy.TargetTuple, false);
                     break;
                 }
@@ -173,8 +194,10 @@ namespace PFW.Units.Component.Weapon
                 return;
 
             float distance = Vector3.Distance(Unit.transform.position, _target.Position);
-            if (distance > _data.FireRange)
+            if (distance > _data.FireRange) {
                 _target = null;
+                Logger.LogTargeting("Dropping a target because it is out of range.", gameObject);
+            }
         }
     }
 

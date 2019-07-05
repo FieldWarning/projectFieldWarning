@@ -20,7 +20,7 @@ namespace PFW.Units.Component.Damage
         private DamageData.HeatData _heatData;
 
         public HeatDamage(DamageData.HeatData data, DamageData.Target target)
-            : base(DamageTypes.HEAT, target)
+            : base(DamageType.HEAT, target)
         {
             _heatData = data;
         }

@@ -12,6 +12,10 @@
  */
 
 using System;
+using System.Collections.Generic;
+
+using UnityEngine;
+
 using PFW.Units.Component.Damage;
 
 namespace PFW.Units.Component.Weapon
@@ -19,33 +23,34 @@ namespace PFW.Units.Component.Weapon
     [Serializable]
     public class WeaponData
     {
-        public float FireRange { get; set; } = 4000;
-        public float ReloadTime { get; set; } = 10;
-		public float Accuracy { get; set; } = 40;
-        public WeaponDamage Damage { get; private set; }
+        public float FireRange = 4000;
+        public float ReloadTime = 10;
+        public float Accuracy = 40;
+        public List<WeaponDamage> Damage;
 
         /// <summary>
         /// A set of damage data structs representing the power of the weapon
         /// and the type of the damage it deals
         /// </summary>
+        [Serializable]
         public struct WeaponDamage
         {
-            // TODO: add weapon with multiple types of damage
-            public DamageData.KineticData? KineticData;
-            public DamageData.HeatData? HeatData;
-            public DamageData.HEData? HEData;
-            public DamageData.FireData? FireData;
-            public DamageData.SmallarmsData? LightarmsData;
-            public DamageTypes DamageType;
-        }
+            public DamageType DamageType;
+            [Tooltip("The power of the shot, used by all damage types.")]
+            public float Power;
+            [Tooltip("How much armor the weapon strips off, used by all damage types except small arms.")]
+            public float ArmorDegradation;
+            [Tooltip("Multiplier for health damage?? TODO clarify. For KE, Fire, HEAT damage.")]
+            public float HealthDamageFactor;
 
-        public WeaponData(
-            float fireRange, float reloadTime, float accuracy, WeaponDamage damage)
-        {
-            FireRange = fireRange;
-            ReloadTime = reloadTime;
-            Accuracy = accuracy;
-            Damage = damage;
+            [Tooltip("For fire damage.")]
+            public float SuffocationDamage;
+
+            [Tooltip("Air friction constant used in calculation of attenuation, for KE damage.")]
+            public float AirFriction;
+
+            [Tooltip("Explosion radius, for HE damage.")]
+            public float EffectiveRadius;
         }
     }
 }

@@ -90,7 +90,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         var positions = Formations.GetLineFormation(center, heading, _units.Count);
         for (int i = 0; i < _units.Count; i++) {
             _units[i].GetComponent<MovementComponent>()
-                    .SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading, false);
+                    .SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading);
         }
     }
 

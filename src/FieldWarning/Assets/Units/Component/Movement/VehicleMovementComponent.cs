@@ -218,11 +218,8 @@ namespace PFW.Units.Component.Movement
         }
 
         // Heading given in radians
-        public override void SetOriginalOrientation(Vector3 pos, float heading, bool wake = true)
+        public override void SetOriginalOrientation(Vector3 pos, float heading)
         {
-            if (wake)
-                WakeUp();
-
             _position = pos;
             transform.position = pos;
 
@@ -231,7 +228,7 @@ namespace PFW.Units.Component.Movement
             UpdateMapOrientation();
         }
 
-        public override void UpdateMapOrientation()
+        protected override void UpdateMapOrientation()
         {
             int terrainType = Pathfinder == null ? TerrainMap.PLAIN : Pathfinder.Data.Map.GetTerrainType(transform.position);
             if (terrainType == TerrainMap.BRIDGE) {
