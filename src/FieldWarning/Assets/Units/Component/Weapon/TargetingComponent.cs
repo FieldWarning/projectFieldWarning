@@ -132,8 +132,17 @@ namespace PFW.Units.Component.Weapon
             StopMovingIfInRangeOfTarget();
 
             if (_target != null && _target.Exists) {
-
                 MaybeDropOutOfRangeTarget();
+
+                if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted) {
+                    Logger.LogTargeting(
+                        "Dropping a target because it is no longer spotted.", gameObject);
+                    _target = null;
+                }
+            }
+
+            if (_target != null && _target.Exists) {
+
                 bool targetInRange = !_movingTowardsTarget;
                 bool shotFired = false;
 
@@ -161,6 +170,9 @@ namespace PFW.Units.Component.Weapon
             // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
 
             foreach (UnitDispatcher enemy in Unit.Platoon.Owner.Session.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
+                if (!enemy.VisionComponent.IsSpotted)
+                    continue;
+
                 // See if they are in range of weapon:
                 var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
                 if (distance < _data.FireRange) {
