@@ -6,6 +6,10 @@ src/FieldWarning/Assets/New Terrain.asset
 
 doxygen/html/
 
+# IDE files
+.vscode
+*.code-workspace
+
 # Build artifacts:
 src/FieldWarning/Joined.exe
 src/FieldWarning/Joined_Data/*
