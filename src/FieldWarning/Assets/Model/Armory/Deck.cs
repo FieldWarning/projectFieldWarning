@@ -44,9 +44,18 @@ namespace PFW.Model.Armory
 
             Units[(int)UnitCategory.REC].Add(
                     new Unit("Army Rangers", 20, Resources.Load<GameObject>("Tank")));
+            
+            Units[(int)UnitCategory.VHC].Add(
+                    new Unit("BTR-32", 20, Resources.Load<GameObject>("BTR-32")));
+            Units[(int)UnitCategory.VHC].Add(
+                    new Unit("BTR-32A", 20, Resources.Load<GameObject>("BTR-32A")));
+            Units[(int)UnitCategory.VHC].Add(
+                    new Unit("BTR-32 Zhalo", 20, Resources.Load<GameObject>("BTR-32 Zhalo")));
 
             Units[(int)UnitCategory.SUP].Add(
                     new Unit("ARTY", 500, Resources.Load<GameObject>("Arty")));
+            Units[(int)UnitCategory.SUP].Add(
+                    new Unit("BTR-32 Nona", 20, Resources.Load<GameObject>("BTR-32 Nona")));
 
             Units[(int)UnitCategory.HEL].Add(
                     new Unit("AH-64D Apache", 20, Resources.Load<GameObject>("Tank")));
