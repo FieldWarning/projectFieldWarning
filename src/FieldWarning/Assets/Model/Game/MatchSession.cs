@@ -67,8 +67,8 @@ namespace PFW.Model.Game
             var blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
             var redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
-            blueTeam.AddPlayer(this);
-            redTeam.AddPlayer(this);
+            blueTeam.AddPlayer(this, "player-blue");
+            redTeam.AddPlayer(this, "player-red");
 
             Teams.Add(blueTeam);
             Teams.Add(redTeam);

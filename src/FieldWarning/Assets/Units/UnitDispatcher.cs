@@ -14,6 +14,7 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
@@ -65,14 +66,12 @@ namespace PFW.Units
         // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
         public VisionComponent VisionComponent;
 
+        private DataComponent _unitData;
         private VoiceComponent _voiceComponent;
 
         // TODO move to a component class:
         private GameObject _selectionCircle;
 
-        // TODO pass from some factory:
-        private static GameObject VOICE_PREFAB =
-                Resources.Load<GameObject>("VoiceComponent_US");
         public static GameObject SELECTION_CIRCLE_PREFAB =
                 Resources.Load<GameObject>("SelectionCircle");
 
@@ -85,43 +84,31 @@ namespace PFW.Units
             }
         }
 
-        public UnitDispatcher(
-            MovementComponent movementComponent,
-            PlatoonBehaviour platoon)
+        public UnitDispatcher(GameObject unitInstance, PlatoonBehaviour platoon)
         {
             TargetTuple = new TargetTuple(this);
 
-            _movementComponent = movementComponent;
-            _movementComponent.Dispatcher = this;
+            var behaviour = unitInstance.GetComponent<SelectableBehavior>();
+            behaviour.Platoon = platoon;
 
-            VisionComponent = new VisionComponent(GameObject, this);
+            _unitData = unitInstance.GetComponent<DataComponent>();
 
-            _targetingComponents = movementComponent.GetComponents<TargetingComponent>();
+            _voiceComponent      = unitInstance.transform.Find("VoiceComponent")
+                                               .GetComponent<VoiceComponent>();
+            _movementComponent   = unitInstance.GetComponent<MovementComponent>();
+            _targetingComponents = unitInstance.GetComponents<TargetingComponent>();
+            _healthComponent     = unitInstance.GetComponent<HealthComponent>();
+            _armorComponent      = unitInstance.GetComponent<ArmorComponent>();
+            VisionComponent      = unitInstance.GetComponent<VisionComponent>();
 
-            _healthComponent = new HealthComponent(
-                    _movementComponent.Data.maxHealth,
-                    platoon,
-                    GameObject,
-                    this,
-                    TargetTuple);
+            // Only used in this class, not really configurable, and no way to get a reference
+            // to it here if it's instantiated in the UnitFitter. I think it's fine to leave it here.
+            _selectionCircle = GameObject.Instantiate(SELECTION_CIRCLE_PREFAB, Transform);
 
-            _armorComponent = new ArmorComponent(
-                _movementComponent,
-                platoon,
-                _movementComponent.Data.armorData,
-                _healthComponent);
-
-            _voiceComponent = GameObject.Instantiate(
-                    VOICE_PREFAB,
-                    Transform).GetComponent<VoiceComponent>();
-
-            _selectionCircle = GameObject.Instantiate(
-                    SELECTION_CIRCLE_PREFAB,
-                    Transform);
-
-            Transform.gameObject.AddComponent<SelectableBehavior>().Platoon = Platoon;
-
-            Platoon = platoon;
+            _movementComponent.Initialize(this);
+            _healthComponent.Initialize(this);
+            VisionComponent.Initialize(this);
+            _armorComponent.Initialize();
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -155,7 +142,7 @@ namespace PFW.Units
         public T GetComponent<T>() => _movementComponent.GetComponent<T>();
 
         public float GetHealth() => _healthComponent.Health;
-        public float MaxHealth => _movementComponent.Data.maxHealth;
+        public float MaxHealth => _unitData.MaxHealth;
 
         public void HandleHit(
             List<WeaponData.WeaponDamage> receivedDamage,

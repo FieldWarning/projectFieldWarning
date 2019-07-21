@@ -26,7 +26,7 @@ public class Loading
     public string Name;
     
     // the list of functions along with their descriptions
-    private List<Tuple<LoadingThreadDelegate,string>> _funcs = 
+    private List<Tuple<LoadingThreadDelegate, string>> _funcs = 
         new List<Tuple<LoadingThreadDelegate, string>>();
 
     // the current function being executed

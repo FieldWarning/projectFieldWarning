@@ -99,7 +99,9 @@ public class GhostPlatoonBehaviour : MonoBehaviour
         _icon.GetComponent<IconBehaviour>().SetVisible(vis);
         _units.ForEach(x => x.GetComponent<MovementComponent>().SetVisible(vis));
 
-        _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
+        // FIXME: It looks like UnitLabelAttacher looks for a GameObject ("UIWrapper") that
+        //      no longer exists in the scene. Is this deprecated? Should it be removed?
+        // _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
     }
 
     public void Destroy()

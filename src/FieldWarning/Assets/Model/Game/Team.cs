@@ -34,8 +34,8 @@ namespace PFW.Model.Game
             return Color != t.Color;
         }
 
-        public void AddPlayer(MatchSession session) {
-            PlayerData p = new PlayerData();
+        public void AddPlayer(MatchSession session, string playerName) {
+            PlayerData p = new PlayerData(playerName);
             p.Session = session;
             p.Team = this;
             Players.Add(p);

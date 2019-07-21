@@ -88,12 +88,12 @@ public partial class PlatoonBehaviour : MonoBehaviour
         for (int i = 0; i < n; i++) {
             var unitInstance =
                 Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
-            MovementComponent moveComponent = unitInstance.GetComponent<MovementComponent>();
-            UnitDispatcher unitDispatcher =
-                    new UnitDispatcher(moveComponent, this);
+            UnitDispatcher unitDispatcher = new UnitDispatcher(unitInstance, this);
             Units.Add(unitDispatcher);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
+            
+            unitInstance.SetActive(true);
             collider.enabled = true;
         }
 

@@ -1,9 +1,16 @@
-# Visual Studio cache directory
+# IDE files
 .vs/
+.vscode
+*.code-workspace
+.idea
+JetBrains*
+
+# Terrains
 src/FieldWarning/Assets/Units/New Terrain.asset
 src/FieldWarning/Assets/Units/New Terrain.asset
 src/FieldWarning/Assets/New Terrain.asset
 
+# Doxygen
 doxygen/html/
 
 # Build artifacts:

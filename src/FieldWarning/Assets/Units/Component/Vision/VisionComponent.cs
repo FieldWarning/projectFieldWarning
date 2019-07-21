@@ -19,8 +19,9 @@ using PFW.Units.Component.Movement;
 
 namespace PFW.Units.Component.Vision
 {
-    public class VisionComponent //: IComponentData
+    public class VisionComponent : MonoBehaviour
     {
+        // TODO: Add these values to YAML / UnitConfig schema
         [SerializeField]
         private float max_spot_range = 800f;
         [SerializeField]
@@ -42,7 +43,6 @@ namespace PFW.Units.Component.Vision
         public bool IsSpotted { get { return _spotters.Count != 0; } }
 
         public UnitDispatcher Unit;
-        private GameObject _gameObject;
 
         private Team _team {
             get { return Unit.Platoon.Owner.Team; }
@@ -51,20 +51,21 @@ namespace PFW.Units.Component.Vision
         private MatchSession _session {
             get { return Unit.Platoon.Owner.Session; }
         }
-
-        private VisionComponent() { }
-
-        public VisionComponent(GameObject unitGO, UnitDispatcher unit)
+        
+        public void Initialize(UnitDispatcher dispatcher)
         {
-            _gameObject = unitGO;
-            Unit = unit;
+            Unit = dispatcher;
         }
 
         // Alert all nearby enemy units that they may have to show themselves.
         // Only works if they have colliders!
         public void ScanForEnemies()
         {
-            Collider[] hits = Physics.OverlapSphere(_gameObject.transform.position, max_spot_range, LayerMask.NameToLayer("Selectable"), QueryTriggerInteraction.Ignore);
+            Collider[] hits = Physics.OverlapSphere(
+                    gameObject.transform.position,
+                    max_spot_range,
+                    LayerMask.NameToLayer("Selectable"),
+                    QueryTriggerInteraction.Ignore);
 
             foreach (Collider c in hits) {
                 GameObject go = c.gameObject;
@@ -87,7 +88,7 @@ namespace PFW.Units.Component.Vision
             if (!IsVisible)
                 return;
 
-            _spotters.RemoveWhere(s => s._gameObject == null || !s.CanDetect(this));
+            _spotters.RemoveWhere(s => s.gameObject == null || !s.CanDetect(this));
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
         }
@@ -108,15 +109,17 @@ namespace PFW.Units.Component.Vision
         private bool CanDetect(VisionComponent target)
         {
             float distance = Vector3.Distance(
-                    _gameObject.transform.position,
-                    target._gameObject.transform.position);
-            return distance < max_spot_range && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
+                    gameObject.transform.position,
+                    target.gameObject.transform.position);
+            return
+                distance < max_spot_range
+                && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
         }
 
         public void ToggleUnitVisibility(bool revealUnit)
         {
             IsVisible = revealUnit;
-            ToggleAllRenderers(_gameObject, revealUnit);
+            ToggleAllRenderers(gameObject, revealUnit);
             MaybeTogglePlatoonVisibility(revealUnit);
         }
 

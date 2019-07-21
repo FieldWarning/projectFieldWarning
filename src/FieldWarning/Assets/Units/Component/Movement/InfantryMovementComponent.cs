@@ -15,6 +15,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+using PFW.Units.Component.Data;
+
 namespace PFW.Units.Component.Movement
 {
     public class InfantryMovementComponent : MovementComponent
@@ -39,7 +41,6 @@ namespace PFW.Units.Component.Movement
         void initialize()
         {
             if (!init) {
-                Data = UnitData.Infantry();
                 // health initialized here instead of UnitBehaviour because there's no "base.Start()" unlike for the other vehicles
                 // base.SetHealth(Data.maxHealth);
                 buildMen();
@@ -53,7 +54,7 @@ namespace PFW.Units.Component.Movement
                 var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 go.transform.localScale = new Vector3(.1f, .2f, .1f);
                 //go.transform.parent = transform;
-                men.Add(new Man(go, Data));
+                men.Add(new Man(go));
             }
         }
         // Update is called once per frame
@@ -310,16 +311,16 @@ namespace PFW.Units.Component.Movement
             public bool reachedDestination;
             Vector3 destination;
             Vector3 formationOffset;
-            UnitData data;
+            DataComponent data;
             public GameObject gameObject;
             public bool active {
                 get;
                 private set;
             }
-            public Man(GameObject obj, UnitData d)
+            public Man(GameObject obj)
             {
                 gameObject = obj;
-                data = d;
+                data = obj.GetComponent<DataComponent>();
             }
             public void setActive(bool a)
             {
@@ -335,7 +336,7 @@ namespace PFW.Units.Component.Movement
                 if (!active) return;
                 var diff = destination - gameObject.transform.position;
                 var distance = diff.magnitude;
-                var step = Time.deltaTime * data.movementSpeed;
+                var step = Time.deltaTime * data.MovementSpeed;
                 if (step < distance) {
                     gameObject.transform.position += step * diff / distance;
 
