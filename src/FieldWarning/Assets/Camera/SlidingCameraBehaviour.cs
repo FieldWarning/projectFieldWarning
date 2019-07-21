@@ -192,7 +192,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _translateZ -= dz;
 
         // Apply zoom movement:
-        var dzoom = Mathf.Abs(_leftoverZoom) < GetScaledZoomSpeed() ? _leftoverZoom : GetScaledZoomSpeed();
+        var dzoom = _leftoverZoom < GetScaledZoomSpeed() ? _leftoverZoom : GetScaledZoomSpeed();
         var oldAltitude = _targetPosition.y;
 
         // Zoom in:
