@@ -11,6 +11,8 @@ ModelImporter:
     400004: bus_stop_LOD1
     2100000: lambert1
     2100002: lambert2
+    2100004: lambert3
+    2100006: lambert4
     2300000: bus_stop_LOD0
     2300002: bus_stop_LOD1
     3300000: bus_stop_LOD0
@@ -28,6 +30,16 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert2
+    second: {fileID: 2100000, guid: 8bbb7a252463e344c858d4c670444b1b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert3
+    second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert4
     second: {fileID: 2100000, guid: 8bbb7a252463e344c858d4c670444b1b, type: 2}
   materials:
     importMaterials: 1

@@ -10,6 +10,7 @@ ModelImporter:
     400002: traffic_sign1_LOD0
     400004: traffic_sign1_LOD1
     2100000: lambert1
+    2100002: lambert19
     2300000: traffic_sign1_LOD0
     2300002: traffic_sign1_LOD1
     3300000: traffic_sign1_LOD0
@@ -22,6 +23,11 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert1
+    second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert19
     second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
   materials:
     importMaterials: 1

@@ -10,6 +10,7 @@ ModelImporter:
     400002: highway_traffic_light_LOD1
     400004: //RootNode
     2100000: lambert1
+    2100002: lambert17
     2300000: highway_traffic_light_LOD0
     2300002: highway_traffic_light_LOD1
     3300000: highway_traffic_light_LOD0
@@ -22,6 +23,11 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert1
+    second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert17
     second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
   materials:
     importMaterials: 1

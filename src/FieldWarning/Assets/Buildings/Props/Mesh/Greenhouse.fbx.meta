@@ -11,6 +11,8 @@ ModelImporter:
     400004: greenhouse_LOD1
     2100000: lambert2
     2100002: lambert1
+    2100004: lambert7
+    2100006: lambert8
     2300000: greenhouse_LOD0
     2300002: greenhouse_LOD1
     3300000: greenhouse_LOD0
@@ -29,6 +31,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: lambert2
     second: {fileID: 2100000, guid: 8bbb7a252463e344c858d4c670444b1b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert7
+    second: {fileID: 2100000, guid: 8bbb7a252463e344c858d4c670444b1b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert8
+    second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

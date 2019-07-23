@@ -10,6 +10,7 @@ ModelImporter:
     400002: small_turbine_LOD0
     400004: small_turbine_LOD1
     2100000: lambert1
+    2100002: lambert14
     2300000: small_turbine_LOD0
     2300002: small_turbine_LOD1
     3300000: small_turbine_LOD0
@@ -22,6 +23,11 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert1
+    second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert14
     second: {fileID: 2100000, guid: f4bdb9aab69f4514e93d295489b131ff, type: 2}
   materials:
     importMaterials: 1
