@@ -117,17 +117,13 @@ public sealed class MobilityType
 
     public static int GetIndexForConfig(MobilityConfig config)
     {
-        foreach (MobilityType m in MobilityTypes) {
-            if (
-                m.SlopeSensitivity == config.SlopeSensitivity
-                && m.DirectionalSlopeSensitivity == config.DirectionalSlopeSensitivity
-                && m.PlainSpeed == config.PlainSpeed
-                && m.ForestSpeed == config.ForestSpeed
-                && m.WaterSpeed == config.WaterSpeed
-            ) {
+        foreach (MobilityType m in MobilityTypes)
+            if (m.SlopeSensitivity == config.SlopeSensitivity
+                    && m.DirectionalSlopeSensitivity == config.DirectionalSlopeSensitivity
+                    && m.PlainSpeed == config.PlainSpeed
+                    && m.ForestSpeed == config.ForestSpeed
+                    && m.WaterSpeed == config.WaterSpeed)
                 return m.Index;
-            }
-        }
 
         var newMobilityType = new MobilityType(config);
         return newMobilityType.Index;

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System;
 /**
  * Copyright (c) 2017-present, PFW Contributors.
  *
@@ -13,6 +11,8 @@ using System;
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -28,18 +28,18 @@ namespace PFW
                     Regex.Matches(unitId, @"^(Unit__)([A-Z]+)(?:--)([-_a-zA-Z0-9]+)");
             string categoryKey = matches[0].Groups[2].Value;
             string modelDesignation = matches[0].Groups[3].Value;
-            
+
             TextAsset configFile = Resources.Load<TextAsset>($"{categoryKey}/{modelDesignation}");
             UnitConfig config = JsonUtility.FromJson<UnitConfig>(configFile.text);
-            
+
             return config;
         }
-        
+
         public static DeckConfig FindDeckConfig(string playerId)
         {
             TextAsset configFile = Resources.Load<TextAsset>($"{playerId}__deck");
             DeckConfig config = JsonUtility.FromJson<DeckConfig>(configFile.text);
-            
+
             return config;
         }
     }
