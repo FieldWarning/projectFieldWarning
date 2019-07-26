@@ -68,10 +68,8 @@ namespace PFW.Model.Game
             var blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
             var redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
-            DeckConfig bluePlayerDeckConfig = ConfigReader.FindDeckConfig("player-blue");
-            DeckConfig redPlayerDeckConfig = ConfigReader.FindDeckConfig("player-red");
-            Deck bluePlayerDeck = new Deck(bluePlayerDeckConfig);
-            Deck redPlayerDeck = new Deck(redPlayerDeckConfig);
+            Deck bluePlayerDeck = ConfigReader.FindDeck("player-blue");
+            Deck redPlayerDeck = ConfigReader.FindDeck("player-red");
             blueTeam.AddPlayer(this, bluePlayerDeck);
             redTeam.AddPlayer(this, redPlayerDeck);
 

@@ -35,8 +35,8 @@ namespace PFW.Model.Armory
                 if (Categories[i] == null) Categories[i] = new List<Unit>();
 
                 foreach (string unitId in (List<string>) deckConfig[categoryKey]) {
-                    UnitConfig unitConfig = ConfigReader.FindUnitConfig(unitId);
-                    Categories[i].Add(new Unit(unitConfig));
+                    Unit unit = ConfigReader.FindUnit(unitId);
+                    Categories[i].Add(unit);
                 }
             }
         }
