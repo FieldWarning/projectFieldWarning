@@ -23,7 +23,6 @@ namespace PFW.Model.Game
     public class PlayerData
     {
         public Team Team;
-        public string Name;
 
         private MatchSession _session;
         public MatchSession Session {
@@ -36,18 +35,15 @@ namespace PFW.Model.Game
                     _session = value;
             }
         }
-        private DeckConfig _deckConfig;
 
         public Deck Deck { get; private set; }
 
         public float Money = 1000;
         public float IncomeTick = 7;
-        
-        public PlayerData(string name)
+
+        public PlayerData(Deck deck)
         {
-            Name = name;
-            _deckConfig = ConfigReader.FindDeckConfig(Name);
-            Deck = new Deck(_deckConfig);
+            Deck = deck;
         }
     }
 }

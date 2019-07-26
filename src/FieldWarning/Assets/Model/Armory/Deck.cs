@@ -26,14 +26,14 @@ namespace PFW.Model.Armory
         public Deck(DeckConfig deckConfig)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
-            
+
             foreach (string categoryKey in Enum.GetNames(typeof(UnitCategory))) {
                 if (Regex.IsMatch(categoryKey, @"^_"))
                     break;
-                
+
                 int i = (int) Enum.Parse(typeof(UnitCategory), categoryKey);
                 if (Categories[i] == null) Categories[i] = new List<Unit>();
-                
+
                 foreach (string unitId in (List<string>) deckConfig[categoryKey]) {
                     UnitConfig unitConfig = ConfigReader.FindUnitConfig(unitId);
                     Categories[i].Add(new Unit(unitConfig));
