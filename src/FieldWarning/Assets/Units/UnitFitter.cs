@@ -24,10 +24,16 @@ namespace PFW.Units
 {
     public static class UnitFitter
     {
+        static GameObject prototypeRoot;
+
         public static GameObject CreatePrefab(UnitConfig config)
         {
+            if (prototypeRoot == null)
+                prototypeRoot = new GameObject("Unit Prototypes");
+
             GameObject basePrefab = Resources.Load<GameObject>(config.PrefabPath);
-            GameObject prototype = GameObject.Instantiate(basePrefab);
+            GameObject prototype = GameObject.Instantiate(basePrefab, prototypeRoot.transform);
+            prototype.name = config.Name;
             prototype.SetActive(false);
 
             DataComponent.CreateDataComponent(prototype, config.Data, config.Mobility);

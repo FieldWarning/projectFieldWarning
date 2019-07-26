@@ -68,7 +68,7 @@ namespace PFW.Units.Component.Movement
         {
         }
 
-        public virtual void Initialize(UnitDispatcher dispatcher)
+        public void Initialize(UnitDispatcher dispatcher)
         {
             Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
             Dispatcher = dispatcher;

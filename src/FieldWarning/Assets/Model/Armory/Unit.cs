@@ -26,7 +26,6 @@ namespace PFW.Model.Armory
         //[Tooltip("The gameobject this will be cloned from.")]
         public GameObject Prefab { get; }
 
-        // public Unit(string name, int price, GameObject prefab)
         public Unit(UnitConfig config)
         {
             Name = config.Name;

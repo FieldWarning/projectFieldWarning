@@ -28,23 +28,6 @@ namespace PFW.Units.Component.Movement
         private float _terrainTiltForward, _terrainTiltRight;
         private float _terrainHeight;
 
-        new void Awake()
-        {
-            base.Awake();
-        }
-
-        // Use this for initialization
-        new void Start()
-        {
-            base.Start();
-        }
-
-        // Update is called once per frame
-        new void Update()
-        {
-            base.Update();
-        }
-
         protected override void DoMovement()
         {
             float distanceToWaypoint = Pathfinder.HasDestination() ? (Pathfinder.GetWaypoint() - _position).magnitude : 0f;
