@@ -35,9 +35,9 @@ namespace PFW
             return config;
         }
 
-        public static DeckConfig FindDeckConfig(string playerId)
+        public static DeckConfig FindDeckConfig(string deckName)
         {
-            TextAsset configFile = Resources.Load<TextAsset>($"{playerId}__deck");
+            TextAsset configFile = Resources.Load<TextAsset>($"Decks/{deckName}");
             DeckConfig config = JsonUtility.FromJson<DeckConfig>(configFile.text);
 
             return config;
