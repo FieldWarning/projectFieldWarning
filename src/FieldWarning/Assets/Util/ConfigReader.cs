@@ -22,7 +22,7 @@ namespace PFW
 {
 	public static class ConfigReader
     {
-        public static UnitConfig FindUnitConfig(string unitId)
+        public static Unit FindUnit(string unitId)
         {
             MatchCollection matches =
                     Regex.Matches(unitId, @"^(Unit__)([A-Z]+)(?:--)([-_a-zA-Z0-9]+)");
@@ -32,15 +32,15 @@ namespace PFW
             TextAsset configFile = Resources.Load<TextAsset>($"{categoryKey}/{modelDesignation}");
             UnitConfig config = JsonUtility.FromJson<UnitConfig>(configFile.text);
 
-            return config;
+            return new Unit(config);
         }
 
-        public static DeckConfig FindDeckConfig(string deckName)
+        public static Deck FindDeck(string deckName)
         {
             TextAsset configFile = Resources.Load<TextAsset>($"Decks/{deckName}");
             DeckConfig config = JsonUtility.FromJson<DeckConfig>(configFile.text);
 
-            return config;
+            return new Deck(config);
         }
     }
 }
