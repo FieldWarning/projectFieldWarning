@@ -19,7 +19,6 @@ using PFW.UI.Ingame;
 using PFW.Model.Game;
 using PFW.Units;
 
-using PFW.Units.Component.Movement;
 using PFW.Model.Armory;
 
 public partial class PlatoonBehaviour : MonoBehaviour
@@ -36,7 +35,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
     private List<PlatoonModule> _modules = new List<PlatoonModule>();
     public bool IsInitialized = false;
 
-    public static readonly float UNIT_DISTANCE = 40*TerrainConstants.MAP_SCALE;
+    public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
 
     public PlayerData Owner { get; private set; }
 
@@ -92,7 +91,7 @@ public partial class PlatoonBehaviour : MonoBehaviour
             Units.Add(unitDispatcher);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
-            
+
             unitInstance.SetActive(true);
             collider.enabled = true;
         }

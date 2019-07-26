@@ -42,19 +42,19 @@ namespace PFW.Units.Component.Vision
         /// </summary>
         public bool IsSpotted { get { return _spotters.Count != 0; } }
 
-        public UnitDispatcher Unit;
+        private UnitDispatcher _unit;
 
         private Team _team {
-            get { return Unit.Platoon.Owner.Team; }
+            get { return _unit.Platoon.Owner.Team; }
         }
 
         private MatchSession _session {
-            get { return Unit.Platoon.Owner.Session; }
+            get { return _unit.Platoon.Owner.Session; }
         }
-        
+
         public void Initialize(UnitDispatcher dispatcher)
         {
-            Unit = dispatcher;
+            _unit = dispatcher;
         }
 
         // Alert all nearby enemy units that they may have to show themselves.
@@ -125,7 +125,7 @@ namespace PFW.Units.Component.Vision
 
         private void MaybeTogglePlatoonVisibility(bool unitRevealed)
         {
-            PlatoonBehaviour platoon = Unit.Platoon;
+            PlatoonBehaviour platoon = _unit.Platoon;
             ToggleAllRenderers(
                     platoon.gameObject,
                     !platoon.Units.TrueForAll(
