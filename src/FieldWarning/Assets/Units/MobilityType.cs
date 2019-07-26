@@ -14,6 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+using PFW.Model.Armory;
 using PFW.Units;
 using PFW.Units.Component.Movement;
 
@@ -25,8 +26,6 @@ public sealed class MobilityType
     // This list needs to be instantiated before the PathfinderData
     public static readonly List<MobilityType> MobilityTypes = new List<MobilityType>();
 
-    private static MobilityType _tmp = new MobilityType();
-
     public readonly int Index;
 
     // More all-terrain units like infantry should have reduced slope sensitivity
@@ -37,14 +36,14 @@ public sealed class MobilityType
 
     public readonly float PlainSpeed, ForestSpeed, WaterSpeed;
 
-    public MobilityType()
+    public MobilityType(MobilityConfig config)
     {
-        SlopeSensitivity = 2.0f;
-        DirectionalSlopeSensitivity = 0.6f;
+        SlopeSensitivity = config.SlopeSensitivity; // 2.0f;
+        DirectionalSlopeSensitivity = config.DirectionalSlopeSensitivity; // 0.6f;
 
-        PlainSpeed = 0.4f;
-        ForestSpeed = 0.2f;
-        WaterSpeed = 0.0f;
+        PlainSpeed = config.PlainSpeed; // 0.4f;
+        ForestSpeed = config.ForestSpeed; // 0.2f;
+        WaterSpeed = config.WaterSpeed; // 0.0f;
 
         Index = MobilityTypes.Count;
         MobilityTypes.Insert(Index, this);
@@ -63,7 +62,7 @@ public sealed class MobilityType
 
             foreach (UnitDispatcher unit in session.Units) {
                 float dist = Vector3.Distance(location, unit.Transform.position);
-                if (dist < unitRadius + unit.GetComponent<MovementComponent>().Data.radius)
+                if (dist < unitRadius + unit.GetComponent<MovementComponent>().Data.Radius)
                     return 0f;
             }
         }
@@ -114,5 +113,19 @@ public sealed class MobilityType
         float directionalSlopeFactor = SlopeSensitivity * DirectionalSlopeSensitivity * forwardSlope;
         float speed = 1.0f / (1.0f + overallSlopeFactor + directionalSlopeFactor);
         return Mathf.Max(speed - 0.1f, 0f);
+    }
+
+    public static int GetIndexForConfig(MobilityConfig config)
+    {
+        foreach (MobilityType m in MobilityTypes)
+            if (m.SlopeSensitivity == config.SlopeSensitivity
+                    && m.DirectionalSlopeSensitivity == config.DirectionalSlopeSensitivity
+                    && m.PlainSpeed == config.PlainSpeed
+                    && m.ForestSpeed == config.ForestSpeed
+                    && m.WaterSpeed == config.WaterSpeed)
+                return m.Index;
+
+        var newMobilityType = new MobilityType(config);
+        return newMobilityType.Index;
     }
 }

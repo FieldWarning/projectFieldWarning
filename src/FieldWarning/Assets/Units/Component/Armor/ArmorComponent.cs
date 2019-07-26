@@ -15,6 +15,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using PFW.Units.Component.Data;
 using PFW.Units.Component.Movement;
 using PFW.Units.Component.Damage;
 using PFW.Units.Component.Weapon;
@@ -23,7 +24,7 @@ using static PFW.Units.Component.Damage.DamageData;
 
 namespace PFW.Units.Component.Armor
 {
-    class ArmorComponent
+    class ArmorComponent : MonoBehaviour
     {
         /// <summary>
         /// The movement component where we obtain the front and right vectors
@@ -37,18 +38,18 @@ namespace PFW.Units.Component.Armor
         /// An array of ArmorAttributes to store armor values
         /// on front / side / rear/ top respectively
         /// </summary>
-        public UnitData.ArmorAttributes[] ArmorData = new UnitData.ArmorAttributes[4];
+        public ArmorAttributes[] ArmorData = new ArmorAttributes[4];
 
-        public ArmorComponent(
-            MovementComponent unit,
-            PlatoonBehaviour platoon,
-            UnitData.ArmorAttributes[] armorData,
-            HealthComponent healthComponent)
+        private void Awake()
         {
-            Unit = unit;
-            _platoon = platoon;
-            ArmorData = armorData;
-            _healthComponent = healthComponent;
+            ArmorData = gameObject.GetComponent<DataComponent>().ArmorData;
+            Unit = gameObject.GetComponent<MovementComponent>();
+            _healthComponent = gameObject.GetComponent<HealthComponent>();
+        }
+
+        public void Initialize()
+        {
+            _platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace PFW.Units.Component.Armor
             float? distanceToCentre)
         {
             Logger.LogDamage($"ArmorComponent::HandleHit() called");
-            UnitData.ArmorAttributes armorOfImpact = new UnitData.ArmorAttributes();
+            ArmorAttributes armorOfImpact = new ArmorAttributes();
             int armorIndex;
 
             if (displacementToThis == null)
@@ -127,7 +128,7 @@ namespace PFW.Units.Component.Armor
         /// <summary>
         /// Use the displacement vector to calculate the angle of the shot
         /// </summary>
-        public UnitData.ArmorAttributes DetermineSideOfImpact(Vector3 displacementToThis, out int index)
+        public ArmorAttributes DetermineSideOfImpact(Vector3 displacementToThis, out int index)
         {
             index = 0;
             Vector3 displacementToFiringUnit = -displacementToThis;
@@ -158,7 +159,7 @@ namespace PFW.Units.Component.Armor
             return ArmorData[index];
         }
 
-        public UnitData.ArmorAttributes DetermineSideOfImpact()
+        public ArmorAttributes DetermineSideOfImpact()
         {
             // When no displacement vector is supplied, the damage is dealt to the top armor
             return ArmorData[4];
@@ -167,7 +168,7 @@ namespace PFW.Units.Component.Armor
         /// <summary>
         /// Use this data of the armor being hit to construct a Target struct for the Damage classes to use as input
         /// </summary>
-        public DamageData.Target ConstructTargetStruct(UnitData.ArmorAttributes armorOfImpact)
+        public DamageData.Target ConstructTargetStruct(ArmorAttributes armorOfImpact)
         {
             DamageData.Target target = new DamageData.Target();
 

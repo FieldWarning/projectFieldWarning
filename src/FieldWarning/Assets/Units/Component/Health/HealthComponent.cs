@@ -12,31 +12,28 @@
 */
 using UnityEngine;
 
+using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
-using PFW.Units.Component.Damage;
 
 namespace PFW.Units.Component.Health
 {
-    public class HealthComponent
+    public class HealthComponent : MonoBehaviour
     {
         public float Health { get; private set; }
         private PlatoonBehaviour _platoon;
-        private GameObject _gameObject;
         private UnitDispatcher _dispatcher;
         private TargetTuple _targetTuple;
 
-        public HealthComponent(
-            float maxHealth,
-            PlatoonBehaviour platoon,
-            GameObject gameObject,
-            UnitDispatcher dispatcher,
-            TargetTuple targetTuple)
+        private void Awake()
         {
-            Health = maxHealth;
-            _platoon = platoon;
-            _gameObject = gameObject;
+            Health = gameObject.GetComponent<DataComponent>().MaxHealth;
+        }
+
+        public void Initialize(UnitDispatcher dispatcher)
+        {
             _dispatcher = dispatcher;
-            _targetTuple = targetTuple;
+            _platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
+            _targetTuple = dispatcher.TargetTuple;
         }
 
         public void UpdateHealth(float newHealth)
@@ -54,7 +51,7 @@ namespace PFW.Units.Component.Health
             _platoon.Owner.Session.RegisterUnitDeath(_dispatcher);
 
             _platoon.Units.Remove(_dispatcher);
-            GameObject.Destroy(_gameObject);
+            GameObject.Destroy(gameObject);
 
             _platoon.GhostPlatoon.HandleRealUnitDestroyed();
 

@@ -1,0 +1,147 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+
+    "definitions": {
+        "Data": {
+            "type": "object",
+            "description": "Values for the unit's Data component\n\nSee: <PFW.Units.Component.Data.DataComponent>",
+            "additionalProperties": false,
+            "required": [
+                "MovementSpeed",
+                "ReverseSpeed",
+                "AccelRate",
+                "MaxRotationSpeed",
+                "MinTurnRadius",
+                "MaxLateralAccel",
+                "Suspension",
+                "MaxHealth",
+                "Length",
+                "Width"
+            ],
+            "properties": {
+                "MovementSpeed": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "ReverseSpeed": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "AccelRate": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "MaxRotationSpeed": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "MinTurnRadius": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "MaxLateralAccel": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "Suspension": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "MaxHealth": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "Length": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "Width": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                }
+            }
+        },
+
+        "Mobility": {
+            "type": "object",
+            "description": "Values for the unit's mobility type\n\nSee: <MobilityType>",
+            "additionalProperties": false,
+            "required": [
+                "SlopeSensitivity",
+                "DirectionalSlopeSensitivity",
+                "PlainSpeed",
+                "ForestSpeed",
+                "WaterSpeed"
+            ],
+            "properties": {
+                "SlopeSensitivity": {
+                    "type": "number",
+                    "description": "More all-terrain units like infantry should have reduced slope sensitivity"
+                },
+                "DirectionalSlopeSensitivity": {
+                    "type": "number",
+                    "description": "A value of 0.5 means the unit will go the same speed on flat terrain as it does on a 30 degree downhill incline"
+                },
+                "PlainSpeed": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "ForestSpeed": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "WaterSpeed": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                }
+            }
+        }
+    },
+
+    "title": "Unit Config Schema",
+    "type": "object",
+    "required": [
+        "$schema",
+        "ID",
+        "CategoryKey",
+        "Name",
+        "Price",
+        "PrefabPath",
+        "Data",
+        "Mobility"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "ID": {
+            "type": "string",
+            "description": "A unique ID for this unit.\n\nShould follow the format: `Unit__[category]--[model]`\ne.g.: `Unit__TNK--M1A2`",
+            "pattern": "^Unit__(HEL|INF|LOG|REC|SUP|TNK|VHC)--[-a-zA-Z0-9]+$"
+        },
+        "CategoryKey": {
+            "type": "string",
+            "description": "The category of this unit.\n\nSee: <PFW.Model.Armory.UnitCategory>",
+            "enum": [ "LOG", "SUP", "INF", "TNK", "REC", "VHC", "HEL" ]
+        },
+        "Name": {
+            "type": "string",
+            "description": "The full, human-friendly name of this unit.\n\nFor use in unit labels, the deck builder, etc."
+        },
+        "Price": {
+            "type": "number",
+            "description": "(float) The cost of purchasing this unit."
+        },
+        "PrefabPath": {
+            "description": "Path to the unit's prefab, relative to any Resources directory.\n\nNOTE: The prefab should not have any components besides the `Transform`, as all necessary components will be added programatically at runtime according to the properties specified in this config file.",
+            "type": "string"
+        },
+        "Data": {
+            "$ref": "#/definitions/Data"
+        },
+        "Mobility": {
+            "$ref": "#/definitions/Mobility"
+        }
+    }
+}

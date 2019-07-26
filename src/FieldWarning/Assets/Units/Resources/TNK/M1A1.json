@@ -1,0 +1,30 @@
+{
+    "$schema": "../UnitConfigSchema.json",
+
+    "ID": "Unit__TNK--M1A1",
+    "CategoryKey": "TNK",
+    "Name": "M1A1 Abrams",
+    "Price": 15,
+    "PrefabPath": "TNK/M1Ax",
+
+    "Data": {
+        "MovementSpeed": 400,
+        "ReverseSpeed": 12.5,
+        "AccelRate": 11.5,
+        "MaxRotationSpeed": 40,
+        "MinTurnRadius": 0,
+        "MaxLateralAccel": 15,
+        "Suspension": 0.01,
+        "MaxHealth": 7.5,
+        "Length": 12,
+        "Width": 7
+    },
+
+    "Mobility": {
+        "SlopeSensitivity": 2,
+        "DirectionalSlopeSensitivity": 0.6,
+        "PlainSpeed": 0.4,
+        "ForestSpeed": 0.2,
+        "WaterSpeed": 0
+    }
+}

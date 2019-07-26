@@ -28,25 +28,6 @@ namespace PFW.Units.Component.Movement
         private float _terrainTiltForward, _terrainTiltRight;
         private float _terrainHeight;
 
-        new void Awake()
-        {
-            base.Awake();
-            Data = UnitData.Tank();
-        }
-
-        // Use this for initialization
-        new void Start()
-        {
-            base.Start();
-        }
-
-        // Update is called once per frame
-        new void Update()
-        {
-            base.Update();
-        }
-
-
         protected override void DoMovement()
         {
             float distanceToWaypoint = Pathfinder.HasDestination() ? (Pathfinder.GetWaypoint() - _position).magnitude : 0f;
@@ -90,9 +71,9 @@ namespace PFW.Units.Component.Movement
         // All angles need to have units of radians
         private float CalculateRotationSpeed(float linSpeed)
         {
-            float turnRadius = Mathf.Max(Data.minTurnRadius, linSpeed * linSpeed / Data.maxLateralAccel);
+            float turnRadius = Mathf.Max(Data.MinTurnRadius, linSpeed * linSpeed / Data.MaxLateralAccel);
 
-            float rotSpeed = Mathf.Deg2Rad * Data.maxRotationSpeed;
+            float rotSpeed = Mathf.Deg2Rad * Data.MaxRotationSpeed;
             if (turnRadius > 0f)
                 rotSpeed = Mathf.Min(rotSpeed, linSpeed / turnRadius);
 
@@ -108,10 +89,10 @@ namespace PFW.Units.Component.Movement
             if (Pathfinder.Command == MoveCommandType.Reverse)
                 return true;
 
-            float timeForward = Mathf.Abs(turnForward) / rotationSpeed + linDist / Data.movementSpeed;
-            float timeReverse = Mathf.Abs(turnReverse) / rotationSpeed + linDist / Data.reverseSpeed;
+            float timeForward = Mathf.Abs(turnForward) / rotationSpeed + linDist / Data.MovementSpeed;
+            float timeReverse = Mathf.Abs(turnReverse) / rotationSpeed + linDist / Data.ReverseSpeed;
 
-            float accelTime = 2 * Mathf.Abs(linVelocity) / (Data.accelRate * (1 + DECELERATION_FACTOR));
+            float accelTime = 2 * Mathf.Abs(linVelocity) / (Data.AccelRate * (1 + DECELERATION_FACTOR));
             if (linVelocity > 0) {
                 timeReverse += accelTime;
             } else {
@@ -129,14 +110,14 @@ namespace PFW.Units.Component.Movement
             // Need to face approximately the right direction before speeding up
             float angDist = Mathf.Max(0f, Mathf.Abs(remainingTurn) - HEADING_THRESHOLD);
             if (angDist > Mathf.PI / 4)
-                return Data.optimumTurnSpeed;
+                return Data.OptimumTurnSpeed;
 
             // Want to go just fast enough to cover the linear and angular distance if the unit starts slowing down now
-            float longestDist = Mathf.Max(linDist - 0.7f * Data.accelDampTime * linSpeed, Data.minTurnRadius * angDist);
-            float targetSpeed = Mathf.Sqrt(2 * longestDist * Data.accelRate * DECELERATION_FACTOR);
+            float longestDist = Mathf.Max(linDist - 0.7f * Data.AccelDampTime * linSpeed, Data.MinTurnRadius * angDist);
+            float targetSpeed = Mathf.Sqrt(2 * longestDist * Data.AccelRate * DECELERATION_FACTOR);
 
             // But not so fast that it cannot make the turn
-            if (linSpeed > Data.optimumTurnSpeed && angDist > 0f)
+            if (linSpeed > Data.OptimumTurnSpeed && angDist > 0f)
                 targetSpeed = Mathf.Min(targetSpeed, 0.25f * linDist * rotSpeed / angDist);
 
             return targetSpeed;
@@ -150,16 +131,16 @@ namespace PFW.Units.Component.Movement
                 Bounce();
                 //_position -= transform.forward * Data.movementSpeed * Time.deltaTime;
             } else {
-                targetSpeed = terrainSpeed * Mathf.Clamp(targetSpeed, -Data.reverseSpeed, Data.movementSpeed);
+                targetSpeed = terrainSpeed * Mathf.Clamp(targetSpeed, -Data.ReverseSpeed, Data.MovementSpeed);
 
-                _forwardAccel = Mathf.Sign(targetSpeed - _linVelocity) * Data.accelRate;
+                _forwardAccel = Mathf.Sign(targetSpeed - _linVelocity) * Data.AccelRate;
                 if (Mathf.Sign(_forwardAccel) != Mathf.Sign(_linVelocity))
                     _forwardAccel *= DECELERATION_FACTOR;
 
                 if (Mathf.Abs(_forwardAccel) > 0) {
                     float accelTime = (targetSpeed - _linVelocity) / _forwardAccel;
-                    if (accelTime < Data.accelDampTime)
-                        _forwardAccel = _forwardAccel * (0.25f + 0.75f * accelTime / Data.accelDampTime);
+                    if (accelTime < Data.AccelDampTime)
+                        _forwardAccel = _forwardAccel * (0.25f + 0.75f * accelTime / Data.AccelDampTime);
 
                     if (_forwardAccel > 0) {
                         _linVelocity = Mathf.Min(targetSpeed, _linVelocity + _forwardAccel * Time.deltaTime);
@@ -187,8 +168,8 @@ namespace PFW.Units.Component.Movement
                 turn = remainingTurn;
             _rotation.y += turn;
 
-            float accelTiltForward = Data.suspensionForward * _forwardAccel;
-            float accelTiltRight = Data.suspensionSide * _linVelocity * _rotVelocity;
+            float accelTiltForward = Data.SuspensionForward * _forwardAccel;
+            float accelTiltRight = Data.SuspensionSide * _linVelocity * _rotVelocity;
 
             _rotation.x = _terrainTiltForward + accelTiltForward;
             _rotation.z = _terrainTiltRight - accelTiltRight;
@@ -201,14 +182,14 @@ namespace PFW.Units.Component.Movement
             Vector3 bounceDirection = Vector3.zero;
             for (float angle = 0f; angle < 360f; angle += 30f) {
                 Vector3 offset = BOUNCE_RADIUS * new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0f, Mathf.Cos(angle * Mathf.Deg2Rad));
-                float speed = Data.mobility.GetUnitSpeed(Pathfinder.Data.Terrain, Pathfinder.Data.Map, transform.position + offset, 0f, -transform.forward);
+                float speed = Mobility.GetUnitSpeed(Pathfinder.Data.Terrain, Pathfinder.Data.Map, transform.position + offset, 0f, -transform.forward);
                 if (speed > 0f)
                     bounceDirection += offset;
             }
             if (bounceDirection.magnitude < 0.01f)
                 bounceDirection = -transform.forward;
 
-            _position += bounceDirection.normalized * Data.movementSpeed * Time.deltaTime;
+            _position += bounceDirection.normalized * Data.MovementSpeed * Time.deltaTime;
         }
 
         protected override Renderer[] GetRenderers()
@@ -230,6 +211,7 @@ namespace PFW.Units.Component.Movement
 
         protected override void UpdateMapOrientation()
         {
+            if (Data == null) Awake();
             int terrainType = Pathfinder == null ? TerrainMap.PLAIN : Pathfinder.Data.Map.GetTerrainType(transform.position);
             if (terrainType == TerrainMap.BRIDGE) {
                 _terrainTiltForward = 0f;
@@ -244,14 +226,14 @@ namespace PFW.Units.Component.Movement
                 //      much assuming length and width are set correctly, but it is not very fast
 
                 // Apparently our forward and backward are opposite of the Unity convention
-                float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + Forward * Data.length / 2);
-                float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - Forward * Data.length / 2);
-                float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - Right * Data.width / 2);
-                float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + Right * Data.width / 2);
+                float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + Forward * Data.Length / 2);
+                float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - Forward * Data.Length / 2);
+                float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - Right * Data.Width / 2);
+                float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + Right * Data.Width / 2);
 
                 _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
-                _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.length);
-                _terrainTiltRight = Mathf.Atan((rightHeight - leftHeight) / Data.width);
+                _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.Length);
+                _terrainTiltRight = Mathf.Atan((rightHeight - leftHeight) / Data.Width);
             }
         }
 

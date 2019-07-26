@@ -15,6 +15,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using PFW.Model.Armory;
+
 namespace PFW.Model.Game
 {
     public class Team : MonoBehaviour
@@ -34,8 +36,8 @@ namespace PFW.Model.Game
             return Color != t.Color;
         }
 
-        public void AddPlayer(MatchSession session) {
-            PlayerData p = new PlayerData();
+        public void AddPlayer(MatchSession session, Deck playerDeck) {
+            PlayerData p = new PlayerData(playerDeck);
             p.Session = session;
             p.Team = this;
             Players.Add(p);

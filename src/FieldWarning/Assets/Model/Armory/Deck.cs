@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -11,7 +11,9 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using UnityEngine;
 
@@ -19,39 +21,26 @@ namespace PFW.Model.Armory
 {
     public class Deck
     {
-        public List<Unit>[] Units;
+        public List<Unit>[] Categories;
 
-        public Deck()
+        public Deck(DeckConfig deckConfig)
         {
-            Units = new List<Unit>[(int)UnitCategory._SIZE];
-            for (int i = 0; i < (int)UnitCategory._SIZE; i++) {
-                Units[i] = new List<Unit>();
+            Categories = new List<Unit>[(int)UnitCategory._SIZE];
+
+            foreach (string categoryKey in Enum.GetNames(typeof(UnitCategory))) {
+                if (Regex.IsMatch(categoryKey, @"^_"))
+                    break;
+
+                int i = (int) Enum.Parse(typeof(UnitCategory), categoryKey);
+                if (Categories[i] == null) Categories[i] = new List<Unit>();
+
+                foreach (string unitId in (List<string>) deckConfig[categoryKey]) {
+                    UnitConfig unitConfig = ConfigReader.FindUnitConfig(unitId);
+                    Categories[i].Add(new Unit(unitConfig));
+                }
             }
-
-            Units[(int)UnitCategory.LOG].Add(
-                    new Unit("HEMIT", 20, Resources.Load<GameObject>("Tank")));
-            Units[(int)UnitCategory.INF].Add(
-                    new Unit("Riflemen", 20, Resources.Load<GameObject>("Tank")));
-            Units[(int)UnitCategory.INF].Add(
-                    new Unit("Marines", 20, Resources.Load<GameObject>("AFV")));
-            Units[(int)UnitCategory.SUP].Add(
-                    new Unit("PLZ-5", 20, Resources.Load<GameObject>("Arty")));
-
-            Units[(int)UnitCategory.TNK].Add(
-                    new Unit("M1A2 Abrams", 20, Resources.Load<GameObject>("Tank")));
-            Units[(int)UnitCategory.TNK].Add(
-                    new Unit("M1A1 Abrams", 5, Resources.Load<GameObject>("Tank")));
-
-            Units[(int)UnitCategory.REC].Add(
-                    new Unit("Army Rangers", 20, Resources.Load<GameObject>("Tank")));
-
-            Units[(int)UnitCategory.SUP].Add(
-                    new Unit("ARTY", 500, Resources.Load<GameObject>("Arty")));
-
-            Units[(int)UnitCategory.HEL].Add(
-                    new Unit("AH-64D Apache", 20, Resources.Load<GameObject>("Tank")));
         }
 
-        public List<Unit> ByCategory(UnitCategory cat) => Units[(int)cat];
+        public List<Unit> ByCategory(UnitCategory cat) => Categories[(int)cat];
     }
 }

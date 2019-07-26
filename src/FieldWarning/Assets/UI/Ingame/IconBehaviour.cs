@@ -35,8 +35,6 @@ namespace PFW.UI.Ingame
             }
         }
 
-        private bool _visible = true;
-
         private void Awake()
         {
             _symbol = transform.GetChild(1).GetComponent<SymbolBehaviour>();
@@ -50,7 +48,6 @@ namespace PFW.UI.Ingame
                 SetLayer(_layer);
 
             SetSelected(false);
-            SetVisible(_visible);
         }
 
         public void SetLayer(int l)
@@ -83,8 +80,6 @@ namespace PFW.UI.Ingame
                 _billboard.GetComponent<Renderer>().enabled = vis;
                 _symbol.GetComponent<Renderer>().enabled = vis;
 
-            } else {
-                _visible = vis;
             }
 
             if (vis) {

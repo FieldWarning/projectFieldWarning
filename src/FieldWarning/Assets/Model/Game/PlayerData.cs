@@ -36,9 +36,14 @@ namespace PFW.Model.Game
             }
         }
 
-        public Deck Deck { get; private set; } = new Deck();
+        public Deck Deck { get; private set; }
 
         public float Money = 1000;
         public float IncomeTick = 7;
+
+        public PlayerData(Deck deck)
+        {
+            Deck = deck;
+        }
     }
 }

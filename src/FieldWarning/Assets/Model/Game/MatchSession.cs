@@ -18,6 +18,7 @@ using PFW.UI.Prototype;
 using PFW.UI.Ingame;
 using PFW.Units;
 using PFW.Units.Component.Vision;
+using PFW.Model.Armory;
 
 namespace PFW.Model.Game
 {
@@ -67,8 +68,12 @@ namespace PFW.Model.Game
             var blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
             var redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
-            blueTeam.AddPlayer(this);
-            redTeam.AddPlayer(this);
+            DeckConfig bluePlayerDeckConfig = ConfigReader.FindDeckConfig("player-blue");
+            DeckConfig redPlayerDeckConfig = ConfigReader.FindDeckConfig("player-red");
+            Deck bluePlayerDeck = new Deck(bluePlayerDeckConfig);
+            Deck redPlayerDeck = new Deck(redPlayerDeckConfig);
+            blueTeam.AddPlayer(this, bluePlayerDeck);
+            redTeam.AddPlayer(this, redPlayerDeck);
 
             Teams.Add(blueTeam);
             Teams.Add(redTeam);

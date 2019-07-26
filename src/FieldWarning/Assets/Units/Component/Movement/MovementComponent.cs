@@ -13,6 +13,7 @@
 
 using UnityEngine;
 
+using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
 
 namespace PFW.Units.Component.Movement
@@ -23,9 +24,11 @@ namespace PFW.Units.Component.Movement
         private const float ORIENTATION_RATE = 5.0f;
         private const float TRANSLATION_RATE = 5.0f;
 
-        public UnitData Data { get; set; } = UnitData.GenericUnit();
+        public DataComponent Data { get; private set; }
         public PlatoonBehaviour Platoon { get; set; }
         public Pathfinder Pathfinder { get; private set; }
+
+        public MobilityType Mobility;
 
         // These are set by the subclass in DoMovement()
         protected Vector3 _position;
@@ -57,10 +60,19 @@ namespace PFW.Units.Component.Movement
 
         public virtual void Awake()
         {
+            Data = gameObject.GetComponent<DataComponent>();
+            Mobility = MobilityType.MobilityTypes[Data.MobilityTypeIndex];
         }
 
         public virtual void Start()
         {
+        }
+
+        public void Initialize(UnitDispatcher dispatcher)
+        {
+            Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
+            Dispatcher = dispatcher;
+
             Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
         }
 
@@ -208,7 +220,7 @@ namespace PFW.Units.Component.Movement
         // Returns the unit's speed on the current terrain
         public float GetTerrainSpeedMultiplier()
         {
-            float terrainSpeed = Data.mobility.GetUnitSpeed(
+            float terrainSpeed = Mobility.GetUnitSpeed(
                     Pathfinder.Data.Terrain,
                     Pathfinder.Data.Map,
                     transform.position,

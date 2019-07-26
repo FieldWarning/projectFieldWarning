@@ -11,9 +11,9 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
-
 using UnityEngine;
+
+using PFW.Units;
 
 namespace PFW.Model.Armory
 {
@@ -26,11 +26,11 @@ namespace PFW.Model.Armory
         //[Tooltip("The gameobject this will be cloned from.")]
         public GameObject Prefab { get; }
 
-        public Unit(string name, int price, GameObject prefab)
+        public Unit(UnitConfig config)
         {
-            Name = name;
-            Price = price;
-            Prefab = prefab;
+            Name = config.Name;
+            Price = config.Price;
+            Prefab = UnitFitter.CreatePrefab(config);
         }
     }
 }
