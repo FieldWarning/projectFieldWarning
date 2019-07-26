@@ -88,7 +88,7 @@ namespace PFW.Units.Component.Vision
             if (!IsVisible)
                 return;
 
-            _spotters.RemoveWhere(s => s.gameObject == null || !s.CanDetect(this));
+            _spotters.RemoveWhere(s => s == null || !s.CanDetect(this));
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
         }
