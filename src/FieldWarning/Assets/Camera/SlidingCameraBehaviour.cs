@@ -17,11 +17,11 @@ using UnityEngine.UI;
 
 /**
  * Sliding camera is our main RTS cam. It is wargame-like and provides almost entirely free movement. Zooming in goes toward the cursor ("sliding"), zooming out moves back and up at a fixed angle. The camera faces up slightly when zoomed all the way into the ground, and tries to restore its facing when zoomed out again.
- * 
+ *
  * Restrictions:
  * - Players can't look too far up or down.
  * - There are minimal and maximal altitudes to prevent going below the level.
- * 
+ *
  * TODO:
  * - Maybe prevent the camera from clipping into units.
  * - A/B test values for a better feel.
@@ -77,35 +77,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private Camera _cam;
 
-    public void SetTargetPosition(Vector3 target)
-    {
-        _targetPosition = target;
-        _translateX = 0;
-        _translateZ = 0;
-        _leftoverZoom = 0;
-    }
-
-    public void LookAt(Vector3 target)
-    {
-
-        var toTarget = target - _targetPosition;
-        var rotFromX = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)), Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
-        var rotFromY = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)), Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
-        _rotateX += rotFromX;
-        _rotateY += rotFromY;
-    }
-
-    // If we allow the camera to get to height = 0 we would need special cases for the height scaling.
-    private float GetScaledPanSpeed()
-    {
-        return _panSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
-    }
-
-    private float GetScaledZoomSpeed()
-    {
-        return _zoomSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
-    }
-
     private void Awake()
     {
         _cam = GetComponent<Camera>();
@@ -159,22 +130,47 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
         _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
 
-        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
-        {
+        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
             //Try border panning with mouse
             PanFromScreenBorder();
-        }
-        else
-        {
+        } else {
             SetPanningCursor(ScreenCorner.None);
         }
 
         AimedZoom();
 
-        if (Input.GetMouseButton(2))
-        {
+        if (Input.GetMouseButton(2)) {
             RotateCamera();
         }
+    }
+
+    public void SetTargetPosition(Vector3 target)
+    {
+        _targetPosition = target;
+        _translateX = 0;
+        _translateZ = 0;
+        _leftoverZoom = 0;
+    }
+
+    public void LookAt(Vector3 target)
+    {
+
+        var toTarget = target - _targetPosition;
+        var rotFromX = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)), Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
+        var rotFromY = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)), Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
+        _rotateX += rotFromX;
+        _rotateY += rotFromY;
+    }
+
+    // If we allow the camera to get to height = 0 we would need special cases for the height scaling.
+    private float GetScaledPanSpeed()
+    {
+        return _panSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
+    }
+
+    private float GetScaledZoomSpeed()
+    {
+        return _zoomSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
     }
 
     private void LateUpdate()
@@ -213,7 +209,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     }
 
     /// <summary>
-    /// When zooming in we gradually approach whatever the cursor is pointing at. 
+    /// When zooming in we gradually approach whatever the cursor is pointing at.
     /// </summary>
     private void AimedZoom()
     {
