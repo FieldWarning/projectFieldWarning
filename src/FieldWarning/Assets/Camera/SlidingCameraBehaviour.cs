@@ -29,11 +29,16 @@ using UnityEngine.UI;
 public class SlidingCameraBehaviour : MonoBehaviour
 {
     [Header("Translational Movement")]
-    [SerializeField] private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _borderPanningOffset = 2;    //Pixels
-    [SerializeField] private float _borderPanningCornerSize = 200;    //Pixels
-    [SerializeField] private float _maxCameraHorizontalDistanceFromTerrain =
+    [SerializeField]
+    private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _borderPanningOffset = 2; // Pixels
+    [SerializeField]
+    private float _borderPanningCornerSize = 200; // Pixels
+    [SerializeField]
+    private float _maxCameraHorizontalDistanceFromTerrain =
             5000f * TerrainConstants.MAP_SCALE;
 
     private Image _cornerArrowBottomLeft;
@@ -46,20 +51,32 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private Image _sideArrowBottom;
 
     [Header("Rotational Movement")]
-    [SerializeField] private float _horizontalRotationSpeed = 600f;
-    [SerializeField] private float _verticalRotationSpeed = 600f;
-    [SerializeField] private float _rotLerpSpeed = 10f;
-    [SerializeField] private float _maxCameraAngle = 85f;
-    [SerializeField] private float _minCameraAngle = 5f;
+    [SerializeField]
+    private float _horizontalRotationSpeed = 600f;
+    [SerializeField]
+    private float _verticalRotationSpeed = 600f;
+    [SerializeField]
+    private float _rotLerpSpeed = 10f;
+    [SerializeField]
+    private float _maxCameraAngle = 85f;
+    [SerializeField]
+    private float _minCameraAngle = 5f;
 
     [Header("Zoom Level")]
-    [SerializeField] private float _zoomSpeed = 5000f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _zoomTiltSpeed = 4f;
-    [SerializeField] private float _minAltitude = 1.0f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _tiltThreshold = 2f;
-    [SerializeField] private float _maxAltitude = 20000f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _heightSpeedScaling = 0.75f;
-    [SerializeField] private float _zoomOutAngle = 45f;
+    [SerializeField]
+    private float _zoomSpeed = 5000f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _zoomTiltSpeed = 4f;
+    [SerializeField]
+    private float _minAltitude = 1.0f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _tiltThreshold = 2f;
+    [SerializeField]
+    private float _maxAltitude = 20000f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _heightSpeedScaling = 0.75f;
+    [SerializeField]
+    private float _zoomOutAngle = 45f;
 
     private Vector3 _zoomOutDirection;
 
@@ -208,8 +225,13 @@ public class SlidingCameraBehaviour : MonoBehaviour
         ClampCameraXZPosition();
 
         // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
-        transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
+        transform.position =
+                Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
+        transform.rotation =
+                Quaternion.Slerp(
+                        transform.rotation,
+                        Quaternion.Euler(_rotateX, _rotateY, 0f),
+                        Time.deltaTime * _rotLerpSpeed);
     }
 
     /// <summary>
@@ -281,55 +303,82 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private void PanFromScreenBorder()
     {
         if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
-            && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
-            || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
-            && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) { //Lower-left screen corner
+                && Input.mousePosition.y <= _borderPanningCornerSize
+                && Input.mousePosition.y >= 0)
+                || (Input.mousePosition.x <= _borderPanningCornerSize
+                && Input.mousePosition.x >= 0
+                && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {
+            // Lower-left screen corner
             SetPanningCursor(ScreenCorner.BottomLeft);
             _translateX += -1 * GetScaledPanSpeed();
             _translateZ += -1 * GetScaledPanSpeed();
 
-        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
-            || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {  //Lower-right screen corner
+        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset
+                && Input.mousePosition.x <= Screen.width
+                && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
+                || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize
+                && Input.mousePosition.x <= Screen.width
+                && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {
+            // Lower-right screen corner
             SetPanningCursor(ScreenCorner.BottomRight);
             _translateX += 1 * GetScaledPanSpeed();
             _translateZ += -1 * GetScaledPanSpeed();
 
-        } else if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
-            && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
-            || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
-            && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-left screen corner
+        } else if ((Input.mousePosition.x <= _borderPanningOffset
+                && Input.mousePosition.x >= 0
+                && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize
+                && Input.mousePosition.y <= Screen.height)
+                || (Input.mousePosition.x <= _borderPanningCornerSize
+                && Input.mousePosition.x >= 0
+                && Input.mousePosition.y >= Screen.height - _borderPanningOffset
+                && Input.mousePosition.y <= Screen.height)) {
+            // Upper-left screen corner
             SetPanningCursor(ScreenCorner.TopLeft);
             _translateX += -1 * GetScaledPanSpeed();
             _translateZ += 1 * GetScaledPanSpeed();
 
-        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
-            || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-right screen corner
+        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset
+                && Input.mousePosition.x <= Screen.width
+                && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize
+                && Input.mousePosition.y <= Screen.height)
+                || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize
+                && Input.mousePosition.x <= Screen.width
+                && Input.mousePosition.y >= Screen.height - _borderPanningOffset
+                && Input.mousePosition.y <= Screen.height)) {
+            // Upper-right screen corner
             SetPanningCursor(ScreenCorner.TopRight);
             _translateX += 1 * GetScaledPanSpeed();
             _translateZ += 1 * GetScaledPanSpeed();
 
-        } else {    //Border of screen but not corners
-            if (Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
-                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Left screen side
+        } else { // Border of screen but not corners
+            if (Input.mousePosition.x <= _borderPanningOffset
+                    && Input.mousePosition.x >= 0
+                    && Input.mousePosition.y >= 0
+                    && Input.mousePosition.y <= Screen.height) {
+                // Left screen side
                 SetPanningCursor(ScreenCorner.Left);
                 _translateX += -1 * GetScaledPanSpeed();
 
-            } else if (Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
-                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Right screen side
+            } else if (Input.mousePosition.x >= Screen.width - _borderPanningOffset
+                    && Input.mousePosition.x <= Screen.width
+                    && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {
+                // Right screen side
                 SetPanningCursor(ScreenCorner.Right);
                 _translateX += 1 * GetScaledPanSpeed();
 
-            } else if (Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0
-                && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Bottom screen side
+            } else if (Input.mousePosition.y <= _borderPanningOffset
+                    && Input.mousePosition.y >= 0
+                    && Input.mousePosition.x >= 0
+                    && Input.mousePosition.x <= Screen.width) {
+                // Bottom screen side
                 SetPanningCursor(ScreenCorner.Bottom);
                 _translateZ += -1 * GetScaledPanSpeed();
 
-            } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height
-                && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Top screen side
+            } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset
+                    && Input.mousePosition.y <= Screen.height
+                    && Input.mousePosition.x >= 0
+                    && Input.mousePosition.x <= Screen.width) {
+                // Top screen side
                 SetPanningCursor(ScreenCorner.Top);
                 _translateZ += 1 * GetScaledPanSpeed();
 
