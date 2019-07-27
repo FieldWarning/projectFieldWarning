@@ -108,6 +108,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
 #pragma warning restore 0649
     }
 
+    [Header("Microsplat Terrain Materials")]
     [SerializeField]
     [Tooltip("Must be sorted in ascending order. The first material whose max altitude "
         + "is higher than the current camera altitude will be applied to the terrain.")]
