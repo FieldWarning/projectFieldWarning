@@ -12,6 +12,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -97,9 +99,38 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private Terrain _terrain;
 
+    [Serializable]
+    private struct TerrainMaterial
+    {
+#pragma warning disable 0649
+        public Material Material;
+        public float MaxAltitude;
+#pragma warning restore 0649
+    }
+
+    [SerializeField]
+    [Tooltip("Must be sorted in ascending order. The first material whose max altitude "
+        + "is higher than the current camera altitude will be applied to the terrain.")]
+    List<TerrainMaterial> _terrainMaterials = null;
+    [SerializeField]
+    private MicroSplatTerrain _microSplatTerrain = null;
+
     private void Awake()
     {
         _terrain = Terrain.activeTerrain;
+
+        if (_microSplatTerrain == null) {
+            _microSplatTerrain = _terrain.GetComponent<MicroSplatTerrain>();
+        }
+
+        if (_microSplatTerrain == null) {
+            throw new Exception("Camera not set up correctly, microsplat reference missing!");
+        }
+
+        if (_terrainMaterials == null || _terrainMaterials.Count == 0) {
+            throw new Exception("Camera not set up correctly, terrain materials missing!");
+        }
+
         _cam = GetComponent<Camera>();
     }
 
@@ -183,7 +214,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _rotateY += rotFromY;
     }
 
-    // If we allow the camera to get to height = 0 we would need special cases for the height scaling.
+    // If we allow the camera to get to height = 0 we would
+    // need special cases for the height scaling.
     private float GetScaledPanSpeed()
     {
         return _panSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
@@ -200,7 +232,9 @@ public class SlidingCameraBehaviour : MonoBehaviour
         var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
         _targetPosition += transform.TransformDirection(dx * Vector3.right);
 
-        // If we move forward in local space, camera will also change altitude. To properly move forward, we have to rotate the forward vector to be horizontal in world space while keeping the magnitude:
+        // If we move forward in local space, camera will also change altitude.
+        // To properly move forward, we have to rotate the forward vector to be
+        // horizontal in world space while keeping the magnitude:
         var worldForward = transform.TransformDirection(Vector3.forward);
         var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
         _targetPosition += angle * worldForward * dz;
@@ -224,7 +258,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
         ClampCameraAltitude();
         ClampCameraXZPosition();
 
-        // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
+        // It is mathematically incorrect to directly lerp on
+        // deltaTime like this, since we never get to the target (except by rounding I guess):
         transform.position =
                 Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
         transform.rotation =
@@ -232,6 +267,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
                         transform.rotation,
                         Quaternion.Euler(_rotateX, _rotateY, 0f),
                         Time.deltaTime * _rotLerpSpeed);
+
+        MaybeChangeTerrainMaterial();
     }
 
     /// <summary>
@@ -455,6 +492,25 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _sideArrowRight.enabled = false;
         _sideArrowTop.enabled = false;
         _sideArrowBottom.enabled = false;
+    }
+
+    /// <summary>
+    /// Based on camera distance, change terrain settings to improve appearance.
+    /// </summary>
+    private void MaybeChangeTerrainMaterial()
+    {
+        float camAltitude = transform.position.y - _terrain.transform.position.y;
+
+        foreach (TerrainMaterial mat in _terrainMaterials) {
+            if (camAltitude < mat.MaxAltitude) {
+
+                if (_microSplatTerrain.templateMaterial != mat.Material) {
+                    _microSplatTerrain.templateMaterial = mat.Material;
+                    _microSplatTerrain.Sync();
+                }
+                break;
+            }
+        }
     }
 
     enum ScreenCorner
