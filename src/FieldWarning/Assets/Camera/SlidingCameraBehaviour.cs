@@ -33,7 +33,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
     [SerializeField] private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
     [SerializeField] private float _borderPanningOffset = 2;    //Pixels
     [SerializeField] private float _borderPanningCornerSize = 200;    //Pixels
-    [SerializeField] private float _maxCameraHorizontalDistanceFromTerrain = 5000f * TerrainConstants.MAP_SCALE;
+    [SerializeField] private float _maxCameraHorizontalDistanceFromTerrain =
+            5000f * TerrainConstants.MAP_SCALE;
 
     private Image _cornerArrowBottomLeft;
     private Image _cornerArrowBottomRight;
@@ -77,8 +78,11 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private Camera _cam;
 
+    private Terrain _terrain;
+
     private void Awake()
     {
+        _terrain = Terrain.activeTerrain;
         _cam = GetComponent<Camera>();
     }
 
@@ -270,7 +274,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         _targetPosition.y = Mathf.Clamp(
                 _targetPosition.y,
-                Terrain.activeTerrain.SampleHeight(_targetPosition) + _minAltitude,
+                _terrain.SampleHeight(_targetPosition) + _minAltitude,
                 _maxAltitude);
     }
 
@@ -339,12 +343,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         _targetPosition.x = Mathf.Clamp(
                 _targetPosition.x,
-                Terrain.activeTerrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
-                Terrain.activeTerrain.GetPosition().x + Terrain.activeTerrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
+                _terrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
+                _terrain.GetPosition().x + _terrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
         _targetPosition.z = Mathf.Clamp(
                 _targetPosition.z,
-                Terrain.activeTerrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
-                Terrain.activeTerrain.GetPosition().z + Terrain.activeTerrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
+                _terrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
+                _terrain.GetPosition().z + _terrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
     }
 
     private void SetPanningCursor(ScreenCorner corner)
