@@ -104,6 +104,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
 #pragma warning disable 0649
         public Material Material;
+        public MicroSplatPropData PerTextureData;
+        public MicroSplatKeywords Keywords;
         public float MaxAltitude;
 #pragma warning restore 0649
     }
@@ -497,6 +499,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     /// <summary>
     /// Based on camera distance, change terrain settings to improve appearance.
+    ///
+    /// TODO: we need to write our own shader instead of employing this hack
     /// </summary>
     private void MaybeChangeTerrainMaterial()
     {
@@ -506,7 +510,14 @@ public class SlidingCameraBehaviour : MonoBehaviour
             if (camAltitude < mat.MaxAltitude) {
 
                 if (_microSplatTerrain.templateMaterial != mat.Material) {
+
                     _microSplatTerrain.templateMaterial = mat.Material;
+
+                    // In the inspector this is the "Debug/Keywords" field.
+                    _microSplatTerrain.keywordSO = mat.Keywords;
+                    // In the inspector this is the "Debug/Per Texture Data" field.
+                    _microSplatTerrain.propData = mat.PerTextureData;
+
                     _microSplatTerrain.Sync();
                 }
                 break;
