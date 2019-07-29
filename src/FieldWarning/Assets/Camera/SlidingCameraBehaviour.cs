@@ -211,8 +211,14 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
 
         var toTarget = target - _targetPosition;
-        var rotFromX = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)), Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
-        var rotFromY = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)), Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
+        var rotFromX =
+                Vector3.Angle(
+                        Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)),
+                        Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
+        var rotFromY =
+                Vector3.Angle(
+                        Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)),
+                        Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
         _rotateX += rotFromX;
         _rotateY += rotFromY;
     }
