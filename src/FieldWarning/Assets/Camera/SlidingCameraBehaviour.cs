@@ -342,16 +342,62 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void PanFromScreenBorder()
     {
+        ScreenCorner mouseScreenCorner = GetScreenCornerForMousePosition(Input.mousePosition);
+
+        SetPanningCursor(mouseScreenCorner);
+
+        switch (mouseScreenCorner) {
+
+        case ScreenCorner.BottomLeft:
+            _translateX += -1 * GetScaledPanSpeed();
+            _translateZ += -1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.BottomRight:
+            _translateX += 1 * GetScaledPanSpeed();
+            _translateZ += -1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.TopLeft:
+            _translateX += -1 * GetScaledPanSpeed();
+            _translateZ += 1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.TopRight:
+            _translateX += 1 * GetScaledPanSpeed();
+            _translateZ += 1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.Left:
+            _translateX += -1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.Right:
+            _translateX += 1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.Bottom:
+            _translateZ += -1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.Top:
+            _translateZ += 1 * GetScaledPanSpeed();
+            break;
+
+        case ScreenCorner.None:
+            break;
+        }
+    }
+
+    private ScreenCorner GetScreenCornerForMousePosition(Vector2 mousePosition)
+    {
         if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
                 && Input.mousePosition.y <= _borderPanningCornerSize
                 && Input.mousePosition.y >= 0)
                 || (Input.mousePosition.x <= _borderPanningCornerSize
                 && Input.mousePosition.x >= 0
                 && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {
-            // Lower-left screen corner
-            SetPanningCursor(ScreenCorner.BottomLeft);
-            _translateX += -1 * GetScaledPanSpeed();
-            _translateZ += -1 * GetScaledPanSpeed();
+            return ScreenCorner.BottomLeft;
 
         } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset
                 && Input.mousePosition.x <= Screen.width
@@ -359,10 +405,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize
                 && Input.mousePosition.x <= Screen.width
                 && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {
-            // Lower-right screen corner
-            SetPanningCursor(ScreenCorner.BottomRight);
-            _translateX += 1 * GetScaledPanSpeed();
-            _translateZ += -1 * GetScaledPanSpeed();
+            return ScreenCorner.BottomRight;
 
         } else if ((Input.mousePosition.x <= _borderPanningOffset
                 && Input.mousePosition.x >= 0
@@ -372,10 +415,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 && Input.mousePosition.x >= 0
                 && Input.mousePosition.y >= Screen.height - _borderPanningOffset
                 && Input.mousePosition.y <= Screen.height)) {
-            // Upper-left screen corner
-            SetPanningCursor(ScreenCorner.TopLeft);
-            _translateX += -1 * GetScaledPanSpeed();
-            _translateZ += 1 * GetScaledPanSpeed();
+            return ScreenCorner.TopLeft;
 
         } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset
                 && Input.mousePosition.x <= Screen.width
@@ -385,46 +425,33 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 && Input.mousePosition.x <= Screen.width
                 && Input.mousePosition.y >= Screen.height - _borderPanningOffset
                 && Input.mousePosition.y <= Screen.height)) {
-            // Upper-right screen corner
-            SetPanningCursor(ScreenCorner.TopRight);
-            _translateX += 1 * GetScaledPanSpeed();
-            _translateZ += 1 * GetScaledPanSpeed();
+            return ScreenCorner.TopRight;
 
-        } else { // Border of screen but not corners
-            if (Input.mousePosition.x <= _borderPanningOffset
-                    && Input.mousePosition.x >= 0
-                    && Input.mousePosition.y >= 0
-                    && Input.mousePosition.y <= Screen.height) {
-                // Left screen side
-                SetPanningCursor(ScreenCorner.Left);
-                _translateX += -1 * GetScaledPanSpeed();
+        } else if (Input.mousePosition.x <= _borderPanningOffset
+                && Input.mousePosition.x >= 0
+                && Input.mousePosition.y >= 0
+                && Input.mousePosition.y <= Screen.height) {
+            return ScreenCorner.Left;
 
-            } else if (Input.mousePosition.x >= Screen.width - _borderPanningOffset
-                    && Input.mousePosition.x <= Screen.width
-                    && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {
-                // Right screen side
-                SetPanningCursor(ScreenCorner.Right);
-                _translateX += 1 * GetScaledPanSpeed();
+        } else if (Input.mousePosition.x >= Screen.width - _borderPanningOffset
+                && Input.mousePosition.x <= Screen.width
+                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {
+            return ScreenCorner.Right;
 
-            } else if (Input.mousePosition.y <= _borderPanningOffset
-                    && Input.mousePosition.y >= 0
-                    && Input.mousePosition.x >= 0
-                    && Input.mousePosition.x <= Screen.width) {
-                // Bottom screen side
-                SetPanningCursor(ScreenCorner.Bottom);
-                _translateZ += -1 * GetScaledPanSpeed();
+        } else if (Input.mousePosition.y <= _borderPanningOffset
+                && Input.mousePosition.y >= 0
+                && Input.mousePosition.x >= 0
+                && Input.mousePosition.x <= Screen.width) {
+            return ScreenCorner.Bottom;
 
-            } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset
-                    && Input.mousePosition.y <= Screen.height
-                    && Input.mousePosition.x >= 0
-                    && Input.mousePosition.x <= Screen.width) {
-                // Top screen side
-                SetPanningCursor(ScreenCorner.Top);
-                _translateZ += 1 * GetScaledPanSpeed();
+        } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset
+                && Input.mousePosition.y <= Screen.height
+                && Input.mousePosition.x >= 0
+                && Input.mousePosition.x <= Screen.width) {
+            return ScreenCorner.Top;
 
-            } else {
-                SetPanningCursor(ScreenCorner.None);
-            }
+        } else {
+            return ScreenCorner.None;
         }
     }
 
