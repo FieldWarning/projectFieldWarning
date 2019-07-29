@@ -14,6 +14,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PFW.UI.Ingame
 {
@@ -39,6 +40,28 @@ namespace PFW.UI.Ingame
 
         private RectTransform _targetRect;
         private RectTransform _rect;
+
+        protected class Transition
+        {
+            public Image Component;
+            public Color ColorFrom;
+            public Color ColorTo;
+
+            public Transition(Image component, Color colorFrom, Color colorTo)
+            {
+                Component = component;
+                ColorFrom = colorFrom;
+                ColorTo = colorTo;
+            }
+
+            public void Animate(float lerp)
+            {
+                Color newColor = Color.Lerp(ColorFrom, ColorTo, lerp);
+                Component.color = newColor;
+            }
+        }
+
+        protected List<Transition> _transitionList = new List<Transition>();
 
         protected virtual void Start()
         {

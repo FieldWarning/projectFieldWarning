@@ -28,12 +28,6 @@ namespace PFW.UI.Ingame
         private Button _button;
 
         [SerializeField]
-        private Image _colorSprite;
-
-        [SerializeField]
-        private Image _borderSprite;
-
-        [SerializeField]
         private TextMeshProUGUI _unitName;
 
         [Header("Icons")]
@@ -57,8 +51,6 @@ namespace PFW.UI.Ingame
         protected override void Start()
         {
             base.Start();
-            _colorSprite.color = new Color(_baseColor.r, _baseColor.g, _baseColor.b, _colorAlpha);
-            _borderSprite.color = new Color(_accentColor.r, _accentColor.g, _accentColor.b, _borderAlpha);
             _unitIcon.color = Color.white;
             _unitName.color = Color.white;
             _weaponStatusIcon.color = new Color(_accentColor.r, _accentColor.g, _accentColor.b, _weaponStatusIdleAlpha);
