@@ -41,15 +41,29 @@ namespace PFW.UI.Ingame
         private RectTransform _targetRect;
         private RectTransform _rect;
 
+        protected class ComponentState
+        {
+            public Graphic Component;
+            public Color Color;
+
+            public ComponentState(Graphic component, Color color)
+            {
+                Component = component;
+                Color = color;
+            }
+        }
+
+        protected List<ComponentState> _uiState;
+
         protected class Transition
         {
-            public Image Component;
+            public Graphic Graphic;
             public Color ColorFrom;
             public Color ColorTo;
 
-            public Transition(Image component, Color colorFrom, Color colorTo)
+            public Transition(Graphic component, Color colorFrom, Color colorTo)
             {
-                Component = component;
+                Graphic = component;
                 ColorFrom = colorFrom;
                 ColorTo = colorTo;
             }
@@ -57,11 +71,17 @@ namespace PFW.UI.Ingame
             public void Animate(float lerp)
             {
                 Color newColor = Color.Lerp(ColorFrom, ColorTo, lerp);
-                Component.color = newColor;
+                Graphic.color = newColor;
             }
         }
 
         protected List<Transition> _transitionList = new List<Transition>();
+
+        protected float _lerp;
+        protected bool _isAnimating = false;
+
+        [SerializeField]
+        protected float _animationSpeed = 10f;
 
         protected virtual void Start()
         {
@@ -82,6 +102,41 @@ namespace PFW.UI.Ingame
                 if (targetSizeDelta != _rect.sizeDelta)
                     _rect.sizeDelta = targetSizeDelta;
             }
+
+            if (_isAnimating)
+                RunAnimations();
+        }
+
+        private void RunAnimations()
+        {
+            _lerp = Mathf.Clamp(_lerp + Time.deltaTime * _animationSpeed, 0f, 1f);
+
+            foreach (var transition in _transitionList)
+                transition.Animate(_lerp);
+
+            if (_lerp >= 1f)
+                _isAnimating = false;
+        }
+
+        // TODO: Find out if Unity already has a utility like this, and if not, move it to a static class
+        protected Color GetColorWithAlpha(Color color, float alpha)
+        {
+            return new Color(color.r, color.g, color.b, alpha);
+        }
+
+        protected void TransitionToState(List<ComponentState> state)
+        {
+            _transitionList.Clear();
+            _lerp = 0f;
+
+            foreach (ComponentState componentState in state)
+                _transitionList.Add(new Transition(
+                        componentState.Component,
+                        componentState.Component.color,
+                        componentState.Color));
+
+            if (!_isAnimating)
+                _isAnimating = true;
         }
     }
 }

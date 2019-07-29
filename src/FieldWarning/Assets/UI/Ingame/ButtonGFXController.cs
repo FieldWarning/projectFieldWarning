@@ -26,97 +26,43 @@ namespace PFW.UI.Ingame
     #pragma warning disable 0649
         [SerializeField]
         private Button _button;
-
-        [SerializeField]
-        private Image _colorSprite;
-
-        [SerializeField]
-        private Image _borderSprite;
     #pragma warning restore 0649
+        public Image ColorSprite;
+        public Image BorderSprite;
 
-        [Header("Configuration")]
-        [SerializeField]
-        private float _animationSpeed = 10f;
-
-        private float _lerp;
-        private bool _isAnimating = false;
-
+        [Header("Colors")]
         private float _colorAlpha = 0.7f;
         private float _borderAlpha = 0.525f;
         private float _colorAlphaHover = 1f;
         private float _borderAlphaHover = 1f;
 
+        private List<ComponentState> _defaultState;
+        private List<ComponentState> _hoverState;
+
         protected override void Start()
         {
             base.Start();
-            _colorSprite.color = GetColorWithAlpha(_baseColor, _colorAlpha);
-            _borderSprite.color = GetColorWithAlpha(_accentColor, _borderAlpha);
-        }
+            ColorSprite.color = GetColorWithAlpha(_baseColor, _colorAlpha);
+            BorderSprite.color = GetColorWithAlpha(_accentColor, _borderAlpha);
 
-        protected override void Update()
-        {
-            base.Update();
-
-            if (_isAnimating)
-                RunAnimations();
+            _defaultState = new List<ComponentState> {
+                new ComponentState(ColorSprite, GetColorWithAlpha(_baseColor, _colorAlpha)),
+                new ComponentState(BorderSprite, GetColorWithAlpha(_accentColor, _borderAlpha))
+            };
+            _hoverState = new List<ComponentState> {
+                new ComponentState(ColorSprite, _baseColor),
+                new ComponentState(BorderSprite, _accentColor)
+            };
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            StartTransition(TransitionDirection.ToHoverState);
+            TransitionToState(_hoverState);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            StartTransition(TransitionDirection.ToDefaultState);
-        }
-
-        protected void StartTransition(TransitionDirection direction)
-        {
-            var colorFrom = _colorSprite.color;
-            var borderColorFrom = _borderSprite.color;
-            var colorTo = (direction == TransitionDirection.ToHoverState)
-                    ? GetColorWithAlpha(_baseColor, _colorAlphaHover)
-                    : GetColorWithAlpha(_baseColor, _colorAlpha);
-            var borderColorTo = (direction == TransitionDirection.ToHoverState)
-                    ? GetColorWithAlpha(_accentColor, _borderAlphaHover)
-                    : GetColorWithAlpha(_accentColor, _borderAlpha);
-
-            _transitionList.Clear();
-
-            Transition colorTransition = new Transition(_colorSprite, colorFrom, colorTo);
-            Transition borderTransition = new Transition(_borderSprite, borderColorFrom, borderColorTo);
-
-            _transitionList.Add(colorTransition);
-            _transitionList.Add(borderTransition);
-
-            _lerp = 0f;
-
-            if (!_isAnimating)
-                _isAnimating = true;
-        }
-
-        private void RunAnimations()
-        {
-            _lerp = Mathf.Clamp(_lerp + Time.deltaTime * _animationSpeed, 0f, 1f);
-
-            foreach (var transition in _transitionList)
-                transition.Animate(_lerp);
-
-            if (_lerp >= 1f)
-                _isAnimating = false;
-        }
-
-        // TODO: Find out if Unity already has a utility like this, and if not, move it to a static class
-        private Color GetColorWithAlpha(Color color, float alpha)
-        {
-            return new Color(color.r, color.g, color.b, alpha);
-        }
-
-        protected enum TransitionDirection
-        {
-            ToHoverState,
-            ToDefaultState
+            TransitionToState(_defaultState);
         }
     }
 }
