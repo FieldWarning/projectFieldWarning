@@ -397,63 +397,63 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private ScreenCorner GetScreenCornerForMousePosition(Vector2 mousePosition)
     {
-        if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
-                && Input.mousePosition.y <= _borderPanningCornerSize
-                && Input.mousePosition.y >= 0)
-                || (Input.mousePosition.x <= _borderPanningCornerSize
-                && Input.mousePosition.x >= 0
-                && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {
+        if ((mousePosition.x <= _borderPanningOffset && mousePosition.x >= 0
+                && mousePosition.y <= _borderPanningCornerSize
+                && mousePosition.y >= 0)
+                || (mousePosition.x <= _borderPanningCornerSize
+                && mousePosition.x >= 0
+                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) {
             return ScreenCorner.BottomLeft;
 
-        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset
-                && Input.mousePosition.x <= Screen.width
-                && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
-                || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize
-                && Input.mousePosition.x <= Screen.width
-                && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {
+        } else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+                && mousePosition.x <= Screen.width
+                && mousePosition.y <= _borderPanningCornerSize && mousePosition.y >= 0)
+                || (mousePosition.x >= Screen.width - _borderPanningCornerSize
+                && mousePosition.x <= Screen.width
+                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) {
             return ScreenCorner.BottomRight;
 
-        } else if ((Input.mousePosition.x <= _borderPanningOffset
-                && Input.mousePosition.x >= 0
-                && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize
-                && Input.mousePosition.y <= Screen.height)
-                || (Input.mousePosition.x <= _borderPanningCornerSize
-                && Input.mousePosition.x >= 0
-                && Input.mousePosition.y >= Screen.height - _borderPanningOffset
-                && Input.mousePosition.y <= Screen.height)) {
+        } else if ((mousePosition.x <= _borderPanningOffset
+                && mousePosition.x >= 0
+                && mousePosition.y >= Screen.height - _borderPanningCornerSize
+                && mousePosition.y <= Screen.height)
+                || (mousePosition.x <= _borderPanningCornerSize
+                && mousePosition.x >= 0
+                && mousePosition.y >= Screen.height - _borderPanningOffset
+                && mousePosition.y <= Screen.height)) {
             return ScreenCorner.TopLeft;
 
-        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset
-                && Input.mousePosition.x <= Screen.width
-                && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize
-                && Input.mousePosition.y <= Screen.height)
-                || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize
-                && Input.mousePosition.x <= Screen.width
-                && Input.mousePosition.y >= Screen.height - _borderPanningOffset
-                && Input.mousePosition.y <= Screen.height)) {
+        } else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+                && mousePosition.x <= Screen.width
+                && mousePosition.y >= Screen.height - _borderPanningCornerSize
+                && mousePosition.y <= Screen.height)
+                || (mousePosition.x >= Screen.width - _borderPanningCornerSize
+                && mousePosition.x <= Screen.width
+                && mousePosition.y >= Screen.height - _borderPanningOffset
+                && mousePosition.y <= Screen.height)) {
             return ScreenCorner.TopRight;
 
-        } else if (Input.mousePosition.x <= _borderPanningOffset
-                && Input.mousePosition.x >= 0
-                && Input.mousePosition.y >= 0
-                && Input.mousePosition.y <= Screen.height) {
+        } else if (mousePosition.x <= _borderPanningOffset
+                && mousePosition.x >= 0
+                && mousePosition.y >= 0
+                && mousePosition.y <= Screen.height) {
             return ScreenCorner.Left;
 
-        } else if (Input.mousePosition.x >= Screen.width - _borderPanningOffset
-                && Input.mousePosition.x <= Screen.width
-                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {
+        } else if (mousePosition.x >= Screen.width - _borderPanningOffset
+                && mousePosition.x <= Screen.width
+                && mousePosition.y >= 0 && mousePosition.y <= Screen.height) {
             return ScreenCorner.Right;
 
-        } else if (Input.mousePosition.y <= _borderPanningOffset
-                && Input.mousePosition.y >= 0
-                && Input.mousePosition.x >= 0
-                && Input.mousePosition.x <= Screen.width) {
+        } else if (mousePosition.y <= _borderPanningOffset
+                && mousePosition.y >= 0
+                && mousePosition.x >= 0
+                && mousePosition.x <= Screen.width) {
             return ScreenCorner.Bottom;
 
-        } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset
-                && Input.mousePosition.y <= Screen.height
-                && Input.mousePosition.x >= 0
-                && Input.mousePosition.x <= Screen.width) {
+        } else if (mousePosition.y >= Screen.height - _borderPanningOffset
+                && mousePosition.y <= Screen.height
+                && mousePosition.x >= 0
+                && mousePosition.x <= Screen.width) {
             return ScreenCorner.Top;
 
         } else {
