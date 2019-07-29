@@ -267,8 +267,9 @@ public class SlidingCameraBehaviour : MonoBehaviour
         ClampCameraAltitude();
         ClampCameraXZPosition();
 
-        // It is mathematically incorrect to directly lerp on
-        // deltaTime like this, since we never get to the target (except by rounding I guess):
+        // Note: It is mathematically incorrect to directly lerp on deltaTime like this,
+        // since we would get infinitely closer to the target but never reach it.
+        // However, it works without issues (because of rounding I guess):
         transform.position =
                 Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
         transform.rotation =
