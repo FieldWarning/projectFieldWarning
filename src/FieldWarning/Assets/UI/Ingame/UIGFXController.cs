@@ -11,10 +11,8 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace PFW.UI.Ingame
 {
@@ -42,7 +40,6 @@ namespace PFW.UI.Ingame
         private RectTransform _rect;
 
         protected List<ColorTransition> _colorTransitions = new List<ColorTransition>();
-        protected List<ActivationTransition> _activationTransitions = new List<ActivationTransition>();
 
         protected UIState _currentState;
         protected UIState _nextState;
@@ -83,38 +80,24 @@ namespace PFW.UI.Ingame
 
             foreach (var transition in _colorTransitions)
                 transition.Animate(_lerp);
-            foreach (var transition in _activationTransitions)
-                transition.Animate(_lerp);
 
-            if (_lerp >= 1f) {
+            if (_lerp >= 1f)
                 _isAnimating = false;
-                _currentState = _nextState;
-                _nextState = null;
-            }
         }
 
         protected void TransitionToState(UIState state)
         {
-            _nextState = state;
-
-            if (!_isAnimating)
-                state = UIState.Diff(_currentState, state);
+            _currentState = state;
 
             _colorTransitions.Clear();
-            _activationTransitions.Clear();
             _lerp = 0f;
 
             foreach (ColorState colorState in state.StateColors)
                 _colorTransitions.Add(new ColorTransition(
                         colorState.Component,
                         colorState.Component.color,
-                        colorState.Color));
-
-            foreach (ActivationState activationState in state.StateActivations)
-                _activationTransitions.Add(new ActivationTransition(
-                        activationState.Component,
-                        activationState.Component.activeSelf,
-                        activationState.Activated));
+                        colorState.Color,
+                        colorState.Alpha));
 
             if (!_isAnimating)
                 _isAnimating = true;
@@ -123,10 +106,10 @@ namespace PFW.UI.Ingame
         protected void SetInitialState(UIState state)
         {
             foreach (ColorState colorState in state.StateColors)
-                colorState.Component.color = colorState.Color;
+                colorState.Component.color =
+                        UIColors.WithAlpha((Color) colorState.Color, (float) colorState.Alpha);
 
-            foreach (ActivationState activationState in state.StateActivations)
-                activationState.Component.SetActive(activationState.Activated);
+            _currentState = state;
         }
     }
 }

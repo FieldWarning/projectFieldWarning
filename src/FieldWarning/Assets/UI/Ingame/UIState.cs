@@ -12,36 +12,56 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+using NColor = System.Nullable<UnityEngine.Color>;
+using NFloat = System.Nullable<System.Single>;
+
 namespace PFW.UI.Ingame
 {
-    // Color State
     public class ColorState
     {
-        // TODO: Add alpha as a third argument?
         public Graphic Component;
-        public Color Color;
+        public NColor Color;
+        public NFloat Alpha;
 
-        public ColorState(Graphic component, Color color)
+        public ColorState(Graphic component, NColor color, NFloat alpha)
         {
             Component = component;
             Color = color;
+            Alpha = alpha;
         }
     }
     public class ColorTransition
     {
-        // TODO: Add alpha as a third and fifth argument?
         public Graphic Component;
         public Color ColorFrom;
         public Color ColorTo;
 
-        public ColorTransition(Graphic component, Color colorFrom, Color colorTo)
+        public ColorTransition(
+                Graphic component,
+                Color colorFrom,
+                NColor colorTo,
+                NFloat alphaTo)
         {
             Component = component;
             ColorFrom = colorFrom;
-            ColorTo = colorTo;
+
+            Vector3 rgb =
+                    (colorTo != null)
+                        ? new Vector3(
+                                ((Color) colorTo).r,
+                                ((Color) colorTo).g,
+                                ((Color) colorTo).b)
+                        : new Vector3(
+                                colorFrom.r,
+                                colorFrom.g,
+                                colorFrom.b);
+            float a = (float) (alphaTo != null ? alphaTo : colorFrom.a);
+
+            ColorTo = new Color(rgb.x, rgb.y, rgb.z, a);
         }
 
         public void Animate(float lerp)
@@ -51,73 +71,20 @@ namespace PFW.UI.Ingame
         }
     }
 
-    // Activation State
-    public class ActivationState
-    {
-        public GameObject Component;
-        public bool Activated;
-
-        public ActivationState(GameObject component, bool activated)
-        {
-            Component = component;
-            Activated = activated;
-        }
-    }
-    public class ActivationTransition
-    {
-        public GameObject Component;
-        public bool FromState;
-        public bool ToState;
-        private Graphic _graphic;
-        private Color _fromColor;
-        private Color _toColor;
-
-        public ActivationTransition(
-                GameObject component,
-                bool fromState,
-                bool toState)
-        {
-            Component = component;
-            FromState = fromState;
-            ToState = toState;
-            _graphic = component.GetComponent<Graphic>();
-            _fromColor = FromState ? _graphic.color : UIColors.WithAlpha(_graphic.color, 0f);
-            _toColor = ToState ? _graphic.color : UIColors.WithAlpha(_graphic.color, 0f);
-        }
-
-        public void Animate(float lerp)
-        {
-            if (!Component.activeSelf) {
-                _graphic.color = _fromColor;
-                Component.SetActive(true);
-            }
-
-            Color newColor = Color.Lerp(_fromColor, _toColor, lerp);
-            _graphic.color = newColor;
-
-            if (lerp >= 1f && ToState == false) {
-                Component.SetActive(false);
-                _graphic.color = _fromColor;
-            }
-        }
-    }
-
-    // Combined State
+    // TODO: This is basically just an abstraction for List<ColorState> that adds some helpful methods
+    // Maybe there's a better way to do this?
     public class UIState
     {
         public List<ColorState> StateColors;
-        public List<ActivationState> StateActivations;
 
-        public UIState(List<ColorState> stateColors, List<ActivationState> stateActivations)
+        public UIState(List<ColorState> stateColors)
         {
             StateColors = stateColors;
-            StateActivations = stateActivations;
         }
 
         public static UIState Diff(UIState fromState, UIState toState)
         {
             List<ColorState> colors = new List<ColorState>();
-            List<ActivationState> activations = new List<ActivationState>();
 
             foreach (ColorState fromColor in fromState.StateColors)
                 foreach (ColorState toColor in toState.StateColors)
@@ -125,13 +92,40 @@ namespace PFW.UI.Ingame
                             && fromColor.Color != toColor.Color)
                         colors.Add(toColor);
 
-            foreach (ActivationState fromActivation in fromState.StateActivations)
-                foreach (ActivationState toActivation in toState.StateActivations)
-                    if (fromActivation.Component == toActivation.Component
-                            && fromActivation.Activated != toActivation.Activated)
-                        activations.Add(toActivation);
+            return new UIState(colors);
+        }
 
-            return new UIState(colors, activations);
+        public static UIState Merge(List<ColorState> aColors, List<ColorState> bColors)
+        {
+            List<ColorState> original = aColors.Where(aColor => {
+                foreach (ColorState bColor in bColors)
+                    if (bColor.Component == aColor.Component)
+                        return false;
+                return true;
+            }).ToList();
+
+            List<ColorState> additions = bColors.Where(bColor => {
+                foreach (ColorState aColor in aColors)
+                    if (aColor.Component == bColor.Component)
+                        return false;
+                return true;
+            }).ToList();
+
+            List<ColorState> modifications = bColors.Where(bColor =>
+                    (!additions.Contains(bColor))).ToList();
+
+            foreach (ColorState mColor in modifications) {
+                ColorState aColor = aColors.Find(a => a.Component == mColor.Component);
+                mColor.Color = (mColor.Color != null) ? mColor.Color : aColor.Color;
+                mColor.Alpha = (mColor.Alpha != null) ? mColor.Alpha : aColor.Alpha;
+            }
+
+            List<ColorState> merged = new List<ColorState>();
+            merged.AddRange(original);
+            merged.AddRange(additions);
+            merged.AddRange(modifications);
+
+            return new UIState(merged);
         }
     }
 }
