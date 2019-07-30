@@ -12,16 +12,18 @@
  */
 
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
 /**
  * Sliding camera is our main RTS cam. It is wargame-like and provides almost entirely free movement. Zooming in goes toward the cursor ("sliding"), zooming out moves back and up at a fixed angle. The camera faces up slightly when zoomed all the way into the ground, and tries to restore its facing when zoomed out again.
- * 
+ *
  * Restrictions:
  * - Players can't look too far up or down.
  * - There are minimal and maximal altitudes to prevent going below the level.
- * 
+ *
  * TODO:
  * - Maybe prevent the camera from clipping into units.
  * - A/B test values for a better feel.
@@ -29,11 +31,17 @@ using UnityEngine.UI;
 public class SlidingCameraBehaviour : MonoBehaviour
 {
     [Header("Translational Movement")]
-    [SerializeField] private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _borderPanningOffset = 2;    //Pixels
-    [SerializeField] private float _borderPanningCornerSize = 200;    //Pixels
-    [SerializeField] private float _maxCameraHorizontalDistanceFromTerrain = 5000f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _borderPanningOffset = 2; // Pixels
+    [SerializeField]
+    private float _borderPanningCornerSize = 200; // Pixels
+    [SerializeField]
+    private float _maxCameraHorizontalDistanceFromTerrain =
+            5000f * TerrainConstants.MAP_SCALE;
 
     private Image _cornerArrowBottomLeft;
     private Image _cornerArrowBottomRight;
@@ -45,20 +53,32 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private Image _sideArrowBottom;
 
     [Header("Rotational Movement")]
-    [SerializeField] private float _horizontalRotationSpeed = 600f;
-    [SerializeField] private float _verticalRotationSpeed = 600f;
-    [SerializeField] private float _rotLerpSpeed = 10f;
-    [SerializeField] private float _maxCameraAngle = 85f;
-    [SerializeField] private float _minCameraAngle = 5f;
+    [SerializeField]
+    private float _horizontalRotationSpeed = 600f;
+    [SerializeField]
+    private float _verticalRotationSpeed = 600f;
+    [SerializeField]
+    private float _rotLerpSpeed = 10f;
+    [SerializeField]
+    private float _maxCameraAngle = 85f;
+    [SerializeField]
+    private float _minCameraAngle = 5f;
 
     [Header("Zoom Level")]
-    [SerializeField] private float _zoomSpeed = 5000f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _zoomTiltSpeed = 4f;
-    [SerializeField] private float _minAltitude = 1.0f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _tiltThreshold = 2f;
-    [SerializeField] private float _maxAltitude = 20000f * TerrainConstants.MAP_SCALE;
-    [SerializeField] private float _heightSpeedScaling = 0.75f;
-    [SerializeField] private float _zoomOutAngle = 45f;
+    [SerializeField]
+    private float _zoomSpeed = 5000f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _zoomTiltSpeed = 4f;
+    [SerializeField]
+    private float _minAltitude = 1.0f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _tiltThreshold = 2f;
+    [SerializeField]
+    private float _maxAltitude = 20000f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _heightSpeedScaling = 0.75f;
+    [SerializeField]
+    private float _zoomOutAngle = 45f;
 
     private Vector3 _zoomOutDirection;
 
@@ -77,37 +97,43 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private Camera _cam;
 
-    public void SetTargetPosition(Vector3 target)
+    private Terrain _terrain;
+
+    [Serializable]
+    private struct TerrainMaterial
     {
-        _targetPosition = target;
-        _translateX = 0;
-        _translateZ = 0;
-        _leftoverZoom = 0;
+#pragma warning disable 0649
+        public Material Material;
+        public MicroSplatPropData PerTextureData;
+        public MicroSplatKeywords Keywords;
+        public float MaxAltitude;
+#pragma warning restore 0649
     }
 
-    public void LookAt(Vector3 target)
-    {
-
-        var toTarget = target - _targetPosition;
-        var rotFromX = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)), Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
-        var rotFromY = Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)), Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
-        _rotateX += rotFromX;
-        _rotateY += rotFromY;
-    }
-
-    // If we allow the camera to get to height = 0 we would need special cases for the height scaling.
-    private float GetScaledPanSpeed()
-    {
-        return _panSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
-    }
-
-    private float GetScaledZoomSpeed()
-    {
-        return _zoomSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
-    }
+    [Header("Microsplat Terrain Materials")]
+    [SerializeField]
+    [Tooltip("Must be sorted in ascending order. The first material whose max altitude "
+        + "is higher than the current camera altitude will be applied to the terrain.")]
+    List<TerrainMaterial> _terrainMaterials = null;
+    [SerializeField]
+    private MicroSplatTerrain _microSplatTerrain = null;
 
     private void Awake()
     {
+        _terrain = Terrain.activeTerrain;
+
+        if (_microSplatTerrain == null) {
+            _microSplatTerrain = _terrain.GetComponent<MicroSplatTerrain>();
+        }
+
+        if (_microSplatTerrain == null) {
+            throw new Exception("Camera not set up correctly, microsplat reference missing!");
+        }
+
+        if (_terrainMaterials == null || _terrainMaterials.Count == 0) {
+            throw new Exception("Camera not set up correctly, terrain materials missing!");
+        }
+
         _cam = GetComponent<Camera>();
     }
 
@@ -159,22 +185,54 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
         _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
 
-        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
-        {
+        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
             //Try border panning with mouse
             PanFromScreenBorder();
-        }
-        else
-        {
+        } else {
             SetPanningCursor(ScreenCorner.None);
         }
 
         AimedZoom();
 
-        if (Input.GetMouseButton(2))
-        {
+        if (Input.GetMouseButton(2)) {
             RotateCamera();
         }
+    }
+
+    public void SetTargetPosition(Vector3 target)
+    {
+        _targetPosition = target;
+        _translateX = 0;
+        _translateZ = 0;
+        _leftoverZoom = 0;
+    }
+
+    public void LookAt(Vector3 target)
+    {
+
+        var toTarget = target - _targetPosition;
+        var rotFromX =
+                Vector3.Angle(
+                        Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)),
+                        Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
+        var rotFromY =
+                Vector3.Angle(
+                        Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)),
+                        Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
+        _rotateX += rotFromX;
+        _rotateY += rotFromY;
+    }
+
+    // If we allow the camera to get to height = 0 we would
+    // need special cases for the height scaling.
+    private float GetScaledPanSpeed()
+    {
+        return _panSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
+    }
+
+    private float GetScaledZoomSpeed()
+    {
+        return _zoomSpeed * Time.deltaTime * Mathf.Pow(transform.position.y, _heightSpeedScaling);
     }
 
     private void LateUpdate()
@@ -183,7 +241,9 @@ public class SlidingCameraBehaviour : MonoBehaviour
         var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
         _targetPosition += transform.TransformDirection(dx * Vector3.right);
 
-        // If we move forward in local space, camera will also change altitude. To properly move forward, we have to rotate the forward vector to be horizontal in world space while keeping the magnitude:
+        // If we move forward in local space, camera will also change altitude.
+        // To properly move forward, we have to rotate the forward vector to be
+        // horizontal in world space while keeping the magnitude:
         var worldForward = transform.TransformDirection(Vector3.forward);
         var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
         _targetPosition += angle * worldForward * dz;
@@ -207,13 +267,22 @@ public class SlidingCameraBehaviour : MonoBehaviour
         ClampCameraAltitude();
         ClampCameraXZPosition();
 
-        // It is mathematically incorrect to directly lerp on deltaTime like this, since we never get to the target (except by rounding I guess):
-        transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(_rotateX, _rotateY, 0f), Time.deltaTime * _rotLerpSpeed);
+        // Note: It is mathematically incorrect to directly lerp on deltaTime like this,
+        // since we would get infinitely closer to the target but never reach it.
+        // However, it works without issues (because of rounding I guess):
+        transform.position =
+                Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
+        transform.rotation =
+                Quaternion.Slerp(
+                        transform.rotation,
+                        Quaternion.Euler(_rotateX, _rotateY, 0f),
+                        Time.deltaTime * _rotLerpSpeed);
+
+        MaybeChangeTerrainMaterial();
     }
 
     /// <summary>
-    /// When zooming in we gradually approach whatever the cursor is pointing at. 
+    /// When zooming in we gradually approach whatever the cursor is pointing at.
     /// </summary>
     private void AimedZoom()
     {
@@ -274,68 +343,122 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         _targetPosition.y = Mathf.Clamp(
                 _targetPosition.y,
-                Terrain.activeTerrain.SampleHeight(_targetPosition) + _minAltitude,
+                _terrain.SampleHeight(_targetPosition) + _minAltitude,
                 _maxAltitude);
     }
 
     private void PanFromScreenBorder()
     {
-        if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
-            && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
-            || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
-            && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) { //Lower-left screen corner
-            SetPanningCursor(ScreenCorner.BottomLeft);
+        ScreenCorner mouseScreenCorner = GetScreenCornerForMousePosition(Input.mousePosition);
+
+        SetPanningCursor(mouseScreenCorner);
+
+        switch (mouseScreenCorner) {
+
+        case ScreenCorner.BottomLeft:
             _translateX += -1 * GetScaledPanSpeed();
             _translateZ += -1 * GetScaledPanSpeed();
+            break;
 
-        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y <= _borderPanningCornerSize && Input.mousePosition.y >= 0)
-            || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0)) {  //Lower-right screen corner
-            SetPanningCursor(ScreenCorner.BottomRight);
+        case ScreenCorner.BottomRight:
             _translateX += 1 * GetScaledPanSpeed();
             _translateZ += -1 * GetScaledPanSpeed();
+            break;
 
-        } else if ((Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
-            && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
-            || (Input.mousePosition.x <= _borderPanningCornerSize && Input.mousePosition.x >= 0
-            && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-left screen corner
-            SetPanningCursor(ScreenCorner.TopLeft);
+        case ScreenCorner.TopLeft:
             _translateX += -1 * GetScaledPanSpeed();
             _translateZ += 1 * GetScaledPanSpeed();
+            break;
 
-        } else if ((Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y >= Screen.height - _borderPanningCornerSize && Input.mousePosition.y <= Screen.height)
-            || (Input.mousePosition.x >= Screen.width - _borderPanningCornerSize && Input.mousePosition.x <= Screen.width
-            && Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height)) {  //Upper-right screen corner
-            SetPanningCursor(ScreenCorner.TopRight);
+        case ScreenCorner.TopRight:
             _translateX += 1 * GetScaledPanSpeed();
             _translateZ += 1 * GetScaledPanSpeed();
+            break;
 
-        } else {    //Border of screen but not corners
-            if (Input.mousePosition.x <= _borderPanningOffset && Input.mousePosition.x >= 0
-                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Left screen side
-                SetPanningCursor(ScreenCorner.Left);
-                _translateX += -1 * GetScaledPanSpeed();
+        case ScreenCorner.Left:
+            _translateX += -1 * GetScaledPanSpeed();
+            break;
 
-            } else if (Input.mousePosition.x >= Screen.width - _borderPanningOffset && Input.mousePosition.x <= Screen.width
-                && Input.mousePosition.y >= 0 && Input.mousePosition.y <= Screen.height) {  //Right screen side
-                SetPanningCursor(ScreenCorner.Right);
-                _translateX += 1 * GetScaledPanSpeed();
+        case ScreenCorner.Right:
+            _translateX += 1 * GetScaledPanSpeed();
+            break;
 
-            } else if (Input.mousePosition.y <= _borderPanningOffset && Input.mousePosition.y >= 0
-                && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Bottom screen side
-                SetPanningCursor(ScreenCorner.Bottom);
-                _translateZ += -1 * GetScaledPanSpeed();
+        case ScreenCorner.Bottom:
+            _translateZ += -1 * GetScaledPanSpeed();
+            break;
 
-            } else if (Input.mousePosition.y >= Screen.height - _borderPanningOffset && Input.mousePosition.y <= Screen.height
-                && Input.mousePosition.x >= 0 && Input.mousePosition.x <= Screen.width) {   //Top screen side
-                SetPanningCursor(ScreenCorner.Top);
-                _translateZ += 1 * GetScaledPanSpeed();
+        case ScreenCorner.Top:
+            _translateZ += 1 * GetScaledPanSpeed();
+            break;
 
-            } else {
-                SetPanningCursor(ScreenCorner.None);
-            }
+        case ScreenCorner.None:
+            break;
+        }
+    }
+
+    private ScreenCorner GetScreenCornerForMousePosition(Vector2 mousePosition)
+    {
+        if ((mousePosition.x <= _borderPanningOffset && mousePosition.x >= 0
+                && mousePosition.y <= _borderPanningCornerSize
+                && mousePosition.y >= 0)
+                || (mousePosition.x <= _borderPanningCornerSize
+                && mousePosition.x >= 0
+                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) {
+            return ScreenCorner.BottomLeft;
+
+        } else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+                && mousePosition.x <= Screen.width
+                && mousePosition.y <= _borderPanningCornerSize && mousePosition.y >= 0)
+                || (mousePosition.x >= Screen.width - _borderPanningCornerSize
+                && mousePosition.x <= Screen.width
+                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) {
+            return ScreenCorner.BottomRight;
+
+        } else if ((mousePosition.x <= _borderPanningOffset
+                && mousePosition.x >= 0
+                && mousePosition.y >= Screen.height - _borderPanningCornerSize
+                && mousePosition.y <= Screen.height)
+                || (mousePosition.x <= _borderPanningCornerSize
+                && mousePosition.x >= 0
+                && mousePosition.y >= Screen.height - _borderPanningOffset
+                && mousePosition.y <= Screen.height)) {
+            return ScreenCorner.TopLeft;
+
+        } else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+                && mousePosition.x <= Screen.width
+                && mousePosition.y >= Screen.height - _borderPanningCornerSize
+                && mousePosition.y <= Screen.height)
+                || (mousePosition.x >= Screen.width - _borderPanningCornerSize
+                && mousePosition.x <= Screen.width
+                && mousePosition.y >= Screen.height - _borderPanningOffset
+                && mousePosition.y <= Screen.height)) {
+            return ScreenCorner.TopRight;
+
+        } else if (mousePosition.x <= _borderPanningOffset
+                && mousePosition.x >= 0
+                && mousePosition.y >= 0
+                && mousePosition.y <= Screen.height) {
+            return ScreenCorner.Left;
+
+        } else if (mousePosition.x >= Screen.width - _borderPanningOffset
+                && mousePosition.x <= Screen.width
+                && mousePosition.y >= 0 && mousePosition.y <= Screen.height) {
+            return ScreenCorner.Right;
+
+        } else if (mousePosition.y <= _borderPanningOffset
+                && mousePosition.y >= 0
+                && mousePosition.x >= 0
+                && mousePosition.x <= Screen.width) {
+            return ScreenCorner.Bottom;
+
+        } else if (mousePosition.y >= Screen.height - _borderPanningOffset
+                && mousePosition.y <= Screen.height
+                && mousePosition.x >= 0
+                && mousePosition.x <= Screen.width) {
+            return ScreenCorner.Top;
+
+        } else {
+            return ScreenCorner.None;
         }
     }
 
@@ -343,12 +466,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         _targetPosition.x = Mathf.Clamp(
                 _targetPosition.x,
-                Terrain.activeTerrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
-                Terrain.activeTerrain.GetPosition().x + Terrain.activeTerrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
+                _terrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
+                _terrain.GetPosition().x + _terrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
         _targetPosition.z = Mathf.Clamp(
                 _targetPosition.z,
-                Terrain.activeTerrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
-                Terrain.activeTerrain.GetPosition().z + Terrain.activeTerrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
+                _terrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
+                _terrain.GetPosition().z + _terrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
     }
 
     private void SetPanningCursor(ScreenCorner corner)
@@ -406,6 +529,34 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _sideArrowRight.enabled = false;
         _sideArrowTop.enabled = false;
         _sideArrowBottom.enabled = false;
+    }
+
+    /// <summary>
+    /// Based on camera distance, change terrain settings to improve appearance.
+    ///
+    /// TODO: we need to write our own shader instead of employing this hack
+    /// </summary>
+    private void MaybeChangeTerrainMaterial()
+    {
+        float camAltitude = transform.position.y - _terrain.transform.position.y;
+
+        foreach (TerrainMaterial mat in _terrainMaterials) {
+            if (camAltitude < mat.MaxAltitude) {
+
+                if (_microSplatTerrain.templateMaterial != mat.Material) {
+
+                    _microSplatTerrain.templateMaterial = mat.Material;
+
+                    // In the inspector this is the "Debug/Keywords" field.
+                    _microSplatTerrain.keywordSO = mat.Keywords;
+                    // In the inspector this is the "Debug/Per Texture Data" field.
+                    _microSplatTerrain.propData = mat.PerTextureData;
+
+                    _microSplatTerrain.Sync();
+                }
+                break;
+            }
+        }
     }
 
     enum ScreenCorner
