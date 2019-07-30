@@ -41,29 +41,27 @@ namespace PFW.UI.Ingame
         private RectTransform _targetRect;
         private RectTransform _rect;
 
-        protected class ComponentState
+        // Color State
+        protected class ColorState
         {
             public Graphic Component;
             public Color Color;
 
-            public ComponentState(Graphic component, Color color)
+            public ColorState(Graphic component, Color color)
             {
                 Component = component;
                 Color = color;
             }
         }
-
-        protected List<ComponentState> _uiState;
-
-        protected class Transition
+        protected class ColorTransition
         {
-            public Graphic Graphic;
+            public Graphic Component;
             public Color ColorFrom;
             public Color ColorTo;
 
-            public Transition(Graphic component, Color colorFrom, Color colorTo)
+            public ColorTransition(Graphic component, Color colorFrom, Color colorTo)
             {
-                Graphic = component;
+                Component = component;
                 ColorFrom = colorFrom;
                 ColorTo = colorTo;
             }
@@ -71,11 +69,81 @@ namespace PFW.UI.Ingame
             public void Animate(float lerp)
             {
                 Color newColor = Color.Lerp(ColorFrom, ColorTo, lerp);
-                Graphic.color = newColor;
+                Component.color = newColor;
+            }
+        }
+        protected List<ColorTransition> _colorTransitions = new List<ColorTransition>();
+
+        // Activation State
+        protected class ActivationState
+        {
+            public GameObject Component;
+            public bool Activated;
+
+            public ActivationState(GameObject component, bool activated)
+            {
+                Component = component;
+                Activated = activated;
+            }
+        }
+        protected class ActivationTransition
+        {
+            public GameObject Component;
+            public bool FromState;
+            public bool ToState;
+            private Graphic _graphic;
+            private Color _fromColor;
+            private Color _toColor;
+            private UIGFXController _host;
+
+            public ActivationTransition(
+                    ref GameObject component,
+                    bool fromState,
+                    bool toState,
+                    UIGFXController host)
+            {
+                Component = component;
+                FromState = fromState;
+                ToState = toState;
+                _host = host;
+                _graphic = component.GetComponent<Graphic>();
+                _fromColor = FromState ? _graphic.color : host.GetColorWithAlpha(_graphic.color, 0f);
+                _toColor = ToState ? _graphic.color : host.GetColorWithAlpha(_graphic.color, 0f);
+            }
+
+            public void Animate(float lerp)
+            {
+                if (!Component.activeSelf) {
+                    _graphic.color = _fromColor;
+                    Component.SetActive(true);
+                }
+
+                Color newColor = Color.Lerp(_fromColor, _toColor, lerp);
+                _graphic.color = newColor;
+
+                if (lerp >= 1f && ToState == false) {
+                    Component.SetActive(false);
+                    _graphic.color = _fromColor;
+                }
+            }
+        }
+        protected List<ActivationTransition> _activationTransitions = new List<ActivationTransition>();
+
+        // Combined State
+        protected class UIState
+        {
+            public List<ColorState> StateColors;
+            public List<ActivationState> StateActivations;
+
+            public UIState(List<ColorState> stateColors, List<ActivationState> stateActivations)
+            {
+                StateColors = stateColors;
+                StateActivations = stateActivations;
             }
         }
 
-        protected List<Transition> _transitionList = new List<Transition>();
+        protected UIState _currentState;
+        protected UIState _nextState;
 
         protected float _lerp;
         protected bool _isAnimating = false;
@@ -111,11 +179,16 @@ namespace PFW.UI.Ingame
         {
             _lerp = Mathf.Clamp(_lerp + Time.deltaTime * _animationSpeed, 0f, 1f);
 
-            foreach (var transition in _transitionList)
+            foreach (var transition in _colorTransitions)
+                transition.Animate(_lerp);
+            foreach (var transition in _activationTransitions)
                 transition.Animate(_lerp);
 
-            if (_lerp >= 1f)
+            if (_lerp >= 1f) {
                 _isAnimating = false;
+                _currentState = _nextState;
+                _nextState = null;
+            }
         }
 
         // TODO: Find out if Unity already has a utility like this, and if not, move it to a static class
@@ -124,19 +197,53 @@ namespace PFW.UI.Ingame
             return new Color(color.r, color.g, color.b, alpha);
         }
 
-        protected void TransitionToState(List<ComponentState> state)
+        // protected void TransitionToState(List<ColorState> state)
+        protected void TransitionToState(UIState state)
         {
-            _transitionList.Clear();
+            _nextState = state;
+
+            if (!_isAnimating)
+                state = DiffStates(_currentState, state);
+
+            _colorTransitions.Clear();
+            _activationTransitions.Clear();
             _lerp = 0f;
 
-            foreach (ComponentState componentState in state)
-                _transitionList.Add(new Transition(
-                        componentState.Component,
-                        componentState.Component.color,
-                        componentState.Color));
+            foreach (ColorState colorState in state.StateColors)
+                _colorTransitions.Add(new ColorTransition(
+                        colorState.Component,
+                        colorState.Component.color,
+                        colorState.Color));
+
+            foreach (ActivationState activationState in state.StateActivations)
+                _activationTransitions.Add(new ActivationTransition(
+                        ref activationState.Component,
+                        activationState.Component.activeSelf,
+                        activationState.Activated,
+                        this));
 
             if (!_isAnimating)
                 _isAnimating = true;
+        }
+
+        private UIState DiffStates(UIState fromState, UIState toState)
+        {
+            List<ColorState> colors = new List<ColorState>();
+            List<ActivationState> activations = new List<ActivationState>();
+
+            foreach (ColorState fromColor in fromState.StateColors)
+                foreach (ColorState toColor in toState.StateColors)
+                    if (fromColor.Component == toColor.Component
+                            && fromColor.Color != toColor.Color)
+                        colors.Add(toColor);
+
+            foreach (ActivationState fromActivation in fromState.StateActivations)
+                foreach (ActivationState toActivation in toState.StateActivations)
+                    if (fromActivation.Component == toActivation.Component
+                            && fromActivation.Activated != toActivation.Activated)
+                        activations.Add(toActivation);
+
+            return new UIState(colors, activations);
         }
     }
 }
