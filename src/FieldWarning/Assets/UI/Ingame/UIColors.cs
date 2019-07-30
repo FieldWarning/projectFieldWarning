@@ -35,6 +35,11 @@ namespace PFW.UI.Ingame
             default:                throw new Exception($"Unknown color `{color}` requested!");
             }
         }
+
+        public static Color WithAlpha(Color color, float alpha)
+        {
+            return new Color(color.r, color.g, color.b, alpha);
+        }
     }
 
     public enum UIColor

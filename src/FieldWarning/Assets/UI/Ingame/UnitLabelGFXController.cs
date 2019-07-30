@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -73,12 +73,12 @@ namespace PFW.UI.Ingame
             base.Start();
             _unitIcon.color = Color.white;
             _unitName.color = Color.white;
-            _weaponStatusIcon.color = new Color(_accentColor.r, _accentColor.g, _accentColor.b, _weaponStatusIdleAlpha);
+            _weaponStatusIcon.color = UIColors.WithAlpha(_accentColor, _weaponStatusIdleAlpha);
 
             _defaultState = new UIState(
                     new List<ColorState> {
-                        new ColorState(_colorSprite, GetColorWithAlpha(_baseColor, _colorAlpha)),
-                        new ColorState(_borderSprite, GetColorWithAlpha(_accentColor, _borderAlpha)),
+                        new ColorState(_colorSprite, UIColors.WithAlpha(_baseColor, _colorAlpha)),
+                        new ColorState(_borderSprite, UIColors.WithAlpha(_accentColor, _borderAlpha)),
                         new ColorState(_unitName, Color.white),
                         new ColorState(_unitIcon, Color.white),
                         new ColorState(_weaponStatusIcon, _accentColor)
