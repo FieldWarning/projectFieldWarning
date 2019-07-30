@@ -22,10 +22,26 @@ namespace PFW.UI.Ingame
     [ExecuteAlways]
     public class UnitLabelGFXController : UIGFXController
     {
-        [Header("Main Components")]
+        [Header("Functional Components")]
     #pragma warning disable 0649
         [SerializeField]
+        private ButtonGFXController _buttonGFX;
+
+        [SerializeField]
         private Button _button;
+
+        [Header("Graphical Components")]
+        [SerializeField]
+        private Image _colorSprite;
+
+        [SerializeField]
+        private Image _borderSprite;
+
+        [SerializeField]
+        private GameObject _dropShadow;
+
+        [SerializeField]
+        private GameObject _selectionGlow;
 
         [SerializeField]
         private TextMeshProUGUI _unitName;
@@ -48,12 +64,77 @@ namespace PFW.UI.Ingame
         private float _borderAlpha = 0.525f;
         private float _weaponStatusIdleAlpha = 0.3f;
 
+        private UIState _defaultState;
+        private UIState _hoverState;
+        private UIState _selectedState;
+
         protected override void Start()
         {
             base.Start();
             _unitIcon.color = Color.white;
             _unitName.color = Color.white;
             _weaponStatusIcon.color = new Color(_accentColor.r, _accentColor.g, _accentColor.b, _weaponStatusIdleAlpha);
+
+            _defaultState = new UIState(
+                    new List<ColorState> {
+                        new ColorState(_colorSprite, GetColorWithAlpha(_baseColor, _colorAlpha)),
+                        new ColorState(_borderSprite, GetColorWithAlpha(_accentColor, _borderAlpha)),
+                        new ColorState(_unitName, Color.white),
+                        new ColorState(_unitIcon, Color.white),
+                        new ColorState(_weaponStatusIcon, _accentColor)
+                    },
+                    new List<ActivationState> {
+                        new ActivationState(_dropShadow, true),
+                        new ActivationState(_selectionGlow, false)
+                    });
+
+            _hoverState = new UIState(
+                    new List<ColorState> {
+                        new ColorState(_colorSprite, _baseColor),
+                        new ColorState(_borderSprite, _accentColor),
+                        new ColorState(_unitName, Color.white),
+                        new ColorState(_unitIcon, Color.white),
+                        new ColorState(_weaponStatusIcon, _accentColor)
+                    },
+                    new List<ActivationState>{
+                        new ActivationState(_dropShadow, true),
+                        new ActivationState(_selectionGlow, false)
+                    });
+
+            _selectedState = new UIState(
+                    new List<ColorState> {
+                        new ColorState(_colorSprite, Color.white),
+                        new ColorState(_borderSprite, _baseColor),
+                        new ColorState(_unitName, _baseColor),
+                        new ColorState(_unitIcon, _baseColor),
+                        new ColorState(_weaponStatusIcon, _baseColor)
+                    },
+                    new List<ActivationState>{
+                        new ActivationState(_dropShadow, false),
+                        new ActivationState(_selectionGlow, true)
+                    });
+
+            _currentState = _defaultState;
+        }
+
+        public void OnButtonClick()
+        {
+            if (_currentState != _selectedState)
+                TransitionToState(_selectedState);
+            else
+                TransitionToState(_hoverState);
+        }
+
+        public void OnButtonMouseover()
+        {
+            if (_currentState != _selectedState)
+                TransitionToState(_hoverState);
+        }
+
+        public void OnButtonMouseout()
+        {
+            if (_currentState != _selectedState)
+                TransitionToState(_defaultState);
         }
     }
 }
