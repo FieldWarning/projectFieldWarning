@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -24,8 +24,8 @@ namespace PFW.UI.Ingame
     {
         [Header("Functional Components")]
     #pragma warning disable 0649
-        [SerializeField]
-        private ButtonGFXController _buttonGFX;
+        // [SerializeField]
+        // private ButtonGFXController _buttonGFX;
 
         [SerializeField]
         private Button _button;
@@ -38,10 +38,10 @@ namespace PFW.UI.Ingame
         private Image _borderSprite;
 
         [SerializeField]
-        private GameObject _dropShadow;
+        private Image _dropShadow;
 
         [SerializeField]
-        private GameObject _selectionGlow;
+        private Image _selectionGlow;
 
         [SerializeField]
         private TextMeshProUGUI _unitName;
@@ -75,66 +75,57 @@ namespace PFW.UI.Ingame
             _unitName.color = Color.white;
             _weaponStatusIcon.color = UIColors.WithAlpha(_accentColor, _weaponStatusIdleAlpha);
 
-            _defaultState = new UIState(
+            _defaultState = new UIState(new List<ColorState> {
+                    new ColorState(_colorSprite, _baseColor, _colorAlpha),
+                    new ColorState(_borderSprite, _accentColor, _borderAlpha),
+                    new ColorState(_unitName, Color.white, 1f),
+                    new ColorState(_unitIcon, Color.white, 1f),
+                    new ColorState(_weaponStatusIcon, _accentColor, _weaponStatusIdleAlpha),
+                    new ColorState(_dropShadow, Color.white, 1f),
+                    new ColorState(_selectionGlow, _accentColor, 0f)});
+
+            _hoverState = UIState.Merge(
+                    _defaultState.StateColors,
                     new List<ColorState> {
-                        new ColorState(_colorSprite, UIColors.WithAlpha(_baseColor, _colorAlpha)),
-                        new ColorState(_borderSprite, UIColors.WithAlpha(_accentColor, _borderAlpha)),
-                        new ColorState(_unitName, Color.white),
-                        new ColorState(_unitIcon, Color.white),
-                        new ColorState(_weaponStatusIcon, _accentColor)
-                    },
-                    new List<ActivationState> {
-                        new ActivationState(_dropShadow, true),
-                        new ActivationState(_selectionGlow, false)
+                        new ColorState(_colorSprite, null, 1f),
+                        new ColorState(_borderSprite, null, 1f)
                     });
 
-            _hoverState = new UIState(
+            _selectedState = UIState.Merge(
+                    _defaultState.StateColors,
                     new List<ColorState> {
-                        new ColorState(_colorSprite, _baseColor),
-                        new ColorState(_borderSprite, _accentColor),
-                        new ColorState(_unitName, Color.white),
-                        new ColorState(_unitIcon, Color.white),
-                        new ColorState(_weaponStatusIcon, _accentColor)
-                    },
-                    new List<ActivationState>{
-                        new ActivationState(_dropShadow, true),
-                        new ActivationState(_selectionGlow, false)
+                        new ColorState(_colorSprite, Color.white, 1f),
+                        new ColorState(_borderSprite, _baseColor, 1f),
+                        new ColorState(_unitIcon, _baseColor, 1f),
+                        new ColorState(_unitName, _baseColor, 1f),
+                        new ColorState(_dropShadow, null, 0f),
+                        new ColorState(_selectionGlow, null, 1f)
                     });
 
-            _selectedState = new UIState(
-                    new List<ColorState> {
-                        new ColorState(_colorSprite, Color.white),
-                        new ColorState(_borderSprite, _baseColor),
-                        new ColorState(_unitName, _baseColor),
-                        new ColorState(_unitIcon, _baseColor),
-                        new ColorState(_weaponStatusIcon, _baseColor)
-                    },
-                    new List<ActivationState>{
-                        new ActivationState(_dropShadow, false),
-                        new ActivationState(_selectionGlow, true)
-                    });
-
-            _currentState = _defaultState;
+            SetInitialState(_defaultState);
         }
 
         public void OnButtonClick()
         {
-            if (_currentState != _selectedState)
+            if (_currentState != _selectedState) {
                 TransitionToState(_selectedState);
-            else
+            } else {
                 TransitionToState(_hoverState);
+            }
         }
 
         public void OnButtonMouseover()
         {
-            if (_currentState != _selectedState)
+            if (_currentState != _selectedState) {
                 TransitionToState(_hoverState);
+            }
         }
 
         public void OnButtonMouseout()
         {
-            if (_currentState != _selectedState)
+            if (_currentState != _selectedState) {
                 TransitionToState(_defaultState);
+            }
         }
     }
 }
