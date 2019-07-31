@@ -65,8 +65,6 @@ namespace PFW.UI.Ingame
         }
     }
 
-    // TODO: This is basically just an abstraction for List<ColorState> that adds some helpful methods
-    // Maybe there's a better way to do this?
     public class UIState
     {
         public List<ColorState> ColorStates;
