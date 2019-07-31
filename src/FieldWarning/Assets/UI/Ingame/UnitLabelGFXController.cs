@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -148,15 +148,10 @@ namespace PFW.UI.Ingame
 
         private UIState GenerateState()
         {
-            return new UIState(
-                    UIState.Merge(
-                            GetWeaponStatusState(),
-                            UIState.Merge(
-                                    GetSelectedState(),
-                                    GetHoverState()
-                                    )
-                            )
-                    );
+            return UIState.Merge(
+                    GetHoverState(),
+                    GetSelectedState(),
+                    GetWeaponStatusState());
         }
 
         protected override void Start()
