@@ -49,16 +49,10 @@ namespace PFW.UI.Ingame
             Component = component;
             ColorFrom = colorFrom;
 
-            Vector3 rgb =
-                    (colorTo != null)
-                        ? new Vector3(
-                                ((Color) colorTo).r,
-                                ((Color) colorTo).g,
-                                ((Color) colorTo).b)
-                        : new Vector3(
-                                colorFrom.r,
-                                colorFrom.g,
-                                colorFrom.b);
+            Vector3 rgb = (colorTo != null)
+                    ? UIColors.RGB((Color) colorTo)
+                    : UIColors.RGB(colorFrom);
+
             float a = (float) (alphaTo != null ? alphaTo : colorFrom.a);
 
             ColorTo = new Color(rgb.x, rgb.y, rgb.z, a);
