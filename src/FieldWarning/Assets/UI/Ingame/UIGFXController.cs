@@ -92,7 +92,7 @@ namespace PFW.UI.Ingame
             _colorTransitions.Clear();
             _lerp = 0f;
 
-            foreach (ColorState colorState in state.StateColors)
+            foreach (ColorState colorState in state.ColorStates)
                 _colorTransitions.Add(new ColorTransition(
                         colorState.Component,
                         colorState.Component.color,
@@ -105,7 +105,7 @@ namespace PFW.UI.Ingame
 
         protected void SetInitialState(UIState state)
         {
-            foreach (ColorState colorState in state.StateColors)
+            foreach (ColorState colorState in state.ColorStates)
                 colorState.Component.color =
                         UIColors.WithAlpha((Color) colorState.Color, (float) colorState.Alpha);
 
