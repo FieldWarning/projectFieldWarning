@@ -87,7 +87,7 @@ namespace PFW.UI.Ingame
             float alpha;
 
             if (_weaponState == WeaponState.Idle)
-                alpha = 0.3f;
+                alpha = 0.525f;
             else
                 alpha = 1f;
 
