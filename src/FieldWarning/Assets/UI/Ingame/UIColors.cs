@@ -36,6 +36,11 @@ namespace PFW.UI.Ingame
             }
         }
 
+        public static Vector3 RGB(Color color)
+        {
+            return new Vector3(color.r, color.g, color.b);
+        }
+
         public static Color WithAlpha(Color color, float alpha)
         {
             return new Color(color.r, color.g, color.b, alpha);
