@@ -75,19 +75,19 @@ namespace PFW.UI.Ingame
     // Maybe there's a better way to do this?
     public class UIState
     {
-        public List<ColorState> StateColors;
+        public List<ColorState> ColorStates;
 
-        public UIState(List<ColorState> stateColors)
+        public UIState(List<ColorState> colorStates)
         {
-            StateColors = stateColors;
+            ColorStates = colorStates;
         }
 
         public static UIState Diff(UIState fromState, UIState toState)
         {
             List<ColorState> colors = new List<ColorState>();
 
-            foreach (ColorState fromColor in fromState.StateColors)
-                foreach (ColorState toColor in toState.StateColors)
+            foreach (ColorState fromColor in fromState.ColorStates)
+                foreach (ColorState toColor in toState.ColorStates)
                     if (fromColor.Component == toColor.Component
                             && fromColor.Color != toColor.Color)
                         colors.Add(toColor);
