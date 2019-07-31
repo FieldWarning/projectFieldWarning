@@ -11,7 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,72 +59,160 @@ namespace PFW.UI.Ingame
         private TextMeshProUGUI _routingIcon;
     #pragma warning restore 0649
 
-        private float _colorAlpha = 0.7f;
-        private float _borderAlpha = 0.525f;
-        private float _weaponStatusIdleAlpha = 0.3f;
+        private SelectedState _selectedState = SelectedState.Deselected;
+        private WeaponState _weaponState = WeaponState.Idle;
+        private HoverState _hoverState = HoverState.Default;
 
-        private UIState _defaultState;
-        private UIState _hoverState;
-        private UIState _selectedState;
+        private enum SelectedState
+        {
+            Deselected,
+            Selected
+        }
+
+        private enum HoverState
+        {
+            Default,
+            Hover
+        }
+
+        private enum WeaponState
+        {
+            Idle,
+            Aiming
+        }
+
+        private List<ColorState> GetWeaponStatusState()
+        {
+            Color color;
+            float alpha;
+
+            if (_weaponState == WeaponState.Idle)
+                alpha = 0.3f;
+            else
+                alpha = 1f;
+
+            if (_selectedState == SelectedState.Deselected) {
+                if (_weaponState == WeaponState.Idle)
+                    color = _accentColor;
+                else
+                    color = Color.white;
+            } else {
+                color = _baseColor;
+            }
+
+            return new List<ColorState> {
+                new ColorState(_weaponStatusIcon, color, alpha)
+            };
+        }
+
+        private List<ColorState> GetHoverState()
+        {
+            if (_selectedState == SelectedState.Deselected) {
+                return new List<ColorState> {
+                    new ColorState(
+                            _colorSprite,
+                            null,
+                            (_hoverState == HoverState.Default ? 0.7f : 1f)),
+                    new ColorState(
+                            _borderSprite,
+                            null,
+                            (_hoverState == HoverState.Default ? 0.525f : 1f))
+                };
+            } else {
+                return new List<ColorState>();
+            }
+        }
+
+        private List<ColorState> GetSelectedState()
+        {
+            if (_selectedState == SelectedState.Deselected) {
+                return new List<ColorState> {
+                    new ColorState(_colorSprite, _baseColor, null),
+                    new ColorState(_borderSprite, _accentColor, null),
+                    new ColorState(_unitIcon, Color.white, 1f),
+                    new ColorState(_unitName, Color.white, 1f),
+                    new ColorState(_dropShadow, Color.white, 1f),
+                    new ColorState(_selectionGlow, _accentColor, 0f)
+                };
+            } else {
+                return new List<ColorState> {
+                    new ColorState(_colorSprite, Color.white, 1f),
+                    new ColorState(_borderSprite, _baseColor, 1f),
+                    new ColorState(_unitIcon, _baseColor, 1f),
+                    new ColorState(_unitName, _baseColor, 1f),
+                    new ColorState(_dropShadow, Color.white, 0f),
+                    new ColorState(_selectionGlow, _accentColor, 1f)
+                };
+            }
+        }
+
+        private UIState GenerateState()
+        {
+            return new UIState(
+                    UIState.Merge(
+                            GetWeaponStatusState(),
+                            UIState.Merge(
+                                    GetSelectedState(),
+                                    GetHoverState()
+                                    )
+                            )
+                    );
+        }
 
         protected override void Start()
         {
             base.Start();
-            _unitIcon.color = Color.white;
-            _unitName.color = Color.white;
-            _weaponStatusIcon.color = UIColors.WithAlpha(_accentColor, _weaponStatusIdleAlpha);
 
-            _defaultState = new UIState(new List<ColorState> {
-                    new ColorState(_colorSprite, _baseColor, _colorAlpha),
-                    new ColorState(_borderSprite, _accentColor, _borderAlpha),
-                    new ColorState(_unitName, Color.white, 1f),
-                    new ColorState(_unitIcon, Color.white, 1f),
-                    new ColorState(_weaponStatusIcon, _accentColor, _weaponStatusIdleAlpha),
-                    new ColorState(_dropShadow, Color.white, 1f),
-                    new ColorState(_selectionGlow, _accentColor, 0f)});
+            SetInitialState(GenerateState());
+        }
 
-            _hoverState = UIState.Merge(
-                    _defaultState.StateColors,
-                    new List<ColorState> {
-                        new ColorState(_colorSprite, null, 1f),
-                        new ColorState(_borderSprite, null, 1f)
-                    });
+        private void UpdateState()
+        {
+            TransitionToState(GenerateState());
+        }
 
-            _selectedState = UIState.Merge(
-                    _defaultState.StateColors,
-                    new List<ColorState> {
-                        new ColorState(_colorSprite, Color.white, 1f),
-                        new ColorState(_borderSprite, _baseColor, 1f),
-                        new ColorState(_unitIcon, _baseColor, 1f),
-                        new ColorState(_unitName, _baseColor, 1f),
-                        new ColorState(_dropShadow, null, 0f),
-                        new ColorState(_selectionGlow, null, 1f)
-                    });
+        protected override void Update()
+        {
+            base.Update();
 
-            SetInitialState(_defaultState);
+            if (Input.GetButtonDown("Jump"))
+                ToggleWeaponStatus();
         }
 
         public void OnButtonClick()
         {
-            if (_currentState != _selectedState) {
-                TransitionToState(_selectedState);
-            } else {
-                TransitionToState(_hoverState);
-            }
+            if (_selectedState != SelectedState.Selected)
+                _selectedState = SelectedState.Selected;
+            else
+                _selectedState = SelectedState.Deselected;
+
+            UpdateState();
         }
 
         public void OnButtonMouseover()
         {
-            if (_currentState != _selectedState) {
-                TransitionToState(_hoverState);
+            if (_selectedState != SelectedState.Selected) {
+                _hoverState = HoverState.Hover;
+                UpdateState();
             }
         }
 
         public void OnButtonMouseout()
         {
-            if (_currentState != _selectedState) {
-                TransitionToState(_defaultState);
+            if (_selectedState != SelectedState.Selected) {
+                _hoverState = HoverState.Default;
+                UpdateState();
             }
+        }
+
+        public void ToggleWeaponStatus()
+        {
+            if (_weaponState == WeaponState.Idle)
+                _weaponState = WeaponState.Aiming;
+            else
+                _weaponState = WeaponState.Idle;
+
+            UpdateState();
         }
     }
 }

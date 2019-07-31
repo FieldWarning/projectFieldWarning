@@ -95,7 +95,7 @@ namespace PFW.UI.Ingame
             return new UIState(colors);
         }
 
-        public static UIState Merge(List<ColorState> aColors, List<ColorState> bColors)
+        public static List<ColorState> Merge(List<ColorState> aColors, List<ColorState> bColors)
         {
             List<ColorState> original = aColors.Where(aColor => {
                 foreach (ColorState bColor in bColors)
@@ -125,7 +125,7 @@ namespace PFW.UI.Ingame
             merged.AddRange(additions);
             merged.AddRange(modifications);
 
-            return new UIState(merged);
+            return merged;
         }
     }
 }
