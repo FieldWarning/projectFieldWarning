@@ -95,37 +95,43 @@ namespace PFW.UI.Ingame
             return new UIState(colors);
         }
 
-        public static List<ColorState> Merge(List<ColorState> aColors, List<ColorState> bColors)
+        public static UIState Merge(params List<ColorState>[] states)
         {
-            List<ColorState> original = aColors.Where(aColor => {
-                foreach (ColorState bColor in bColors)
-                    if (bColor.Component == aColor.Component)
-                        return false;
-                return true;
-            }).ToList();
+            var merged = new List<ColorState>();
 
-            List<ColorState> additions = bColors.Where(bColor => {
-                foreach (ColorState aColor in aColors)
-                    if (aColor.Component == bColor.Component)
-                        return false;
-                return true;
-            }).ToList();
+            for (int i = 0; i < states.Length - 1; i++) {
+                var aColors = states[i];
+                var bColors = states[i + 1];
 
-            List<ColorState> modifications = bColors.Where(bColor =>
-                    (!additions.Contains(bColor))).ToList();
+                List<ColorState> original = aColors.Where(aColor => {
+                    foreach (ColorState bColor in bColors)
+                        if (bColor.Component == aColor.Component)
+                            return false;
+                    return true;
+                }).ToList();
 
-            foreach (ColorState mColor in modifications) {
-                ColorState aColor = aColors.Find(a => a.Component == mColor.Component);
-                mColor.Color = (mColor.Color != null) ? mColor.Color : aColor.Color;
-                mColor.Alpha = (mColor.Alpha != null) ? mColor.Alpha : aColor.Alpha;
+                List<ColorState> additions = bColors.Where(bColor => {
+                    foreach (ColorState aColor in aColors)
+                        if (aColor.Component == bColor.Component)
+                            return false;
+                    return true;
+                }).ToList();
+
+                List<ColorState> modifications = bColors.Where(bColor =>
+                        (!additions.Contains(bColor))).ToList();
+
+                foreach (ColorState mColor in modifications) {
+                    ColorState aColor = aColors.Find(a => a.Component == mColor.Component);
+                    mColor.Color = (mColor.Color != null) ? mColor.Color : aColor.Color;
+                    mColor.Alpha = (mColor.Alpha != null) ? mColor.Alpha : aColor.Alpha;
+                }
+
+                merged.AddRange(original);
+                merged.AddRange(additions);
+                merged.AddRange(modifications);
             }
 
-            List<ColorState> merged = new List<ColorState>();
-            merged.AddRange(original);
-            merged.AddRange(additions);
-            merged.AddRange(modifications);
-
-            return merged;
+            return new UIState(merged);
         }
     }
 }
