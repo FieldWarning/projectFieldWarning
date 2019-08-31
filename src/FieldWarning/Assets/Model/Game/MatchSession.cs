@@ -20,6 +20,8 @@ using PFW.Units;
 using PFW.Units.Component.Vision;
 using PFW.Model.Armory;
 
+using Mirror;
+
 namespace PFW.Model.Game
 {
     /**
@@ -63,6 +65,8 @@ namespace PFW.Model.Game
 
         public UnitFactory Factory { get; private set; }
 
+        public NetworkManager NetworkManager { get { return NetworkManager.singleton; } }
+
         public void Awake()
         {
             var blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
@@ -95,6 +99,10 @@ namespace PFW.Model.Game
             PathData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
             Factory = new UnitFactory();
             Settings = new Settings();
+
+            // For offline games we start an online game as host with (TODO) maxConnections = 1:
+            if (!NetworkManager.isNetworkActive)
+                NetworkManager.StartHost();
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
