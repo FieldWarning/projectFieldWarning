@@ -182,21 +182,24 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private void Update()
     {
         // Camera panning:
-        _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
-        _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
+        if (PFW.Model.Game.GameManager.EnableInput) {
+            _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
+            _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
 
-        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
-            //Try border panning with mouse
-            PanFromScreenBorder();
-        } else {
-            SetPanningCursor(ScreenCorner.None);
+            if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
+                //Try border panning with mouse
+                PanFromScreenBorder();
+            } else {
+                SetPanningCursor(ScreenCorner.None);
+            }
+
+            AimedZoom();
+
+            if (Input.GetMouseButton(2)) {
+                RotateCamera();
+            }
         }
 
-        AimedZoom();
-
-        if (Input.GetMouseButton(2)) {
-            RotateCamera();
-        }
     }
 
     public void SetTargetPosition(Vector3 target)
@@ -213,7 +216,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
         var toTarget = target - _targetPosition;
         var rotFromX =
                 Vector3.Angle(
-                        Vector3.ProjectOnPlane(transform.forward, new Vector3(1,0,0)),
+                        Vector3.ProjectOnPlane(transform.forward, new Vector3(1, 0, 0)),
                         Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
         var rotFromY =
                 Vector3.Angle(
@@ -237,48 +240,50 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void LateUpdate()
     {
-        var dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
-        var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
-        _targetPosition += transform.TransformDirection(dx * Vector3.right);
+        if (PFW.Model.Game.GameManager.EnableInput) {
+            var dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
+            var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
+            _targetPosition += transform.TransformDirection(dx * Vector3.right);
 
-        // If we move forward in local space, camera will also change altitude.
-        // To properly move forward, we have to rotate the forward vector to be
-        // horizontal in world space while keeping the magnitude:
-        var worldForward = transform.TransformDirection(Vector3.forward);
-        var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
-        _targetPosition += angle * worldForward * dz;
+            // If we move forward in local space, camera will also change altitude.
+            // To properly move forward, we have to rotate the forward vector to be
+            // horizontal in world space while keeping the magnitude:
+            var worldForward = transform.TransformDirection(Vector3.forward);
+            var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
+            _targetPosition += angle * worldForward * dz;
 
-        _translateX -= dx;
-        _translateZ -= dz;
+            _translateX -= dx;
+            _translateZ -= dz;
 
-        // Apply zoom movement:
-        var dzoom = _leftoverZoom < GetScaledZoomSpeed() ? _leftoverZoom : GetScaledZoomSpeed();
-        var oldAltitude = _targetPosition.y;
+            // Apply zoom movement:
+            var dzoom = _leftoverZoom < GetScaledZoomSpeed() ? _leftoverZoom : GetScaledZoomSpeed();
+            var oldAltitude = _targetPosition.y;
 
-        // Zoom in:
-        if (dzoom > 0) {
-            ApplyZoomIn(dzoom);
-        } else if (dzoom < 0) {
-            ApplyZoomOut(dzoom);
+            // Zoom in:
+            if (dzoom > 0) {
+                ApplyZoomIn(dzoom);
+            } else if (dzoom < 0) {
+                ApplyZoomOut(dzoom);
+            }
+
+            _leftoverZoom -= dzoom;
+            TiltCameraIfNearGround(oldAltitude);
+            ClampCameraAltitude();
+            ClampCameraXZPosition();
+
+            // Note: It is mathematically incorrect to directly lerp on deltaTime like this,
+            // since we would get infinitely closer to the target but never reach it.
+            // However, it works without issues (because of rounding I guess):
+            transform.position =
+                    Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
+            transform.rotation =
+                    Quaternion.Slerp(
+                            transform.rotation,
+                            Quaternion.Euler(_rotateX, _rotateY, 0f),
+                            Time.deltaTime * _rotLerpSpeed);
+
+            MaybeChangeTerrainMaterial();
         }
-
-        _leftoverZoom -= dzoom;
-        TiltCameraIfNearGround(oldAltitude);
-        ClampCameraAltitude();
-        ClampCameraXZPosition();
-
-        // Note: It is mathematically incorrect to directly lerp on deltaTime like this,
-        // since we would get infinitely closer to the target but never reach it.
-        // However, it works without issues (because of rounding I guess):
-        transform.position =
-                Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * _panLerpSpeed);
-        transform.rotation =
-                Quaternion.Slerp(
-                        transform.rotation,
-                        Quaternion.Euler(_rotateX, _rotateY, 0f),
-                        Time.deltaTime * _rotLerpSpeed);
-
-        MaybeChangeTerrainMaterial();
     }
 
     /// <summary>
