@@ -13,7 +13,11 @@
 
 using UnityEngine;
 
+using Mirror;
+using TMPro;
+
 using PFW.Model.Game;
+using PFW.Networking;
 
 namespace PFW.UI.Ingame
 {
@@ -21,14 +25,14 @@ namespace PFW.UI.Ingame
      * Manages chat within a match, synched server to clients, receives
      * client messages from the PlayerChat class.
      */
-    public class ChatManager : Mirror.NetworkBehaviour
+    public class ChatManager : NetworkBehaviour
     {
         [SerializeField]
         private GameObject _chat = null;
         [SerializeField]
-        private TMPro.TMP_InputField _inputField = null;
+        private TMP_InputField _inputField = null;
         [SerializeField]
-        private TMPro.TextMeshProUGUI _messagesText = null;
+        private TextMeshProUGUI _messagesText = null;
 
         [Tooltip("How long the Chat is visible when receiving a new Message")]
         [SerializeField]
@@ -36,57 +40,56 @@ namespace PFW.UI.Ingame
         private float _messagesVisibleRemaining = 0;
         [SerializeField]
         private MatchSession _session = null;
-        private string _oldMessages = "";
 
         // Contains all sent messages, synched across all clients.
-        [Mirror.SyncVar]
-        public string _sentMessages = "";
+        private SyncListString _sentMessages = new SyncListString();
 
-        // Start is called before the first frame update
+        private CommandConnection _connection { get { return CommandConnection.Connection; } }
+
         private void Start()
         {
+            // TODO race if we enter the scene before connection complete (e.g. in editor), fix
+            if (isClientOnly)
+                _connection.ChatManager = this;
             _chat.SetActive(false);
+            _sentMessages.Callback += OnChatUpdate;
         }
 
-        public void UpdateMessageText(string msg)
+        // Called when we receive a new message from the server (or ourselves)
+        private void OnChatUpdate(SyncListString.Operation op, int index, string item)
         {
-            _sentMessages = msg;
-            _messagesText.text = msg;
+            // Update the UI element
+            _messagesText.text += item;
             _messagesText.gameObject.SetActive(true);
             _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
         }
 
-        // Update is called once per frame
+        public void UpdateMessageText(string msg)
+        {
+            _sentMessages.Add(msg);
+        }
+
         private void Update()
         {
             if (_messagesVisibleRemaining <= 0) {
                 _messagesText.gameObject.SetActive(false);
                 _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
-            } else {
+            } else if (!_session.isChatFocused) {
                 _messagesVisibleRemaining -= Time.deltaTime;
             }
 
-            //If Messages where updated via Sync, then this needs to be detected
-            if (!_oldMessages.Equals(_sentMessages)) {
-                _oldMessages = _sentMessages;
-                _messagesText.text = _sentMessages;
-                _messagesText.gameObject.SetActive(true);
-                _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
-            }
-
-            //Open/Close Chat
+            // Open/Close chat
             if (Input.GetButtonDown("Chat")) {
-                //if Chat is being closed handle the typed message
+                // If chat is being closed handle the typed message
                 if (_chat.activeSelf == true) {
-                    //replace with the playername once we get accounts working
-                    string user = "[" + "Name here"+ "]:";
-                    _sentMessages += user + _inputField.text + "\n";
-                    _messagesText.text = _sentMessages;
-                    _messagesText.gameObject.SetActive(true);
-                    _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
+                    // TODO Replace with the player name once we get accounts working
+                    string user = "[" + (_connection.isClientOnly ? "guest" : "host") + "]:";
+                    string newMessage = user + _inputField.text + "\n";
+                    _connection.CmdUpdateChat(newMessage);
                     _session.isChatFocused = false;
+
                 } else {
-                    //activated chat
+                    // activated chat
                     _session.isChatFocused = true;
                     _messagesText.gameObject.SetActive(true);
                     _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
@@ -95,7 +98,7 @@ namespace PFW.UI.Ingame
                 _chat.SetActive(!_chat.activeSelf);
                 _inputField.Select();
                 _inputField.ActivateInputField();
-                _inputField.text = "[YOU]";
+                _inputField.text = "Your message here..";
             }
         }
     }
