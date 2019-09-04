@@ -11,6 +11,8 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 
+using System;
+
 using UnityEngine;
 
 using Mirror;
@@ -27,6 +29,8 @@ namespace PFW.UI.Ingame
      */
     public class ChatManager : NetworkBehaviour
     {
+        private const int MAX_MESSAGES = 10;
+
         [SerializeField]
         private GameObject _chat = null;
         [SerializeField]
@@ -60,10 +64,15 @@ namespace PFW.UI.Ingame
         {
             // Update the UI element
             _messagesText.text += item;
+            if (_sentMessages.Count > MAX_MESSAGES) /* TODO perhaps also shrink the list */
+                _messagesText.text = _messagesText.text.Substring(
+                        _messagesText.text.IndexOf("\n") + "\n".Length);
+
             _messagesText.gameObject.SetActive(true);
             _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
         }
 
+        [Server]
         public void UpdateMessageText(string msg)
         {
             _sentMessages.Add(msg);
