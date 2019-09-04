@@ -17,8 +17,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using PFW.Model.Game;
+
 /**
- * Sliding camera is our main RTS cam. It is wargame-like and provides almost entirely free movement. Zooming in goes toward the cursor ("sliding"), zooming out moves back and up at a fixed angle. The camera faces up slightly when zoomed all the way into the ground, and tries to restore its facing when zoomed out again.
+ * Sliding camera is our main RTS cam.
+ * It is wargame-like and provides almost entirely free movement.
+ * Zooming in goes toward the cursor ("sliding"),
+ * zooming out moves back and up at a fixed angle.
+ * The camera faces up slightly when zoomed all the way into the ground,
+ * and tries to restore its facing when zoomed out again.
  *
  * Restrictions:
  * - Players can't look too far up or down.
@@ -80,7 +87,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     [SerializeField]
     private float _zoomOutAngle = 45f;
     [SerializeField]
-    private PFW.Model.Game.MatchSession _session ;
+    private MatchSession _session = null;
 
     private Vector3 _zoomOutDirection;
 
@@ -104,12 +111,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
     [Serializable]
     private struct TerrainMaterial
     {
-#pragma warning disable 0649
+#pragma warning disable 0649 // Field is never assigned to, and will always have its default value
         public Material Material;
         public MicroSplatPropData PerTextureData;
         public MicroSplatKeywords Keywords;
         public float MaxAltitude;
-#pragma warning restore 0649
+#pragma warning restore 0649 // Field is never assigned to, and will always have its default value
     }
 
     [Header("Microsplat Terrain Materials")]

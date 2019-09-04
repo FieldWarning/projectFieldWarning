@@ -11,47 +11,44 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
+using Mirror;
+
 namespace PFW.UI.Ingame
 {
-
-    public class PlayerChat : Mirror.NetworkBehaviour
+    /**
+     * This class exists to allow clients to send their chat messages to the server.
+     */
+    public class PlayerChat : NetworkBehaviour
     {
         public ChatManager ChatManager;
         private string _messages = "";
 
-        // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
-            ChatManager = GameObject.FindGameObjectWithTag("ChatManager").GetComponent<ChatManager>();
-
+            ChatManager =
+                GameObject.FindGameObjectWithTag("ChatManager").GetComponent<ChatManager>();
         }
-        //(On Server) Update chat messages
-        [Mirror.Command]
-        void CmdupdateMsg(string msg)
+
+        // (On Server) Update chat messages
+        [Command]
+        public void CmdUpdateMsg(string msg)
         {
             _messages = msg;
             ChatManager.UpdateMessageText(msg);
-            ChatManager.MessagesText.text = msg;
         }
-        // Update is called once per frame
-        void Update()
+
+        private void Update()
         {
-            // When you wrote a message, send it to the server, which then distributes it to other clients
+            // When you wrote a message, send it to the server,
+            // which then distributes it to other clients
             if (isLocalPlayer) {
-                if (!ChatManager._messages.Equals(_messages)) {
-                   // Debug.Log("Sending" + ChatManager._messages);
-                    CmdupdateMsg(ChatManager._messages);
-                    _messages = ChatManager._messages;
+                if (!ChatManager._sentMessages.Equals(_messages)) {
+                    CmdUpdateMsg(ChatManager._sentMessages);
+                    _messages = ChatManager._sentMessages;
                 }
-
             }
-
         }
-
     }
 }

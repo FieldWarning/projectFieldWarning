@@ -11,83 +11,92 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
+using PFW.Model.Game;
+
 namespace PFW.UI.Ingame
 {
-
+    /**
+     * Manages chat within a match, synched server to clients, receives
+     * client messages from the PlayerChat class.
+     */
     public class ChatManager : Mirror.NetworkBehaviour
     {
-        public GameObject Chat;
-        public TMPro.TMP_InputField InputField;
-        public TMPro.TextMeshProUGUI MessagesText;
-        [Tooltip("How long the Chat is visible when recieving a new Message")]
-        public float MessagesVisibleFor = 7;
-        private float _messagesVisible = 7;
-        //Sync recieved messages to other clients
-        [Mirror.SyncVar]
-        public string _messages = "";
         [SerializeField]
-        PFW.Model.Game.MatchSession _session;
-        private string _oldMessages = "";
-        // Start is called before the first frame update
-        void Start()
-        {
-            Chat.active = false;
+        private GameObject _chat = null;
+        [SerializeField]
+        private TMPro.TMP_InputField _inputField = null;
+        [SerializeField]
+        private TMPro.TextMeshProUGUI _messagesText = null;
 
+        [Tooltip("How long the Chat is visible when receiving a new Message")]
+        [SerializeField]
+        private float MESSAGES_VISIBLE_MAX = 7;
+        private float _messagesVisibleRemaining = 0;
+        [SerializeField]
+        private MatchSession _session = null;
+        private string _oldMessages = "";
+
+        // Contains all sent messages, synched across all clients.
+        [Mirror.SyncVar]
+        public string _sentMessages = "";
+
+        // Start is called before the first frame update
+        private void Start()
+        {
+            _chat.SetActive(false);
         }
+
         public void UpdateMessageText(string msg)
         {
-            _messages = msg;
-            MessagesText.text = msg;
-            MessagesText.gameObject.active = true;
-            _messagesVisible = MessagesVisibleFor;
+            _sentMessages = msg;
+            _messagesText.text = msg;
+            _messagesText.gameObject.SetActive(true);
+            _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-            if (_messagesVisible < 0) {
-                MessagesText.gameObject.active = false;
-                _messagesVisible = 7;
+            if (_messagesVisibleRemaining <= 0) {
+                _messagesText.gameObject.SetActive(false);
+                _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
             } else {
-                _messagesVisible -= Time.deltaTime;
+                _messagesVisibleRemaining -= Time.deltaTime;
             }
+
             //If Messages where updated via Sync, then this needs to be detected
-            if (!_oldMessages.Equals(_messages)) {
-                _oldMessages = _messages;
-                MessagesText.text = _messages;
-                MessagesText.gameObject.active = true;
-                _messagesVisible = MessagesVisibleFor;
+            if (!_oldMessages.Equals(_sentMessages)) {
+                _oldMessages = _sentMessages;
+                _messagesText.text = _sentMessages;
+                _messagesText.gameObject.SetActive(true);
+                _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
             }
+
             //Open/Close Chat
             if (Input.GetButtonDown("Chat")) {
                 //if Chat is being closed handle the typed message
-                if (Chat.active == true) {
+                if (_chat.activeSelf == true) {
                     //replace with the playername once we get accounts working
                     string user = "[" + "Name here"+ "]:";
-                    _messages += user + InputField.text + "\n";
-                    MessagesText.text = _messages;
-                    MessagesText.gameObject.active = true;
-                    _messagesVisible = MessagesVisibleFor;
+                    _sentMessages += user + _inputField.text + "\n";
+                    _messagesText.text = _sentMessages;
+                    _messagesText.gameObject.SetActive(true);
+                    _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
                     _session.isChatFocused = false;
                 } else {
                     //activated chat
                     _session.isChatFocused = true;
-                    MessagesText.gameObject.active = true;
-                    _messagesVisible = MessagesVisibleFor;
+                    _messagesText.gameObject.SetActive(true);
+                    _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
                 }
-                Chat.active = !Chat.active;
-                InputField.Select();
-                InputField.ActivateInputField();
-                InputField.text = "[YOU]";
 
-
+                _chat.SetActive(!_chat.activeSelf);
+                _inputField.Select();
+                _inputField.ActivateInputField();
+                _inputField.text = "[YOU]";
             }
         }
-
     }
 }
