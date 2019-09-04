@@ -309,6 +309,7 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
+            if (!_session.isChatFocused) { 
             if (Commands.Unload) {
                 _selectionManager.DispatchUnloadCommand();
 
@@ -326,6 +327,7 @@ namespace PFW.UI.Ingame
             } else if (Commands.Split && !_selectionManager.Empty) {
                 EnterSplitMode();
             }
+        }
         }
 
         private void EnterFirePosMode()

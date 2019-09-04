@@ -30,6 +30,8 @@ namespace PFW.UI.Ingame
         //Sync recieved messages to other clients
         [Mirror.SyncVar]
         public string _messages = "";
+        [SerializeField]
+        PFW.Model.Game.MatchSession _session;
         private string _oldMessages = "";
         // Start is called before the first frame update
         void Start()
@@ -66,15 +68,15 @@ namespace PFW.UI.Ingame
                 //if Chat is being closed handle the typed message
                 if (Chat.active == true) {
                     //replace with the playername once we get accounts working
-                    string user = "[" + Mirror.ClientScene.localPlayer.name + "]:";
+                    string user = "[" + "Name here"+ "]:";
                     _messages += user + InputField.text + "\n";
                     MessagesText.text = _messages;
                     MessagesText.gameObject.active = true;
                     _messagesVisible = MessagesVisibleFor;
-                    PFW.Model.Game.GameManager.EnableInput = true;
+                    _session.isChatFocused = false;
                 } else {
                     //activated chat
-                    PFW.Model.Game.GameManager.EnableInput = false;
+                    _session.isChatFocused = true;
                     MessagesText.gameObject.active = true;
                     _messagesVisible = MessagesVisibleFor;
                 }

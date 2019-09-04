@@ -79,6 +79,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private float _heightSpeedScaling = 0.75f;
     [SerializeField]
     private float _zoomOutAngle = 45f;
+    [SerializeField]
+    private PFW.Model.Game.MatchSession _session ;
 
     private Vector3 _zoomOutDirection;
 
@@ -182,7 +184,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private void Update()
     {
         // Camera panning:
-        if (PFW.Model.Game.GameManager.EnableInput) {
+        if (!_session.isChatFocused) {
             _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
             _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
 
@@ -240,7 +242,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (PFW.Model.Game.GameManager.EnableInput) {
+        if (!_session.isChatFocused) {
             var dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
             var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
             _targetPosition += transform.TransformDirection(dx * Vector3.right);
