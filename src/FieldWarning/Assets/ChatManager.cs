@@ -75,6 +75,8 @@ namespace Mirror
                 } else {
                     //activated chat
                     PFW.Model.Game.GameManager.EnableInput = false;
+                    MessagesText.gameObject.active = true;
+                    _messagesVisible = MessagesVisibleFor;
                 }
                 Chat.active = !Chat.active;
                 InputField.Select();
