@@ -44,6 +44,8 @@ namespace PFW.Model.Game
         public Dictionary<Team, List<UnitDispatcher>> EnemiesByTeam =>
                 _unitRegistry.EnemiesByTeam;
 
+        public bool isChatFocused = false;
+
         public List<UnitDispatcher> AllyUnits =>
                 _unitRegistry.AllyUnits;
         public List<UnitDispatcher> EnemyUnits =>
