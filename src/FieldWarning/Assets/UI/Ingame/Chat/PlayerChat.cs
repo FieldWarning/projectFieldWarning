@@ -16,10 +16,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-namespace Mirror
+namespace PFW.UI.Ingame
 {
 
-    public class PlayerChat : NetworkBehaviour
+    public class PlayerChat : Mirror.NetworkBehaviour
     {
         public ChatManager ChatManager;
         private string _messages = "";
@@ -31,7 +31,7 @@ namespace Mirror
 
         }
         //(On Server) Update chat messages
-        [Command]
+        [Mirror.Command]
         void CmdupdateMsg(string msg)
         {
             _messages = msg;

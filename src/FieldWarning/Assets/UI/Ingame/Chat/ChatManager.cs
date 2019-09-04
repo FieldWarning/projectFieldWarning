@@ -16,10 +16,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-namespace Mirror
+namespace PFW.UI.Ingame
 {
 
-    public class ChatManager : NetworkBehaviour
+    public class ChatManager : Mirror.NetworkBehaviour
     {
         public GameObject Chat;
         public TMPro.TMP_InputField InputField;
@@ -28,7 +28,7 @@ namespace Mirror
         public float MessagesVisibleFor = 7;
         private float _messagesVisible = 7;
         //Sync recieved messages to other clients
-        [SyncVar]
+        [Mirror.SyncVar]
         public string _messages = "";
         private string _oldMessages = "";
         // Start is called before the first frame update
