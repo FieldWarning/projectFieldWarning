@@ -86,6 +86,11 @@ namespace PFW.UI.Ingame
         {
             _selectionManager.Update(CurMouseMode);
 
+            if (Input.GetKeyDown("f")) {
+                int prefabId = 0;
+                FindObjectOfType<NetworkSpawner>().CmdSpawn(prefabId);
+            }
+
             switch (CurMouseMode) {
 
             case MouseMode.purchasing:

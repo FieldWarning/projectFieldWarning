@@ -22,19 +22,6 @@ public class TeamButton : MonoBehaviour
     [SerializeField]
     private MatchSession _session = null;
 
-    // We set the position at runtime instead of in the inspector because
-    // otherwise the button graphics interfere with working on the map in edit mode:
-    [SerializeField]
-    private int _position = 0;
-
-    public void Awake()
-    {
-        transform.position = new Vector3(
-            transform.position.x,
-            _position,
-            transform.position.z);
-    }
-
     public void onClick()
     {
         _session.LocalPlayer.Data = _team.Players[0];
