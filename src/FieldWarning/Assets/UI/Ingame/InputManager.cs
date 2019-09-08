@@ -86,11 +86,6 @@ namespace PFW.UI.Ingame
         {
             _selectionManager.Update(CurMouseMode);
 
-            if (Input.GetKeyDown("f")) {
-                int prefabId = 0;
-                FindObjectOfType<NetworkSpawner>().CmdSpawn(prefabId);
-            }
-
             switch (CurMouseMode) {
 
             case MouseMode.purchasing:
@@ -314,7 +309,7 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
-            if (!_session.isChatFocused) { 
+            if (!_session.isChatFocused) {
             if (Commands.Unload) {
                 _selectionManager.DispatchUnloadCommand();
 
