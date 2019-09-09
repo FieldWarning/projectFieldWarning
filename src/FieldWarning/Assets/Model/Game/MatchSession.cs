@@ -105,8 +105,8 @@ namespace PFW.Model.Game
             Settings = new Settings();
 
 #if UNITY_EDITOR
-            // For offline games we start an online game as host with (TODO) maxConnections = 1:
-            if (!_networkManager.isNetworkActive)
+            // Default to hosting if entering play mode directly into a match scene:
+            if (!NetworkClient.isConnected)
                 _networkManager.StartHost();
 #endif
         }

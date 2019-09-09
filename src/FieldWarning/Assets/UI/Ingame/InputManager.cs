@@ -309,7 +309,7 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
-            if (!_session.isChatFocused) { 
+            if (!_session.isChatFocused) {
             if (Commands.Unload) {
                 _selectionManager.DispatchUnloadCommand();
 
