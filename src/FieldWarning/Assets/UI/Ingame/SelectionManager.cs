@@ -77,7 +77,7 @@ namespace PFW.UI.Ingame
         {
             _mouseMode = mouseMode;
 
-            if (_mouseMode == MouseMode.normal)
+            if (_mouseMode == MouseMode.NORMAL)
                 _clickManager.Update();
         }
 
@@ -216,9 +216,9 @@ namespace PFW.UI.Ingame
 
         private void UpdateSelection(bool finalizeSelection)
         {
-            if (_mouseMode == MouseMode.firePos
-                || _mouseMode == MouseMode.fastMove
-                || _mouseMode == MouseMode.reverseMove)
+            if (_mouseMode == MouseMode.FIRE_POS
+                || _mouseMode == MouseMode.FAST_MOVE
+                || _mouseMode == MouseMode.REVERSE_MOVE)
                 return;
 
             List<PlatoonBehaviour> newSelection = AllPlatoons.Where(x => IsInside(x)).ToList();

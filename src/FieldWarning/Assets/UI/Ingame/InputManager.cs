@@ -36,8 +36,16 @@ namespace PFW.UI.Ingame
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
-        public enum MouseMode { normal, purchasing, firePos, reverseMove, fastMove, split };
-        public MouseMode CurMouseMode { get; private set; } = MouseMode.normal;
+        public enum MouseMode {
+            NORMAL,       //< Left click selects, right click orders normal movement or attack.
+            PURCHASING,   //< Left click purchases platoon, right click cancels.
+            FIRE_POS,     //< Left click orders fire position, right click cancels.
+            REVERSE_MOVE, //< Left click reverse moves to cursor, right click cancels.
+            FAST_MOVE,    //< Left click fast moves to cursor, right click cancels.
+            SPLIT         //< Left click splits the platoon, right click cancels.
+        };
+
+        public MouseMode CurMouseMode { get; private set; } = MouseMode.NORMAL;
 
         private BuyTransaction _currentBuyTransaction;
 
@@ -88,7 +96,7 @@ namespace PFW.UI.Ingame
 
             switch (CurMouseMode) {
 
-            case MouseMode.purchasing:
+            case MouseMode.PURCHASING:
 
                 RaycastHit hit;
                 if (Util.GetTerrainClickLocation(out hit)
@@ -100,12 +108,12 @@ namespace PFW.UI.Ingame
                 MaybeExitPurchasingModeAndRefund();
                 break;
 
-            case MouseMode.normal:
+            case MouseMode.NORMAL:
                 ApplyHotkeys();
                 _rightClickManager.Update();
                 break;
 
-            case MouseMode.firePos:
+            case MouseMode.FIRE_POS:
                 ApplyHotkeys();
 
                 if (Input.GetMouseButtonDown(0))
@@ -117,7 +125,7 @@ namespace PFW.UI.Ingame
 
                 break;
 
-            case MouseMode.reverseMove:
+            case MouseMode.REVERSE_MOVE:
                 ApplyHotkeys();
                 if (Input.GetMouseButtonDown(0)) {
                     MoveGhostsToMouse();
@@ -130,7 +138,7 @@ namespace PFW.UI.Ingame
                     EnterNormalMode();
                 break;
 
-            case MouseMode.fastMove:
+            case MouseMode.FAST_MOVE:
                 ApplyHotkeys();
                 if (Input.GetMouseButtonDown(0)) {
                     MoveGhostsToMouse();
@@ -143,7 +151,7 @@ namespace PFW.UI.Ingame
                     EnterNormalMode();
                 break;
 
-            case MouseMode.split:
+            case MouseMode.SPLIT:
                 ApplyHotkeys();
                 if (Input.GetMouseButtonDown(0)) {
                     _selectionManager.DispatchSplitCommand(_localPlayer);
@@ -272,7 +280,7 @@ namespace PFW.UI.Ingame
                 _currentBuyTransaction.AddUnit();
 
             //buildUnit(UnitType.Tank);
-            CurMouseMode = MouseMode.purchasing;
+            CurMouseMode = MouseMode.PURCHASING;
         }
 
         private void ExitPurchasingMode()
@@ -281,7 +289,7 @@ namespace PFW.UI.Ingame
 
             _currentBuyTransaction = null;
 
-            CurMouseMode = MouseMode.normal;
+            CurMouseMode = MouseMode.NORMAL;
         }
 
         private SpawnPointBehaviour GetClosestSpawn(Vector3 p)
@@ -332,32 +340,32 @@ namespace PFW.UI.Ingame
 
         private void EnterFirePosMode()
         {
-            CurMouseMode = MouseMode.firePos;
+            CurMouseMode = MouseMode.FIRE_POS;
             Vector2 hotspot = new Vector2(_firePosReticle.width / 2, _firePosReticle.height / 2);
             Cursor.SetCursor(_firePosReticle, hotspot, CursorMode.Auto);
         }
 
         private void EnterNormalMode()
         {
-            CurMouseMode = MouseMode.normal;
+            CurMouseMode = MouseMode.NORMAL;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 
         private void EnterFastMoveMode()
         {
-            CurMouseMode = MouseMode.fastMove;
+            CurMouseMode = MouseMode.FAST_MOVE;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
         }
 
         private void EnterReverseMoveMode()
         {
-            CurMouseMode = MouseMode.reverseMove;
+            CurMouseMode = MouseMode.REVERSE_MOVE;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
         }
 
         private void EnterSplitMode()
         {
-            CurMouseMode = MouseMode.split;
+            CurMouseMode = MouseMode.SPLIT;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
         }
 
