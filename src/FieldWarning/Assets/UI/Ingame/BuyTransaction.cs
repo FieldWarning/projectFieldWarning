@@ -12,11 +12,11 @@
 */
 
 using System.Collections.Generic;
-using PFW.UI.Prototype;
 using UnityEngine;
 
 using PFW.Model.Game;
 using PFW.Model.Armory;
+using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
@@ -67,7 +67,8 @@ namespace PFW.UI.Ingame
                 GhostPlatoons.Add(_ghostPlatoonBehaviour);
             } else {
 
-                // If all platoons in the transaction are max size, we add a new one and update the size counter:
+                // If all platoons in the transaction are max size,
+                // we add a new one and update the size counter:
                 _smallestPlatoonSize = MIN_PLATOON_SIZE;
                 _ghostPlatoonBehaviour = GhostPlatoonBehaviour.Build(
                         Unit, Owner, _smallestPlatoonSize);

@@ -14,6 +14,8 @@
 using System.Linq;
 using UnityEngine;
 
+using PFW.Units;
+
 public class TransporterWaypoint : Waypoint
 {
     public bool loading;

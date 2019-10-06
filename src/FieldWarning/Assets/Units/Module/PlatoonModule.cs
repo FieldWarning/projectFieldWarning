@@ -11,6 +11,8 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using PFW.Units;
+
 public abstract class PlatoonModule
 {
     private Waypoint _newWaypoint;

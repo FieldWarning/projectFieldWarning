@@ -13,6 +13,8 @@
 
 using System.Linq;
 
+using PFW.Units;
+
 public class TransportableWaypoint : Waypoint
 {
     public TransporterWaypoint transporterWaypoint;

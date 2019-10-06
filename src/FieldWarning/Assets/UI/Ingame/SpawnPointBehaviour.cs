@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using PFW.Model.Game;
+using PFW.Units;
 
 public class SpawnPointBehaviour : MonoBehaviour
 {

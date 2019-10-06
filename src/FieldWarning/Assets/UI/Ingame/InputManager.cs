@@ -19,6 +19,7 @@ using System;
 
 using PFW.Model.Game;
 using PFW.Model.Armory;
+using PFW.Units;
 
 namespace PFW.UI.Ingame
 {

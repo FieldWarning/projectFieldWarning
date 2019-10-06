@@ -19,126 +19,135 @@ using PFW.Model.Game;
 using PFW.Units.Component.Movement;
 using PFW.Model.Armory;
 
-public class GhostPlatoonBehaviour : MonoBehaviour
+namespace PFW.Units
 {
-    public float FinalHeading;
 
-    private GameObject _icon;
-    private Unit _unit;
-    private GameObject _realPlatoon;
-    private PlatoonBehaviour _platoonBehaviour;
-    private PlayerData _owner;
-    private List<GameObject> _units = new List<GameObject>();
-
-    private void InitializeIcon()
+    /**
+     * When showing previews of move orders or purchases, we need 'ghost' units that
+     * are grayed out and not functional. This is where the GhostPlatoon comes in.
+     */
+    public class GhostPlatoonBehaviour : MonoBehaviour
     {
-        _icon = GameObject.Instantiate(Resources.Load<GameObject>("Icon"));
-        _icon.GetComponent<IconBehaviour>().BaseColor = _owner.Team.Color;
-        _icon.transform.parent = transform;
-    }
+        public float FinalHeading;
 
-    public PlatoonBehaviour GetRealPlatoon()
-    {
-        return _platoonBehaviour;
-    }
+        private IconBehaviour _icon;
+        private Unit _unit;
+        private GameObject _realPlatoon;
+        private PlatoonBehaviour _platoonBehaviour;
+        private PlayerData _owner;
+        private List<GameObject> _units = new List<GameObject>();
 
-    public void BuildRealPlatoon()
-    {
-        _realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
-
-        _platoonBehaviour = _realPlatoon.GetComponent<PlatoonBehaviour>();
-        _platoonBehaviour.Initialize(_unit, _owner, _units.Count);
-
-        _platoonBehaviour.GhostPlatoon = this;
-    }
-
-    public void Initialize(Unit unit, PlayerData owner, int unitCount)
-    {
-        _owner = owner;
-        _unit = unit;
-        transform.position = 100 * Vector3.down;
-
-        // Create units:
-        for (int i = 0; i < unitCount; i++)
-            AddSingleUnit();
-    }
-
-    public void InitializeAfterSplit(
-            Unit unit, PlayerData owner)
-    {
-        _owner = owner;
-        _unit = unit;
-        transform.position = 100 * Vector3.down;
-
-        InitializeIcon();
-
-        AddSingleUnit();
-    }
-
-    private void AddSingleUnit()
-    {
-        GameObject _unitPrefab = _unit.Prefab;
-        GameObject unit = _owner.Session.Factory.MakeGhostUnit(_unitPrefab);
-        unit.GetComponent<MovementComponent>().InitData(_owner.Session.TerrainMap);
-        _units.Add(unit);
-    }
-
-    public void SetOrientation(Vector3 center, float heading)
-    {
-        FinalHeading = heading;
-        transform.position = center;
-
-        var positions = Formations.GetLineFormation(center, heading, _units.Count);
-        for (int i = 0; i < _units.Count; i++) {
-            _units[i].GetComponent<MovementComponent>()
-                    .SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading);
+        // Each GhostPlatoon gameobject has an icon under it, spawned in the prefab.
+        private void InitializeIcon(IconBehaviour icon)
+        {
+            _icon = icon;
+            _icon.GetComponent<IconBehaviour>().BaseColor = _owner.Team.Color;
         }
-    }
 
-    public void SetVisible(bool vis)
-    {
-        _icon.GetComponent<IconBehaviour>().SetVisible(vis);
-        _units.ForEach(x => x.GetComponent<MovementComponent>().SetVisible(vis));
-        _units.ForEach(x => x.SetActive(vis));
+        public PlatoonBehaviour GetRealPlatoon()
+        {
+            return _platoonBehaviour;
+        }
 
-        // FIXME: It looks like UnitLabelAttacher looks for a GameObject ("UIWrapper") that
-        //      no longer exists in the scene. Is this deprecated? Should it be removed?
-        // _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
-    }
+        public void BuildRealPlatoon()
+        {
+            _realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
 
-    public void Destroy()
-    {
-        foreach (var u in _units)
+            _platoonBehaviour = _realPlatoon.GetComponent<PlatoonBehaviour>();
+            _platoonBehaviour.Initialize(_unit, _owner, _units.Count);
+
+            _platoonBehaviour.GhostPlatoon = this;
+        }
+
+        public void Initialize(Unit unit, PlayerData owner, int unitCount)
+        {
+            _owner = owner;
+            _unit = unit;
+            transform.position = 100 * Vector3.down;
+
+            // Create units:
+            for (int i = 0; i < unitCount; i++)
+                AddSingleUnit();
+        }
+
+        public void InitializeAfterSplit(
+                Unit unit, PlayerData owner)
+        {
+            _owner = owner;
+            _unit = unit;
+            transform.position = 100 * Vector3.down;
+
+            InitializeIcon(gameObject.GetComponentInChildren<IconBehaviour>());
+
+            AddSingleUnit();
+        }
+
+        private void AddSingleUnit()
+        {
+            GameObject _unitPrefab = _unit.Prefab;
+            GameObject unit = _owner.Session.Factory.MakeGhostUnit(_unitPrefab);
+            unit.GetComponent<MovementComponent>().InitData(_owner.Session.TerrainMap);
+            _units.Add(unit);
+        }
+
+        public void SetOrientation(Vector3 center, float heading)
+        {
+            FinalHeading = heading;
+            transform.position = center;
+
+            var positions = Formations.GetLineFormation(center, heading, _units.Count);
+            for (int i = 0; i < _units.Count; i++) {
+                _units[i].GetComponent<MovementComponent>()
+                        .SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading);
+            }
+        }
+
+        public void SetVisible(bool vis)
+        {
+            _icon.SetVisible(vis);
+            _units.ForEach(x => x.GetComponent<MovementComponent>().SetVisible(vis));
+
+            // FIXME: It looks like UnitLabelAttacher looks for a GameObject ("UIWrapper") that
+            //      no longer exists in the scene. Is this deprecated? Should it be removed?
+            // _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
+        }
+
+        public void Destroy()
+        {
+            foreach (var u in _units)
+                Destroy(u);
+
+            Destroy(gameObject);
+        }
+
+        public static GhostPlatoonBehaviour Build(Unit unit, PlayerData owner, int count)
+        {
+            GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
+            var ghostPlatoonBehaviour = go.GetComponentInChildren<GhostPlatoonBehaviour>();
+            ghostPlatoonBehaviour.Initialize(unit, owner, count);
+            ghostPlatoonBehaviour.InitializeIcon(go.GetComponentInChildren<IconBehaviour>());
+
+            go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
+            ghostPlatoonBehaviour._icon.SetGhost();
+
+            Mirror.NetworkServer.Spawn(go);  /* must call from authority */
+
+            return ghostPlatoonBehaviour;
+        }
+
+        public void Spawn(Vector3 pos)
+        {
+            BuildRealPlatoon();
+            _platoonBehaviour.Spawn(pos);
+        }
+
+        public void HandleRealUnitDestroyed()
+        {
+            GameObject u = _units[0];
+            _units.Remove(u);
             Destroy(u);
-
-        Destroy(gameObject);
-    }
-
-    public static GhostPlatoonBehaviour Build(Unit unit, PlayerData owner, int count)
-    {
-        GameObject go = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
-        var behaviour = go.GetComponent<GhostPlatoonBehaviour>();
-        behaviour.Initialize(unit, owner, count);
-        behaviour.InitializeIcon();
-
-        go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
-        behaviour._icon.GetComponent<IconBehaviour>().SetGhost();
-
-        return behaviour;
-    }
-
-    public void Spawn(Vector3 pos)
-    {
-        BuildRealPlatoon();
-        _platoonBehaviour.Spawn(pos);
-    }
-
-    public void HandleRealUnitDestroyed()
-    {
-        GameObject u = _units[0];
-        _units.Remove(u);
-        Destroy(u);
-        if (_units.Count == 0)
-            Destroy();
+            if (_units.Count == 0)
+                Destroy();
+        }
     }
 }
