@@ -86,7 +86,7 @@ namespace PFW.Units
         private void AddSingleUnit()
         {
             GameObject _unitPrefab = _unit.Prefab;
-            GameObject unit = _owner.Session.Factory.MakeGhostUnit(_unitPrefab);
+            GameObject unit = _owner.Session.Factory.MakeGhostUnit(gameObject, _unitPrefab);
             unit.GetComponent<MovementComponent>().InitData(_owner.Session.TerrainMap);
             _units.Add(unit);
         }

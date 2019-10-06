@@ -85,7 +85,7 @@ namespace PFW.Units
 
             for (int i = 0; i < n; i++) {
                 var unitInstance =
-                    Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
+                    Owner.Session.Factory.MakeUnit(gameObject, unitPrefab, Owner.Team.Color);
                 UnitDispatcher unitDispatcher = new UnitDispatcher(unitInstance, this);
                 Units.Add(unitDispatcher);
 
