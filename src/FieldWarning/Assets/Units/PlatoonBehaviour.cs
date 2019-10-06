@@ -79,8 +79,6 @@ namespace PFW.Units
         {
             Unit = unit;
             Owner = owner;
-            var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
-            Icon = iconInstance.GetComponent<IconBehaviour>();
             Icon.BaseColor = Owner.Team.Color;
 
             var unitPrefab = Unit.Prefab;

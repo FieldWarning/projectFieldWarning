@@ -32,7 +32,7 @@ namespace PFW.Units
 
         private IconBehaviour _icon;
         private Unit _unit;
-        private GameObject _realPlatoon;
+        [SerializeField]
         private PlatoonBehaviour _platoonBehaviour;
         private PlayerData _owner;
         private List<GameObject> _units = new List<GameObject>();
@@ -51,9 +51,7 @@ namespace PFW.Units
 
         public void BuildRealPlatoon()
         {
-            _realPlatoon = GameObject.Instantiate(Resources.Load<GameObject>("Platoon"));
-
-            _platoonBehaviour = _realPlatoon.GetComponent<PlatoonBehaviour>();
+            _platoonBehaviour.gameObject.SetActive(true);
             _platoonBehaviour.Initialize(_unit, _owner, _units.Count);
 
             _platoonBehaviour.GhostPlatoon = this;
