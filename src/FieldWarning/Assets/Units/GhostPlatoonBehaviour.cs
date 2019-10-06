@@ -13,11 +13,11 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using PFW.UI.Ingame;
 
-using PFW.Model.Game;
-using PFW.Units.Component.Movement;
 using PFW.Model.Armory;
+using PFW.Model.Game;
+using PFW.UI.Ingame;
+using PFW.Units.Component.Movement;
 
 namespace PFW.Units
 {
@@ -30,18 +30,32 @@ namespace PFW.Units
     {
         public float FinalHeading;
 
-        private IconBehaviour _icon;
+        [SerializeField]
+        private IconBehaviour _icon = null;
         private Unit _unit;
         [SerializeField]
-        private PlatoonBehaviour _platoonBehaviour;
+        private PlatoonBehaviour _platoonBehaviour = null;
         private PlayerData _owner;
         private List<GameObject> _units = new List<GameObject>();
+
+        public void Initialize(Unit unit, PlayerData owner, int unitCount)
+        {
+            _owner = owner;
+            _unit = unit;
+            transform.position = 100 * Vector3.down;
+
+            // Create units:
+            for (int i = 0; i < unitCount; i++)
+                AddSingleUnit();
+
+            InitializeIcon(_icon);
+        }
 
         // Each GhostPlatoon gameobject has an icon under it, spawned in the prefab.
         private void InitializeIcon(IconBehaviour icon)
         {
-            _icon = icon;
-            _icon.GetComponent<IconBehaviour>().BaseColor = _owner.Team.Color;
+            _icon.BaseColor = _owner.Team.Color;
+            _icon.SetGhost();
         }
 
         public PlatoonBehaviour GetRealPlatoon()
@@ -55,17 +69,6 @@ namespace PFW.Units
             _platoonBehaviour.Initialize(_unit, _owner, _units.Count);
 
             _platoonBehaviour.GhostPlatoon = this;
-        }
-
-        public void Initialize(Unit unit, PlayerData owner, int unitCount)
-        {
-            _owner = owner;
-            _unit = unit;
-            transform.position = 100 * Vector3.down;
-
-            // Create units:
-            for (int i = 0; i < unitCount; i++)
-                AddSingleUnit();
         }
 
         public void InitializeAfterSplit(
@@ -116,27 +119,6 @@ namespace PFW.Units
                 Destroy(u);
 
             Destroy(gameObject);
-        }
-
-        public static GhostPlatoonBehaviour Build(Unit unit, PlayerData owner, int count)
-        {
-            GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
-            var ghostPlatoonBehaviour = go.GetComponentInChildren<GhostPlatoonBehaviour>();
-            ghostPlatoonBehaviour.Initialize(unit, owner, count);
-            ghostPlatoonBehaviour.InitializeIcon(go.GetComponentInChildren<IconBehaviour>());
-
-            go.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
-            ghostPlatoonBehaviour._icon.SetGhost();
-
-            Mirror.NetworkServer.Spawn(go);  /* must call from authority */
-
-            return ghostPlatoonBehaviour;
-        }
-
-        public void Spawn(Vector3 pos)
-        {
-            BuildRealPlatoon();
-            _platoonBehaviour.Spawn(pos);
         }
 
         public void HandleRealUnitDestroyed()

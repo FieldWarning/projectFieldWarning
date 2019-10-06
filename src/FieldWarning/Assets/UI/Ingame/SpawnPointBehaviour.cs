@@ -25,7 +25,7 @@ public class SpawnPointBehaviour : MonoBehaviour
     public const float MIN_SPAWN_INTERVAL = 2f;
     public const float QUEUE_DELAY = 1f;
 
-    private Queue<GhostPlatoonBehaviour> _spawnQueue = new Queue<GhostPlatoonBehaviour>();
+    private Queue<PlatoonRoot> _spawnQueue = new Queue<PlatoonRoot>();
     private float _spawnTime = MIN_SPAWN_INTERVAL;
 
     private void Start()
@@ -45,8 +45,8 @@ public class SpawnPointBehaviour : MonoBehaviour
             return;
 
 
-        GhostPlatoonBehaviour ghostPlatoon = _spawnQueue.Dequeue();
-        ghostPlatoon.Spawn(transform.position);
+        PlatoonRoot previewPlatoon = _spawnQueue.Dequeue();
+        previewPlatoon.Spawn(transform.position);
 
         if (_spawnQueue.Count > 0)
             _spawnTime += MIN_SPAWN_INTERVAL;
@@ -54,8 +54,8 @@ public class SpawnPointBehaviour : MonoBehaviour
             _spawnTime = QUEUE_DELAY;
     }
 
-    public void BuyPlatoons(List<GhostPlatoonBehaviour> ghostPlatoons)
+    public void BuyPlatoons(List<PlatoonRoot> previewPlatoons)
     {
-        ghostPlatoons.ForEach(x => _spawnQueue.Enqueue(x));
+        previewPlatoons.ForEach(x => _spawnQueue.Enqueue(x));
     }
 }

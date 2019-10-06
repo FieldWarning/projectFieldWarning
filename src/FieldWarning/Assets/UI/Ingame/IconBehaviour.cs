@@ -103,8 +103,12 @@ namespace PFW.UI.Ingame
             _symbol.GetComponent<Renderer>().material.color = color;
         }
 
+        /**
+         * Ghost platoons have paler icons which hint that they're not real.
+         */
         public void SetGhost()
         {
+            gameObject.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
             _billboard.GetComponent<Renderer>().material.SetColor(
                     "_Emission", (2 * _baseColor + Color.white) / 3);
             _symbol.GetComponent<Renderer>().material.SetColor(
