@@ -66,16 +66,28 @@ namespace PFW.Units
             _realPlatoon.AddSingleUnit();
         }
 
-        // Meant to put units
-        public void AddSingleExistingUnit(GameObject realUnit, GameObject ghostUnit)
+        // Meant to put already existing units into the platoon (when merging or splitting platoons)
+        private void AddSingleExistingUnit(UnitDispatcher realUnit)
         {
-
+            _ghostPlatoon.AddSingleUnit();
+            realUnit.GameObject.transform.parent = _realPlatoon.transform;
+            _realPlatoon.Units.Add(realUnit);
         }
 
-        //public void Split()
-        //{
-        //    _realPlatoon.Split(null);
-        //}
+        // Makes platoons of N units into N platoons of 1 unit
+        public void Split()
+        {
+            while (_realPlatoon.Units.Count > 1) {
+                UnitDispatcher u = _realPlatoon.Units[0];
+                _realPlatoon.Units.RemoveAt(0);
+                _ghostPlatoon.RemoveOneGhostUnit();
+
+                PlatoonRoot newPlatoon = CreateGhostMode(_realPlatoon.Unit, _realPlatoon.Owner);
+                newPlatoon.AddSingleExistingUnit(u);
+                // We aren't really spawning the units but binding them to the platoon and activating it:
+                newPlatoon.Spawn(u.Transform.position);
+            }
+        }
 
         public void SetGhostOrientation(Vector3 center, float heading) =>
                 _ghostPlatoon.SetOrientation(center, heading);

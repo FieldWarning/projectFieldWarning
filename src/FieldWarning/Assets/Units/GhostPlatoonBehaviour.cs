@@ -36,6 +36,7 @@ namespace PFW.Units
         private PlayerData _owner;
         private List<GameObject> _units = new List<GameObject>();
 
+        // Call after creating an object of this class, pretend it is a constructor
         public void Initialize(Unit unit, PlayerData owner)
         {
             _owner = owner;
@@ -50,18 +51,6 @@ namespace PFW.Units
         {
             _icon.BaseColor = _owner.Team.Color;
             _icon.SetGhost();
-        }
-
-        public void InitializeAfterSplit(
-                Unit unit, PlayerData owner)
-        {
-            _owner = owner;
-            _unit = unit;
-            transform.position = 100 * Vector3.down;
-
-            InitializeIcon(gameObject.GetComponentInChildren<IconBehaviour>());
-
-            AddSingleUnit();
         }
 
         public void AddSingleUnit()
@@ -102,7 +91,7 @@ namespace PFW.Units
             Destroy(gameObject);
         }
 
-        public void HandleRealUnitDestroyed()
+        public void RemoveOneGhostUnit()
         {
             GameObject u = _units[0];
             _units.Remove(u);

@@ -156,8 +156,9 @@ namespace PFW.UI.Ingame
             List<PlatoonBehaviour> selectionCopy =
                 new List<PlatoonBehaviour>(_selection);
 
-            selectionCopy.ForEach(p => p.Split(owner));
-            _selection.Clear();
+            UnselectAll(_selection, false);
+
+            selectionCopy.ForEach(p => p.gameObject.GetComponentInParent<PlatoonRoot>().Split());
         }
 
         /**

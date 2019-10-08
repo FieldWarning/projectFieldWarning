@@ -75,6 +75,7 @@ namespace PFW.Units
             //}
         }
 
+        // Call after creating an object of this class, pretend it is a constructor
         public void Initialize(Unit unit, PlayerData owner)
         {
             Unit = unit;
@@ -82,6 +83,7 @@ namespace PFW.Units
             Icon.BaseColor = Owner.Team.Color;
         }
 
+        // Create an inactive unit (to be activated when Spawn() is called)
         public void AddSingleUnit()
         {
             var unitInstance = Owner.Session.Factory.MakeUnit(
@@ -95,6 +97,8 @@ namespace PFW.Units
             Units.Add(new UnitDispatcher(unitInstance, this));
         }
 
+        // Activates all units, moving from ghost/preview mode to a real platoon
+        // Only use from PlatoonRoot (the lifetime manager class for platoons)
         public void Spawn(Vector3 center)
         {
             Units.ForEach(x => x.GameObject.SetActive(true));
@@ -129,58 +133,6 @@ namespace PFW.Units
             GhostPlatoon.SetVisible(false);
 
             Owner.Session.RegisterPlatoonBirth(this);
-        }
-
-        // Call when splitting a platoon
-        public void InitializeAfterSplit(
-                Unit unit,
-                PlayerData owner,
-                UnitDispatcher unitDispatcher,
-                MoveWaypoint destination)
-        {
-            Unit = unit;
-            Owner = owner;
-
-            var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
-            Icon = iconInstance.GetComponent<IconBehaviour>();
-            Icon.BaseColor = Owner.Team.Color;
-
-            unitDispatcher.Platoon = this;
-            Units.Add(unitDispatcher);
-
-            BuildModules();
-
-            Movement.BeginQueueing(false);
-            Movement.SetDestination(destination.Destination);
-            Movement.EndQueueing();
-
-            Icon.AssociateToRealUnits(Units);
-
-            GhostPlatoon.SetVisible(false);
-
-            Owner.Session.RegisterPlatoonBirth(this);
-            IsInitialized = true;
-        }
-
-        // Create new platoons for all units
-        public void Split(PlayerData owner)
-        {
-            foreach (UnitDispatcher unit in Units) {
-                var ghost = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
-                var platoon = Instantiate(Resources.Load<GameObject>("Platoon"));
-
-                var pBehavior = platoon.GetComponent<PlatoonBehaviour>();
-                var gBehavior = ghost.GetComponent<GhostPlatoonBehaviour>();
-
-                pBehavior.GhostPlatoon = gBehavior;
-
-                gBehavior.InitializeAfterSplit(Unit, owner);
-
-                pBehavior.InitializeAfterSplit(Unit, owner, unit, Movement.Waypoint);
-            }
-
-            Destroy(GhostPlatoon);
-            DestroyWithoutUnits();
         }
 
         // Called when a platoon enters or leaves the player's selection.

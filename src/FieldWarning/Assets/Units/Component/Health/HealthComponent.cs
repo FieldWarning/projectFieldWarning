@@ -53,7 +53,7 @@ namespace PFW.Units.Component.Health
             _platoon.Units.Remove(_dispatcher);
             GameObject.Destroy(gameObject);
 
-            _platoon.GhostPlatoon.HandleRealUnitDestroyed();
+            _platoon.GhostPlatoon.RemoveOneGhostUnit();
 
             if (_platoon.Units.Count == 0) {
                 GameObject.Destroy(_platoon.gameObject);
