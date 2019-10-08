@@ -211,9 +211,7 @@ namespace PFW.Units.Component.Movement
 
         protected override void UpdateMapOrientation()
         {
-            //if (Data == null) Awake();
-            //TerrainMap map = Platoon.Owner.Session.TerrainMap;
-            int terrainType = _terrainMap.GetTerrainType(transform.position);
+            int terrainType = _terrainMap == null ? TerrainMap.PLAIN : _terrainMap.GetTerrainType(transform.position);
             if (terrainType == TerrainMap.BRIDGE) {
                 _terrainTiltForward = 0f;
                 _terrainTiltRight = 0f;

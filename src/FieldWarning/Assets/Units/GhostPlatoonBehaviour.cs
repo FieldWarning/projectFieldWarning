@@ -33,20 +33,14 @@ namespace PFW.Units
         [SerializeField]
         private IconBehaviour _icon = null;
         private Unit _unit;
-        [SerializeField]
-        private PlatoonBehaviour _platoonBehaviour = null;
         private PlayerData _owner;
         private List<GameObject> _units = new List<GameObject>();
 
-        public void Initialize(Unit unit, PlayerData owner, int unitCount)
+        public void Initialize(Unit unit, PlayerData owner)
         {
             _owner = owner;
             _unit = unit;
             transform.position = 100 * Vector3.down;
-
-            // Create units:
-            for (int i = 0; i < unitCount; i++)
-                AddSingleUnit();
 
             InitializeIcon(_icon);
         }
@@ -56,19 +50,6 @@ namespace PFW.Units
         {
             _icon.BaseColor = _owner.Team.Color;
             _icon.SetGhost();
-        }
-
-        public PlatoonBehaviour GetRealPlatoon()
-        {
-            return _platoonBehaviour;
-        }
-
-        public void BuildRealPlatoon()
-        {
-            _platoonBehaviour.gameObject.SetActive(true);
-            _platoonBehaviour.Initialize(_unit, _owner, _units.Count);
-
-            _platoonBehaviour.GhostPlatoon = this;
         }
 
         public void InitializeAfterSplit(
@@ -83,7 +64,7 @@ namespace PFW.Units
             AddSingleUnit();
         }
 
-        private void AddSingleUnit()
+        public void AddSingleUnit()
         {
             GameObject _unitPrefab = _unit.Prefab;
             GameObject unit = _owner.Session.Factory.MakeGhostUnit(gameObject, _unitPrefab);

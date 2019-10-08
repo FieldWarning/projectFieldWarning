@@ -32,12 +32,13 @@ namespace PFW.Units
 
         // Create a pair of platoon and ghost platoon with units, but don't
         // activate any real units yet (only ghost mode).
-        public static PlatoonRoot CreateGhostMode(Unit unit, PlayerData owner, int count)
+        public static PlatoonRoot CreateGhostMode(Unit unit, PlayerData owner)
         {
             GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
             PlatoonRoot root = go.GetComponent<PlatoonRoot>();
 
-            root._ghostPlatoon.Initialize(unit, owner, count);
+            root._ghostPlatoon.Initialize(unit, owner);
+            root._realPlatoon.Initialize(unit, owner);
 
             Mirror.NetworkServer.Spawn(go);  /* must call from authority */
 
@@ -45,10 +46,11 @@ namespace PFW.Units
         }
 
         // For a ghost mode platoon root, activate the real units also.
-        // Effectively spawns the platoon, turning it from preview into a real one.
+        // Effectively spawns the platoon, turning it from a preview into a real one.
         public void Spawn(Vector3 pos)
         {
-            _ghostPlatoon.BuildRealPlatoon();
+            _realPlatoon.gameObject.SetActive(true);
+            _realPlatoon.GhostPlatoon = _ghostPlatoon;
             _realPlatoon.Spawn(pos);
         }
 
@@ -56,6 +58,24 @@ namespace PFW.Units
         {
             Destroy(gameObject);
         }
+
+        // Meant for a platoon still in ghost mode: Spawn() should be called to activate the units
+        public void AddSingleUnit()
+        {
+            _ghostPlatoon.AddSingleUnit();
+            _realPlatoon.AddSingleUnit();
+        }
+
+        // Meant to put units
+        public void AddSingleExistingUnit(GameObject realUnit, GameObject ghostUnit)
+        {
+
+        }
+
+        //public void Split()
+        //{
+        //    _realPlatoon.Split(null);
+        //}
 
         public void SetGhostOrientation(Vector3 center, float heading) =>
                 _ghostPlatoon.SetOrientation(center, heading);

@@ -22,7 +22,7 @@ namespace PFW.UI.Ingame
 {
     public class BuyTransaction
     {
-        private PlatoonRoot _previewPlatoon;
+        private PlatoonRoot _newestPlatoon;
 
         private const int MAX_PLATOON_SIZE = 4;
         private const int MIN_PLATOON_SIZE = 1;
@@ -44,44 +44,39 @@ namespace PFW.UI.Ingame
             Unit = unit;
             Owner = owner;
 
-            _smallestPlatoonSize = MIN_PLATOON_SIZE;
-            _previewPlatoon =
-                    PlatoonRoot.CreateGhostMode(
-                            unit, owner, _smallestPlatoonSize);
-
             PreviewPlatoons = new List<PlatoonRoot>();
-            PreviewPlatoons.Add(_previewPlatoon);
+            StartNewPlatoon();
         }
 
         public void AddUnit()
         {
             if (_smallestPlatoonSize < MAX_PLATOON_SIZE) {
 
-                PreviewPlatoons.Remove(_previewPlatoon);
-                _previewPlatoon.Destroy();
-
                 _smallestPlatoonSize++;
-                _previewPlatoon =
-                        PlatoonRoot.CreateGhostMode(
-                                Unit, Owner, _smallestPlatoonSize);
-                PreviewPlatoons.Add(_previewPlatoon);
+                _newestPlatoon.AddSingleUnit();
+
             } else {
 
-                // If all platoons in the transaction are max size,
-                // we add a new one and update the size counter:
-                _smallestPlatoonSize = MIN_PLATOON_SIZE;
-                _previewPlatoon = PlatoonRoot.CreateGhostMode(
-                        Unit, Owner, _smallestPlatoonSize);
-                PreviewPlatoons.Add(_previewPlatoon);
+                StartNewPlatoon();
             }
+        }
+
+        // Create the smallest platoon allowed
+        private void StartNewPlatoon()
+        {
+            _smallestPlatoonSize = MIN_PLATOON_SIZE;
+            _newestPlatoon = PlatoonRoot.CreateGhostMode(Unit, Owner);
+            for (int i = 0; i < MIN_PLATOON_SIZE; i++)
+                _newestPlatoon.AddSingleUnit();
+
+            PreviewPlatoons.Add(_newestPlatoon);
         }
 
         public BuyTransaction Clone()
         {
             BuyTransaction clone = new BuyTransaction(Unit, Owner);
 
-            int unitCount =
-                    (PreviewPlatoons.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
+            int unitCount = (PreviewPlatoons.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
 
             while (unitCount-- > 1)
                 clone.AddUnit();

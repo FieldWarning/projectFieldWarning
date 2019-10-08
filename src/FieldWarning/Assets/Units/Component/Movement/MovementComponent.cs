@@ -64,6 +64,7 @@ namespace PFW.Units.Component.Movement
 
         public virtual void Start()
         {
+            Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
         }
 
         // This needs to be separate from Initialize because this stuff is also needed by the ghost platoon
@@ -79,8 +80,6 @@ namespace PFW.Units.Component.Movement
             Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
             InitData(Platoon.Owner.Session.TerrainMap);
             Dispatcher = dispatcher;
-
-            Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
         }
 
         public void WakeUp()

@@ -30,6 +30,7 @@ namespace PFW.UI.Prototype
         public GameObject MakeGhostUnit(GameObject parent, GameObject prefab)
         {
             GameObject unit = Object.Instantiate(prefab);
+            unit.SetActive(true);
             unit.transform.parent = parent.transform;
             unit.GetComponent<MovementComponent>().enabled = false;
 

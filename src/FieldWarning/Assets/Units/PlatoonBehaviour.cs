@@ -75,25 +75,29 @@ namespace PFW.Units
             //}
         }
 
-        public void Initialize(Unit unit, PlayerData owner, int n)
+        public void Initialize(Unit unit, PlayerData owner)
         {
             Unit = unit;
             Owner = owner;
             Icon.BaseColor = Owner.Team.Color;
+        }
 
-            var unitPrefab = Unit.Prefab;
+        public void AddSingleUnit()
+        {
+            var unitInstance = Owner.Session.Factory.MakeUnit(
+                gameObject, Unit.Prefab, Owner.Team.Color);
 
-            for (int i = 0; i < n; i++) {
-                var unitInstance =
-                    Owner.Session.Factory.MakeUnit(gameObject, unitPrefab, Owner.Team.Color);
-                UnitDispatcher unitDispatcher = new UnitDispatcher(unitInstance, this);
-                Units.Add(unitDispatcher);
+            var collider = unitInstance.GetComponentInChildren<BoxCollider>();
 
-                var collider = unitInstance.GetComponentInChildren<BoxCollider>();
+            unitInstance.SetActive(false);
+            collider.enabled = true;
 
-                unitInstance.SetActive(true);
-                collider.enabled = true;
-            }
+            Units.Add(new UnitDispatcher(unitInstance, this));
+        }
+
+        public void Spawn(Vector3 center)
+        {
+            Units.ForEach(x => x.GameObject.SetActive(true));
 
             BuildModules();
 
@@ -109,10 +113,8 @@ namespace PFW.Units
             Icon.AssociateToRealUnits(Units);
 
             IsInitialized = true;
-        }
 
-        public void Spawn(Vector3 center)
-        {
+
             transform.position = center;
             var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
 
