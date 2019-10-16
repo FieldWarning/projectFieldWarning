@@ -125,17 +125,19 @@ public class SlidingCameraBehaviour : MonoBehaviour
         + "is higher than the current camera altitude will be applied to the terrain.")]
     List<TerrainMaterial> _terrainMaterials = null;
     [SerializeField]
-    private MicroSplatTerrain _microSplatTerrain = null;
+    //Array as we now have multiple MicroSplats
+    private MicroSplatTerrain[] _microSplatTerrains = null;
+
 
     private void Awake()
     {
         _terrain = Terrain.activeTerrain;
 
-        if (_microSplatTerrain == null) {
-            _microSplatTerrain = _terrain.GetComponent<MicroSplatTerrain>();
+        if (_microSplatTerrains.Length == 0 || _microSplatTerrains == null) {
+            _microSplatTerrains = _terrain.GetComponents<MicroSplatTerrain>();
         }
 
-        if (_microSplatTerrain == null) {
+        if (_microSplatTerrains == null) {
             throw new Exception("Camera not set up correctly, microsplat reference missing!");
         }
 
@@ -554,17 +556,21 @@ public class SlidingCameraBehaviour : MonoBehaviour
         foreach (TerrainMaterial mat in _terrainMaterials) {
             if (camAltitude < mat.MaxAltitude) {
 
-                if (_microSplatTerrain.templateMaterial != mat.Material) {
+                foreach (MicroSplatTerrain microSplate in _microSplatTerrains)
+                {
+                    if (microSplate.templateMaterial != mat.Material)
+                    {
+                        microSplate.templateMaterial = mat.Material;
 
-                    _microSplatTerrain.templateMaterial = mat.Material;
+                        // In the inspector this is the "Debug/Keywords" field.
+                        microSplate.keywordSO = mat.Keywords;
+                        // In the inspector this is the "Debug/Per Texture Data" field.
+                        microSplate.propData = mat.PerTextureData;
 
-                    // In the inspector this is the "Debug/Keywords" field.
-                    _microSplatTerrain.keywordSO = mat.Keywords;
-                    // In the inspector this is the "Debug/Per Texture Data" field.
-                    _microSplatTerrain.propData = mat.PerTextureData;
-
-                    _microSplatTerrain.Sync();
+                        microSplate.Sync();
+                    }
                 }
+                
                 break;
             }
         }
