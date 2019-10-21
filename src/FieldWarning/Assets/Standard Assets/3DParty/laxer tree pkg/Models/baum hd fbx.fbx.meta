@@ -1,0 +1,154 @@
+fileFormatVersion: 2
+guid: 9b27b908e66bddb42940797bc06df908
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: group_1
+    100004: instance_0
+    100006: instance_1
+    100008: instance_2
+    100010: instance_3
+    100012: instance_4
+    100014: instance_5
+    100016: instance_6
+    100018: instance_7
+    100020: SketchUp
+    400000: //RootNode
+    400002: group_1
+    400004: instance_0
+    400006: instance_1
+    400008: instance_2
+    400010: instance_3
+    400012: instance_4
+    400014: instance_5
+    400016: instance_6
+    400018: instance_7
+    400020: SketchUp
+    2300000: group_1
+    2300002: instance_0
+    2300004: instance_1
+    2300006: instance_2
+    2300008: instance_3
+    2300010: instance_4
+    2300012: instance_5
+    2300014: instance_6
+    2300016: instance_7
+    2300018: //RootNode
+    3300000: group_1
+    3300002: instance_0
+    3300004: instance_1
+    3300006: instance_2
+    3300008: instance_3
+    3300010: instance_4
+    3300012: instance_5
+    3300014: instance_6
+    3300016: instance_7
+    3300018: //RootNode
+    4300000: instance_7
+    4300002: instance_6
+    4300004: instance_5
+    4300006: instance_4
+    4300008: instance_3
+    4300010: instance_2
+    4300012: instance_1
+    4300014: instance_0
+    4300016: group_1
+    7400000: Default Take
+    9500000: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: None__ast3_png
+    second: {fileID: 2100000, guid: c575968aacb53144381d64ddfaa6c2f6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: None__bark_wh_png
+    second: {fileID: 2100000, guid: ec234b86cf157d94e9dd6a5ee9b31eee, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.04
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

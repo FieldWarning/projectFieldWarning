@@ -14,3 +14,4 @@
 | Forest Materials   | Assets/Terrain | yes| FREE (Poliigon) | https://www.poliigon.com/search?is_free=true |
 | Sean's Water 	     | Assets/Terrain | yes | FREE (Sean) | https://www.reddit.com/r/Unity3D/comments/9684rh/seans_water_shader_download_it_for_free_see/?st=JLH8SEFT&sh=df4ca7f3|
 |Free HDR Sky|Assets/Skybox|yes| FREE (store)| https://assetstore.unity.com/packages/2d/textures-materials/sky/free-hdr-sky-61217|
+| Mobile Tree Package | laxer tree pkg | yes | FREE (store) | https://assetstore.unity.com/packages/3d/vegetation/trees/mobile-tree-package-18866|
