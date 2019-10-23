@@ -9,7 +9,7 @@
 //   RenderLoop : Surface Shader
 //////////////////////////////////////////////////////
 
-Shader "Hidden/MicroSplat/Terrain_Base1274048430" {
+Shader "Hidden/MicroSplat/Terrain_Base3202685" {
    Properties {
       [HideInInspector] _Control0 ("Control0", 2D) = "red" {}
       [HideInInspector] _Control1 ("Control1", 2D) = "black" {}
