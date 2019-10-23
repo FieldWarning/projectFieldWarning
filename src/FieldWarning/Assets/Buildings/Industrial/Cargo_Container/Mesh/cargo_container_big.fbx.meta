@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0b349b08ce160ca4ab2ef50500b81dcd
+guid: becb981a44c14a04fb8bafb4462884b1
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -15,7 +15,7 @@ ModelImporter:
     4300000: cargo_container_big3
   externalObjects: {}
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
