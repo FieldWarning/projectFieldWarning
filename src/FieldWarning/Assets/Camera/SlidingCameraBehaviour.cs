@@ -106,8 +106,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private Camera _cam;
 
-    private Terrain _terrain;
-
     [Serializable]
     private struct TerrainMaterial
     {
@@ -131,13 +129,15 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        _terrain = Terrain.activeTerrain;
+        List<MicroSplatTerrain> splatList = new List<MicroSplatTerrain>();
 
-        if (_microSplatTerrains.Length == 0 || _microSplatTerrains == null) {
-            _microSplatTerrains = _terrain.GetComponents<MicroSplatTerrain>();
+        foreach (Terrain terrain in GameObject.FindObjectsOfType<Terrain>()) {
+            splatList.AddRange(terrain.GetComponents<MicroSplatTerrain>());
         }
 
-        if (_microSplatTerrains == null) {
+        if (splatList.Count > 0) {
+            _microSplatTerrains = splatList.ToArray();
+        } else {
             throw new Exception("Camera not set up correctly, microsplat reference missing!");
         }
 
@@ -356,7 +356,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         _targetPosition.y = Mathf.Clamp(
                 _targetPosition.y,
-                _terrain.SampleHeight(_targetPosition) + _minAltitude,
+                _session.TerrainMap.GetTerrainHeight(_targetPosition) + _minAltitude,
                 _maxAltitude);
     }
 
@@ -477,14 +477,15 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void ClampCameraXZPosition()
     {
+        TerrainMap map = _session.TerrainMap;
         _targetPosition.x = Mathf.Clamp(
                 _targetPosition.x,
-                _terrain.GetPosition().x - _maxCameraHorizontalDistanceFromTerrain,
-                _terrain.GetPosition().x + _terrain.terrainData.size.x + _maxCameraHorizontalDistanceFromTerrain);
+                map._mapMin.x - _maxCameraHorizontalDistanceFromTerrain,
+                map._mapMax.x + _maxCameraHorizontalDistanceFromTerrain);
         _targetPosition.z = Mathf.Clamp(
                 _targetPosition.z,
-                _terrain.GetPosition().z - _maxCameraHorizontalDistanceFromTerrain,
-                _terrain.GetPosition().z + _terrain.terrainData.size.z + _maxCameraHorizontalDistanceFromTerrain);
+                map._mapMin.z - _maxCameraHorizontalDistanceFromTerrain,
+                map._mapMax.z + _maxCameraHorizontalDistanceFromTerrain);
     }
 
     private void SetPanningCursor(ScreenCorner corner)
@@ -551,7 +552,7 @@ public class SlidingCameraBehaviour : MonoBehaviour
     /// </summary>
     private void MaybeChangeTerrainMaterial()
     {
-        float camAltitude = transform.position.y - _terrain.transform.position.y;
+        float camAltitude = transform.position.y - _session.TerrainMap.GetTerrainHeight(transform.position);
 
         foreach (TerrainMaterial mat in _terrainMaterials) {
             if (camAltitude < mat.MaxAltitude) {

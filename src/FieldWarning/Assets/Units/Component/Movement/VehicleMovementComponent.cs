@@ -182,7 +182,7 @@ namespace PFW.Units.Component.Movement
             Vector3 bounceDirection = Vector3.zero;
             for (float angle = 0f; angle < 360f; angle += 30f) {
                 Vector3 offset = BOUNCE_RADIUS * new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0f, Mathf.Cos(angle * Mathf.Deg2Rad));
-                float speed = Mobility.GetUnitSpeed(Pathfinder.Data.Terrain, Pathfinder.Data.Map, transform.position + offset, 0f, -transform.forward);
+                float speed = Mobility.GetUnitSpeed(_terrainMap, transform.position + offset, 0f, -transform.forward);
                 if (speed > 0f)
                     bounceDirection += offset;
             }
@@ -211,8 +211,9 @@ namespace PFW.Units.Component.Movement
 
         protected override void UpdateMapOrientation()
         {
-            if (Data == null) Awake();
-            int terrainType = Pathfinder == null ? TerrainMap.PLAIN : Pathfinder.Data.Map.GetTerrainType(transform.position);
+            //if (Data == null) Awake();
+            //TerrainMap map = Platoon.Owner.Session.TerrainMap;
+            int terrainType = _terrainMap.GetTerrainType(transform.position);
             if (terrainType == TerrainMap.BRIDGE) {
                 _terrainTiltForward = 0f;
                 _terrainTiltRight = 0f;
@@ -220,16 +221,20 @@ namespace PFW.Units.Component.Movement
             } else if (terrainType == TerrainMap.WATER) {
                 _terrainTiltForward = 0f;
                 _terrainTiltRight = 0f;
-                _terrainHeight = Pathfinder.Data.Map.WATER_HEIGHT;
+                _terrainHeight = _terrainMap.WATER_HEIGHT;
             } else {
                 // This way of doing the rotation should look nice because the unit won't sink into the ground
                 //      much assuming length and width are set correctly, but it is not very fast
-
+                
+                Terrain terrain = _terrainMap.GetTerrainAtPos(transform.position);
+                if (terrain == null)
+                    return;
+                
                 // Apparently our forward and backward are opposite of the Unity convention
-                float frontHeight = Terrain.activeTerrain.SampleHeight(transform.position + Forward * Data.Length / 2);
-                float rearHeight = Terrain.activeTerrain.SampleHeight(transform.position - Forward * Data.Length / 2);
-                float leftHeight = Terrain.activeTerrain.SampleHeight(transform.position - Right * Data.Width / 2);
-                float rightHeight = Terrain.activeTerrain.SampleHeight(transform.position + Right * Data.Width / 2);
+                float frontHeight = terrain.SampleHeight(transform.position + Forward * Data.Length / 2);
+                float rearHeight = terrain.SampleHeight(transform.position - Forward * Data.Length / 2);
+                float leftHeight = terrain.SampleHeight(transform.position - Right * Data.Width / 2);
+                float rightHeight = terrain.SampleHeight(transform.position + Right * Data.Width / 2);
 
                 _terrainHeight = Mathf.Max((frontHeight + rearHeight) / 2, (leftHeight + rightHeight) / 2);
                 _terrainTiltForward = Mathf.Atan((frontHeight - rearHeight) / Data.Length);

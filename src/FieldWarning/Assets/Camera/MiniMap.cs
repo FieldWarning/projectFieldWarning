@@ -22,10 +22,10 @@ using PFW.Units;
 
 public class MiniMap : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField]
-    private Terrain _terrain = null;
+    //[SerializeField]
+    //private Terrain _terrain = null;
     //(x,y,z) X and Z are the important values
-    private Vector3 _terrainSize;
+    private Vector3 _terrainSize, _terrainPos;
     private float _minimapSize;
     private float _offsetFromRightSide;
     private float _targetedScreenSize;
@@ -51,7 +51,11 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         _targetedScreenSize =
             transform.parent.parent.GetComponent<RectTransform>().rect.width;
 
-        _terrainSize = _terrain.terrainData.bounds.size;
+        TerrainMap map = GameObject.FindObjectOfType<MatchSession>().TerrainMap;
+
+        //_terrainSize = _terrain.terrainData.bounds.size;
+        _terrainSize = map._mapMax - map._mapMin;
+        _terrainPos = map._mapMin;
         _miniMapCamera.orthographicSize = _terrainSize.x / 2f;
 
         //convert camera to a texture
@@ -107,7 +111,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     {
         float scale = _screenSize.x / _targetedScreenSize;
         //adjust the position to fit on the terrain
-        pos = pos - _terrain.GetPosition();
+        pos = pos - _terrainPos;
         //Scale the pos to fit the pixel size of the minimap
         pos = pos * (_minimapSize / _terrainSize.x);
         pos = new Vector2(Screen.width - _minimapSize * scale - _offsetFromRightSide * scale + pos.x * scale, _minimapSize * scale - pos.z * scale);
@@ -126,7 +130,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         pos = pos / scale;
         pos.y = _minimapSize - pos.y;
         pos = pos / (_minimapSize / _terrainSize.x);
-        pos = pos + new Vector2(_terrain.GetPosition().x, _terrain.GetPosition().z);
+        pos = pos + new Vector2(_terrainPos.x, _terrainPos.z);
 
         _mainCamera.SetTargetPosition(
                 new Vector3(pos.x, _mainCamera.transform.position.y, pos.y));

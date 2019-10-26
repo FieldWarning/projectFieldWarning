@@ -63,6 +63,7 @@ namespace PFW.Model.Game
         public List<Team> Teams { get; } = new List<Team>();
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
+        public TerrainMap TerrainMap { get; private set; }
         public PathfinderData PathData { get; private set; }
 
         public UnitFactory Factory { get; private set; }
@@ -100,7 +101,9 @@ namespace PFW.Model.Game
             _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
 
             // TODO: Pass terrain from future location of starting matches (no Find)
-            PathData = new PathfinderData(GameObject.Find("Terrain").GetComponent<Terrain>());
+            Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
+            TerrainMap = new TerrainMap(terrains);
+            PathData = new PathfinderData(TerrainMap);
             Factory = new UnitFactory();
             Settings = new Settings();
 

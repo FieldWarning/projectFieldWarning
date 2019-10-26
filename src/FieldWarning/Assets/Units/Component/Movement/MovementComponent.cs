@@ -42,6 +42,8 @@ namespace PFW.Units.Component.Movement
         // the localEulerAngles will sometimes automatically change to some new equivalent angles
         private Vector3 _currentRotation;
 
+        protected TerrainMap _terrainMap { get; private set; }
+
         private TerrainCollider _Ground;
         protected TerrainCollider Ground {
             get {
@@ -54,23 +56,28 @@ namespace PFW.Units.Component.Movement
 
         protected float _finalHeading;
 
-        private Terrain _terrain;
-
         public UnitDispatcher Dispatcher;
 
         public virtual void Awake()
         {
-            Data = gameObject.GetComponent<DataComponent>();
-            Mobility = MobilityType.MobilityTypes[Data.MobilityTypeIndex];
         }
 
         public virtual void Start()
         {
         }
 
+        // This needs to be separate from Initialize because this stuff is also needed by the ghost platoon
+        public void InitData(TerrainMap map)
+        {
+            _terrainMap = map;
+            Data = gameObject.GetComponent<DataComponent>();
+            Mobility = MobilityType.MobilityTypes[Data.MobilityTypeIndex];
+        }
+
         public void Initialize(UnitDispatcher dispatcher)
         {
             Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
+            InitData(Platoon.Owner.Session.TerrainMap);
             Dispatcher = dispatcher;
 
             Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
@@ -221,8 +228,7 @@ namespace PFW.Units.Component.Movement
         public float GetTerrainSpeedMultiplier()
         {
             float terrainSpeed = Mobility.GetUnitSpeed(
-                    Pathfinder.Data.Terrain,
-                    Pathfinder.Data.Map,
+                    Pathfinder.Data._map,
                     transform.position,
                     0f,
                     -transform.forward);

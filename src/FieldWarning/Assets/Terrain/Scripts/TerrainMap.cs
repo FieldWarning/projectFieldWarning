@@ -41,62 +41,94 @@ public class TerrainMap
     public const string HEIGHT_MAP_SUFFIX = "_sample_height.dat";
     private readonly string _HEIGHT_MAP_PATH;
 
+    public readonly Vector3 _mapMin, _mapMax, _mapCenter;
+
     private byte[,] _map;
     private int _mapSize;
-    private Terrain terrain;
+    private float _terrainSpacingX, _terrainSpacingZ;
+
+    // 2D array of terrain pieces for quickly finding which piece is at a given location
+    private Terrain[,] _terrains;
+
     private Loading _loader;
 
     public readonly float WATER_HEIGHT;
-
-    private List<Vector3> _trees = new List<Vector3>();
+    
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
 
     // this is only needed for map testing
     private byte[,] originalTestMap = null;
 
-    public TerrainMap(Terrain terrain)
+    public TerrainMap(Terrain[] terrains1D)
     {
-        this.terrain = terrain;
         WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
         WATER_HEIGHT = water.transform.position.y;
 
-        _mapSize = (int)(Mathf.Max(this.terrain.terrainData.size.x, this.terrain.terrainData.size.z) / 2f / MAP_SPACING);
+        // Find limits of the map
+        _mapMin = new Vector3(99999f, 0f, 99999f);
+        _mapMax = new Vector3(-99999f, 0f, -99999f);
+        foreach (Terrain terrain in terrains1D)
+        {
+            Vector3 pos = terrain.transform.position;
+            Vector3 size = terrain.terrainData.size;
+            _mapMin.Set(Mathf.Min(_mapMin.x, pos.x), 0.0f, Mathf.Min(_mapMin.z, pos.z));
+            _mapMax.Set(Mathf.Max(_mapMax.x, pos.x + size.x), 0.0f, Mathf.Max(_mapMax.z, pos.z + size.x));
+        }
+        _mapCenter = (_mapMin + _mapMax) / 2f;
+
+        // Move terrains from 1D array to 2D array
+        int sqrtLen = Mathf.RoundToInt(Mathf.Sqrt(terrains1D.Length));
+        _terrains = new Terrain[sqrtLen, sqrtLen];
+        _terrainSpacingX = (_mapMax.x - _mapMin.x) / sqrtLen;
+        _terrainSpacingZ = (_mapMax.z - _mapMin.z) / sqrtLen;
+        for (int i = 0; i < sqrtLen; i++)
+        {
+            for (int j = 0; j < sqrtLen; j++)
+            {
+                Vector3 corner = _mapMin + new Vector3(_terrainSpacingX*i, 0f, _terrainSpacingZ*j);
+                foreach (Terrain terrain in terrains1D)
+                {
+                    if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2 &&
+                            Mathf.Abs(terrain.transform.position.z - corner.z) < _terrainSpacingZ / 2)
+                    {
+                        _terrains[i,j] = terrain;
+                    }
+                }
+            }
+        }
+
+        _mapSize = (int)(Mathf.Max(_mapMax.x - _mapMin.x, _mapMax.z - _mapMin.z) / 2f / MAP_SPACING);
 
         string sceneName = SceneManager.GetActiveScene().name;
         string scenePathWithFilename = SceneManager.GetActiveScene().path;
         string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
         _HEIGHT_MAP_PATH = Path.Combine(sceneDirectory, sceneName + HEIGHT_MAP_SUFFIX);
 
-        //TODO create some debug UI to dump the map when needed
-        if (!File.Exists(_HEIGHT_MAP_PATH))
-        {
-            WriteHeightMap(_HEIGHT_MAP_PATH);
-        }
-
         _roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
         _bridges = GameObject.FindGameObjectsWithTag("Bridge");
 
-        // get the trees
-        foreach (TreeInstance tree in terrain.terrainData.treeInstances)
+        //TODO create some debug UI to dump the map when needed
+        if (!File.Exists(_HEIGHT_MAP_PATH))
         {
-            Vector3 treePosition = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
-            _trees.Add(treePosition);
+            CreateOriginalMap();
+            WriteHeightMap(_HEIGHT_MAP_PATH);
         }
-
+        
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
 
         // leave this commented out until we make a change and need to retest the map
         // need to run this before the worker threads start
         //originalTestMap = CreateOriginalMap();
-
-        _map = new byte[nEntry, nEntry];
-
+		
         _loader = new Loading("Terrain");
         _loader.AddWorker(LoadHeightMap, "Loading height map");
-        _loader.AddWorker(LoadTrees, "Setting tree positions");
-        _loader.AddWorker(LoadRoads, "Connecting roads");
-        _loader.AddWorker(LoadBridges, "Loading bridges");
+		
+		// Loading bridges from a separate thread throws an exception.
+		// But this stuff is read in from the heightmap file anyway.
+        //_loader.AddWorker(LoadTrees, "Setting tree positions");
+        //_loader.AddWorker(LoadRoads, "Connecting roads");
+        //_loader.AddWorker(LoadBridges, "Loading bridges");
 
         // leave this commented out until we make a change and need to retest the map
         //_loader.AddWorker(MapTester);
@@ -140,7 +172,7 @@ public class TerrainMap
         {
             for (var z = 0; z < nEntry; z++)
             {
-                _map[x, z] = (byte)(terrain.SampleHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
+                _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
             }
         }
@@ -180,7 +212,7 @@ public class TerrainMap
 
             for (int z = 0; z < nEntry; z++)
             {
-                temp = terrain.SampleHeight(PositionOf(x, z));
+                temp = GetTerrainHeight(PositionOf(x, z));
 
                 //map[x, z] = (byte)(terrain.SampleHeight(PositionOf(x, z)) > waterHeight ? PLAIN : WATER);
 
@@ -228,6 +260,7 @@ public class TerrainMap
         //TODO : not much error checking is done in thsi function
 
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
+        _map = new byte[nEntry, nEntry];
 
         // read the entire file into memory
         var file = File.ReadAllBytes(path);
@@ -281,6 +314,18 @@ public class TerrainMap
 
     private void LoadTrees()
     {
+        List<Vector3> _trees = new List<Vector3>();
+
+        // get the trees
+        foreach (Terrain terrain in _terrains)
+        {
+            foreach (TreeInstance tree in terrain.terrainData.treeInstances)
+            {
+                Vector3 treePosition = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
+                _trees.Add(treePosition);
+            }
+        }
+
         // assign tree positions
         var currIdx = 0;
 
@@ -380,10 +425,10 @@ public class TerrainMap
             int nPointWide = (int)(width / (MAP_SPACING / 2));
             for (int iWidth = -nPointWide; iWidth <= nPointWide; iWidth++) {
                 Vector3 position = positionLong + iWidth * (MAP_SPACING / 2) * directionWide;
-                int indexX = MapIndex(position.x);
-                int indexZ = MapIndex(position.z);
+                int indexX = MapIndex(position.x - _mapCenter.x);
+                int indexZ = MapIndex(position.z - _mapCenter.z);
                 if (indexX >= 0 && indexX < _map.Length && indexZ >= 0 && indexZ < _map.Length)
-                    _map[MapIndex(position.x), MapIndex(position.z)] = value;
+                    _map[indexX, indexZ] = value;
             }
 
             distLong += MAP_SPACING / 2;
@@ -394,15 +439,20 @@ public class TerrainMap
     {
         for (float x = -radius; x < radius; x += MAP_SPACING / 2) {
             for (float z = -radius; z < radius; z += MAP_SPACING / 2) {
-                if (Mathf.Sqrt(x*x + z*z) < radius)
-                    _map[MapIndex(position.x + x), MapIndex(position.z + z)] = value;
+                if (Mathf.Sqrt(x * x + z * z) < radius) {
+                    int indexX = MapIndex(position.x + x - _mapCenter.x);
+                    int indexZ = MapIndex(position.z + z - _mapCenter.z);
+                    if (indexX >= 0 && indexX < _map.Length && indexZ >= 0 && indexZ < _map.Length)
+                        _map[indexX, indexZ] = value;
+                }
             }
         }
     }
 
     private Vector3 PositionOf(int x, int z)
     {
-        return MAP_SPACING * new Vector3(x - EXTENSION + 0.5f - _mapSize, 0f, z - EXTENSION + 0.5f - _mapSize);
+        Vector3 pos = MAP_SPACING * new Vector3(x - EXTENSION + 0.5f - _mapSize, 0f, z - EXTENSION + 0.5f - _mapSize);
+        return pos + _mapCenter;
     }
 
     private int MapIndex(float position)
@@ -413,18 +463,36 @@ public class TerrainMap
 
     public int GetTerrainType(Vector3 position)
     {
-        return _map[MapIndex(position.x), MapIndex(position.z)];
+        return _map[MapIndex(position.x - _mapCenter.x), MapIndex(position.z - _mapCenter.z)];
     }
 
-    public float GetTerrainHeight(Vector3 position, int type)
+    public Terrain GetTerrainAtPos(Vector3 position)
     {
-        if (type == WATER) {
-            return WATER_HEIGHT;
-        }else if (type == BRIDGE) {
-            return BRIDGE_HEIGHT;
-        } else {
-            return terrain.SampleHeight(position);
-        }
+        int indexX = (int)((position.x - _mapMin.x) / _terrainSpacingX);
+        int indexZ = (int)((position.z - _mapMin.z) / _terrainSpacingZ);
+        if (indexX < 0 || indexX >= _terrains.GetLength(0))
+            return null;
+        if (indexZ < 0 || indexZ >= _terrains.GetLength(1))
+            return null;
+        return _terrains[indexX, indexZ];
+    }
+
+    public bool IsInMap(Vector3 position)
+    {
+        return GetTerrainAtPos(position) != null;
+    }
+
+    public float GetTerrainHeight(Vector3 position)
+    {
+        Terrain terrain = GetTerrainAtPos(position);
+        return terrain == null ? WATER_HEIGHT : terrain.SampleHeight(position);
+        //if (type == WATER) {
+        //    return WATER_HEIGHT;
+        //}else if (type == BRIDGE) {
+        //    return BRIDGE_HEIGHT;
+        //} else {
+        //    return terrain.SampleHeight(position);
+        //}
     }
 
 }

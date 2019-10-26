@@ -79,6 +79,7 @@ public class GhostPlatoonBehaviour : MonoBehaviour
     {
         GameObject _unitPrefab = _unit.Prefab;
         GameObject unit = _owner.Session.Factory.MakeGhostUnit(_unitPrefab);
+        unit.GetComponent<MovementComponent>().InitData(_owner.Session.TerrainMap);
         _units.Add(unit);
     }
 

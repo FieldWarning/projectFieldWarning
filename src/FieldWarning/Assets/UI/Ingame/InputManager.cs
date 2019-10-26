@@ -99,9 +99,7 @@ namespace PFW.UI.Ingame
             case MouseMode.PURCHASING:
 
                 RaycastHit hit;
-                if (Util.GetTerrainClickLocation(out hit)
-                    && hit.transform.gameObject.name.Equals("Terrain")) {
-
+                if (Util.GetTerrainClickLocation(out hit)) {
                     ShowGhostUnitsAndMaybePurchase(hit);
                 }
 
