@@ -31,10 +31,9 @@ public class PathfinderData
     private const float ROAD_GRID_SPACING = 200f * TerrainConstants.MAP_SCALE;
     private const float NODE_PRUNE_DIST_THRESH = 10f * TerrainConstants.MAP_SCALE;
     private const float ARC_MAX_DIST = 2500f * TerrainConstants.MAP_SCALE;
-
-    public Terrain Terrain;
-    public TerrainMap Map;
-    public List<PathNode> Graph;
+    
+    public TerrainMap _map;
+    public List<PathNode> _graph;
 
     /// <summary>
     /// If a node is in the open set, it has been seen
@@ -42,11 +41,10 @@ public class PathfinderData
     /// </summary>
     private FastPriorityQueue<PathNode> _openSet;
 
-    public PathfinderData(Terrain terrain)
+    public PathfinderData(TerrainMap map)
     {
-        Terrain = terrain;
-        Map = new TerrainMap(terrain);
-        Graph = new List<PathNode>();
+        _map = map;
+        _graph = new List<PathNode>();
 
         string sceneName = SceneManager.GetActiveScene().name;
         string scenePathWithFilename = SceneManager.GetActiveScene().path;
@@ -73,10 +71,10 @@ public class PathfinderData
             Stream stream = File.Open(file, FileMode.Open);
             BinaryFormatter formatter = new BinaryFormatter();
 
-            Graph = (List<PathNode>)formatter.Deserialize(stream);
+            _graph = (List<PathNode>)formatter.Deserialize(stream);
             stream.Close();
 
-            _openSet = new FastPriorityQueue<PathNode>(Graph.Count + 1);
+            _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
             return true;
         } catch (Exception exception) {
             Debug.Log("Error reading graph file: " + exception.Message);
@@ -89,14 +87,13 @@ public class PathfinderData
         Stream stream = File.Open(file, FileMode.Create);
         BinaryFormatter formatter = new BinaryFormatter();
 
-        formatter.Serialize(stream, Graph);
+        formatter.Serialize(stream, _graph);
         stream.Close();
     }
 
     private void BuildGraph()
     {
-        Graph.Clear();
-        Vector3 size = Terrain.terrainData.size;
+        _graph.Clear();
 
         // TODO: Add nodes for terrain features
 
@@ -105,8 +102,8 @@ public class PathfinderData
         foreach (ERModularRoad road in roads) {
             for (int i = 0; i < road.middleIndentVecs.Count; i++) {
                 Vector3 roadVert = road.middleIndentVecs[i];
-                if (Mathf.Abs(roadVert.x) < size.x/2 && Mathf.Abs(roadVert.z) < size.z/2)
-                    Graph.Add(new PathNode(roadVert, true));
+                if (_map.IsInMap(roadVert))
+                    _graph.Add(new PathNode(roadVert, true));
 
                 if (i < road.middleIndentVecs.Count - 1) {
                     Vector3 nextRoadVert = road.middleIndentVecs[i+1];
@@ -117,13 +114,8 @@ public class PathfinderData
 
                     for (int j = 0; j < nIntermediate; j++) {
                         intermediatePosition += stretch;
-
-                        bool mysteryComparison =
-                            Mathf.Abs(intermediatePosition.x) < size.x / 2
-                            &&
-                            Mathf.Abs(intermediatePosition.z) < size.z / 2;
-                        if (mysteryComparison)
-                            Graph.Add(new PathNode(intermediatePosition, true));
+                        if (_map.IsInMap(intermediatePosition))
+                            _graph.Add(new PathNode(intermediatePosition, true));
                     }
                 }
             }
@@ -145,20 +137,20 @@ public class PathfinderData
         }*/
 
         // Remove nodes that are right on top of each other
-        for (int i = 0; i < Graph.Count; i++) {
-            for (int j = i + 1; j < Graph.Count; j++) {
-                if ((Position(Graph[i]) - Position(Graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
-                    Graph.RemoveAt(j);
+        for (int i = 0; i < _graph.Count; i++) {
+            for (int j = i + 1; j < _graph.Count; j++) {
+                if ((Position(_graph[i]) - Position(_graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
+                    _graph.RemoveAt(j);
             }
         }
 
-        _openSet = new FastPriorityQueue<PathNode>(Graph.Count + 1);
+        _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
 
         // Compute arcs for all pairs of nodes within cutoff distance
-        for (int i = 0; i < Graph.Count; i++) {
-            for (int j = i + 1; j < Graph.Count; j++) {
-                if ((Position(Graph[i]) - Position(Graph[j])).magnitude < ARC_MAX_DIST)
-                    AddArc(Graph[i], Graph[j]);
+        for (int i = 0; i < _graph.Count; i++) {
+            for (int j = i + 1; j < _graph.Count; j++) {
+                if ((Position(_graph[i]) - Position(_graph[j])).magnitude < ARC_MAX_DIST)
+                    AddArc(_graph[i], _graph[j]);
             }
         }
 
@@ -167,10 +159,10 @@ public class PathfinderData
         // between the nodes is at least as good as the optimal global path.
         // This is a brute force approach and it might be too slow.
         List<PathNode> path = new List<PathNode>();
-        for (int i = 0; i < Graph.Count; i++) {
-            for (int j = i + 1; j < Graph.Count; j++) {
+        for (int i = 0; i < _graph.Count; i++) {
+            for (int j = i + 1; j < _graph.Count; j++) {
 
-                PathArc arc = GetArc(Graph[i], Graph[j]);
+                PathArc arc = GetArc(_graph[i], _graph[j]);
                 if (arc.Equals(INVALID_ARC))
                     continue;
 
@@ -180,7 +172,7 @@ public class PathfinderData
                         continue;
 
                     float time = FindPath(path,
-                        Position(Graph[i]), Position(Graph[j]),
+                        Position(_graph[i]), Position(_graph[j]),
                         mobility, 0f, MoveCommandType.Fast);
 
                     if (arc.Time[mobility.Index] < 1.5 * time) {
@@ -190,7 +182,7 @@ public class PathfinderData
                 }
 
                 if (!necessary)
-                    RemoveArc(Graph[i], Graph[j]);
+                    RemoveArc(_graph[i], _graph[j]);
             }
         }
     }
@@ -250,7 +242,7 @@ public class PathfinderData
         // Initialize with all nodes accessible from the starting point
         // (this can be optimized later by throwing out some from the start)
         _openSet.Clear();
-        foreach (PathNode neighbor in Graph) {
+        foreach (PathNode neighbor in _graph) {
             neighbor.IsClosed = false;
             neighbor.CameFrom = null;
             neighbor.GScore = Pathfinder.FOREVER;
