@@ -260,7 +260,7 @@ public class TerrainMap
         //TODO : not much error checking is done in thsi function
 
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
-        _map = new byte[nEntry, nEntry];
+        var inputMap = new byte[nEntry, nEntry];
 
         // read the entire file into memory
         var file = File.ReadAllBytes(path);
@@ -298,7 +298,7 @@ public class TerrainMap
                 // populate the rest of the same type
                 while (zCoord < zEnd)
                 {
-                    _map[xCoord, zCoord] = bType;
+                    inputMap[xCoord, zCoord] = bType;
                     zCoord++;
                 }
             }
@@ -309,6 +309,8 @@ public class TerrainMap
         }
 
         reader.Close();
+
+        _map = inputMap;
     }
 
 
