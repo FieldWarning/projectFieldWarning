@@ -8,25 +8,31 @@ ModelImporter:
     100004: haus2_LOD1
     100006: haus2_LOD2
     100008: haus2_LOD3
+    100010: polySurface39
     400000: //RootNode
     400002: haus2_LOD0
     400004: haus2_LOD1
     400006: haus2_LOD2
     400008: haus2_LOD3
+    400010: polySurface39
     2100000: aiStandard1
     2300000: haus2_LOD0
     2300002: haus2_LOD1
     2300004: haus2_LOD2
     2300006: haus2_LOD3
+    2300008: polySurface39
     3300000: haus2_LOD0
     3300002: haus2_LOD1
     3300004: haus2_LOD2
     3300006: haus2_LOD3
+    3300008: polySurface39
     4300000: haus2_LOD0
     4300002: haus2_LOD1
     4300004: haus2_LOD2
     4300006: haus2_LOD3
+    4300008: polySurface39
     20500000: //RootNode
+    2186277476908879412: ImportLogs
   externalObjects:
   - first:
       type: UnityEngine:Material
