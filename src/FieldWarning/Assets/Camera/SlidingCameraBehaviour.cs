@@ -480,12 +480,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
         TerrainMap map = _session.TerrainMap;
         _targetPosition.x = Mathf.Clamp(
                 _targetPosition.x,
-                map._mapMin.x - _maxCameraHorizontalDistanceFromTerrain,
-                map._mapMax.x + _maxCameraHorizontalDistanceFromTerrain);
+                map.MapMin.x - _maxCameraHorizontalDistanceFromTerrain,
+                map.MapMax.x + _maxCameraHorizontalDistanceFromTerrain);
         _targetPosition.z = Mathf.Clamp(
                 _targetPosition.z,
-                map._mapMin.z - _maxCameraHorizontalDistanceFromTerrain,
-                map._mapMax.z + _maxCameraHorizontalDistanceFromTerrain);
+                map.MapMin.z - _maxCameraHorizontalDistanceFromTerrain,
+                map.MapMax.z + _maxCameraHorizontalDistanceFromTerrain);
     }
 
     private void SetPanningCursor(ScreenCorner corner)

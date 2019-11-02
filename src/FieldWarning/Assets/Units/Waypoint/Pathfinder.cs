@@ -69,7 +69,7 @@ public class Pathfinder
         this.Data = data;
         _path = new List<PathNode>();
         FinalCompletionDist =
-            0.5f * TerrainConstants.MAP_SCALE + unit.Data.MinTurnRadius;
+            2f * TerrainConstants.MAP_SCALE + unit.Data.MinTurnRadius;
         _nextUpdateTime = 0f;
     }
 

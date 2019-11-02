@@ -159,15 +159,13 @@ namespace PFW.Units.Component.Movement
         }
 
         // Sets the unit's destination location, with a default heading value
-        public void SetDestination(Vector3 v)
+        public void SetDestination(Vector3 d)
         {
-            //var diff = (v - transform.position);
-            //SetFinalOrientation(v, diff.getRadianAngle());
-            SetFinalOrientation(v, NO_HEADING);
+            SetDestination(d, NO_HEADING);
         }
 
         // Sets the unit's destination location, with a specific given heading value
-        public void SetFinalOrientation(Vector3 d, float heading)
+        public void SetDestination(Vector3 d, float heading)
         {
             if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.FOREVER)
                 SetUnitFinalHeading(heading);

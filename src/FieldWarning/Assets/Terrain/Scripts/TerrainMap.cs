@@ -41,7 +41,7 @@ public class TerrainMap
     public const string HEIGHT_MAP_SUFFIX = "_sample_height.dat";
     private readonly string _HEIGHT_MAP_PATH;
 
-    public readonly Vector3 _mapMin, _mapMax, _mapCenter;
+    public readonly Vector3 MapMin, MapMax, MapCenter;
 
     private byte[,] _map;
     private int _mapSize;
@@ -66,27 +66,27 @@ public class TerrainMap
         WATER_HEIGHT = water.transform.position.y;
 
         // Find limits of the map
-        _mapMin = new Vector3(99999f, 0f, 99999f);
-        _mapMax = new Vector3(-99999f, 0f, -99999f);
+        MapMin = new Vector3(99999f, 0f, 99999f);
+        MapMax = new Vector3(-99999f, 0f, -99999f);
         foreach (Terrain terrain in terrains1D)
         {
             Vector3 pos = terrain.transform.position;
             Vector3 size = terrain.terrainData.size;
-            _mapMin.Set(Mathf.Min(_mapMin.x, pos.x), 0.0f, Mathf.Min(_mapMin.z, pos.z));
-            _mapMax.Set(Mathf.Max(_mapMax.x, pos.x + size.x), 0.0f, Mathf.Max(_mapMax.z, pos.z + size.x));
+            MapMin.Set(Mathf.Min(MapMin.x, pos.x), 0.0f, Mathf.Min(MapMin.z, pos.z));
+            MapMax.Set(Mathf.Max(MapMax.x, pos.x + size.x), 0.0f, Mathf.Max(MapMax.z, pos.z + size.x));
         }
-        _mapCenter = (_mapMin + _mapMax) / 2f;
+        MapCenter = (MapMin + MapMax) / 2f;
 
         // Move terrains from 1D array to 2D array
         int sqrtLen = Mathf.RoundToInt(Mathf.Sqrt(terrains1D.Length));
         _terrains = new Terrain[sqrtLen, sqrtLen];
-        _terrainSpacingX = (_mapMax.x - _mapMin.x) / sqrtLen;
-        _terrainSpacingZ = (_mapMax.z - _mapMin.z) / sqrtLen;
+        _terrainSpacingX = (MapMax.x - MapMin.x) / sqrtLen;
+        _terrainSpacingZ = (MapMax.z - MapMin.z) / sqrtLen;
         for (int i = 0; i < sqrtLen; i++)
         {
             for (int j = 0; j < sqrtLen; j++)
             {
-                Vector3 corner = _mapMin + new Vector3(_terrainSpacingX*i, 0f, _terrainSpacingZ*j);
+                Vector3 corner = MapMin + new Vector3(_terrainSpacingX*i, 0f, _terrainSpacingZ*j);
                 foreach (Terrain terrain in terrains1D)
                 {
                     if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2 &&
@@ -98,7 +98,7 @@ public class TerrainMap
             }
         }
 
-        _mapSize = (int)(Mathf.Max(_mapMax.x - _mapMin.x, _mapMax.z - _mapMin.z) / 2f / MAP_SPACING);
+        _mapSize = (int)(Mathf.Max(MapMax.x - MapMin.x, MapMax.z - MapMin.z) / 2f / MAP_SPACING);
 
         string sceneName = SceneManager.GetActiveScene().name;
         string scenePathWithFilename = SceneManager.GetActiveScene().path;
@@ -427,8 +427,8 @@ public class TerrainMap
             int nPointWide = (int)(width / (MAP_SPACING / 2));
             for (int iWidth = -nPointWide; iWidth <= nPointWide; iWidth++) {
                 Vector3 position = positionLong + iWidth * (MAP_SPACING / 2) * directionWide;
-                int indexX = MapIndex(position.x - _mapCenter.x);
-                int indexZ = MapIndex(position.z - _mapCenter.z);
+                int indexX = MapIndex(position.x - MapCenter.x);
+                int indexZ = MapIndex(position.z - MapCenter.z);
                 if (indexX >= 0 && indexX < _map.Length && indexZ >= 0 && indexZ < _map.Length)
                     _map[indexX, indexZ] = value;
             }
@@ -442,8 +442,8 @@ public class TerrainMap
         for (float x = -radius; x < radius; x += MAP_SPACING / 2) {
             for (float z = -radius; z < radius; z += MAP_SPACING / 2) {
                 if (Mathf.Sqrt(x * x + z * z) < radius) {
-                    int indexX = MapIndex(position.x + x - _mapCenter.x);
-                    int indexZ = MapIndex(position.z + z - _mapCenter.z);
+                    int indexX = MapIndex(position.x + x - MapCenter.x);
+                    int indexZ = MapIndex(position.z + z - MapCenter.z);
                     if (indexX >= 0 && indexX < _map.Length && indexZ >= 0 && indexZ < _map.Length)
                         _map[indexX, indexZ] = value;
                 }
@@ -454,7 +454,7 @@ public class TerrainMap
     private Vector3 PositionOf(int x, int z)
     {
         Vector3 pos = MAP_SPACING * new Vector3(x - EXTENSION + 0.5f - _mapSize, 0f, z - EXTENSION + 0.5f - _mapSize);
-        return pos + _mapCenter;
+        return pos + MapCenter;
     }
 
     private int MapIndex(float position)
@@ -465,13 +465,13 @@ public class TerrainMap
 
     public int GetTerrainType(Vector3 position)
     {
-        return _map[MapIndex(position.x - _mapCenter.x), MapIndex(position.z - _mapCenter.z)];
+        return _map[MapIndex(position.x - MapCenter.x), MapIndex(position.z - MapCenter.z)];
     }
 
     public Terrain GetTerrainAtPos(Vector3 position)
     {
-        int indexX = (int)((position.x - _mapMin.x) / _terrainSpacingX);
-        int indexZ = (int)((position.z - _mapMin.z) / _terrainSpacingZ);
+        int indexX = (int)((position.x - MapMin.x) / _terrainSpacingX);
+        int indexZ = (int)((position.z - MapMin.z) / _terrainSpacingZ);
         if (indexX < 0 || indexX >= _terrains.GetLength(0))
             return null;
         if (indexZ < 0 || indexZ >= _terrains.GetLength(1))

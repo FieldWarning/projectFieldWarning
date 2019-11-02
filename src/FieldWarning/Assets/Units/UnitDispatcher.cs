@@ -156,8 +156,8 @@ namespace PFW.Units
                 _movementComponent.SetOriginalOrientation(position, heading);
 
         public bool AreOrdersComplete() => _movementComponent.AreOrdersComplete();
-        public void SetDestination(MoveWaypoint waypoint) =>
-                _movementComponent.SetUnitDestination(waypoint);
+        public void SetDestination(Vector3 pos, float heading) =>
+                _movementComponent.SetDestination(pos, heading);
 
         public InfantryMovementComponent AsInfantry()
         {

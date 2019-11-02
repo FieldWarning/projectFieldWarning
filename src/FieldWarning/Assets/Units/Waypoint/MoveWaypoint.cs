@@ -29,7 +29,9 @@ public class MoveWaypoint : Waypoint
     public override void ProcessWaypoint()
     {
         var destinations = Formations.GetLineFormation(Destination, Heading, platoon.Units.Count);
-        platoon.Units.ForEach(x => x.SetDestination(this));
+        for (int i = 0; i < platoon.Units.Count; i++) {
+            platoon.Units[i].SetDestination(destinations[i], Heading);
+        }
         //platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
         //platoon.Units.ForEach(x => x.SetUnitFinalHeading(Heading));
     }

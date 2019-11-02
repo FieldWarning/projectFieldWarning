@@ -54,8 +54,8 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         TerrainMap map = GameObject.FindObjectOfType<MatchSession>().TerrainMap;
 
         //_terrainSize = _terrain.terrainData.bounds.size;
-        _terrainSize = map._mapMax - map._mapMin;
-        _terrainPos = map._mapMin;
+        _terrainSize = map.MapMax - map.MapMin;
+        _terrainPos = map.MapMin;
         _miniMapCamera.orthographicSize = _terrainSize.x / 2f;
 
         //convert camera to a texture
