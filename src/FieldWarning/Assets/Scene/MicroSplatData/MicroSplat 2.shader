@@ -34,6 +34,7 @@ Shader "MicroSplat/Terrain" {
    }
 
    CGINCLUDE
+      #define UNITY_BRDF_PBS BRDF1_Unity_PBS
    ENDCG
 
    SubShader {
@@ -50,7 +51,7 @@ Shader "MicroSplat/Terrain" {
       #include "UnityPBSLighting.cginc"
       #include "UnityStandardBRDF.cginc"
 
-      #pragma surface surf Standard vertex:vert fullforwardshadows addshadow
+      #pragma surface surf Standard vertex:vert fullforwardshadows addshadow exclude_path:deferred
 
 
      #pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd
@@ -61,6 +62,7 @@ Shader "MicroSplat/Terrain" {
       #define _MICROSPLAT 1
       #define _USEGRADMIP 1
       #define _MAX32TEXTURES 1
+      #define _BDRF1 1
       #define _PERTEXUVSCALEOFFSET 1
       #define _PERTEXHEIGHTOFFSET 1
       #define _PERTEXHEIGHTCONTRAST 1
@@ -1618,7 +1620,7 @@ ENDCG
 
    }
    Dependency "AddPassShader" = "Hidden/MicroSplat/AddPass"
-   Dependency "BaseMapShader" = "Hidden/MicroSplat/Terrain_Base3202685"
+   Dependency "BaseMapShader" = "Hidden/MicroSplat/Terrain_Base2107828904"
    CustomEditor "MicroSplatShaderGUI"
    Fallback "Nature/Terrain/Diffuse"
 }
