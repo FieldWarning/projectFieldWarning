@@ -1,0 +1,238 @@
+fileFormatVersion: 2
+guid: 3a163d992b9c74e478f0973bd2086db3
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: KamazBase_LOD0
+    100004: KamazBase_LOD1
+    100006: KamazBase_LOD2
+    100008: Wheel1_LOD0
+    100010: Wheel1_LOD1
+    100012: Wheel1_LOD2
+    100014: Wheel2_LOD0
+    100016: Wheel2_LOD1
+    100018: Wheel2_LOD2
+    100020: Wheel3_LOD0
+    100022: Wheel3_LOD1
+    100024: Wheel3_LOD2
+    100026: Wheel4_LOD0
+    100028: Wheel4_LOD1
+    100030: Wheel4_LOD2
+    100032: Wheel5_LOD0
+    100034: Wheel5_LOD1
+    100036: Wheel5_LOD2
+    100038: Wheel6_LOD0
+    100040: Wheel6_LOD1
+    100042: Wheel6_LOD2
+    100044: Wheel7_LOD0
+    100046: Wheel7_LOD1
+    100048: Wheel7_LOD2
+    100050: Wheel8_LOD0
+    100052: Wheel8_LOD1
+    100054: Wheel8_LOD2
+    400000: //RootNode
+    400002: KamazBase_LOD0
+    400004: KamazBase_LOD1
+    400006: KamazBase_LOD2
+    400008: Wheel1_LOD0
+    400010: Wheel1_LOD1
+    400012: Wheel1_LOD2
+    400014: Wheel2_LOD0
+    400016: Wheel2_LOD1
+    400018: Wheel2_LOD2
+    400020: Wheel3_LOD0
+    400022: Wheel3_LOD1
+    400024: Wheel3_LOD2
+    400026: Wheel4_LOD0
+    400028: Wheel4_LOD1
+    400030: Wheel4_LOD2
+    400032: Wheel5_LOD0
+    400034: Wheel5_LOD1
+    400036: Wheel5_LOD2
+    400038: Wheel6_LOD0
+    400040: Wheel6_LOD1
+    400042: Wheel6_LOD2
+    400044: Wheel7_LOD0
+    400046: Wheel7_LOD1
+    400048: Wheel7_LOD2
+    400050: Wheel8_LOD0
+    400052: Wheel8_LOD1
+    400054: Wheel8_LOD2
+    2100000: Kamaz
+    2300000: KamazBase_LOD0
+    2300002: KamazBase_LOD1
+    2300004: KamazBase_LOD2
+    2300006: Wheel1_LOD0
+    2300008: Wheel1_LOD1
+    2300010: Wheel1_LOD2
+    2300012: Wheel2_LOD0
+    2300014: Wheel2_LOD1
+    2300016: Wheel2_LOD2
+    2300018: Wheel3_LOD0
+    2300020: Wheel3_LOD1
+    2300022: Wheel3_LOD2
+    2300024: Wheel4_LOD0
+    2300026: Wheel4_LOD1
+    2300028: Wheel4_LOD2
+    2300030: Wheel5_LOD0
+    2300032: Wheel5_LOD1
+    2300034: Wheel5_LOD2
+    2300036: Wheel6_LOD0
+    2300038: Wheel6_LOD1
+    2300040: Wheel6_LOD2
+    2300042: Wheel7_LOD0
+    2300044: Wheel7_LOD1
+    2300046: Wheel7_LOD2
+    2300048: Wheel8_LOD0
+    2300050: Wheel8_LOD1
+    2300052: Wheel8_LOD2
+    3300000: KamazBase_LOD0
+    3300002: KamazBase_LOD1
+    3300004: KamazBase_LOD2
+    3300006: Wheel1_LOD0
+    3300008: Wheel1_LOD1
+    3300010: Wheel1_LOD2
+    3300012: Wheel2_LOD0
+    3300014: Wheel2_LOD1
+    3300016: Wheel2_LOD2
+    3300018: Wheel3_LOD0
+    3300020: Wheel3_LOD1
+    3300022: Wheel3_LOD2
+    3300024: Wheel4_LOD0
+    3300026: Wheel4_LOD1
+    3300028: Wheel4_LOD2
+    3300030: Wheel5_LOD0
+    3300032: Wheel5_LOD1
+    3300034: Wheel5_LOD2
+    3300036: Wheel6_LOD0
+    3300038: Wheel6_LOD1
+    3300040: Wheel6_LOD2
+    3300042: Wheel7_LOD0
+    3300044: Wheel7_LOD1
+    3300046: Wheel7_LOD2
+    3300048: Wheel8_LOD0
+    3300050: Wheel8_LOD1
+    3300052: Wheel8_LOD2
+    4300000: Wheel1_LOD0
+    4300002: Wheel2_LOD0
+    4300004: Wheel3_LOD0
+    4300006: Wheel4_LOD0
+    4300008: Wheel5_LOD0
+    4300010: Wheel6_LOD0
+    4300012: Wheel7_LOD0
+    4300014: Wheel8_LOD0
+    4300016: KamazBase_LOD0
+    4300018: KamazBase_LOD1
+    4300020: Wheel3_LOD1
+    4300022: Wheel2_LOD1
+    4300024: Wheel1_LOD1
+    4300026: Wheel6_LOD1
+    4300028: Wheel5_LOD1
+    4300030: Wheel8_LOD1
+    4300032: Wheel7_LOD1
+    4300034: Wheel4_LOD1
+    4300036: Wheel4_LOD2
+    4300038: Wheel8_LOD2
+    4300040: Wheel7_LOD2
+    4300042: Wheel5_LOD2
+    4300044: Wheel2_LOD2
+    4300046: KamazBase_LOD2
+    4300048: Wheel1_LOD2
+    4300050: Wheel3_LOD2
+    4300052: Wheel6_LOD2
+    20500000: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kamaz
+    second: {fileID: 2100000, guid: c05704d3b627bab48b44085c5cd5a4a4, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.01
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
