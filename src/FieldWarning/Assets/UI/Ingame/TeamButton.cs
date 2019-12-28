@@ -19,12 +19,10 @@ public class TeamButton : MonoBehaviour
 {
     [SerializeField]
     private Team _team = null;
-    [SerializeField]
-    private MatchSession _session = null;
 
     public void onClick()
     {
-        _session.LocalPlayer.Data = _team.Players[0];
-        _session.UpdateTeamBelonging(_team);
+        MatchSession.Current.LocalPlayer.Data = _team.Players[0];
+        MatchSession.Current.UpdateTeamBelonging(_team);
     }
 }

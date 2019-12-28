@@ -32,7 +32,7 @@ public class SpawnPointBehaviour : MonoBehaviour
     {
         GetComponentInChildren<Renderer>().material.color = Team.Color;
 
-        Team.Session.RegisterSpawnPoint(this);
+        MatchSession.Current.RegisterSpawnPoint(this);
     }
 
     private void Update()

@@ -181,6 +181,9 @@ namespace PFW.UI.Ingame
             MaybePurchaseGhostUnits(closestSpawn);
         }
 
+        /**
+         * Purchase units if there is a buy selection.
+         */
         private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
             if (Input.GetMouseButtonUp(0)) {

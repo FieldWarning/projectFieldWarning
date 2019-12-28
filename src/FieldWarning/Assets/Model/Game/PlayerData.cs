@@ -24,26 +24,20 @@ namespace PFW.Model.Game
     {
         public Team Team;
 
-        private MatchSession _session;
-        public MatchSession Session {
-            get {
-                return _session;
-            }
-
-            set {
-                if (_session == null)
-                    _session = value;
-            }
-        }
-
         public Deck Deck { get; private set; }
 
         public float Money = 1000;
         public float IncomeTick = 7;
 
-        public PlayerData(Deck deck)
+        // Default constructor needed by mirror seializaiton
+        public PlayerData() 
+        { 
+        }
+
+        public PlayerData(Deck deck, Team team)
         {
             Deck = deck;
+            Team = team;
         }
     }
 }

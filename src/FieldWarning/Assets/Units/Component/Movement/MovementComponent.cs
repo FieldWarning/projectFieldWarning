@@ -13,6 +13,7 @@
 
 using UnityEngine;
 
+using PFW.Model.Game;
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
 
@@ -64,7 +65,7 @@ namespace PFW.Units.Component.Movement
 
         public virtual void Start()
         {
-            Platoon.Owner.Session.RegisterUnitBirth(Dispatcher);
+            MatchSession.Current.RegisterUnitBirth(Dispatcher);
         }
 
         // This needs to be separate from Initialize because this stuff is also needed by the ghost platoon
@@ -78,7 +79,7 @@ namespace PFW.Units.Component.Movement
         public void Initialize(UnitDispatcher dispatcher)
         {
             Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
-            InitData(Platoon.Owner.Session.TerrainMap);
+            InitData(MatchSession.Current.TerrainMap);
             Dispatcher = dispatcher;
         }
 
@@ -89,7 +90,7 @@ namespace PFW.Units.Component.Movement
             foreach (TargetingComponent targeter in gameObject.GetComponents<TargetingComponent>())
                 targeter.WakeUp();
 
-            Pathfinder = new Pathfinder(this, Platoon.Owner.Session.PathData);
+            Pathfinder = new Pathfinder(this, MatchSession.Current.PathData);
         }
 
         public virtual void Update()

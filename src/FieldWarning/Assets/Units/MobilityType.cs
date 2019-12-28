@@ -15,6 +15,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Armory;
+using PFW.Model.Game;
 using PFW.Units;
 using PFW.Units.Component.Movement;
 
@@ -60,11 +61,9 @@ public sealed class MobilityType
 
         // This is a slow way to do it, and we will probably need a fast, generic method to find units within a given distance of a location
         if (unitRadius > 0f) {
-            // TODO use unit list from game/match session
             // TODO maybe move this logic into its own method?
-            var session = GameObject.FindObjectOfType<PFW.Model.Game.MatchSession>();
 
-            foreach (UnitDispatcher unit in session.Units) {
+            foreach (UnitDispatcher unit in MatchSession.Current.Units) {
                 float dist = Vector3.Distance(location, unit.Transform.position);
                 if (dist < unitRadius + unit.GetComponent<MovementComponent>().Data.Radius)
                     return 0f;

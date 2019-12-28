@@ -86,8 +86,9 @@ namespace PFW.Units
         // Create an inactive unit (to be activated when Spawn() is called)
         public void AddSingleUnit()
         {
-            var unitInstance = Owner.Session.Factory.MakeUnit(
+            var unitInstance = MatchSession.Current.Factory.MakeUnit(
                 gameObject, Unit.Prefab, Owner.Team.Color);
+            //Networking.CommandConnection.Connection.CmdSpawnObject(unitInstance);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
 
@@ -132,7 +133,7 @@ namespace PFW.Units
             Movement.EndQueueing();
             GhostPlatoon.SetVisible(false);
 
-            Owner.Session.RegisterPlatoonBirth(this);
+            MatchSession.Current.RegisterPlatoonBirth(this);
         }
 
         // Called when a platoon enters or leaves the player's selection.
@@ -161,7 +162,7 @@ namespace PFW.Units
         /// </summary>
         private void DestroyWithoutUnits()
         {
-            Owner.Session.RegisterPlatoonDeath(this);
+            MatchSession.Current.RegisterPlatoonDeath(this);
             Destroy(gameObject);
         }
 

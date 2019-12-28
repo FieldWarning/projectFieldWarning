@@ -51,7 +51,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         _targetedScreenSize =
             transform.parent.parent.GetComponent<RectTransform>().rect.width;
 
-        TerrainMap map = GameObject.FindObjectOfType<MatchSession>().TerrainMap;
+        TerrainMap map = MatchSession.Current.TerrainMap;
 
         //_terrainSize = _terrain.terrainData.bounds.size;
         _terrainSize = map.MapMax - map.MapMin;

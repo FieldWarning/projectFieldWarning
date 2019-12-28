@@ -26,20 +26,13 @@ namespace PFW.Model.Game
 
         public List<PlayerData> Players { get; } = new List<PlayerData>();
 
-        public MatchSession Session {
-            // Guard omitted intentionally - a team must always have players:
-            get { return Players[0].Session; }
-        }
-
         public bool IsEnemy(Team t)
         {
             return Color != t.Color;
         }
 
-        public void AddPlayer(MatchSession session, Deck playerDeck) {
-            PlayerData p = new PlayerData(playerDeck);
-            p.Session = session;
-            p.Team = this;
+        public void AddPlayer(Deck playerDeck) {
+            PlayerData p = new PlayerData(playerDeck, this);
             Players.Add(p);
         }
     }
