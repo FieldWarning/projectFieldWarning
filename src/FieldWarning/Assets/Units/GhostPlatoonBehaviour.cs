@@ -13,6 +13,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using Mirror;
 
 using PFW.Model.Armory;
 using PFW.Model.Game;
@@ -26,7 +27,7 @@ namespace PFW.Units
      * When showing previews of move orders or purchases, we need 'ghost' units that
      * are grayed out and not functional. This is where the GhostPlatoon comes in.
      */
-    public class GhostPlatoonBehaviour : MonoBehaviour
+    public class GhostPlatoonBehaviour : NetworkBehaviour
     {
         public float FinalHeading;
 

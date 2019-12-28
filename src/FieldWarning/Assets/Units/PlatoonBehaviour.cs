@@ -14,6 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Mirror;
 
 using PFW.UI.Ingame;
 using PFW.Model.Game;
@@ -22,7 +23,7 @@ using PFW.Model.Armory;
 
 namespace PFW.Units
 {
-    public partial class PlatoonBehaviour : MonoBehaviour
+    public partial class PlatoonBehaviour : NetworkBehaviour
     {
         public Unit Unit;
         public IconBehaviour Icon;

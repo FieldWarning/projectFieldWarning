@@ -13,6 +13,7 @@
 
 
 using UnityEngine;
+using Mirror;
 
 using PFW.Model.Armory;
 using PFW.Model.Game;
@@ -23,7 +24,7 @@ namespace PFW.Units
      * Each platoon has a GhostPlatoonBehaviour and a PlatoonBehaviour. This class
      * manages the pairing and lifetime of those two classes.
      */
-    public sealed class PlatoonRoot : MonoBehaviour
+    public sealed class PlatoonRoot : NetworkBehaviour
     {
         [SerializeField]
         private GhostPlatoonBehaviour _ghostPlatoon = null;
@@ -37,10 +38,19 @@ namespace PFW.Units
             GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
             PlatoonRoot root = go.GetComponent<PlatoonRoot>();
 
+            // Hack: Ideally they should be under this object,
+            // but mirror does not support networking nested objects..
+            root._ghostPlatoon = Instantiate(
+                Resources.Load<GameObject>("GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
+            root._realPlatoon = Instantiate(
+                Resources.Load<GameObject>("Platoon")).GetComponent<PlatoonBehaviour>();
+
             root._ghostPlatoon.Initialize(unit, owner);
             root._realPlatoon.Initialize(unit, owner);
 
-            Mirror.NetworkServer.Spawn(go);  /* must call from authority */
+            Networking.CommandConnection.Connection.CmdSpawnObject(go);
+            Networking.CommandConnection.Connection.CmdSpawnObject(root._ghostPlatoon.gameObject);
+            Networking.CommandConnection.Connection.CmdSpawnObject(root._realPlatoon.gameObject);
 
             return root;
         }

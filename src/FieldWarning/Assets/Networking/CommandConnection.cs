@@ -45,5 +45,13 @@ namespace PFW.Networking
         {
             ChatManager.UpdateMessageText(msg);
         }
+
+        // Spawn an object for all network participants.
+        // NetworkServer.Spawn() can only be called by objects with authority, e.g. this one
+        [Command]
+        public void CmdSpawnObject(GameObject go)
+        {
+            NetworkServer.Spawn(go);
+        }
     }
 }
