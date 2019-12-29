@@ -36,6 +36,8 @@ namespace PFW.Model.Armory
 
                 foreach (string unitId in (List<string>) deckConfig[categoryKey]) {
                     Unit unit = ConfigReader.FindUnit(unitId);
+                    unit.CategoryId = (byte) i;
+                    unit.Id = Categories[i].Count;
                     Categories[i].Add(unit);
                 }
             }

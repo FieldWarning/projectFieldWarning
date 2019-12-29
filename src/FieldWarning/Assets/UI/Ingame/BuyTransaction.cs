@@ -17,15 +17,13 @@ using UnityEngine;
 using PFW.Model.Game;
 using PFW.Model.Armory;
 using PFW.Units;
+using static PFW.Constants;
 
 namespace PFW.UI.Ingame
 {
     public class BuyTransaction
     {
         private PlatoonRoot _newestPlatoon;
-
-        private const int MAX_PLATOON_SIZE = 4;
-        private const int MIN_PLATOON_SIZE = 1;
 
         private int _smallestPlatoonSize;
 

@@ -64,6 +64,7 @@ namespace PFW.Model.Game
 
         public PlayerBehaviour LocalPlayer { get; private set; }
 
+        public List<PlayerData> Players { get; } = new List<PlayerData>();
         public List<Team> Teams { get; } = new List<Team>();
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
@@ -84,8 +85,16 @@ namespace PFW.Model.Game
 
             Deck bluePlayerDeck = ConfigReader.FindDeck("player-blue");
             Deck redPlayerDeck = ConfigReader.FindDeck("player-red");
-            blueTeam.AddPlayer(bluePlayerDeck);
-            redTeam.AddPlayer(redPlayerDeck);
+
+            PlayerData bluePlayer = new PlayerData(
+                    bluePlayerDeck, blueTeam, (byte)Players.Count);
+            Players.Add(bluePlayer);
+            blueTeam.Players.Add(bluePlayer);
+
+            PlayerData redPlayer = new PlayerData(
+                    redPlayerDeck, redTeam, (byte)Players.Count);
+            Players.Add(redPlayer);
+            redTeam.Players.Add(redPlayer);
 
             Teams.Add(blueTeam);
             Teams.Add(redTeam);

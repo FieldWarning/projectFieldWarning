@@ -56,6 +56,7 @@ public class SpawnPointBehaviour : MonoBehaviour
 
     public void BuyPlatoons(List<PlatoonRoot> previewPlatoons)
     {
+        // TODO show the preview to allies over the network
         previewPlatoons.ForEach(x => _spawnQueue.Enqueue(x));
     }
 }

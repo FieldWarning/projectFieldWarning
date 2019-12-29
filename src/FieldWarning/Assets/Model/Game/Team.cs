@@ -30,10 +30,5 @@ namespace PFW.Model.Game
         {
             return Color != t.Color;
         }
-
-        public void AddPlayer(Deck playerDeck) {
-            PlayerData p = new PlayerData(playerDeck, this);
-            Players.Add(p);
-        }
     }
 }

@@ -17,6 +17,7 @@ using Mirror;
 
 using PFW.Model.Armory;
 using PFW.Model.Game;
+using PFW.Networking;
 
 namespace PFW.Units
 {
@@ -31,6 +32,22 @@ namespace PFW.Units
         [SerializeField]
         private PlatoonBehaviour _realPlatoon = null;
 
+        // Establish references to the platoon objects after spawning, on non-owners
+        [ClientRpc]
+        public void RpcEstablishReferences(uint realPlatoonNetId, uint ghostPlatoonNetId) 
+        {
+            NetworkIdentity identity;
+            if (NetworkIdentity.spawned.TryGetValue(ghostPlatoonNetId, out identity))
+            {
+                _ghostPlatoon = identity.gameObject.GetComponent<GhostPlatoonBehaviour>();
+            }
+            if (NetworkIdentity.spawned.TryGetValue(realPlatoonNetId, out identity))
+            {
+                _realPlatoon = identity.gameObject.GetComponent<PlatoonBehaviour>();
+                _realPlatoon.GhostPlatoon = _ghostPlatoon;
+            }
+        }
+
         // Create a pair of platoon and ghost platoon with units, but don't
         // activate any real units yet (only ghost mode).
         public static PlatoonRoot CreateGhostMode(Unit unit, PlayerData owner)
@@ -41,32 +58,54 @@ namespace PFW.Units
             // Hack: Ideally they should be under this object,
             // but mirror does not support networking nested objects..
             root._ghostPlatoon = Instantiate(
-                Resources.Load<GameObject>("GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
+                    Resources.Load<GameObject>(
+                            "GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
             root._realPlatoon = Instantiate(
-                Resources.Load<GameObject>("Platoon")).GetComponent<PlatoonBehaviour>();
+                    Resources.Load<GameObject>(
+                            "Platoon")).GetComponent<PlatoonBehaviour>();
 
             root._ghostPlatoon.Initialize(unit, owner);
             root._realPlatoon.Initialize(unit, owner);
 
-            Networking.CommandConnection.Connection.CmdSpawnObject(go);
-            Networking.CommandConnection.Connection.CmdSpawnObject(root._ghostPlatoon.gameObject);
-            Networking.CommandConnection.Connection.CmdSpawnObject(root._realPlatoon.gameObject);
-
             return root;
+        }
+
+        // Create the preview on the other clients and immediately activate it (see RpcSpawn)
+        public void Spawn(Vector3 spawnPos)
+        {
+            CommandConnection.Connection.CmdSpawnPlatoon(
+                    _realPlatoon.Owner.Id,
+                    _realPlatoon.Unit.CategoryId,
+                    _realPlatoon.Unit.Id,
+                    _realPlatoon.Units.Count,
+                    spawnPos, 
+                    _ghostPlatoon.transform.position,
+                    _ghostPlatoon.FinalHeading);
+
+            Destroy();
         }
 
         // For a ghost mode platoon root, activate the real units also.
         // Effectively spawns the platoon, turning it from a preview into a real one.
-        public void Spawn(Vector3 pos)
+        [ClientRpc]
+        public void RpcSpawn(Vector3 spawnPos)
         {
             _realPlatoon.gameObject.SetActive(true);
             _realPlatoon.GhostPlatoon = _ghostPlatoon;
-            _realPlatoon.Spawn(pos);
+            _realPlatoon.Spawn(spawnPos);
         }
 
         public void Destroy()
         {
+            Destroy(_ghostPlatoon.gameObject);
+            Destroy(_realPlatoon.gameObject);
             Destroy(gameObject);
+        }
+
+        [ClientRpc]  // TODO remove and spawn the units on the server to sync them
+        public void RpcAddSingleUnit()
+        {
+            AddSingleUnit();
         }
 
         // Meant for a platoon still in ghost mode: Spawn() should be called to activate the units
@@ -85,6 +124,7 @@ namespace PFW.Units
         }
 
         // Makes platoons of N units into N platoons of 1 unit
+        // TODO multiplayer
         public void Split()
         {
             while (_realPlatoon.Units.Count > 1) {

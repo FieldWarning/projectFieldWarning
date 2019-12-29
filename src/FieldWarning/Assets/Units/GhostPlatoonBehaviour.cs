@@ -37,6 +37,70 @@ namespace PFW.Units
         private PlayerData _owner;
         private List<GameObject> _units = new List<GameObject>();
 
+        public override bool OnSerialize(NetworkWriter writer, bool initialState)
+        {
+            bool canSend = false;
+            if (initialState)
+            {
+                writer.Write(_owner.Id);
+                writer.Write(_unit.CategoryId);
+                writer.Write(_unit.Id);
+                writer.Write(FinalHeading);
+                canSend = true;
+            }
+            else 
+            {
+                // TODO
+            }
+
+            return canSend;
+        }
+
+        public override void OnDeserialize(NetworkReader reader, bool initialState)
+        {
+            if (initialState)
+            {
+                int playerId = reader.ReadByte();
+                if (MatchSession.Current.Players.Count > playerId)
+                {
+                    PlayerData owner = MatchSession.Current.Players[playerId];
+                    byte unitCategoryId = reader.ReadByte();
+                    int unitId = reader.ReadInt32();
+                    if (unitCategoryId < owner.Deck.Categories.Length
+                        && unitId < owner.Deck.Categories[unitCategoryId].Count)
+                    {
+                        Unit unit = owner.Deck.Categories[unitCategoryId][unitId];
+                        Initialize(unit, owner);
+
+                        FinalHeading = reader.ReadSingle();
+                    }
+                    else 
+                    {
+                        Debug.LogError("Got bad unit id from the server.");
+                    }
+                }
+                else
+                {
+                    // Got an invalid player id, server is trying to crash us?
+                    Debug.LogError(
+                        "Network tried to create a ghostplatoon with an invalid player id.");
+                }
+            }
+            else
+            {
+                // TODO
+            }
+        }
+
+        public override void OnStartClient()
+        {
+            Logger.LogNetworking(
+                $"Spawned a ghost platoon of {_unit.Name} with netId {netId}", this);
+            transform.position = 100 * Vector3.down;
+
+            InitializeIcon(_icon);
+        }
+
         // Call after creating an object of this class, pretend it is a constructor
         public void Initialize(Unit unit, PlayerData owner)
         {
@@ -61,6 +125,16 @@ namespace PFW.Units
                     gameObject, _unitPrefab);
             unit.GetComponent<MovementComponent>().InitData(MatchSession.Current.TerrainMap);
             _units.Add(unit);
+        }
+
+        // TODO remove. Currently this is needed because spawned platoons 
+        // infer their destination from the positions of the ghosts, which are not
+        // synchronized. Once those are synchronized (so allies can see buy orders),
+        // this will no longer need to be called as an RPC.
+        [ClientRpc]
+        public void RpcSetOrientation(Vector3 center, float heading)
+        {
+            SetOrientation(center, heading);
         }
 
         public void SetOrientation(Vector3 center, float heading)

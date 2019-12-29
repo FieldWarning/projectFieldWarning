@@ -40,6 +40,57 @@ namespace PFW.Units
         public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
 
         public PlayerData Owner { get; private set; }
+        public override bool OnSerialize(NetworkWriter writer, bool initialState)
+        {
+            bool canSend = false;
+            if (initialState)
+            {
+                writer.Write(Owner.Id);
+                writer.Write(Unit.CategoryId);
+                writer.Write(Unit.Id);
+                canSend = true;
+            }
+            else
+            {
+                // TODO
+            }
+
+            return canSend;
+        }
+
+        public override void OnDeserialize(NetworkReader reader, bool initialState)
+        {
+            if (initialState)
+            {
+                int playerId = reader.ReadByte();
+                if (MatchSession.Current.Players.Count > playerId)
+                {
+                    PlayerData owner = MatchSession.Current.Players[playerId];
+                    byte unitCategoryId = reader.ReadByte();
+                    int unitId = reader.ReadInt32();
+                    if (unitCategoryId < owner.Deck.Categories.Length
+                        && unitId < owner.Deck.Categories[unitCategoryId].Count)
+                    {
+                        Unit unit = owner.Deck.Categories[unitCategoryId][unitId];
+                        Initialize(unit, owner);
+                    }
+                    else
+                    {
+                        Debug.LogError("Got bad unit id from the server.");
+                    }
+                }
+                else
+                {
+                    // Got an invalid player id, server is trying to crash us?
+                    Debug.LogError(
+                        "Network tried to create a platoon with an invalid player id.");
+                }
+            }
+            else
+            {
+                // TODO
+            }
+        }
 
         public void Update()
         {
@@ -103,7 +154,10 @@ namespace PFW.Units
         // Only use from PlatoonRoot (the lifetime manager class for platoons)
         public void Spawn(Vector3 center)
         {
-            Units.ForEach(x => x.GameObject.SetActive(true));
+            Units.ForEach(x => {
+                x.GameObject.SetActive(true);
+                //Networking.CommandConnection.Connection.CmdSpawnObject(x.GameObject);
+            });
 
             BuildModules();
 

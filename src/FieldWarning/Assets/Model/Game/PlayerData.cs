@@ -22,6 +22,8 @@ namespace PFW.Model.Game
      */
     public class PlayerData
     {
+        // Unique and must match the index the player is held in by MatchSession.Players
+        public byte Id;
         public Team Team;
 
         public Deck Deck { get; private set; }
@@ -29,15 +31,11 @@ namespace PFW.Model.Game
         public float Money = 1000;
         public float IncomeTick = 7;
 
-        // Default constructor needed by mirror seializaiton
-        public PlayerData() 
-        { 
-        }
-
-        public PlayerData(Deck deck, Team team)
+        public PlayerData(Deck deck, Team team, byte id)
         {
             Deck = deck;
             Team = team;
+            Id = id;
         }
     }
 }

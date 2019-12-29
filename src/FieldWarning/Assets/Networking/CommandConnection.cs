@@ -11,10 +11,15 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
+using PFW.Model.Armory;
+using PFW.Model.Game;
 using PFW.UI.Ingame;
+using PFW.Units;
+using static PFW.Constants;
 
 namespace PFW.Networking
 {
@@ -52,6 +57,69 @@ namespace PFW.Networking
         public void CmdSpawnObject(GameObject go)
         {
             NetworkServer.Spawn(go);
+        }
+
+        [Command]
+        public void CmdSpawnPlatoon(
+                byte playerId, 
+                byte categoryId, 
+                int unitId, 
+                int unitCount, 
+                Vector3 spawnPos,
+                Vector3 destinationCenter,
+                float destinationHeading)
+        {
+            Logger.LogNetworking($"Spawning platoon at {spawnPos}", this);
+            if (MatchSession.Current.Players.Count > playerId 
+                && unitCount >= MIN_PLATOON_SIZE
+                && unitCount <= MAX_PLATOON_SIZE)
+            {
+                PlayerData owner = MatchSession.Current.Players[playerId];
+                if (categoryId < owner.Deck.Categories.Length
+                    && unitId < owner.Deck.Categories[categoryId].Count)
+                {
+                    Unit unit = owner.Deck.Categories[categoryId][unitId];
+
+                    GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
+                    PlatoonRoot root = go.GetComponent<PlatoonRoot>();
+
+                    // mirror does not support networking nested objects, so 
+                    // everything has to be spawned at the toplevel..
+                    GhostPlatoonBehaviour ghostPlatoon = Instantiate(
+                            Resources.Load<GameObject>(
+                                    "GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
+                    PlatoonBehaviour realPlatoon = Instantiate(
+                            Resources.Load<GameObject>(
+                                    "Platoon")).GetComponent<PlatoonBehaviour>();
+
+                    ghostPlatoon.Initialize(unit, owner);
+                    realPlatoon.Initialize(unit, owner);
+
+                    NetworkServer.Spawn(ghostPlatoon.gameObject);
+                    NetworkServer.Spawn(realPlatoon.gameObject);
+                    NetworkServer.Spawn(go);
+                    root.RpcEstablishReferences(realPlatoon.netId, ghostPlatoon.netId);
+
+                    for (int i = 0; i < unitCount; i++)
+                    {
+                        root.RpcAddSingleUnit();
+                    }
+
+                    ghostPlatoon.RpcSetOrientation(destinationCenter, destinationHeading);
+
+                    root.RpcSpawn(spawnPos);
+                }
+                else
+                {
+                    Debug.LogError("Got bad unit id from a client.");
+                }
+            }
+            else
+            {
+                // Got an invalid player id, server is trying to crash us?
+                Debug.LogError(
+                    "Client asked to create a platoon with an invalid player id.");
+            }
         }
     }
 }

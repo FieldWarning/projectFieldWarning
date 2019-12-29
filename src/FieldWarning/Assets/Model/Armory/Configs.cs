@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace PFW.Model.Armory
 {
-    [System.Serializable]
+    [Serializable]
     public class DeckConfig
     {
         public List<string> LOG;
@@ -36,7 +36,7 @@ namespace PFW.Model.Armory
         }
     }
 
-    [System.Serializable]
+    [Serializable]
     public class UnitConfig
     {
         public string ID;
@@ -49,7 +49,7 @@ namespace PFW.Model.Armory
         public List<UnitWeaponConfig> Weapons;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class UnitDataConfig
     {
         public float MovementSpeed;
@@ -65,7 +65,7 @@ namespace PFW.Model.Armory
         public int MobilityTypeIndex;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class MobilityConfig
     {
         public float SlopeSensitivity;
@@ -75,7 +75,7 @@ namespace PFW.Model.Armory
         public float WaterSpeed;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class UnitWeaponConfig
     {
         public string ComponentRef;

@@ -23,6 +23,9 @@ namespace PFW
         /// have to be moved before release for it to count as
         /// a drag click instead of a simple click?
         /// </summary>
-        public static readonly float MOUSE_DRAG_THRESHOLD = 10.0f;
+        public const float MOUSE_DRAG_THRESHOLD = 10.0f;
+
+        public const int MAX_PLATOON_SIZE = 4;
+        public const int MIN_PLATOON_SIZE = 1;
     }
 }
