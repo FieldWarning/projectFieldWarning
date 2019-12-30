@@ -56,7 +56,7 @@ public class TerrainMap
     
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
-    List<Vector3> _trees = new List<Vector3>();
+    List<Vector3> _treePositions = new List<Vector3>();
     List<Vector3> _bridgePositions = new List<Vector3>();
 
     // this is only needed for map testing
@@ -110,26 +110,13 @@ public class TerrainMap
         _roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
         _bridges = GameObject.FindGameObjectsWithTag("Bridge");
 
-        //TODO create some debug UI to dump the map when needed
-        if (!File.Exists(_HEIGHT_MAP_PATH))
-        {
-            CreateOriginalMap();
-            WriteHeightMap(_HEIGHT_MAP_PATH);
-        }
-        
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-
-        // leave this commented out until we make a change and need to retest the map
-        // need to run this before the worker threads start
-        //originalTestMap = CreateOriginalMap();
-
         // get our trees
         foreach (Terrain terrain in _terrains)
         {
             foreach (TreeInstance tree in terrain.terrainData.treeInstances)
             {
                 Vector3 treePosition = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
-                _trees.Add(treePosition);
+                _treePositions.Add(treePosition);
             }
         }
 
@@ -141,11 +128,22 @@ public class TerrainMap
             _bridgePositions.Add(bridge.transform.position);
         }
 
-            _loader = new Loading("Terrain");
-        _loader.AddWorker(LoadHeightMap, "Loading height map");
+        _loader = new Loading("Terrain");
+
+        //TODO create some debug UI to dump the map when needed
+        if (!File.Exists(_HEIGHT_MAP_PATH))
+        {
+            _map = CreateHeightMapFromtTerrainData();
+            WriteHeightMap(_HEIGHT_MAP_PATH);
+        } else
+        {
+            _loader.AddWorker(LoadHeightMap, "Loading height map");
+        }
+
 
         // Loading bridges from a separate thread throws an exception.
-        // But this stuff is read in from the heightmap file anyway.
+        // This is why we first cache the bridge positions outside the thread before doing the below. 
+        // same goes for roads and trees.
         _loader.AddWorker(LoadTrees, "Setting tree positions");
         _loader.AddWorker(LoadRoads, "Connecting roads");
         _loader.AddWorker(LoadBridges, "Loading bridges");
@@ -175,38 +173,29 @@ public class TerrainMap
     }
 
     /// <summary>
-    /// Map unit test. Compares the map from compressed to the actual terrain map
+    /// Creates height map from original terrain data, slow
     /// </summary>
-    private byte[,] CreateOriginalMap()
+    private byte[,] CreateHeightMapFromtTerrainData()
     {
 
         Debug.Log("Creating original test map.");
 
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
 
-        byte[,] map_original = new byte[nEntry, nEntry];
-
-        _map = map_original;
+        byte[,] map = new byte[nEntry, nEntry];
 
         for (var x = 0; x < nEntry; x++)
         {
             for (var z = 0; z < nEntry; z++)
             {
-                _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
+                map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
             }
         }
 
-        LoadTrees();
-        LoadRoads();
-        LoadBridges();
-
-        // assign the original back
-        map_original = _map;
-
         Debug.Log("Done creating original test map.");
 
-        return map_original;
+        return map;
     }
 
     /// <summary>
@@ -340,12 +329,12 @@ public class TerrainMap
         // assign tree positions
         var currIdx = 0;
 
-        foreach (var tree in _trees)
+        foreach (var tree in _treePositions)
         {
             AssignCircularPatch(tree, TREE_RADIUS, FOREST);
             currIdx++;
             if (_loader != null)
-                _loader.PercentDone = ((double)currIdx / (double)_trees.Count) * 100.0;
+                _loader.PercentDone = ((double)currIdx / (double)_treePositions.Count) * 100.0;
         }
     }
 
