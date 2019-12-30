@@ -13,7 +13,9 @@
 
 using UnityEngine;
 using System.Linq;
+
 using PFW.Units.Component.Movement;
+using PFW.Units;
 
 public class MovementModule : PlatoonModule, Matchable<Vector3>
 {

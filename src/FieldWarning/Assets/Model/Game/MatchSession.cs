@@ -27,11 +27,15 @@ namespace PFW.Model.Game
     /**
      * Represents the ongoing match.
      *
-     * Holds a lot of data that would be singleton or global, but is intentionally
-     * non-static (so that we can easily clean up).
+     * Holds a lot of match-specific data that would be singleton or global.
      */
     public class MatchSession : MonoBehaviour
     {
+        // The currently active match session. In matches (e.g. outside the lobby)
+        // there should always be exactly one match session, so in practice this
+        // is intended to be a singleton.
+        public static MatchSession Current { get; private set; }
+
         private InputManager _inputManager;
         private VisibilityManager _visibilityManager;
         private UnitRegistry _unitRegistry;
@@ -60,6 +64,7 @@ namespace PFW.Model.Game
 
         public PlayerBehaviour LocalPlayer { get; private set; }
 
+        public List<PlayerData> Players { get; } = new List<PlayerData>();
         public List<Team> Teams { get; } = new List<Team>();
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
@@ -72,15 +77,24 @@ namespace PFW.Model.Game
 
         public void Awake()
         {
+            Current = this;
             _networkManager = FindObjectOfType<NetworkManager>();
 
-            var blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
-            var redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
+            Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
+            Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
             Deck bluePlayerDeck = ConfigReader.FindDeck("player-blue");
             Deck redPlayerDeck = ConfigReader.FindDeck("player-red");
-            blueTeam.AddPlayer(this, bluePlayerDeck);
-            redTeam.AddPlayer(this, redPlayerDeck);
+
+            PlayerData bluePlayer = new PlayerData(
+                    bluePlayerDeck, blueTeam, (byte)Players.Count);
+            Players.Add(bluePlayer);
+            blueTeam.Players.Add(bluePlayer);
+
+            PlayerData redPlayer = new PlayerData(
+                    redPlayerDeck, redTeam, (byte)Players.Count);
+            Players.Add(redPlayer);
+            redTeam.Players.Add(redPlayer);
 
             Teams.Add(blueTeam);
             Teams.Add(redTeam);
@@ -92,12 +106,14 @@ namespace PFW.Model.Game
 
             GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
 
-            _inputManager = FindObjectOfType<InputManager>() ??
-                     gameObject.AddComponent<InputManager>();
+            _inputManager = FindObjectOfType<InputManager>();
+            if (!_visibilityManager)
+                _inputManager = gameObject.AddComponent<InputManager>();
             _inputManager.Session = _inputManager.Session ?? this;
 
-            _visibilityManager = FindObjectOfType<VisibilityManager>() ??
-                     gameObject.AddComponent<VisibilityManager>();
+            _visibilityManager = FindObjectOfType<VisibilityManager>();
+            if (!_visibilityManager)
+                _visibilityManager = gameObject.AddComponent<VisibilityManager>();
             _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
 
             // TODO: Pass terrain from future location of starting matches (no Find)

@@ -12,6 +12,7 @@
 */
 using UnityEngine;
 
+using PFW.Model.Game;
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
 
@@ -48,16 +49,16 @@ namespace PFW.Units.Component.Health
         {
             _targetTuple.Reset();
 
-            _platoon.Owner.Session.RegisterUnitDeath(_dispatcher);
+            MatchSession.Current.RegisterUnitDeath(_dispatcher);
 
             _platoon.Units.Remove(_dispatcher);
             GameObject.Destroy(gameObject);
 
-            _platoon.GhostPlatoon.HandleRealUnitDestroyed();
+            _platoon.GhostPlatoon.RemoveOneGhostUnit();
 
             if (_platoon.Units.Count == 0) {
                 GameObject.Destroy(_platoon.gameObject);
-                _platoon.Owner.Session.RegisterPlatoonDeath(_platoon);
+                MatchSession.Current.RegisterPlatoonDeath(_platoon);
             }
         }
     }

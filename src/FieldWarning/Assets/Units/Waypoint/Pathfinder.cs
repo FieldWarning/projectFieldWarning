@@ -65,8 +65,8 @@ public class Pathfinder
 
     public Pathfinder(MovementComponent unit, PathfinderData data)
     {
-        this._unit = unit;
-        this.Data = data;
+        _unit = unit;
+        Data = data;
         _path = new List<PathNode>();
         FinalCompletionDist =
             2f * TerrainConstants.MAP_SCALE + unit.Data.MinTurnRadius;

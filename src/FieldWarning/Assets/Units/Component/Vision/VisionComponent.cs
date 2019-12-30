@@ -48,10 +48,6 @@ namespace PFW.Units.Component.Vision
             get { return _unit.Platoon.Owner.Team; }
         }
 
-        private MatchSession _session {
-            get { return _unit.Platoon.Owner.Session; }
-        }
-
         public void Initialize(UnitDispatcher dispatcher)
         {
             _unit = dispatcher;

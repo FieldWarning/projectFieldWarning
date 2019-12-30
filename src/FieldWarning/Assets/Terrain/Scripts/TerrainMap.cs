@@ -53,7 +53,7 @@ public class TerrainMap
     private Loading _loader;
 
     public readonly float WATER_HEIGHT;
-    
+
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
     List<Vector3> _trees = new List<Vector3>();
@@ -65,7 +65,11 @@ public class TerrainMap
     public TerrainMap(Terrain[] terrains1D)
     {
         WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
-        WATER_HEIGHT = water.transform.position.y;
+        if (water != null) {
+            WATER_HEIGHT = water.transform.position.y;
+        } else {
+            WATER_HEIGHT = -1000;
+        }
 
         // Find limits of the map
         MapMin = new Vector3(99999f, 0f, 99999f);
@@ -116,7 +120,7 @@ public class TerrainMap
             CreateOriginalMap();
             WriteHeightMap(_HEIGHT_MAP_PATH);
         }
-        
+
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
 
         // leave this commented out until we make a change and need to retest the map
@@ -141,7 +145,7 @@ public class TerrainMap
             _bridgePositions.Add(bridge.transform.position);
         }
 
-            _loader = new Loading("Terrain");
+        _loader = new Loading("Terrain");
         _loader.AddWorker(LoadHeightMap, "Loading height map");
 
         // Loading bridges from a separate thread throws an exception.

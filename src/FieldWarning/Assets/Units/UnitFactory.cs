@@ -18,17 +18,20 @@ namespace PFW.UI.Prototype
 {
     public class UnitFactory
     {
-        public GameObject MakeUnit(GameObject prefab, Color minimapColor)
+        public GameObject MakeUnit(GameObject parent, GameObject prefab, Color minimapColor)
         {
             GameObject unit = Object.Instantiate(prefab);
+            unit.transform.parent = parent.transform;
             AddMinimapIcon(unit, minimapColor);
 
             return unit;
         }
 
-        public GameObject MakeGhostUnit(GameObject prefab)
+        public GameObject MakeGhostUnit(GameObject parent, GameObject prefab)
         {
             GameObject unit = Object.Instantiate(prefab);
+            unit.SetActive(true);
+            unit.transform.parent = parent.transform;
             unit.GetComponent<MovementComponent>().enabled = false;
 
             Shader shader = Resources.Load<Shader>("Ghost");
