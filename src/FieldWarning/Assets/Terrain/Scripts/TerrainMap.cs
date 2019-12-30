@@ -56,6 +56,8 @@ public class TerrainMap
     
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
+    List<Vector3> _trees = new List<Vector3>();
+    List<Vector3> _bridgePositions = new List<Vector3>();
 
     // this is only needed for map testing
     private byte[,] originalTestMap = null;
@@ -120,16 +122,34 @@ public class TerrainMap
         // leave this commented out until we make a change and need to retest the map
         // need to run this before the worker threads start
         //originalTestMap = CreateOriginalMap();
-		
-        _loader = new Loading("Terrain");
-        _loader.AddWorker(LoadHeightMap, "Loading height map");
-		
-		// Loading bridges from a separate thread throws an exception.
-		// But this stuff is read in from the heightmap file anyway.
-        //_loader.AddWorker(LoadTrees, "Setting tree positions");
-        //_loader.AddWorker(LoadRoads, "Connecting roads");
-        //_loader.AddWorker(LoadBridges, "Loading bridges");
 
+        // get our trees
+        foreach (Terrain terrain in _terrains)
+        {
+            foreach (TreeInstance tree in terrain.terrainData.treeInstances)
+            {
+                Vector3 treePosition = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
+                _trees.Add(treePosition);
+            }
+        }
+
+        // get our bridge positions so we dont have to be in the main thread to access bridge into
+
+        for (int i = 0; i < _bridges.Length; i++)
+        {
+            GameObject bridge = _bridges[i];
+            _bridgePositions.Add(bridge.transform.position);
+        }
+
+            _loader = new Loading("Terrain");
+        _loader.AddWorker(LoadHeightMap, "Loading height map");
+
+        // Loading bridges from a separate thread throws an exception.
+        // But this stuff is read in from the heightmap file anyway.
+        _loader.AddWorker(LoadTrees, "Setting tree positions");
+        _loader.AddWorker(LoadRoads, "Connecting roads");
+        _loader.AddWorker(LoadBridges, "Loading bridges");
+       
         // leave this commented out until we make a change and need to retest the map
         //_loader.AddWorker(MapTester);
 
@@ -316,17 +336,6 @@ public class TerrainMap
 
     private void LoadTrees()
     {
-        List<Vector3> _trees = new List<Vector3>();
-
-        // get the trees
-        foreach (Terrain terrain in _terrains)
-        {
-            foreach (TreeInstance tree in terrain.terrainData.treeInstances)
-            {
-                Vector3 treePosition = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
-                _trees.Add(treePosition);
-            }
-        }
 
         // assign tree positions
         var currIdx = 0;
@@ -364,9 +373,8 @@ public class TerrainMap
 
     private void LoadBridges()
     {
-        for (int i = 0; i < _bridges.Length; i++)
+        foreach (Vector3 bridgePos in _bridgePositions)
         {
-            GameObject bridge = _bridges[i];
 
             // Bridge starts and ends at the two closest road nodes
             Vector3 start = Vector3.zero;
@@ -375,7 +383,7 @@ public class TerrainMap
             {
                 foreach (Vector3 roadVert in road.middleIndentVecs)
                 {
-                    float dist = (roadVert - bridge.transform.position).magnitude;
+                    float dist = (roadVert - bridgePos).magnitude;
                     if (dist < startDist)
                     {
                         startDist = dist;
@@ -391,7 +399,7 @@ public class TerrainMap
             {
                 foreach (Vector3 roadVert in road.middleIndentVecs)
                 {
-                    float dist = (roadVert - bridge.transform.position).magnitude;
+                    float dist = (roadVert - bridgePos).magnitude;
                     if (roadVert != start && dist < endDist)
                     {
                         endDist = dist;

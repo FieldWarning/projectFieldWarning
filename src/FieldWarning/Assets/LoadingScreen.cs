@@ -50,6 +50,8 @@ public class LoadingScreen : MonoBehaviour
         _HUD = GameObject.FindGameObjectWithTag("HUD");
         _HUD.SetActive(false);
 
+        
+
         _slider = transform.Find("Slider").GetComponent<Slider>();
         _descLbl = GameObject.Find("LoadingLbl").GetComponent<Text>();
 
@@ -97,6 +99,7 @@ public class LoadingScreen : MonoBehaviour
             GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().LookAt(new Vector3(0, 0f, -50));
 
             _HUD.SetActive(true);
+
             _managers.SetActive(true);
             // dispose of the screen when no more workers in queue
             gameObject.SetActive(false);           
