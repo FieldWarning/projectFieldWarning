@@ -70,8 +70,8 @@ namespace PFW.Ingame.UI
 
                 RaycastHit hit;
                 if (Util.GetTerrainClickLocation(out hit)
-                    && hit.transform.gameObject.name.Equals("Terrain")) {
-
+                    && hit.transform.gameObject.name.Equals("Terrain")) 
+				{
                     ShowGhostUnitsAndMaybePurchase(hit);
                 }
 
@@ -107,9 +107,7 @@ namespace PFW.Ingame.UI
 
 1. Every PFW-created file is in the top-level `PFW` namespace.
 
-2. We use [K&R style](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces, where opening braces are on the same line except for methods and types. A single line statement block can go without braces but the block must be properly indented on its own line.
-
-The purpose of K&R braces is to avoid "stretched" code where every expression is surrounded by empty lines, diluting the signaling value of empty lines. The purpose of K&R braces is not to save space by never separating code blocks. You are strongly encouraged to add an empty line between any two lines, and especially after any braces, if you find it improves readability (for an extreme case, note the empty lines around the first case of the switch above).
+2. When it comes to braces, we generally use the visual studio defaults (Allman style, each open brace gets a new line). When this would stretch two lines of real code into ten, exceptions can be made (happens very often when declaring straightforward properties).
 
 3. We use four spaces of indentation (no tabs).
 
@@ -152,9 +150,3 @@ secondUnit = NewUnit();
 18. We seek to fail fast and do not program defensively. A method should not check its inputs for `null`. Instead it should directly use them and throw a `NullException` if it was provided faulty values. It is the responsibility of the caller to handle `null` values as soon as they occur - trying to recover from a bad input only makes it harder to find the source of the problem.
 
 19. We prefer composition over inheritance.
-
-
-We have provided a Visual Studio 2013 vssettings file (`coding-style.vssettings`) at the root of the repository, enabling C# auto-formatting conforming to the above guidelines. Ctrl+k Ctrl+d.
-
-
-// TODO some sort of automatic formatting tool, i dont think codeformatter does the job since its not customizable enough
