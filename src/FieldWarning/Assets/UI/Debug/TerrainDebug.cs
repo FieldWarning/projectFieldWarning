@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TerrainDebug : MonoBehaviour
 {
@@ -22,12 +23,12 @@ public class TerrainDebug : MonoBehaviour
         RaycastHit hit;
         Util.GetTerrainClickLocation(out hit);
 
-        var positionField = transform.Find("PositionField").GetComponent<Text>();
+        var positionField = transform.Find("PositionField").GetComponent<TextMeshProUGUI>();
         positionField.text = hit.point.ToString();
 
         var terrainType = _matchSession.TerrainMap.GetTerrainType(hit.point);
 
-        var typeField = transform.Find("TypeField").GetComponent<Text>();
+        var typeField = transform.Find("TypeField").GetComponent<TextMeshProUGUI>();
         typeField.text = terrainType.ToString();
     }
 
