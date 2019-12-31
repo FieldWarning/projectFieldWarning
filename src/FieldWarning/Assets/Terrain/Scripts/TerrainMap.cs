@@ -29,6 +29,10 @@ public class TerrainMap
     public const int BRIDGE = 4;
     public const int BUILDING = 5;
 
+    // this determines how precise the terrain data is.. the higher.. the faster it will load, lower=more detailed data
+    // this value is the minimum because the engine will determine the granularity around this number for best fit
+    private const int GRANULARITY = 1;
+
     private const float MAP_SPACING = 1.5f * TerrainConstants.MAP_SCALE;
     private const int EXTENSION = 100;
 
@@ -38,7 +42,7 @@ public class TerrainMap
     public const float BRIDGE_WIDTH = 3f * TerrainConstants.MAP_SCALE;
     public const float BRIDGE_HEIGHT = 1.0f; // temporary
 
-    public const string HEIGHT_MAP_SUFFIX = "_sample_height.dat";
+    public const string HEIGHT_MAP_SUFFIX = "_sample_water.dat";
     private readonly string _HEIGHT_MAP_PATH;
 
     public readonly Vector3 MapMin, MapMax, MapCenter;
@@ -56,7 +60,7 @@ public class TerrainMap
 
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
-    List<Vector3> _trees = new List<Vector3>();
+    List<Vector3> _treePositions = new List<Vector3>();
     List<Vector3> _bridgePositions = new List<Vector3>();
 
     // this is only needed for map testing
@@ -114,26 +118,13 @@ public class TerrainMap
         _roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
         _bridges = GameObject.FindGameObjectsWithTag("Bridge");
 
-        //TODO create some debug UI to dump the map when needed
-        if (!File.Exists(_HEIGHT_MAP_PATH))
-        {
-            CreateOriginalMap();
-            WriteHeightMap(_HEIGHT_MAP_PATH);
-        }
-
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-
-        // leave this commented out until we make a change and need to retest the map
-        // need to run this before the worker threads start
-        //originalTestMap = CreateOriginalMap();
-
         // get our trees
         foreach (Terrain terrain in _terrains)
         {
             foreach (TreeInstance tree in terrain.terrainData.treeInstances)
             {
                 Vector3 treePosition = Vector3.Scale(tree.position, terrain.terrainData.size) + terrain.transform.position;
-                _trees.Add(treePosition);
+                _treePositions.Add(treePosition);
             }
         }
 
@@ -146,10 +137,23 @@ public class TerrainMap
         }
 
         _loader = new Loading("Terrain");
-        _loader.AddWorker(LoadHeightMap, "Loading height map");
+
+        //TODO create some debug UI to dump the map when needed
+        // TODO need to also somehow verify the height map is valid?? 
+        // not sure how to do this each time without reading the original data.
+        if (!File.Exists(_HEIGHT_MAP_PATH))
+        {
+            _map = CreateHeightMapFromtTerrainData();
+            WriteWaterMap(_map, _HEIGHT_MAP_PATH);
+        } else
+        {
+            _loader.AddWorker(LoadWaterMap, "Placing water");
+        }
+
 
         // Loading bridges from a separate thread throws an exception.
-        // But this stuff is read in from the heightmap file anyway.
+        // This is why we first cache the bridge positions outside the thread
+        // before doing the below. same goes for roads and trees.
         _loader.AddWorker(LoadTrees, "Setting tree positions");
         _loader.AddWorker(LoadRoads, "Connecting roads");
         _loader.AddWorker(LoadBridges, "Loading bridges");
@@ -179,39 +183,42 @@ public class TerrainMap
     }
 
     /// <summary>
-    /// Map unit test. Compares the map from compressed to the actual terrain map
+    /// Creates height map from original terrain data, slow
     /// </summary>
-    private byte[,] CreateOriginalMap()
+    private byte[,] CreateHeightMapFromtTerrainData()
     {
 
         Debug.Log("Creating original test map.");
 
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
 
-        byte[,] map_original = new byte[nEntry, nEntry];
-
-        _map = map_original;
+        byte[,] map = new byte[nEntry, nEntry];
 
         for (var x = 0; x < nEntry; x++)
         {
-            for (var z = 0; z < nEntry; z++)
+            for (var z = 0; z < nEntry; z += GRANULARITY)
             {
-                _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
+                map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
+
+                if (z + GRANULARITY >= nEntry)
+                {
+                    byte savedVal = map[x, z];
+
+                    for (int i = 0; i < nEntry - z; i++)
+                    {
+                        map[x, z + i] = savedVal;
+                    }
+                }
 
             }
         }
 
-        LoadTrees();
-        LoadRoads();
-        LoadBridges();
-
-        // assign the original back
-        map_original = _map;
-
         Debug.Log("Done creating original test map.");
 
-        return map_original;
+        return map;
     }
+
+
 
     /// <summary>
     /// Takes the sampled height from the terrain and packs/compresses it to a binary file with the format of:
@@ -223,26 +230,25 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void WriteHeightMap(string path)
+    public void WriteWaterMap(byte[,] map, string path)
     {
 
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
         BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
         for (int x = 0; x < nEntry; x++)
         {
-            float temp = 0;
-            float last = 0;
+            byte temp = 0;
+            byte last = 0;
             int lastcnt = 0;
 
-            for (int z = 0; z < nEntry; z++)
+            for (int z = 0; z < nEntry; z += GRANULARITY)
             {
-                temp = GetTerrainHeight(PositionOf(x, z));
+                temp = map[x, z];
 
-                //map[x, z] = (byte)(terrain.SampleHeight(PositionOf(x, z)) > waterHeight ? PLAIN : WATER);
 
                 if (last == temp || lastcnt == 0)
                 {
-                    lastcnt++;
+                    lastcnt += (z+GRANULARITY>=nEntry)?nEntry-z:GRANULARITY;
                 }
                 else
                 {
@@ -259,7 +265,7 @@ public class TerrainMap
             writer.Write(lastcnt);
 
 
-            writer.Write((int)'\n');
+            writer.Write((char)'\n');
         }
 
         writer.Close();
@@ -279,7 +285,7 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void ReadHeightMap(string path)
+    public void LoadWaterMap(string path)
     {
         //TODO : not much error checking is done in thsi function
 
@@ -299,10 +305,10 @@ public class TerrainMap
         {
 
             // the sampled height of terrain (4 bytes float) or a newline
-            byte[] heightOrNL = reader.ReadBytes(4);
+            byte[] waterOrNL = reader.ReadBytes(1);
 
-            // check to see if this is height or newline
-            if (BitConverter.ToInt32(heightOrNL, 0) == (int)0x0a)
+            // check to see if this is water/plane or newline
+            if (waterOrNL[0] == (byte)0x0a)
             {
                 zCoord = 0;
                 xCoord++;
@@ -310,11 +316,12 @@ public class TerrainMap
             else
             {
 
-                // since we already read a byte but we need 4 bytes
+                // since we already read a byte but we need 4 more bytes for an int 
+                // that represents the count
                 int numOfValues = reader.ReadInt32();
 
-                // convert this height into a terrain type.. water, forest etc - byte
-                var bType = (byte)(BitConverter.ToSingle(heightOrNL, 0) > WATER_HEIGHT ? PLAIN : WATER);
+                // Since this is a water map, there are only two possible terrain types PLAIN/WATER
+                byte bType = waterOrNL[0];
 
                 // this tells us how far to unpack the compression
                 var zEnd = zCoord + numOfValues;
@@ -344,12 +351,12 @@ public class TerrainMap
         // assign tree positions
         var currIdx = 0;
 
-        foreach (var tree in _trees)
+        foreach (var tree in _treePositions)
         {
             AssignCircularPatch(tree, TREE_RADIUS, FOREST);
             currIdx++;
             if (_loader != null)
-                _loader.PercentDone = ((double)currIdx / (double)_trees.Count) * 100.0;
+                _loader.PercentDone = ((double)currIdx / (double)_treePositions.Count) * 100.0;
         }
     }
 
@@ -419,9 +426,21 @@ public class TerrainMap
         }
     }
 
-    private void LoadHeightMap()
+    public void ReloadTerrainData()
     {
-        ReadHeightMap(_HEIGHT_MAP_PATH);
+        _map = CreateHeightMapFromtTerrainData();
+        WriteWaterMap(_map, _HEIGHT_MAP_PATH);
+        LoadWaterMap(_HEIGHT_MAP_PATH);
+        LoadTrees();
+        LoadRoads();
+        LoadBridges();
+    }
+
+    // this function does one thing because it needs to have no params to 
+    // be loaded by the worker thread
+    private void LoadWaterMap()
+    {
+        LoadWaterMap(_HEIGHT_MAP_PATH);
     }
 
     private void AssignRectanglarPatch(Vector3 start, Vector3 end, float width, byte value)

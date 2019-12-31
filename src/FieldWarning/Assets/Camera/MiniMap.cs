@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 using PFW.Model.Game;
-using PFW.Units.Component.Vision;
 using PFW.Units;
 
 public class MiniMap : MonoBehaviour, IPointerClickHandler
@@ -35,7 +34,6 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
     private RawImage _miniMapImage = null;
     [SerializeField]
     private Texture2D _tankTexture = null;
-    [SerializeField]
     private MatchSession _matchSession = null;
     [SerializeField]
     private Camera _miniMapCamera = null;
@@ -66,6 +64,8 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         image.Apply();
         _miniMapImage.texture = image;
         _miniMapCamera.enabled = false;
+
+        _matchSession = MatchSession.Current;
     }
 
     //TODO different signs for different unit Types
