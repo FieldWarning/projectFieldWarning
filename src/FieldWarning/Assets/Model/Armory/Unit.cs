@@ -17,11 +17,25 @@ using PFW.Units;
 
 namespace PFW.Model.Armory
 {
+    /**
+     * Each deck creates its own unit objects.
+     * 
+     * Warning: Currently, units don't have a deck ID. We only look up a unit
+     * by id when it is created, and at that point in time we have access to the 
+     * player who created it (and thus the deck). If we need to create a unit after
+     * the creator has been removed (e.g. disconnect), we will need a more refined solution
+     * that preserves the link to the deck (or a global unit id).
+     */ 
     //[Serializable]
     public class Unit
     {
+        // Identifies which category the unit is in.
+        public byte CategoryId;
+        // Unique for a deck+category pair, should match the index in the unit list.
+        public int Id;
+
         public string Name { get; }
-        public int Price { get;  }
+        public int Price { get; }
 
         //[Tooltip("The gameobject this will be cloned from.")]
         public GameObject Prefab { get; }

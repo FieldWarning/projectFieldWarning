@@ -22,6 +22,13 @@ namespace PFW
     ///
     /// Alternatively, you can write '#define PFW_LOG_NETWORKING' at the top of all
     /// files that call the relevant logging function (LogNetworking).
+    /// 
+    /// This logger is still a work in progress. The goals are:
+    /// -> Ability to remove the messages of specific subsystems at compile time.
+    /// TODO: 
+    /// -> A ranking of log levels (dump, debug, info, warning, error).
+    /// -> Ability to disable the different log levels at run and compile time.
+    /// -> Redirecting logging to a file.
     /// </summary>
     public static class Logger
     {

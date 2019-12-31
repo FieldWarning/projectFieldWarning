@@ -12,30 +12,28 @@
 */
 
 using System.Collections.Generic;
-using PFW.UI.Prototype;
 using UnityEngine;
 
 using PFW.Model.Game;
 using PFW.Model.Armory;
+using PFW.Units;
+using static PFW.Constants;
 
 namespace PFW.UI.Ingame
 {
     public class BuyTransaction
     {
-        private GhostPlatoonBehaviour _ghostPlatoonBehaviour;
-
-        private const int MAX_PLATOON_SIZE = 4;
-        private const int MIN_PLATOON_SIZE = 1;
+        private PlatoonRoot _newestPlatoon;
 
         private int _smallestPlatoonSize;
 
         public Unit Unit { get; }
         public PlayerData Owner { get; }
-        public List<GhostPlatoonBehaviour> GhostPlatoons { get; }
+        public List<PlatoonRoot> PreviewPlatoons { get; }
 
         public int UnitCount {
             get {
-                return _smallestPlatoonSize + (GhostPlatoons.Count - 1) * MAX_PLATOON_SIZE;
+                return _smallestPlatoonSize + (PreviewPlatoons.Count - 1) * MAX_PLATOON_SIZE;
             }
         }
 
@@ -44,55 +42,44 @@ namespace PFW.UI.Ingame
             Unit = unit;
             Owner = owner;
 
-            _smallestPlatoonSize = MIN_PLATOON_SIZE;
-            _ghostPlatoonBehaviour =
-                    GhostPlatoonBehaviour.Build(
-                            unit, owner, _smallestPlatoonSize);
-
-            GhostPlatoons = new List<GhostPlatoonBehaviour>();
-            GhostPlatoons.Add(_ghostPlatoonBehaviour);
+            PreviewPlatoons = new List<PlatoonRoot>();
+            StartNewPlatoon();
         }
 
         public void AddUnit()
         {
             if (_smallestPlatoonSize < MAX_PLATOON_SIZE) {
 
-                GhostPlatoons.Remove(_ghostPlatoonBehaviour);
-                _ghostPlatoonBehaviour.Destroy();
-
                 _smallestPlatoonSize++;
-                _ghostPlatoonBehaviour =
-                        GhostPlatoonBehaviour.Build(
-                                Unit, Owner, _smallestPlatoonSize);
-                GhostPlatoons.Add(_ghostPlatoonBehaviour);
+                _newestPlatoon.AddSingleUnit();
+
             } else {
 
-                // If all platoons in the transaction are max size, we add a new one and update the size counter:
-                _smallestPlatoonSize = MIN_PLATOON_SIZE;
-                _ghostPlatoonBehaviour = GhostPlatoonBehaviour.Build(
-                        Unit, Owner, _smallestPlatoonSize);
-                GhostPlatoons.Add(_ghostPlatoonBehaviour);
+                StartNewPlatoon();
             }
+        }
+
+        // Create the smallest platoon allowed
+        private void StartNewPlatoon()
+        {
+            _smallestPlatoonSize = MIN_PLATOON_SIZE;
+            _newestPlatoon = PlatoonRoot.CreateGhostMode(Unit, Owner);
+            for (int i = 0; i < MIN_PLATOON_SIZE; i++)
+                _newestPlatoon.AddSingleUnit();
+
+            PreviewPlatoons.Add(_newestPlatoon);
         }
 
         public BuyTransaction Clone()
         {
             BuyTransaction clone = new BuyTransaction(Unit, Owner);
 
-            int unitCount =
-                    (GhostPlatoons.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
+            int unitCount = (PreviewPlatoons.Count - 1) * MAX_PLATOON_SIZE + _smallestPlatoonSize;
 
             while (unitCount-- > 1)
                 clone.AddUnit();
 
             return clone;
-        }
-
-        public void Finish()
-        {
-            foreach (GhostPlatoonBehaviour g in GhostPlatoons) {
-                g.BuildRealPlatoon();
-            }
         }
 
         // Places the ghost units (unit silhouettes) in view of the player:
@@ -102,10 +89,9 @@ namespace PFW.UI.Ingame
             float heading = diff.getRadianAngle();
 
             var positions = Formations.GetLineFormation(
-                    center, heading + Mathf.PI / 2, GhostPlatoons.Count);
-            for (var i = 0; i < GhostPlatoons.Count; i++)
-                GhostPlatoons[i].SetOrientation(positions[i], heading);
-
+                    center, heading + Mathf.PI / 2, PreviewPlatoons.Count);
+            for (var i = 0; i < PreviewPlatoons.Count; i++)
+                PreviewPlatoons[i].SetGhostOrientation(positions[i], heading);
         }
     }
 }

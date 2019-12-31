@@ -13,6 +13,7 @@
 
 using UnityEngine;
 
+using PFW.Model.Game;
 using PFW.Units.Component.Movement;
 
 namespace PFW.Units.Component.Weapon
@@ -169,7 +170,7 @@ namespace PFW.Units.Component.Weapon
             // TODO utilize precomputed distance lists from session
             // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
 
-            foreach (UnitDispatcher enemy in Unit.Platoon.Owner.Session.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
+            foreach (UnitDispatcher enemy in MatchSession.Current.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
                 if (!enemy.VisionComponent.IsSpotted)
                     continue;
 

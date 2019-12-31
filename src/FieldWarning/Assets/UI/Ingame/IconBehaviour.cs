@@ -100,14 +100,19 @@ namespace PFW.UI.Ingame
             }
 
             _billboard.GetComponent<Renderer>().material.color = color;
-            _symbol.GetComponent<Renderer>().material.color = color;// (color + Color.white) / 2;
+            _symbol.GetComponent<Renderer>().material.color = color;
         }
 
-
+        /**
+         * Ghost platoons have paler icons which hint that they're not real.
+         */
         public void SetGhost()
         {
-            _billboard.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
-            _symbol.GetComponent<Renderer>().material.SetColor("_Emission", (2 * _baseColor + Color.white) / 3);
+            gameObject.ApplyShaderRecursively(Shader.Find("Custom/Ghost"));
+            _billboard.GetComponent<Renderer>().material.SetColor(
+                    "_Emission", (2 * _baseColor + Color.white) / 3);
+            _symbol.GetComponent<Renderer>().material.SetColor(
+                    "_Emission", (2 * _baseColor + Color.white) / 3);
             SetVisible(true);
         }
     }

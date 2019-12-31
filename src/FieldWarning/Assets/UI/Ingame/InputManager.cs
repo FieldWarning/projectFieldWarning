@@ -19,6 +19,7 @@ using System;
 
 using PFW.Model.Game;
 using PFW.Model.Armory;
+using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
@@ -180,6 +181,9 @@ namespace PFW.UI.Ingame
             MaybePurchaseGhostUnits(closestSpawn);
         }
 
+        /**
+         * Purchase units if there is a buy selection.
+         */
         private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
             if (Input.GetMouseButtonUp(0)) {
@@ -191,7 +195,7 @@ namespace PFW.UI.Ingame
                 if (_currentBuyTransaction == null)
                     return;
 
-                closestSpawn.BuyPlatoons(_currentBuyTransaction.GhostPlatoons);
+                closestSpawn.BuyPlatoons(_currentBuyTransaction.PreviewPlatoons);
 
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     // We turned the current ghosts into real units, so:
@@ -205,7 +209,7 @@ namespace PFW.UI.Ingame
         private void MaybeExitPurchasingModeAndRefund()
         {
             if (Input.GetMouseButton(1)) {
-                foreach (var g in _currentBuyTransaction.GhostPlatoons) {
+                foreach (var g in _currentBuyTransaction.PreviewPlatoons) {
                     g.Destroy();
                 }
 
@@ -283,7 +287,7 @@ namespace PFW.UI.Ingame
 
         private void ExitPurchasingMode()
         {
-            _currentBuyTransaction.GhostPlatoons.Clear();
+            _currentBuyTransaction.PreviewPlatoons.Clear();
 
             _currentBuyTransaction = null;
 

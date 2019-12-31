@@ -13,6 +13,8 @@
 
 using UnityEngine;
 
+using PFW.Units;
+
 public sealed class SelectableBehavior : MonoBehaviour
 {
     public PlatoonBehaviour Platoon { get; set; }

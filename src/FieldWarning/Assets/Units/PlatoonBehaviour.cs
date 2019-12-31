@@ -14,231 +14,241 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Mirror;
 
 using PFW.UI.Ingame;
 using PFW.Model.Game;
-using PFW.Units;
 
 using PFW.Model.Armory;
 
-public partial class PlatoonBehaviour : MonoBehaviour
+namespace PFW.Units
 {
-    public Unit Unit;
-    public IconBehaviour Icon;
-    public MovementModule Movement;
-    public Waypoint ActiveWaypoint;
-    public TransporterModule Transporter;
-    public TransportableModule Transportable;
-    public GhostPlatoonBehaviour GhostPlatoon;
-    public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
-    public List<UnitDispatcher> Units = new List<UnitDispatcher>();
-    private List<PlatoonModule> _modules = new List<PlatoonModule>();
-    public bool IsInitialized = false;
-
-    public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
-
-    public PlayerData Owner { get; private set; }
-
-    public void Update()
+    public partial class PlatoonBehaviour : NetworkBehaviour
     {
-        Vector3 pos = new Vector3();
+        public Unit Unit;
+        public IconBehaviour Icon;
+        public MovementModule Movement;
+        public Waypoint ActiveWaypoint;
+        public TransporterModule Transporter;
+        public TransportableModule Transportable;
+        public GhostPlatoonBehaviour GhostPlatoon;
+        public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
+        public List<UnitDispatcher> Units = new List<UnitDispatcher>();
+        private List<PlatoonModule> _modules = new List<PlatoonModule>();
+        public bool IsInitialized = false;
 
-        Units.ForEach(x => pos += x.Transform.position);
-        transform.position = pos / Units.Count;
-        _modules.ForEach(x => x.Update());
+        public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
 
-        if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
-            if (Waypoints.Any()) {
-                ActiveWaypoint = Waypoints.Dequeue();
-                ActiveWaypoint.ProcessWaypoint();
-            } else {
-                ActiveWaypoint = null;
-                //units.ForEach (x => x.gotDestination = false);
+        public PlayerData Owner { get; private set; }
+        public override bool OnSerialize(NetworkWriter writer, bool initialState)
+        {
+            bool canSend = false;
+            if (initialState)
+            {
+                writer.Write(Owner.Id);
+                writer.Write(Unit.CategoryId);
+                writer.Write(Unit.Id);
+                canSend = true;
             }
-            //setFinalOrientation(waypoint.destination,waypoint.heading);
+            else
+            {
+                // TODO
+            }
+
+            return canSend;
         }
-    }
 
-    public void BuildModules()
-    {
-        Movement = new MovementModule(this);
+        public override void OnDeserialize(NetworkReader reader, bool initialState)
+        {
+            if (initialState)
+            {
+                int playerId = reader.ReadByte();
+                if (MatchSession.Current.Players.Count > playerId)
+                {
+                    PlayerData owner = MatchSession.Current.Players[playerId];
+                    byte unitCategoryId = reader.ReadByte();
+                    int unitId = reader.ReadInt32();
+                    if (unitCategoryId < owner.Deck.Categories.Length
+                        && unitId < owner.Deck.Categories[unitCategoryId].Count)
+                    {
+                        Unit unit = owner.Deck.Categories[unitCategoryId][unitId];
+                        Initialize(unit, owner);
+                    }
+                    else
+                    {
+                        Debug.LogError("Got bad unit id from the server.");
+                    }
+                }
+                else
+                {
+                    // Got an invalid player id, server is trying to crash us?
+                    Debug.LogError(
+                        "Network tried to create a platoon with an invalid player id.");
+                }
+            }
+            else
+            {
+                // TODO
+            }
+        }
 
-        //if (t == UnitType.AFV) {
-        //    Transporter = new TransporterModule(this);
-        //    _modules.Add(Transporter);
-        //}
+        public void Update()
+        {
+            Vector3 pos = new Vector3();
 
-        //if (t == UnitType.Infantry) {
-        //    Transportable = new TransportableModule(this);
-        //    _modules.Add(Transportable);
-        //}
-    }
+            Units.ForEach(x => pos += x.Transform.position);
+            transform.position = pos / Units.Count;
+            _modules.ForEach(x => x.Update());
 
-    public void Initialize(Unit unit, PlayerData owner, int n)
-    {
-        Unit = unit;
-        Owner = owner;
-        var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
-        Icon = iconInstance.GetComponent<IconBehaviour>();
-        Icon.BaseColor = Owner.Team.Color;
+            if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
+                if (Waypoints.Any()) {
+                    ActiveWaypoint = Waypoints.Dequeue();
+                    ActiveWaypoint.ProcessWaypoint();
+                } else {
+                    ActiveWaypoint = null;
+                    //units.ForEach (x => x.gotDestination = false);
+                }
+                //setFinalOrientation(waypoint.destination,waypoint.heading);
+            }
+        }
 
-        var unitPrefab = Unit.Prefab;
+        public void BuildModules()
+        {
+            Movement = new MovementModule(this);
 
-        for (int i = 0; i < n; i++) {
-            var unitInstance =
-                Owner.Session.Factory.MakeUnit(unitPrefab, Owner.Team.Color);
-            UnitDispatcher unitDispatcher = new UnitDispatcher(unitInstance, this);
-            Units.Add(unitDispatcher);
+            //if (t == UnitType.AFV) {
+            //    Transporter = new TransporterModule(this);
+            //    _modules.Add(Transporter);
+            //}
+
+            //if (t == UnitType.Infantry) {
+            //    Transportable = new TransportableModule(this);
+            //    _modules.Add(Transportable);
+            //}
+        }
+
+        // Call after creating an object of this class, pretend it is a constructor
+        public void Initialize(Unit unit, PlayerData owner)
+        {
+            Unit = unit;
+            Owner = owner;
+            Icon.BaseColor = Owner.Team.Color;
+        }
+
+        // Create an inactive unit (to be activated when Spawn() is called)
+        public void AddSingleUnit()
+        {
+            var unitInstance = MatchSession.Current.Factory.MakeUnit(
+                gameObject, Unit.Prefab, Owner.Team.Color);
+            //Networking.CommandConnection.Connection.CmdSpawnObject(unitInstance);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
 
-            unitInstance.SetActive(true);
+            unitInstance.SetActive(false);
             collider.enabled = true;
+
+            Units.Add(new UnitDispatcher(unitInstance, this));
         }
 
-        BuildModules();
+        // Activates all units, moving from ghost/preview mode to a real platoon
+        // Only use from PlatoonRoot (the lifetime manager class for platoons)
+        public void Spawn(Vector3 center)
+        {
+            Units.ForEach(x => {
+                x.GameObject.SetActive(true);
+                //Networking.CommandConnection.Connection.CmdSpawnObject(x.GameObject);
+            });
 
-        //if (t == UnitType.AFV) {
-        //    var ghost = GhostPlatoonBehaviour.Build(UnitType.Infantry, owner, n);
-        //    Transporter.SetTransported(ghost.GetRealPlatoon());
-        //    ghost.SetOrientation(100 * Vector3.down, 0);
-        //    ghost.SetVisible(false);
-        //}
+            BuildModules();
 
-        Movement.SetDestination(Vector3.forward);
+            //if (t == UnitType.AFV) {
+            //    var ghost = GhostPlatoonBehaviour.Build(UnitType.Infantry, owner, n);
+            //    Transporter.SetTransported(ghost.GetRealPlatoon());
+            //    ghost.SetOrientation(100 * Vector3.down, 0);
+            //    ghost.SetVisible(false);
+            //}
 
-        Icon.AssociateToRealUnits(Units);
+            Movement.SetDestination(Vector3.forward);
 
-        IsInitialized = true;
-    }
+            Icon.AssociateToRealUnits(Units);
 
-    public void Spawn(Vector3 center)
-    {
-        transform.position = center;
-        var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
+            IsInitialized = true;
 
-        var positions = Formations.GetLineFormation(center, heading, Units.Count);
-        Units.ForEach(u => u.WakeUp());
-        for (int i = 0; i < Units.Count; i++)
-            Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI / 2);
 
-        Movement.BeginQueueing(false);
-        Movement.GetDestinationFromGhost();
-        Movement.EndQueueing();
-        GhostPlatoon.SetVisible(false);
+            transform.position = center;
+            var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
 
-        Owner.Session.RegisterPlatoonBirth(this);
-    }
+            var positions = Formations.GetLineFormation(center, heading, Units.Count);
+            Units.ForEach(u => u.WakeUp());
+            for (int i = 0; i < Units.Count; i++)
+                Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI / 2);
 
-    // Call when splitting a platoon
-    public void InitializeAfterSplit(
-            Unit unit,
-            PlayerData owner,
-            UnitDispatcher unitDispatcher,
-            MoveWaypoint destination)
-    {
-        Unit = unit;
-        Owner = owner;
+            Movement.BeginQueueing(false);
+            Movement.GetDestinationFromGhost();
+            Movement.EndQueueing();
+            GhostPlatoon.SetVisible(false);
 
-        var iconInstance = Instantiate(Resources.Load<GameObject>("Icon"), transform);
-        Icon = iconInstance.GetComponent<IconBehaviour>();
-        Icon.BaseColor = Owner.Team.Color;
-
-        unitDispatcher.Platoon = this;
-        Units.Add(unitDispatcher);
-
-        BuildModules();
-
-        Movement.BeginQueueing(false);
-        Movement.SetDestination(destination.Destination);
-        Movement.EndQueueing();
-
-        Icon.AssociateToRealUnits(Units);
-
-        GhostPlatoon.SetVisible(false);
-
-        Owner.Session.RegisterPlatoonBirth(this);
-        IsInitialized = true;
-    }
-
-    // Create new platoons for all units
-    public void Split(PlayerData owner)
-    {
-        foreach (UnitDispatcher unit in Units) {
-            var ghost = Instantiate(Resources.Load<GameObject>("GhostPlatoon"));
-            var platoon = Instantiate(Resources.Load<GameObject>("Platoon"));
-
-            var pBehavior = platoon.GetComponent<PlatoonBehaviour>();
-            var gBehavior = ghost.GetComponent<GhostPlatoonBehaviour>();
-
-            pBehavior.GhostPlatoon = gBehavior;
-
-            gBehavior.InitializeAfterSplit(Unit, owner);
-
-            pBehavior.InitializeAfterSplit(Unit, owner, unit, Movement.Waypoint);
+            MatchSession.Current.RegisterPlatoonBirth(this);
         }
 
-        Destroy(GhostPlatoon);
-        DestroyWithoutUnits();
-    }
+        // Called when a platoon enters or leaves the player's selection.
+        // justPreviewing - true when the unit should be shaded as if selected, but the
+        //                  actual selected set has not been changed yet
+        public void SetSelected(bool selected, bool justPreviewing)
+        {
+            Icon?.SetSelected(selected);
+            Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
+        }
 
-    // Called when a platoon enters or leaves the player's selection.
-    // justPreviewing - true when the unit should be shaded as if selected, but the
-    //                  actual selected set has not been changed yet
-    public void SetSelected(bool selected, bool justPreviewing)
-    {
-        Icon?.SetSelected(selected);
-        Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
-    }
+        public void SetEnabled(bool enabled)
+        {
+            this.enabled = enabled;
+            Icon?.SetVisible(enabled);
+        }
 
-    public void SetEnabled(bool enabled)
-    {
-        this.enabled = enabled;
-        Icon?.SetVisible(enabled);
-    }
+        public void SendFirePosOrder(Vector3 position)
+        {
+            Units.ForEach(u => u.SendFirePosOrder(position));
+            PlayAttackCommandVoiceline();
+        }
 
-    public void SendFirePosOrder(Vector3 position)
-    {
-        Units.ForEach(u => u.SendFirePosOrder(position));
-        PlayAttackCommandVoiceline();
-    }
+        /// <summary>
+        /// Destroy just the platoon object, without touching its units.
+        /// </summary>
+        private void DestroyWithoutUnits()
+        {
+            MatchSession.Current.RegisterPlatoonDeath(this);
+            Destroy(gameObject);
+        }
 
-    /// <summary>
-    /// Destroy just the platoon object, without touching its units.
-    /// </summary>
-    private void DestroyWithoutUnits()
-    {
-        Owner.Session.RegisterPlatoonDeath(this);
-        Destroy(gameObject);
-    }
+        /// <summary>
+        /// Destroy the platoon and all units in it.
+        /// </summary>
+        public void Destroy()
+        {
+            foreach (var p in Units)
+                Destroy(p.GameObject);
 
-    /// <summary>
-    /// Destroy the platoon and all units in it.
-    /// </summary>
-    public void Destroy()
-    {
-        foreach (var p in Units)
-            Destroy(p.GameObject);
+            DestroyWithoutUnits();
+        }
 
-        DestroyWithoutUnits();
-    }
+        #region PlayVoicelines
+        // For the time being, always play the voiceline of the first unit
+        // Until we agree on a default unit in platoon that plays
+        public void PlaySelectionVoiceline()
+        {
+            Units[0].PlaySelectionVoiceline();
+        }
 
-#region PlayVoicelines
-// For the time being, always play the voiceline of the first unit
-// Until we agree on a default unit in platoon that plays
-    public void PlaySelectionVoiceline()
-    {
-        Units[0].PlaySelectionVoiceline();
-    }
+        public void PlayMoveCommandVoiceline()
+        {
+            Units[0].PlayMoveCommandVoiceline();
+        }
 
-    public void PlayMoveCommandVoiceline()
-    {
-        Units[0].PlayMoveCommandVoiceline();
+        public void PlayAttackCommandVoiceline()
+        {
+            Units[0].PlayAttackCommandVoiceline();
+        }
+        #endregion
     }
-
-    public void PlayAttackCommandVoiceline()
-    {
-        Units[0].PlayAttackCommandVoiceline();
-    }
-#endregion
 }

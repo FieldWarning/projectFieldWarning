@@ -14,6 +14,8 @@
 using System.Linq;
 using UnityEngine;
 
+using PFW.Units;
+
 public class MoveWaypoint : Waypoint
 {
     public Vector3 Destination;

@@ -57,7 +57,7 @@ public class TerrainMap
     private Loading _loader;
 
     public readonly float WATER_HEIGHT;
-    
+
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
     List<Vector3> _treePositions = new List<Vector3>();
@@ -69,7 +69,11 @@ public class TerrainMap
     public TerrainMap(Terrain[] terrains1D)
     {
         WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
-        WATER_HEIGHT = water.transform.position.y;
+        if (water != null) {
+            WATER_HEIGHT = water.transform.position.y;
+        } else {
+            WATER_HEIGHT = -1000;
+        }
 
         // Find limits of the map
         MapMin = new Vector3(99999f, 0f, 99999f);

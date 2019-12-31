@@ -12,11 +12,12 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 using PFW.Model.Game;
 using static PFW.UI.Ingame.InputManager;
-using System.Linq;
+using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
@@ -155,8 +156,9 @@ namespace PFW.UI.Ingame
             List<PlatoonBehaviour> selectionCopy =
                 new List<PlatoonBehaviour>(_selection);
 
-            selectionCopy.ForEach(p => p.Split(owner));
-            _selection.Clear();
+            UnselectAll(_selection, false);
+
+            selectionCopy.ForEach(p => p.gameObject.GetComponentInParent<PlatoonRoot>().Split());
         }
 
         /**
