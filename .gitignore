@@ -5,11 +5,6 @@
 .idea
 JetBrains*
 
-# Terrains
-src/FieldWarning/Assets/Units/New Terrain.asset
-src/FieldWarning/Assets/Units/New Terrain.asset
-src/FieldWarning/Assets/New Terrain.asset
-
 # Doxygen
 doxygen/html/
 
