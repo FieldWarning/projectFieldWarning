@@ -60,10 +60,11 @@ namespace PFW.UI.Ingame
         }
 
         // Called when we receive a new message from the server (or ourselves)
-        private void OnChatUpdate(SyncListString.Operation op, int index, string item)
+        private void OnChatUpdate(
+                SyncListString.Operation op, int index, string oldItem, string newItem)
         {
             // Update the UI element
-            _messagesText.text += item;
+            _messagesText.text += newItem;
             if (_sentMessages.Count > MAX_MESSAGES) /* TODO perhaps also shrink the list */
                 _messagesText.text = _messagesText.text.Substring(
                         _messagesText.text.IndexOf("\n") + "\n".Length);

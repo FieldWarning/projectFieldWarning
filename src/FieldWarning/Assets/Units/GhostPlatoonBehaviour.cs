@@ -42,10 +42,10 @@ namespace PFW.Units
             bool canSend = false;
             if (initialState)
             {
-                writer.Write(_owner.Id);
-                writer.Write(_unit.CategoryId);
-                writer.Write(_unit.Id);
-                writer.Write(FinalHeading);
+                writer.WriteByte(_owner.Id);
+                writer.WriteByte(_unit.CategoryId);
+                writer.WriteInt32(_unit.Id);
+                writer.WriteSingle(FinalHeading);
                 canSend = true;
             }
             else 

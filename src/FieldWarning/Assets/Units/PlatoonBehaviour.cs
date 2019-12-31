@@ -45,9 +45,9 @@ namespace PFW.Units
             bool canSend = false;
             if (initialState)
             {
-                writer.Write(Owner.Id);
-                writer.Write(Unit.CategoryId);
-                writer.Write(Unit.Id);
+                writer.WriteByte(Owner.Id);
+                writer.WriteByte(Unit.CategoryId);
+                writer.WriteInt32(Unit.Id);
                 canSend = true;
             }
             else
