@@ -31,7 +31,7 @@ public class TerrainMap
 
     // this determines how precise the terrain data is.. the higher.. the faster it will load, lower=more detailed data
     // this value is the minimum because the engine will determine the granularity around this number for best fit
-    private const int GRANULARITY = 3;
+    private const int GRANULARITY = 1;
 
     private const float MAP_SPACING = 1.5f * TerrainConstants.MAP_SCALE;
     private const int EXTENSION = 100;
@@ -42,7 +42,7 @@ public class TerrainMap
     public const float BRIDGE_WIDTH = 3f * TerrainConstants.MAP_SCALE;
     public const float BRIDGE_HEIGHT = 1.0f; // temporary
 
-    public const string HEIGHT_MAP_SUFFIX = "_sample_height.dat";
+    public const string HEIGHT_MAP_SUFFIX = "_sample_water.dat";
     private readonly string _HEIGHT_MAP_PATH;
 
     public readonly Vector3 MapMin, MapMax, MapCenter;
@@ -143,10 +143,10 @@ public class TerrainMap
         if (!File.Exists(_HEIGHT_MAP_PATH))
         {
             _map = CreateHeightMapFromtTerrainData();
-            WriteHeightMap(_HEIGHT_MAP_PATH);
+            WriteWaterMap(_map, _HEIGHT_MAP_PATH);
         } else
         {
-            _loader.AddWorker(LoadHeightMap, "Loading height map");
+            _loader.AddWorker(LoadWaterMap, "Placing water");
         }
 
 
@@ -229,22 +229,21 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void WriteHeightMap(string path)
+    public void WriteWaterMap(byte[,] map, string path)
     {
 
         int nEntry = 2 * _mapSize + 2 * EXTENSION;
         BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
         for (int x = 0; x < nEntry; x++)
         {
-            float temp = 0;
-            float last = 0;
+            byte temp = 0;
+            byte last = 0;
             int lastcnt = 0;
 
             for (int z = 0; z < nEntry; z+= GRANULARITY)
             {
-                temp = GetTerrainHeight(PositionOf(x, z));
+                temp = map[x, z];
 
-                //map[x, z] = (byte)(terrain.SampleHeight(PositionOf(x, z)) > waterHeight ? PLAIN : WATER);
 
                 if (last == temp || lastcnt == 0)
                 {
@@ -265,7 +264,7 @@ public class TerrainMap
             writer.Write(lastcnt);
 
 
-            writer.Write((int)'\n');
+            writer.Write((char)'\n');
         }
 
         writer.Close();
@@ -285,7 +284,7 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void ReadHeightMap(string path)
+    public void LoadWaterMap(string path)
     {
         //TODO : not much error checking is done in thsi function
 
@@ -305,10 +304,10 @@ public class TerrainMap
         {
 
             // the sampled height of terrain (4 bytes float) or a newline
-            byte[] heightOrNL = reader.ReadBytes(4);
+            byte[] waterOrNL = reader.ReadBytes(1);
 
-            // check to see if this is height or newline
-            if (BitConverter.ToInt32(heightOrNL, 0) == (int)0x0a)
+            // check to see if this is water/plane or newline
+            if (waterOrNL[0] == (byte)0x0a)
             {
                 zCoord = 0;
                 xCoord++;
@@ -316,11 +315,12 @@ public class TerrainMap
             else
             {
 
-                // since we already read a byte but we need 4 bytes
+                // since we already read a byte but we need 4 more bytes for an int 
+                // that represents the count
                 int numOfValues = reader.ReadInt32();
 
-                // convert this height into a terrain type.. water, forest etc - byte
-                var bType = (byte)(BitConverter.ToSingle(heightOrNL, 0) > WATER_HEIGHT ? PLAIN : WATER);
+                // Since this is a water map, there are only two possible terrain types PLAIN/WATER
+                byte bType = waterOrNL[0];
 
                 // this tells us how far to unpack the compression
                 var zEnd = zCoord + numOfValues;
@@ -427,16 +427,18 @@ public class TerrainMap
 
     public void ReloadTerrainData()
     {
-        WriteHeightMap(_HEIGHT_MAP_PATH);
-        ReadHeightMap(_HEIGHT_MAP_PATH);
+        _map = CreateHeightMapFromtTerrainData();
+        WriteWaterMap(_map, _HEIGHT_MAP_PATH);
+        LoadWaterMap(_HEIGHT_MAP_PATH);
         LoadTrees();
         LoadRoads();
         LoadBridges();
     }
 
-    private void LoadHeightMap()
+    // this function does one thing because it needs to have no params to be loaded by the worker thread
+    private void LoadWaterMap()
     {
-        ReadHeightMap(_HEIGHT_MAP_PATH);
+        LoadWaterMap(_HEIGHT_MAP_PATH);
     }
 
     private void AssignRectanglarPatch(Vector3 start, Vector3 end, float width, byte value)
