@@ -29,6 +29,10 @@ public class TerrainMap
     public const int BRIDGE = 4;
     public const int BUILDING = 5;
 
+    // this determines how precise the terrain data is.. the higher.. the faster it will load, lower=more detailed data
+    // this value is the minimum because the engine will determine the granularity around this number for best fit
+    private const int GRANULARITY = 5;
+
     private const float MAP_SPACING = 1.5f * TerrainConstants.MAP_SCALE;
     private const int EXTENSION = 100;
 
@@ -131,6 +135,7 @@ public class TerrainMap
         _loader = new Loading("Terrain");
 
         //TODO create some debug UI to dump the map when needed
+        // TODO need to also somehow verify the height map is valid?? not sure how to do this each time without reading the original data.
         if (!File.Exists(_HEIGHT_MAP_PATH))
         {
             _map = CreateHeightMapFromtTerrainData();
@@ -186,9 +191,19 @@ public class TerrainMap
 
         for (var x = 0; x < nEntry; x++)
         {
-            for (var z = 0; z < nEntry; z++)
+            for (var z = 0; z < nEntry; z+= GRANULARITY)
             {
                 map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
+
+                if (z + GRANULARITY >= nEntry)
+                {
+                    byte savedVal = map[x, z];
+
+                    for (int i = 0; i < nEntry - z; i++)
+                    {
+                        map[x, z + i] = savedVal;
+                    }
+                }
 
             }
         }
@@ -197,6 +212,8 @@ public class TerrainMap
 
         return map;
     }
+
+
 
     /// <summary>
     /// Takes the sampled height from the terrain and packs/compresses it to a binary file with the format of:
@@ -219,7 +236,7 @@ public class TerrainMap
             float last = 0;
             int lastcnt = 0;
 
-            for (int z = 0; z < nEntry; z++)
+            for (int z = 0; z < nEntry; z+= GRANULARITY)
             {
                 temp = GetTerrainHeight(PositionOf(x, z));
 
@@ -227,7 +244,7 @@ public class TerrainMap
 
                 if (last == temp || lastcnt == 0)
                 {
-                    lastcnt++;
+                    lastcnt+= (z+GRANULARITY>=nEntry)?nEntry-z:GRANULARITY;
                 }
                 else
                 {
