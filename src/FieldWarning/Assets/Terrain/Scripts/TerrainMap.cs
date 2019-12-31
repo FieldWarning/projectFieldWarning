@@ -139,7 +139,8 @@ public class TerrainMap
         _loader = new Loading("Terrain");
 
         //TODO create some debug UI to dump the map when needed
-        // TODO need to also somehow verify the height map is valid?? not sure how to do this each time without reading the original data.
+        // TODO need to also somehow verify the height map is valid?? 
+        // not sure how to do this each time without reading the original data.
         if (!File.Exists(_HEIGHT_MAP_PATH))
         {
             _map = CreateHeightMapFromtTerrainData();
@@ -151,8 +152,8 @@ public class TerrainMap
 
 
         // Loading bridges from a separate thread throws an exception.
-        // This is why we first cache the bridge positions outside the thread before doing the below. 
-        // same goes for roads and trees.
+        // This is why we first cache the bridge positions outside the thread
+        // before doing the below. same goes for roads and trees.
         _loader.AddWorker(LoadTrees, "Setting tree positions");
         _loader.AddWorker(LoadRoads, "Connecting roads");
         _loader.AddWorker(LoadBridges, "Loading bridges");
@@ -195,7 +196,7 @@ public class TerrainMap
 
         for (var x = 0; x < nEntry; x++)
         {
-            for (var z = 0; z < nEntry; z+= GRANULARITY)
+            for (var z = 0; z < nEntry; z += GRANULARITY)
             {
                 map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
@@ -240,14 +241,14 @@ public class TerrainMap
             byte last = 0;
             int lastcnt = 0;
 
-            for (int z = 0; z < nEntry; z+= GRANULARITY)
+            for (int z = 0; z < nEntry; z += GRANULARITY)
             {
                 temp = map[x, z];
 
 
                 if (last == temp || lastcnt == 0)
                 {
-                    lastcnt+= (z+GRANULARITY>=nEntry)?nEntry-z:GRANULARITY;
+                    lastcnt += (z+GRANULARITY>=nEntry)?nEntry-z:GRANULARITY;
                 }
                 else
                 {
@@ -435,7 +436,8 @@ public class TerrainMap
         LoadBridges();
     }
 
-    // this function does one thing because it needs to have no params to be loaded by the worker thread
+    // this function does one thing because it needs to have no params to 
+    // be loaded by the worker thread
     private void LoadWaterMap()
     {
         LoadWaterMap(_HEIGHT_MAP_PATH);
