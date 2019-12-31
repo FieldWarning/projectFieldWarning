@@ -31,7 +31,7 @@ public class TerrainMap
 
     // this determines how precise the terrain data is.. the higher.. the faster it will load, lower=more detailed data
     // this value is the minimum because the engine will determine the granularity around this number for best fit
-    private const int GRANULARITY = 5;
+    private const int GRANULARITY = 3;
 
     private const float MAP_SPACING = 1.5f * TerrainConstants.MAP_SCALE;
     private const int EXTENSION = 100;
@@ -423,6 +423,15 @@ public class TerrainMap
             AssignRectanglarPatch(start + inset, end - inset, boundaryWidth, BUILDING);
             AssignRectanglarPatch(start, end, BRIDGE_WIDTH, BRIDGE);
         }
+    }
+
+    public void ReloadTerrainData()
+    {
+        WriteHeightMap(_HEIGHT_MAP_PATH);
+        ReadHeightMap(_HEIGHT_MAP_PATH);
+        LoadTrees();
+        LoadRoads();
+        LoadBridges();
     }
 
     private void LoadHeightMap()
