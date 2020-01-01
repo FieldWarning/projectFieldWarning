@@ -8,7 +8,7 @@
     "PrefabPath": "TNK/M1Ax",
 
     "Data": {
-        "MovementSpeed": 400,
+        "MovementSpeed": 40,
         "ReverseSpeed": 12.5,
         "AccelRate": 11.5,
         "MaxRotationSpeed": 40,
