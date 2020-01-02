@@ -184,7 +184,7 @@ namespace PFW.Units
                 Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI / 2);
 
             Movement.BeginQueueing(false);
-            Movement.GetDestinationFromGhost();
+            Movement.SetDestinationFromGhost();
             Movement.EndQueueing();
             GhostPlatoon.SetVisible(false);
 

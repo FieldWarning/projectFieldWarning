@@ -134,10 +134,10 @@ namespace PFW.Units
         [ClientRpc]
         public void RpcSetOrientation(Vector3 center, float heading)
         {
-            SetOrientation(center, heading);
+            SetPositionAndOrientation(center, heading);
         }
 
-        public void SetOrientation(Vector3 center, float heading)
+        public void SetPositionAndOrientation(Vector3 center, float heading)
         {
             FinalHeading = heading;
             transform.position = center;

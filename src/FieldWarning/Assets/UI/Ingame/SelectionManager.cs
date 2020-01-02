@@ -128,7 +128,7 @@ namespace PFW.UI.Ingame
 
             // Set the heading of the waypoints:
             if (useGhostHeading) {
-                _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
+                _selection.ForEach(x => x.Movement.SetHeadingFromGhost());
             } else {
                 _selection.ForEach(x => x.Movement.UseDefaultHeading());
             }
@@ -325,7 +325,7 @@ namespace PFW.UI.Ingame
             var positions = Formations.GetLineFormation(_previewPosition, heading + Mathf.PI / 2, _selection.Count);
             List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(x => x.GhostPlatoon);
             for (var i = 0; i < _selection.Count; i++) {
-                ghosts[i].SetOrientation(positions[i], heading);
+                ghosts[i].SetPositionAndOrientation(positions[i], heading);
             }
 
             if (makeVisible) {

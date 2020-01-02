@@ -19,8 +19,6 @@ using PFW.Units;
 
 public class MovementModule : PlatoonModule, Matchable<Vector3>
 {
-    public Vector3 FinalHeading;
-
     public MoveWaypoint Waypoint
     {
         get
@@ -37,25 +35,24 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
     public void SetDestination(Vector3 v)
     {
         var finalHeading = v - GetFunctionalPosition();
-        SetFinalOrientation(v, finalHeading.getRadianAngle());
-        //SetFinalOrientation(v, UnitBehaviour.NO_HEADING);
+        SetDestinationAndOrientation(v, finalHeading.getRadianAngle());
     }
 
-    public void GetDestinationFromGhost()
+    public void SetDestinationFromGhost()
     {
         var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-        SetFinalOrientation(Platoon.GhostPlatoon.transform.position, heading);
+        SetDestinationAndOrientation(Platoon.GhostPlatoon.transform.position, heading);
     }
 
-    public void GetHeadingFromGhost()
+    public void SetHeadingFromGhost()
     {
         var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-        SetFinalOrientation(Waypoint.Destination, heading);
+        SetDestinationAndOrientation(Waypoint.Destination, heading);
     }
 
     public void UseDefaultHeading()
     {
-        SetFinalOrientation(Waypoint.Destination, MovementComponent.NO_HEADING);
+        SetDestinationAndOrientation(Waypoint.Destination, MovementComponent.NO_HEADING);
     }
 
     private Vector3 GetFunctionalPosition()
@@ -71,7 +68,7 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
         }
     }
 
-    public void SetFinalOrientation(Vector3 v, float h)
+    public void SetDestinationAndOrientation(Vector3 v, float h)
     {
         Waypoint.Destination = v;
         Waypoint.Heading = h;
