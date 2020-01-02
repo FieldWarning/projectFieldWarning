@@ -95,21 +95,12 @@ namespace PFW.UI.Ingame
 
         public void DispatchUnloadCommand()
         {
-            foreach (var t in _selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
-                t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
-                t.Unload();
-                t.EndQueueing();
-            }
+            // TODO
         }
 
         public void DispatchLoadCommand()
         {
-            var transporters = _selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
-            var infantry = _selection.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
-
-            transporters.ForEach(x => x.BeginQueueing(Input.GetKey(KeyCode.LeftShift)));
-            transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
-            transporters.ForEach(x => x.EndQueueing());
+            // TODO
         }
 
         /**
@@ -132,7 +123,7 @@ namespace PFW.UI.Ingame
             // Enqueue or set a destination:
             if (shouldQueue)
             {
-                _selection.ForEach(x => x.Movement.AddDestination(
+                _selection.ForEach(x => x.AddDestination(
                         x.GhostPlatoon.transform.position,
                         useGhostHeading ? 
                                 x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,
@@ -140,7 +131,7 @@ namespace PFW.UI.Ingame
             }
             else
             {
-                _selection.ForEach(x => x.Movement.SetDestination(
+                _selection.ForEach(x => x.SetDestination(
                         x.GhostPlatoon.transform.position,
                         useGhostHeading ?
                                 x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,

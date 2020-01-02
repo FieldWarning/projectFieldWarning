@@ -11,31 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using PFW.Units;
-
-public class TransportableModule : PlatoonModule
+namespace PFW.Units.Component.Movement
 {
-    public TransportableWaypoint Waypoint
-    {
-        get
-        {
-            return base.NewWaypoint as TransportableWaypoint;
-        }
-    }
-
-    public TransportableModule(PlatoonBehaviour p) : base(p)
-    {
-    }
-
-    protected override Waypoint GetModuleWaypoint()
-    {
-        return new TransportableWaypoint(Platoon);
-    }
-
-    public void SetTransport(TransporterModule transport)
-    {
-        Waypoint.transporterWaypoint = transport.Waypoint;
-    }
+    public enum MoveMode { NORMAL_MOVE, REVERSE_MOVE, FAST_MOVE };
 }
-
-

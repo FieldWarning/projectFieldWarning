@@ -20,6 +20,7 @@ using System;
 using PFW.Model.Game;
 using PFW.Model.Armory;
 using PFW.Units;
+using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Ingame
 {

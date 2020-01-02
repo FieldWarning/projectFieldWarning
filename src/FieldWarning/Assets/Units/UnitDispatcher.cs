@@ -159,11 +159,6 @@ namespace PFW.Units
         public void SetDestination(Vector3 pos, float heading) =>
                 _movementComponent.SetDestination(pos, heading);
 
-        public InfantryMovementComponent AsInfantry()
-        {
-            return _movementComponent as InfantryMovementComponent;
-        }
-
         public bool IsVisible => VisionComponent.IsVisible;
     }
 }
