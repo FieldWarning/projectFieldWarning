@@ -18,6 +18,7 @@ using PFW.UI.Prototype;
 using PFW.UI.Ingame;
 using PFW.Units;
 using PFW.Units.Component.Vision;
+using PFW.Units.Component.Movement;
 using PFW.Model.Armory;
 
 using Mirror;
