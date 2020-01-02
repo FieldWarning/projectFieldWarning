@@ -34,7 +34,7 @@ namespace PFW.Units
         public GhostPlatoonBehaviour GhostPlatoon;
         public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
-        private List<PlatoonModule> _modules = new List<PlatoonModule>();
+        //private List<PlatoonModule> _modules = new List<PlatoonModule>();
         public bool IsInitialized = false;
 
         public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
@@ -98,7 +98,7 @@ namespace PFW.Units
 
             Units.ForEach(x => pos += x.Transform.position);
             transform.position = pos / Units.Count;
-            _modules.ForEach(x => x.Update());
+            //_modules.ForEach(x => x.Update());
 
             if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
                 if (Waypoints.Any()) {
