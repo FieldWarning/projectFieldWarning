@@ -23,13 +23,13 @@ namespace PFW.Units.Component.Movement
         public readonly Vector3 Destination;
         public readonly float Heading;
 
-        public readonly MoveMode MoveMode;
+        public readonly MoveCommandType MoveMode;
 
         public MoveWaypoint(
                 PlatoonBehaviour platoon,
                 Vector3 destination,
                 float heading = MovementComponent.NO_HEADING,
-                MoveMode mode = MoveMode.NORMAL_MOVE)
+                MoveCommandType mode = MoveCommandType.NORMAL)
         {
             Platoon = platoon;
             Destination = destination;

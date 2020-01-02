@@ -111,7 +111,7 @@ namespace PFW.UI.Ingame
          * the positions that were shown in the preview). If false, the platoons
          * will just pick their destinations based on where the cursor is.
          */
-        public void DispatchMoveCommand(bool useGhostHeading, MoveMode moveMode)
+        public void DispatchMoveCommand(bool useGhostHeading, MoveCommandType moveMode)
         {
             if (Empty)
                 return;

@@ -13,5 +13,10 @@
 
 namespace PFW.Units.Component.Movement
 {
-    public enum MoveMode { NORMAL_MOVE, REVERSE_MOVE, FAST_MOVE };
+    public enum MoveCommandType
+    {
+        FAST,
+        NORMAL,
+        REVERSE
+    }
 }

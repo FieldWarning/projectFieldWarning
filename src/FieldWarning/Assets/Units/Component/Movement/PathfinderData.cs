@@ -188,7 +188,7 @@ namespace PFW.Units.Component.Movement
 
                         float time = FindPath(path,
                             Position(_graph[i]), Position(_graph[j]),
-                            mobility, 0f, MoveCommandType.Fast);
+                            mobility, 0f, MoveCommandType.FAST);
 
                         if (arc.Time[mobility.Index] < 1.5 * time)
                         {
@@ -254,7 +254,7 @@ namespace PFW.Units.Component.Movement
 
             if (gScoreDest < Pathfinder.FOREVER)
             {
-                if (command == MoveCommandType.Slow || command == MoveCommandType.Reverse)
+                if (command == MoveCommandType.NORMAL || command == MoveCommandType.REVERSE)
                     return gScoreDest;
             }
 
@@ -324,7 +324,7 @@ namespace PFW.Units.Component.Movement
                 // Debug.Log(openSet.Count + " " + Position(current) + " " + current.isRoad + " " + Vector3.Distance(Position(current), destination) + " " + (current.gScore + arcTimeDest) + " " + gScoreDest);
                 if (arcTimeDest >= Pathfinder.FOREVER)
                     continue;
-                if (arcTimeDest < Pathfinder.FOREVER && command == MoveCommandType.Slow)
+                if (arcTimeDest < Pathfinder.FOREVER && command == MoveCommandType.NORMAL)
                     arcTimeDest = 0f;
 
                 float gScoreDestNew = current.GScore + arcTimeDest;

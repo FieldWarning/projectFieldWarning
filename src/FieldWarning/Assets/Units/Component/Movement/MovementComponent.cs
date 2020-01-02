@@ -137,23 +137,7 @@ namespace PFW.Units.Component.Movement
         // perhaps some can be cut?
         public void SetUnitDestination(MoveWaypoint waypoint)
         {
-            MoveCommandType moveType;
-            // TODO we have two enums for the same thing, remove one:
-            switch (waypoint.MoveMode) {
-            case MoveMode.FAST_MOVE:
-                moveType = MoveCommandType.Fast;
-                break;
-            case MoveMode.NORMAL_MOVE:
-                moveType = MoveCommandType.Slow;
-                break;
-            case MoveMode.REVERSE_MOVE:
-                moveType = MoveCommandType.Reverse;
-                break;
-            default:
-                throw new System.Exception("Impossible state");
-            }
-
-            float a = Pathfinder.SetPath(waypoint.Destination, moveType);
+            float a = Pathfinder.SetPath(waypoint.Destination, waypoint.MoveMode);
             if (a < Pathfinder.FOREVER)
                 SetUnitFinalHeading(waypoint.Heading);
         }
@@ -167,7 +151,7 @@ namespace PFW.Units.Component.Movement
         // Sets the unit's destination location, with a specific given heading value
         public void SetDestination(Vector3 d, float heading)
         {
-            if (Pathfinder.SetPath(d, MoveCommandType.Fast) < Pathfinder.FOREVER)
+            if (Pathfinder.SetPath(d, MoveCommandType.FAST) < Pathfinder.FOREVER)
                 SetUnitFinalHeading(heading);
         }
 
@@ -233,12 +217,5 @@ namespace PFW.Units.Component.Movement
             //terrainSpeed = Mathf.Max(terrainSpeed, 0.5f * TerrainConstants.MAP_SCALE); // Never let the speed to go exactly 0, just so units don't get stuck
             return terrainSpeed;
         }
-    }
-
-    public enum MoveCommandType
-    {
-        Fast,
-        Slow,
-        Reverse
     }
 }

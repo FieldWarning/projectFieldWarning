@@ -112,7 +112,7 @@ namespace PFW.Units.Component.Movement
             }
 
             if (_waypoint == NO_POSITION)
-                Command = MoveCommandType.Slow;
+                Command = MoveCommandType.NORMAL;
 
             return _waypoint;
         }

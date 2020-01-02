@@ -86,7 +86,7 @@ namespace PFW.Units.Component.Movement
             if (linDist < Pathfinder.FinalCompletionDist)
                 return false;
 
-            if (Pathfinder.Command == MoveCommandType.Reverse)
+            if (Pathfinder.Command == MoveCommandType.REVERSE)
                 return true;
 
             float timeForward = Mathf.Abs(turnForward) / rotationSpeed + linDist / Data.MovementSpeed;

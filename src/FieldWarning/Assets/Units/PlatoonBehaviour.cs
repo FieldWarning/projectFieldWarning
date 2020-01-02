@@ -206,8 +206,8 @@ namespace PFW.Units
         // Set the destination of the platoon, overwriting any previous move target.
         public void SetDestination(
                 Vector3 destination, 
-                float heading = MovementComponent.NO_HEADING, 
-                MoveMode mode = MoveMode.NORMAL_MOVE)
+                float heading = MovementComponent.NO_HEADING,
+                MoveCommandType mode = MoveCommandType.NORMAL)
         {
             MoveWaypoint waypoint = new MoveWaypoint(this, destination, heading, mode);
             Waypoints.Clear();
@@ -218,8 +218,8 @@ namespace PFW.Units
         // Add a destination for the platoon, appending to any existing move orders.
         public void AddDestination(
                 Vector3 destination, 
-                float heading = MovementComponent.NO_HEADING, 
-                MoveMode mode = MoveMode.NORMAL_MOVE)
+                float heading = MovementComponent.NO_HEADING,
+                MoveCommandType mode = MoveCommandType.NORMAL)
         {
             MoveWaypoint waypoint = new MoveWaypoint(this, destination, heading, mode);
             Waypoints.Enqueue(waypoint);
