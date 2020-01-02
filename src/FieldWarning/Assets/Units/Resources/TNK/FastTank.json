@@ -1,14 +1,14 @@
 {
     "$schema": "../UnitConfigSchema.json",
 
-    "ID": "Unit__TNK--M1A2",
+    "ID": "Unit__TNK--FastTank",
     "CategoryKey": "TNK",
-    "Name": "M1A2 Abrams",
+    "Name": "FastTank",
     "Price": 20,
     "PrefabPath": "TNK/M1Ax",
 
     "Data": {
-        "MovementSpeed": 50,
+        "MovementSpeed": 500,
         "ReverseSpeed": 15,
         "AccelRate": 13,
         "MaxRotationSpeed": 50,

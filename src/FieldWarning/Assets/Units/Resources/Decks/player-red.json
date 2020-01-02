@@ -10,6 +10,7 @@
         "Unit__INF--Marines"
     ],
     "TNK": [
+        "Unit__TNK--FastTank",
         "Unit__TNK--M1A1",
         "Unit__TNK--M1A2"
     ],

@@ -37,7 +37,7 @@ public class TerrainMap
     private const int EXTENSION = 100;
 
     private const float ROAD_WIDTH_MULT = 0.5f;
-    private const float TREE_RADIUS = 7f * TerrainConstants.MAP_SCALE;
+    private const float TREE_RADIUS = 18f * TerrainConstants.MAP_SCALE;
 
     public const float BRIDGE_WIDTH = 3f * TerrainConstants.MAP_SCALE;
     public const float BRIDGE_HEIGHT = 1.0f; // temporary
