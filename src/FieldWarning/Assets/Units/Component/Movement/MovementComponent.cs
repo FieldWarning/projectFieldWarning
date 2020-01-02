@@ -139,14 +139,14 @@ namespace PFW.Units.Component.Movement
         {
             MoveCommandType moveType;
             // TODO we have two enums for the same thing, remove one:
-            switch (waypoint.moveMode) {
-            case MoveWaypoint.MoveMode.fastMove:
+            switch (waypoint.MoveMode) {
+            case MoveMode.FAST_MOVE:
                 moveType = MoveCommandType.Fast;
                 break;
-            case MoveWaypoint.MoveMode.normalMove:
+            case MoveMode.NORMAL_MOVE:
                 moveType = MoveCommandType.Slow;
                 break;
-            case MoveWaypoint.MoveMode.reverseMove:
+            case MoveMode.REVERSE_MOVE:
                 moveType = MoveCommandType.Reverse;
                 break;
             default:

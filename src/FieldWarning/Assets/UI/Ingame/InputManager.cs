@@ -129,7 +129,7 @@ namespace PFW.UI.Ingame
                 if (Input.GetMouseButtonDown(0)) {
                     MoveGhostsToMouse();
                     _selectionManager.DispatchMoveCommand(
-                            false, MoveWaypoint.MoveMode.reverseMove);
+                            false, MoveMode.REVERSE_MOVE);
                 }
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
@@ -142,7 +142,7 @@ namespace PFW.UI.Ingame
                 if (Input.GetMouseButtonDown(0)) {
                     MoveGhostsToMouse();
                     _selectionManager.DispatchMoveCommand(
-                            false, MoveWaypoint.MoveMode.fastMove);
+                            false, MoveMode.FAST_MOVE);
                 }
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
@@ -245,12 +245,12 @@ namespace PFW.UI.Ingame
                 DisplayOrderFeedback();
             }
 
-            _selectionManager.DispatchMoveCommand(false, MoveWaypoint.MoveMode.normalMove);
+            _selectionManager.DispatchMoveCommand(false, MoveMode.NORMAL_MOVE);
         }
 
         void OnOrderLongClick()
         {
-            _selectionManager.DispatchMoveCommand(true, MoveWaypoint.MoveMode.normalMove);
+            _selectionManager.DispatchMoveCommand(true, MoveMode.NORMAL_MOVE);
         }
 
         // Show a Symbol at the position where a move order was issued:

@@ -11,41 +11,46 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 using PFW.Units;
 
-public class MoveWaypoint : Waypoint
+public enum MoveMode { NORMAL_MOVE, REVERSE_MOVE, FAST_MOVE };
+
+public sealed class MoveWaypoint
 {
-    public Vector3 Destination;
-    public float Heading;
+    public readonly PlatoonBehaviour Platoon;
+    public readonly Vector3 Destination;
+    public readonly float Heading;
 
-    public enum MoveMode { normalMove, reverseMove, fastMove };
+    public readonly MoveMode MoveMode;
 
-    // TODO: make this immutable again, would require untangling the inheritance
-    public MoveMode moveMode { get; set; } = MoveMode.normalMove;
-
-    public MoveWaypoint(PlatoonBehaviour p) : base(p) { }
-
-    public override void ProcessWaypoint()
+    public MoveWaypoint(
+            PlatoonBehaviour platoon, 
+            Vector3 destination, 
+            float heading, 
+            MoveMode mode = MoveMode.NORMAL_MOVE)
     {
-        var destinations = Formations.GetLineFormation(Destination, Heading, platoon.Units.Count);
-        for (int i = 0; i < platoon.Units.Count; i++) {
-            platoon.Units[i].SetDestination(destinations[i], Heading);
+        Platoon = platoon;
+        Destination = destination;
+        Heading = heading;
+        MoveMode = mode;
+    }
+
+    public void ProcessWaypoint()
+    {
+        List<Vector3> destinations = Formations.GetLineFormation(
+                Destination, Heading, Platoon.Units.Count);
+        for (int i = 0; i < Platoon.Units.Count; i++) 
+        {
+            Platoon.Units[i].SetDestination(destinations[i], Heading);
         }
-        //platoon.Units.ConvertAll(x => x as Matchable<Vector3>).Match(destinations);
-        //platoon.Units.ForEach(x => x.SetUnitFinalHeading(Heading));
     }
 
-    public override bool OrderComplete()
+    public bool OrderComplete()
     {
-        return platoon.Units.All(x => x.AreOrdersComplete());
-    }
-
-    public override bool Interrupt()
-    {
-        //platoon.units.ForEach (x => x.gotDestination = false);
-        return true;
+        return Platoon.Units.All(x => x.AreOrdersComplete());
     }
 }

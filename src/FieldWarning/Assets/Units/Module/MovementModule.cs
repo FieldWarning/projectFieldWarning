@@ -17,42 +17,35 @@ using System.Linq;
 using PFW.Units.Component.Movement;
 using PFW.Units;
 
-public class MovementModule : PlatoonModule, Matchable<Vector3>
+public sealed class MovementModule : Matchable<Vector3>
 {
-    public MoveWaypoint Waypoint
-    {
-        get
-        {
-            return base.NewWaypoint as MoveWaypoint;
-        }
-    }
+    public readonly PlatoonBehaviour Platoon;
 
     public MovementModule(PlatoonBehaviour p)
-        : base(p)
     {
+        Platoon = p;
     }
 
-    public void SetDestination(Vector3 v)
+    // Set the destination of the platoon, overwriting any previous move target.
+    public void SetDestination(
+            Vector3 destination, 
+            float heading = MovementComponent.NO_HEADING, 
+            MoveMode mode = MoveMode.NORMAL_MOVE)
     {
-        var finalHeading = v - GetFunctionalPosition();
-        SetDestinationAndOrientation(v, finalHeading.getRadianAngle());
+        MoveWaypoint waypoint = new MoveWaypoint(Platoon, destination, heading, mode);
+        Platoon.Waypoints.Clear();
+        Platoon.ActiveWaypoint = null;
+        Platoon.Waypoints.Enqueue(waypoint);
     }
 
-    public void SetDestinationFromGhost()
+    // Add a destination for the platoon, appending to any existing move orders.
+    public void AddDestination(
+            Vector3 destination, 
+            float heading = MovementComponent.NO_HEADING, 
+            MoveMode mode = MoveMode.NORMAL_MOVE)
     {
-        var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-        SetDestinationAndOrientation(Platoon.GhostPlatoon.transform.position, heading);
-    }
-
-    public void SetHeadingFromGhost()
-    {
-        var heading = Platoon.GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-        SetDestinationAndOrientation(Waypoint.Destination, heading);
-    }
-
-    public void UseDefaultHeading()
-    {
-        SetDestinationAndOrientation(Waypoint.Destination, MovementComponent.NO_HEADING);
+        MoveWaypoint waypoint = new MoveWaypoint(Platoon, destination, heading, mode);
+        Platoon.Waypoints.Enqueue(waypoint);
     }
 
     private Vector3 GetFunctionalPosition()
@@ -68,16 +61,10 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
         }
     }
 
-    public void SetDestinationAndOrientation(Vector3 v, float h)
-    {
-        Waypoint.Destination = v;
-        Waypoint.Heading = h;
-    }
-
     public void SetMatch(Vector3 match)
     {
         Platoon.GhostPlatoon.SetVisible(false);
-        SetDestination(match);
+        SetDestination(match, (match - GetFunctionalPosition()).getRadianAngle());
     }
 
     public float GetScore(Vector3 matchees)
@@ -85,10 +72,5 @@ public class MovementModule : PlatoonModule, Matchable<Vector3>
         Vector3 pos = GetFunctionalPosition();
 
         return (matchees - pos).magnitude;
-    }
-
-    protected override Waypoint GetModuleWaypoint()
-    {
-        return new MoveWaypoint(Platoon);
     }
 }

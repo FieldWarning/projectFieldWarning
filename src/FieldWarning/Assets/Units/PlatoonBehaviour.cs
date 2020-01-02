@@ -28,11 +28,11 @@ namespace PFW.Units
         public Unit Unit;
         public IconBehaviour Icon;
         public MovementModule Movement;
-        public Waypoint ActiveWaypoint;
+        public MoveWaypoint ActiveWaypoint;
         public TransporterModule Transporter;
         public TransportableModule Transportable;
         public GhostPlatoonBehaviour GhostPlatoon;
-        public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
+        public Queue<MoveWaypoint> Waypoints = new Queue<MoveWaypoint>();
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
         //private List<PlatoonModule> _modules = new List<PlatoonModule>();
         public bool IsInitialized = false;
@@ -92,7 +92,7 @@ namespace PFW.Units
             }
         }
 
-        public void Update()
+        private void Update()
         {
             Vector3 pos = new Vector3();
 
@@ -100,11 +100,15 @@ namespace PFW.Units
             transform.position = pos / Units.Count;
             //_modules.ForEach(x => x.Update());
 
-            if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
-                if (Waypoints.Any()) {
+            if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) 
+            {
+                if (Waypoints.Any())
+                {
                     ActiveWaypoint = Waypoints.Dequeue();
                     ActiveWaypoint.ProcessWaypoint();
-                } else {
+                } 
+                else 
+                {
                     ActiveWaypoint = null;
                     //units.ForEach (x => x.gotDestination = false);
                 }
@@ -152,7 +156,7 @@ namespace PFW.Units
 
         // Activates all units, moving from ghost/preview mode to a real platoon
         // Only use from PlatoonRoot (the lifetime manager class for platoons)
-        public void Spawn(Vector3 center)
+        public void Spawn(Vector3 spawnCenter)
         {
             Units.ForEach(x => {
                 x.GameObject.SetActive(true);
@@ -168,24 +172,23 @@ namespace PFW.Units
             //    ghost.SetVisible(false);
             //}
 
-            Movement.SetDestination(Vector3.forward);
-
             Icon.AssociateToRealUnits(Units);
 
             IsInitialized = true;
 
+            transform.position = spawnCenter;
 
-            transform.position = center;
-            var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-
-            var positions = Formations.GetLineFormation(center, heading, Units.Count);
+            List<Vector3> positions = Formations.GetLineFormation(
+                    spawnCenter, GhostPlatoon.FinalHeading, Units.Count);
             Units.ForEach(u => u.WakeUp());
             for (int i = 0; i < Units.Count; i++)
-                Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI / 2);
+                Units[i].SetOriginalOrientation(
+                        positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
-            Movement.BeginQueueing(false);
-            Movement.SetDestinationFromGhost();
-            Movement.EndQueueing();
+            Movement.SetDestination(
+                    GhostPlatoon.transform.position,
+                    GhostPlatoon.FinalHeading
+                    );
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);

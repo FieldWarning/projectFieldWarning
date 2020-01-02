@@ -41,6 +41,11 @@ public abstract class PlatoonModule
         Platoon = p;
     }
 
+    /// <summary>
+    /// Prepare a new waypoint. 
+    /// If called with false, also clears the platoon's waypoint list.
+    /// </summary>
+    /// <param name="isQueueing"></param>
     public void BeginQueueing(bool isQueueing)
     {
         _isQueueing = isQueueing;
@@ -51,15 +56,19 @@ public abstract class PlatoonModule
         NewWaypoint = GetModuleWaypoint();
     }
 
+    /// <summary>
+    /// Add the current waypoint to the platoon's waypoint queue.
+    /// </summary>
     public void EndQueueing()
     {
-        if (_isQueueing || (Platoon.ActiveWaypoint != null && !Platoon.ActiveWaypoint.Interrupt()))
+        if (_isQueueing || 
+            (Platoon.ActiveWaypoint != null /*&& !Platoon.ActiveWaypoint.Interrupt()*/))
         {
-            Platoon.Waypoints.Enqueue(NewWaypoint);
+            //Platoon.Waypoints.Enqueue(NewWaypoint);
         }
         else
         {
-            Platoon.ActiveWaypoint = NewWaypoint;
+            //Platoon.ActiveWaypoint = NewWaypoint;
             NewWaypoint.ProcessWaypoint();
         }
     }
