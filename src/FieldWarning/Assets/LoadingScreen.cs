@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,7 @@ public class LoadingScreen : MonoBehaviour
     static public Queue<Loading> SWorkers = new Queue<Loading>();
 
     private Slider _slider;
-    private Text _descLbl;
+    private TextMeshProUGUI _descLbl;
 
     // the thread which runs all the workers.
     // NOTE: some mono specific processes cannot run inside other threads.
@@ -53,7 +54,7 @@ public class LoadingScreen : MonoBehaviour
         
 
         _slider = transform.Find("Slider").GetComponent<Slider>();
-        _descLbl = GameObject.Find("LoadingLbl").GetComponent<Text>();
+        _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
 
     }
 
@@ -78,7 +79,7 @@ public class LoadingScreen : MonoBehaviour
             if (_currentWorker.CurrentWorker != null)
             {
                 // TODO: change formatting to make it look a bit better
-                _descLbl.text = _currentWorker.Name + "\t" + _currentWorker.CurrentWorker.Item2;
+                _descLbl.text = _currentWorker.Name + ":" + _currentWorker.CurrentWorker.Item2;
             }
 
             _slider.value = (float)_currentWorker.PercentDone;

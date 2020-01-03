@@ -47,6 +47,9 @@ public class TerrainMap
 
     public readonly Vector3 MapMin, MapMax, MapCenter;
 
+    // internal variable used for main thread notification
+    private bool _processing = false;
+
     private byte[,] _map;
     private int _mapSize;
     private float _terrainSpacingX, _terrainSpacingZ;
@@ -115,6 +118,9 @@ public class TerrainMap
         string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
         _HEIGHT_MAP_PATH = Path.Combine(sceneDirectory, sceneName + HEIGHT_MAP_SUFFIX);
 
+        var mapLen = 2 * _mapSize + 2 * EXTENSION;
+        _map = new byte[mapLen, mapLen];
+
         _roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
         _bridges = GameObject.FindGameObjectsWithTag("Bridge");
 
@@ -128,8 +134,8 @@ public class TerrainMap
             }
         }
 
-        // get our bridge positions so we dont have to be in the main thread to access bridge into
 
+        // get our bridge positions so we dont have to be in the main thread to access bridge into
         for (int i = 0; i < _bridges.Length; i++)
         {
             GameObject bridge = _bridges[i];
@@ -143,79 +149,72 @@ public class TerrainMap
         // not sure how to do this each time without reading the original data.
         if (!File.Exists(_HEIGHT_MAP_PATH))
         {
-            _map = CreateHeightMapFromtTerrainData();
-            WriteWaterMap(_map, _HEIGHT_MAP_PATH);
+
+            
+            // this cannot be in another thread because it uses the terrain and cannot cache the terrain because
+            // it is just as slow, so no point in putting it in a worker. Nothing we can really do about this 
+            // unless one day we release every map with it's compressed data.
+            LoadWater();
+
+            // Loading bridges from a separate thread throws an exception.
+            // This is why we first cache the bridge positions outside the thread
+            // before doing the below. same goes for roads and trees.
+            _loader.AddWorker(LoadTrees, "Setting tree positions");
+            _loader.AddWorker(LoadRoads, "Connecting roads");
+            _loader.AddWorker(LoadBridges, "Loading bridges");
+            _loader.AddWorker(ExportFinishedMapRunner, "Creating Compressed Map File");
+
         } else
         {
-            _loader.AddWorker(LoadWaterMap, "Placing water");
+            _loader.AddWorker(LoadCompressedMapRunner, "Reading Compressed Map Data");
+
+
         }
 
 
-        // Loading bridges from a separate thread throws an exception.
-        // This is why we first cache the bridge positions outside the thread
-        // before doing the below. same goes for roads and trees.
-        _loader.AddWorker(LoadTrees, "Setting tree positions");
-        _loader.AddWorker(LoadRoads, "Connecting roads");
-        _loader.AddWorker(LoadBridges, "Loading bridges");
-       
         // leave this commented out until we make a change and need to retest the map
         //_loader.AddWorker(MapTester);
 
     }
 
-    private void MapTester()
+    private void ExportFinishedMapRunner()
     {
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-        for (var x = 0; x < nEntry; x++)
-        {
-            for (var z = 0; z < nEntry; z++)
-            {
-                if (originalTestMap[x, z] != _map[x, z])
-                {
-                    Debug.Log("Map mismatch:");
-                    Debug.Log(x + "," + z);
-                }
-
-            }
-        }
-
-        Debug.Log("Map tester finished!");
+        ExportCompressedMap(_map , _HEIGHT_MAP_PATH);
     }
+
+
 
     /// <summary>
     /// Creates height map from original terrain data, slow
     /// </summary>
-    private byte[,] CreateHeightMapFromtTerrainData()
+    private void LoadWater()
     {
 
         Debug.Log("Creating original test map.");
 
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-
-        byte[,] map = new byte[nEntry, nEntry];
-
-        for (var x = 0; x < nEntry; x++)
+        int len = _map.GetLength(0);
+        for (var x = 0; x < _map.GetLength(0); x++)
         {
-            for (var z = 0; z < nEntry; z += GRANULARITY)
+            for (var z = 0; z < _map.GetLength(0); z += GRANULARITY)
             {
-                map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
+                _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
-                if (z + GRANULARITY >= nEntry)
+                if (z + GRANULARITY >= _map.GetLength(0))
                 {
-                    byte savedVal = map[x, z];
+                    byte savedVal = _map[x, z];
 
-                    for (int i = 0; i < nEntry - z; i++)
+                    for (int i = 0; i < _map.GetLength(0) - z; i++)
                     {
-                        map[x, z + i] = savedVal;
+                        _map[x, z + i] = savedVal;
                     }
                 }
 
             }
+
         }
 
-        Debug.Log("Done creating original test map.");
 
-        return map;
+        Debug.Log("Done creating original test map.");
     }
 
 
@@ -230,25 +229,24 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void WriteWaterMap(byte[,] map, string path)
+    public void ExportCompressedMap(byte[,] map,  string path)
     {
-
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
+        
         BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
-        for (int x = 0; x < nEntry; x++)
+        for (int x = 0; x < map.GetLength(0); x++)
         {
             byte temp = 0;
             byte last = 0;
             int lastcnt = 0;
 
-            for (int z = 0; z < nEntry; z += GRANULARITY)
+            for (int z = 0; z < map.GetLength(0); z += GRANULARITY)
             {
                 temp = map[x, z];
 
 
                 if (last == temp || lastcnt == 0)
                 {
-                    lastcnt += (z+GRANULARITY>=nEntry)?nEntry-z:GRANULARITY;
+                    lastcnt += (z+GRANULARITY>= map.GetLength(0)) ? map.GetLength(0) - z:GRANULARITY;
                 }
                 else
                 {
@@ -259,6 +257,8 @@ public class TerrainMap
                 }
 
                 last = temp;
+
+                
             }
 
             writer.Write(temp);
@@ -266,6 +266,7 @@ public class TerrainMap
 
 
             writer.Write((char)'\n');
+            _loader.PercentDone = ((double)x / (double)map.GetLength(0)) * 100.0;
         }
 
         writer.Close();
@@ -285,12 +286,9 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void LoadWaterMap(string path)
+    public void LoadCompressedMap(string path)
     {
         //TODO : not much error checking is done in thsi function
-
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-        var inputMap = new byte[nEntry, nEntry];
 
         // read the entire file into memory
         var file = File.ReadAllBytes(path);
@@ -329,7 +327,7 @@ public class TerrainMap
                 // populate the rest of the same type
                 while (zCoord < zEnd)
                 {
-                    inputMap[xCoord, zCoord] = bType;
+                    _map[xCoord, zCoord] = bType;
                     zCoord++;
                 }
             }
@@ -341,7 +339,6 @@ public class TerrainMap
 
         reader.Close();
 
-        _map = inputMap;
     }
 
 
@@ -428,19 +425,18 @@ public class TerrainMap
 
     public void ReloadTerrainData()
     {
-        _map = CreateHeightMapFromtTerrainData();
-        WriteWaterMap(_map, _HEIGHT_MAP_PATH);
-        LoadWaterMap(_HEIGHT_MAP_PATH);
+        LoadWater();
         LoadTrees();
         LoadRoads();
         LoadBridges();
+        ExportCompressedMap(_map, _HEIGHT_MAP_PATH);
     }
 
     // this function does one thing because it needs to have no params to 
     // be loaded by the worker thread
-    private void LoadWaterMap()
+    private void LoadCompressedMapRunner()
     {
-        LoadWaterMap(_HEIGHT_MAP_PATH);
+        LoadCompressedMap(_HEIGHT_MAP_PATH);
     }
 
     private void AssignRectanglarPatch(Vector3 start, Vector3 end, float width, byte value)
