@@ -18,6 +18,7 @@ using UnityEngine;
 using PFW.Model.Game;
 using static PFW.UI.Ingame.InputManager;
 using PFW.Units;
+using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Ingame
 {
@@ -94,21 +95,12 @@ namespace PFW.UI.Ingame
 
         public void DispatchUnloadCommand()
         {
-            foreach (var t in _selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null)) {
-                t.BeginQueueing(Input.GetKey(KeyCode.LeftShift));
-                t.Unload();
-                t.EndQueueing();
-            }
+            // TODO
         }
 
         public void DispatchLoadCommand()
         {
-            var transporters = _selection.ConvertAll(x => x.Transporter).Where((x, i) => x != null).Where(x => x.transported == null).ToList();
-            var infantry = _selection.ConvertAll(x => x.Transportable).Where((x, i) => x != null).ToList();
-
-            transporters.ForEach(x => x.BeginQueueing(Input.GetKey(KeyCode.LeftShift)));
-            transporters.ConvertAll(x => x as Matchable<TransportableModule>).Match(infantry);
-            transporters.ForEach(x => x.EndQueueing());
+            // TODO
         }
 
         /**
@@ -119,25 +111,32 @@ namespace PFW.UI.Ingame
          * the positions that were shown in the preview). If false, the platoons
          * will just pick their destinations based on where the cursor is.
          */
-        public void DispatchMoveCommand(bool useGhostHeading, MoveWaypoint.MoveMode moveMode)
+        public void DispatchMoveCommand(bool useGhostHeading, MoveCommandType moveMode)
         {
             if (Empty)
                 return;
 
-            PrepareDestination();
+            List<Vector3> destinations = _selection.ConvertAll(
+                    x => x.GhostPlatoon.transform.position);
+            bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
 
-            // Set the heading of the waypoints:
-            if (useGhostHeading) {
-                _selection.ForEach(x => x.Movement.GetHeadingFromGhost());
-            } else {
-                _selection.ForEach(x => x.Movement.UseDefaultHeading());
+            // Enqueue or set a destination:
+            if (shouldQueue)
+            {
+                _selection.ForEach(x => x.AddDestination(
+                        x.GhostPlatoon.transform.position,
+                        useGhostHeading ? 
+                                x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,
+                        moveMode));
             }
-
-            // Set the move type of the waypoints:
-            _selection.ForEach(x => x.Movement.Waypoint.moveMode = moveMode);
-
-            // Enqueue the prepared waypoints:
-            _selection.ForEach(x => x.Movement.EndQueueing());
+            else
+            {
+                _selection.ForEach(x => x.SetDestination(
+                        x.GhostPlatoon.transform.position,
+                        useGhostHeading ?
+                                x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,
+                        moveMode));
+            }
 
             // A random platoon in selection plays the move command voice line
             int randInt = Random.Range(0, _selection.Count);
@@ -159,17 +158,6 @@ namespace PFW.UI.Ingame
             UnselectAll(_selection, false);
 
             selectionCopy.ForEach(p => p.gameObject.GetComponentInParent<PlatoonRoot>().Split());
-        }
-
-        /**
-         * Create waypoints and set their destinations, one waypoint per unit.
-         */
-        public void PrepareDestination()
-        {
-            var destinations = _selection.ConvertAll(x => x.GhostPlatoon.transform.position);
-            bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
-            _selection.ForEach(x => x.Movement.BeginQueueing(shouldQueue));
-            _selection.ConvertAll(x => x.Movement as Matchable<Vector3>).Match(destinations);
         }
 
         public void MaybeDropSelectionAfterOrder()
@@ -325,7 +313,7 @@ namespace PFW.UI.Ingame
             var positions = Formations.GetLineFormation(_previewPosition, heading + Mathf.PI / 2, _selection.Count);
             List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(x => x.GhostPlatoon);
             for (var i = 0; i < _selection.Count; i++) {
-                ghosts[i].SetOrientation(positions[i], heading);
+                ghosts[i].SetPositionAndOrientation(positions[i], heading);
             }
 
             if (makeVisible) {
