@@ -17,6 +17,7 @@ using System.Linq;
 using Mirror;
 
 using PFW.UI.Ingame;
+using PFW.Units.Component.Movement;
 using PFW.Model.Game;
 
 using PFW.Model.Armory;
@@ -27,14 +28,10 @@ namespace PFW.Units
     {
         public Unit Unit;
         public IconBehaviour Icon;
-        public MovementModule Movement;
-        public Waypoint ActiveWaypoint;
-        public TransporterModule Transporter;
-        public TransportableModule Transportable;
+        public MoveWaypoint ActiveWaypoint;
         public GhostPlatoonBehaviour GhostPlatoon;
-        public Queue<Waypoint> Waypoints = new Queue<Waypoint>();
+        public Queue<MoveWaypoint> Waypoints = new Queue<MoveWaypoint>();
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
-        private List<PlatoonModule> _modules = new List<PlatoonModule>();
         public bool IsInitialized = false;
 
         public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
@@ -92,39 +89,25 @@ namespace PFW.Units
             }
         }
 
-        public void Update()
+        private void Update()
         {
             Vector3 pos = new Vector3();
 
             Units.ForEach(x => pos += x.Transform.position);
             transform.position = pos / Units.Count;
-            _modules.ForEach(x => x.Update());
 
-            if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) {
-                if (Waypoints.Any()) {
+            if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) 
+            {
+                if (Waypoints.Any())
+                {
                     ActiveWaypoint = Waypoints.Dequeue();
                     ActiveWaypoint.ProcessWaypoint();
-                } else {
+                } 
+                else 
+                {
                     ActiveWaypoint = null;
-                    //units.ForEach (x => x.gotDestination = false);
                 }
-                //setFinalOrientation(waypoint.destination,waypoint.heading);
             }
-        }
-
-        public void BuildModules()
-        {
-            Movement = new MovementModule(this);
-
-            //if (t == UnitType.AFV) {
-            //    Transporter = new TransporterModule(this);
-            //    _modules.Add(Transporter);
-            //}
-
-            //if (t == UnitType.Infantry) {
-            //    Transportable = new TransportableModule(this);
-            //    _modules.Add(Transportable);
-            //}
         }
 
         // Call after creating an object of this class, pretend it is a constructor
@@ -152,40 +135,27 @@ namespace PFW.Units
 
         // Activates all units, moving from ghost/preview mode to a real platoon
         // Only use from PlatoonRoot (the lifetime manager class for platoons)
-        public void Spawn(Vector3 center)
+        public void Spawn(Vector3 spawnCenter)
         {
             Units.ForEach(x => {
                 x.GameObject.SetActive(true);
                 //Networking.CommandConnection.Connection.CmdSpawnObject(x.GameObject);
             });
 
-            BuildModules();
-
-            //if (t == UnitType.AFV) {
-            //    var ghost = GhostPlatoonBehaviour.Build(UnitType.Infantry, owner, n);
-            //    Transporter.SetTransported(ghost.GetRealPlatoon());
-            //    ghost.SetOrientation(100 * Vector3.down, 0);
-            //    ghost.SetVisible(false);
-            //}
-
-            Movement.SetDestination(Vector3.forward);
-
             Icon.AssociateToRealUnits(Units);
 
             IsInitialized = true;
 
+            transform.position = spawnCenter;
 
-            transform.position = center;
-            var heading = GhostPlatoon.GetComponent<GhostPlatoonBehaviour>().FinalHeading;
-
-            var positions = Formations.GetLineFormation(center, heading, Units.Count);
+            List<Vector3> positions = Formations.GetLineFormation(
+                    spawnCenter, GhostPlatoon.FinalHeading, Units.Count);
             Units.ForEach(u => u.WakeUp());
             for (int i = 0; i < Units.Count; i++)
-                Units[i].SetOriginalOrientation(positions[i], heading - Mathf.PI / 2);
+                Units[i].SetOriginalOrientation(
+                        positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
-            Movement.BeginQueueing(false);
-            Movement.GetDestinationFromGhost();
-            Movement.EndQueueing();
+            SetDestination(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);
@@ -231,6 +201,30 @@ namespace PFW.Units
 
             DestroyWithoutUnits();
         }
+
+        #region Movement
+        // Set the destination of the platoon, overwriting any previous move target.
+        public void SetDestination(
+                Vector3 destination, 
+                float heading = MovementComponent.NO_HEADING,
+                MoveCommandType mode = MoveCommandType.NORMAL)
+        {
+            MoveWaypoint waypoint = new MoveWaypoint(this, destination, heading, mode);
+            Waypoints.Clear();
+            ActiveWaypoint = null;
+            Waypoints.Enqueue(waypoint);
+        }
+
+        // Add a destination for the platoon, appending to any existing move orders.
+        public void AddDestination(
+                Vector3 destination, 
+                float heading = MovementComponent.NO_HEADING,
+                MoveCommandType mode = MoveCommandType.NORMAL)
+        {
+            MoveWaypoint waypoint = new MoveWaypoint(this, destination, heading, mode);
+            Waypoints.Enqueue(waypoint);
+        }
+        #endregion
 
         #region PlayVoicelines
         // For the time being, always play the voiceline of the first unit

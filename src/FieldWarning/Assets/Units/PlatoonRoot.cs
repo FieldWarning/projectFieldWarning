@@ -140,6 +140,6 @@ namespace PFW.Units
         }
 
         public void SetGhostOrientation(Vector3 center, float heading) =>
-                _ghostPlatoon.SetOrientation(center, heading);
+                _ghostPlatoon.SetPositionAndOrientation(center, heading);
     }
 }
