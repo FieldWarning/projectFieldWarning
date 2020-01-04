@@ -12,11 +12,13 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 /// <summary>
 /// The loading screen handles the creation of thread for the workers and
@@ -24,7 +26,7 @@ using UnityEngine.UI;
 /// </summary>
 public class LoadingScreen : MonoBehaviour
 {
-    static public Queue<Loading> SWorkers = new Queue<Loading>();
+    static public Queue<Worker> SWorkers = new Queue<Worker>();
 
     private Slider _slider;
     private TextMeshProUGUI _descLbl;
@@ -32,26 +34,17 @@ public class LoadingScreen : MonoBehaviour
     // the thread which runs all the workers.
     // NOTE: some mono specific processes cannot run inside other threads.
     private Thread _thread;
-    private Loading _currentWorker = null;
+    private Worker _currentWorker = null;
     private GameObject _HUD;
     private GameObject _managers;
 
     // Start is called before the first frame update
     private void Start()
     {
-
         // need to deactivate camera so its not moved by the player.. since this is a loading screen
         var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         GetComponent<Canvas>().worldCamera = mainCamera.GetComponent<Camera>();
         GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().enabled = false;
-
-        _managers = GameObject.Find("Managers");
-        _managers.SetActive(false);
-
-        _HUD = GameObject.FindGameObjectWithTag("HUD");
-        _HUD.SetActive(false);
-
-        
 
         _slider = transform.Find("Slider").GetComponent<Slider>();
         _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
@@ -67,20 +60,18 @@ public class LoadingScreen : MonoBehaviour
             {
                 _currentWorker = SWorkers.Peek();
             }
-
+            
             if (!_currentWorker.Started)
             {
-                _thread = new Thread(_currentWorker.Load);
-                _thread.Start();
+               _currentWorker.Run();
             }
 
-            _descLbl.text = _currentWorker.Name;
+            _descLbl.text = _currentWorker.description;
 
-            if (_currentWorker.CurrentWorker != null)
-            {
-                // TODO: change formatting to make it look a bit better
-                _descLbl.text = _currentWorker.Name + ":" + _currentWorker.CurrentWorker.Item2;
-            }
+
+            // TODO: change formatting to make it look a bit better
+            _descLbl.text = _currentWorker.description;
+            
 
             _slider.value = (float)_currentWorker.PercentDone;
 
@@ -99,9 +90,6 @@ public class LoadingScreen : MonoBehaviour
             GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().SetTargetPosition(new Vector3(0, 80, -200));
             GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().LookAt(new Vector3(0, 0f, -50));
 
-            _HUD.SetActive(true);
-
-            _managers.SetActive(true);
             // dispose of the screen when no more workers in queue
             gameObject.SetActive(false);           
         }

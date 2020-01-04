@@ -12,9 +12,14 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
+
+
+/*
 /// <summary>
 /// Handles which order to load / execute the various specified functions.
 /// </summary>
@@ -24,16 +29,19 @@ public class Loading
     public bool Finished = false;
     public bool Started = false;
     public string Name;
-    
+
+   
+
+
+
     // the list of functions along with their descriptions
-    private List<Tuple<LoadingThreadDelegate, string>> _funcs = 
-        new List<Tuple<LoadingThreadDelegate, string>>();
+    private List<Worker> _workerFuncs = new List<Worker>();
 
     // the current function being executed
-    public Tuple<LoadingThreadDelegate, string> CurrentWorker = null;
+    public Worker CurrentWorker = null;
 
     // this is the function signature that all loader functions have to abide by
-    public delegate void LoadingThreadDelegate();
+    public delegate IEnumerator LoadingCoroutineDelegate();
 
     /// <summary>
     /// The loading screen has a static structure list which reads all workers it contains and
@@ -43,29 +51,30 @@ public class Loading
     public Loading(string name)
     {
         this.Name = name;
-        LoadingScreen.SWorkers.Enqueue(this);
+        //LoadingScreen.SWorkers.Enqueue(this);
     }
 
-    public void AddWorker(LoadingThreadDelegate func, string text = "")
+    public void AddMultiThreadedWorker(ParameterizedThreadStart func, string text)
     {
-        _funcs.Add(new Tuple<LoadingThreadDelegate,string>(func,text));
+        _workerFuncs.Add(new MultithreadedWorker(func, text));
     }
 
-    public void Load()
+    public void AddCoroutineWorker(LoadingCoroutineDelegate func, string text)
+    {
+        _workerFuncs.Add(new CoroutineWorker(func,text));
+    }
+
+    public void Start()
     {
         Started = true;
 
-        foreach (var f in _funcs)
+        foreach (var wf in _workerFuncs)
         {
             // each load starts with a fresh slate
             PercentDone = 0;
 
-            // keep track of this current worker so the loading screen knows
-            // whats being worked on now
-            CurrentWorker = f;
+            wf.Run();
 
-            // Item1 is our worker
-            CurrentWorker.Item1();
             PercentDone = 100;
         }
 
@@ -75,3 +84,4 @@ public class Loading
     }
 }
 
+    */

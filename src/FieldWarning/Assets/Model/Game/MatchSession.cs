@@ -78,6 +78,7 @@ namespace PFW.Model.Game
 
         public void Awake()
         {
+            Debug.Log("Match Session started.");
             Current = this;
             _networkManager = FindObjectOfType<NetworkManager>();
 

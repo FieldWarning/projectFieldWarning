@@ -20,6 +20,8 @@ using UnityEngine.SceneManagement;
 using UnityStandardAssets.Water;
 
 using PFW.Units.Component.Movement;
+using System.Collections;
+//using static Loading;
 
 public class TerrainMap
 {
@@ -58,7 +60,7 @@ public class TerrainMap
     // 2D array of terrain pieces for quickly finding which piece is at a given location
     private Terrain[,] _terrains;
 
-    private Loading _loader;
+    //private Loading _loader;
 
     public readonly float WATER_HEIGHT;
 
@@ -143,7 +145,7 @@ public class TerrainMap
             _bridgePositions.Add(bridge.transform.position);
         }
 
-        _loader = new Loading("Terrain");
+        //_loader = new Loading("Terrain");
 
         //TODO create some debug UI to dump the map when needed
         // TODO need to also somehow verify the height map is valid?? 
@@ -151,23 +153,32 @@ public class TerrainMap
         if (!File.Exists(_HEIGHT_MAP_PATH))
         {
 
-            
+
             // this cannot be in another thread because it uses the terrain and cannot cache the terrain because
             // it is just as slow, so no point in putting it in a worker. Nothing we can really do about this 
             // unless one day we release every map with it's compressed data.
-            LoadWater();
+            //_loader.AddWorker(LoadWater, null, true, "Loading water");
+
+            LoadingScreen.SWorkers.Enqueue(new CoroutineWorker(LoadWater, "Loading water."));
 
             // Loading bridges from a separate thread throws an exception.
             // This is why we first cache the bridge positions outside the thread
             // before doing the below. same goes for roads and trees.
-            _loader.AddWorker(LoadTrees, "Setting tree positions");
-            _loader.AddWorker(LoadRoads, "Connecting roads");
-            _loader.AddWorker(LoadBridges, "Loading bridges");
-            _loader.AddWorker(ExportFinishedMapRunner, "Creating Compressed Map File");
+            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadTrees, "Loading trees."));
+            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadRoads, "Loading roads."));
+            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadBridges, "Loading bridges."));
+            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(ExportFinishedMapRunner, "Creating Compressed Map File"));
+
+
+            //_loader.AddWorker(null, LoadTrees, false, "Setting tree positions");
+            //_loader.AddWorker(null, LoadRoads, false, "Connecting roads");
+            //_loader.AddWorker(null, LoadBridges, false, "Loading bridges");
+            // _loader.AddWorker(null, ExportFinishedMapRunner, false, "Creating Compressed Map File");
 
         } else
         {
-            _loader.AddWorker(LoadCompressedMapRunner, "Reading Compressed Map Data");
+            //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
+            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadCompressedMapRunner, "Reading Compressed Map Data"));
 
 
         }
@@ -178,7 +189,7 @@ public class TerrainMap
 
     }
 
-    private void ExportFinishedMapRunner()
+    private void ExportFinishedMapRunner(object obj)
     {
         ExportCompressedMap(_map , _HEIGHT_MAP_PATH);
     }
@@ -188,7 +199,7 @@ public class TerrainMap
     /// <summary>
     /// Creates height map from original terrain data, slow
     /// </summary>
-    private void LoadWater()
+    private IEnumerator LoadWater()
     {
 
         Debug.Log("Creating original test map.");
@@ -211,7 +222,9 @@ public class TerrainMap
                 }
 
             }
-
+            _loader.PercentDone = ((double)x / (double)_map.GetLength(0)) * 100.0;
+            if (_loader.PercentDone % 5 == 0)
+                yield return null;
         }
 
 
@@ -267,7 +280,7 @@ public class TerrainMap
 
 
             writer.Write((char)'\n');
-            _loader.PercentDone = ((double)x / (double)map.GetLength(0)) * 100.0;
+            LoadingScreen.PercentDone = ((double)x / (double)map.GetLength(0)) * 100.0;
         }
 
         writer.Close();
@@ -354,11 +367,13 @@ public class TerrainMap
             AssignCircularPatch(tree, TREE_RADIUS, FOREST);
             currIdx++;
             if (_loader != null)
+            {
                 _loader.PercentDone = ((double)currIdx / (double)_treePositions.Count) * 100.0;
+            }
         }
     }
 
-    private void LoadRoads()
+    private void LoadRoads(object obj)
     {
         var currRoadIdx = 0;
         foreach (ERModularRoad road in _roads)
@@ -378,9 +393,10 @@ public class TerrainMap
 
             currRoadIdx++;
         }
+
     }
 
-    private void LoadBridges()
+    private void LoadBridges(object obj)
     {
         foreach (Vector3 bridgePos in _bridgePositions)
         {
@@ -427,15 +443,15 @@ public class TerrainMap
     public void ReloadTerrainData()
     {
         LoadWater();
-        LoadTrees();
-        LoadRoads();
-        LoadBridges();
+        LoadTrees(null);
+        LoadRoads(null);
+        LoadBridges(null);
         ExportCompressedMap(_map, _HEIGHT_MAP_PATH);
     }
 
     // this function does one thing because it needs to have no params to 
     // be loaded by the worker thread
-    private void LoadCompressedMapRunner()
+    private void LoadCompressedMapRunner(object obj)
     {
         LoadCompressedMap(_HEIGHT_MAP_PATH);
     }
