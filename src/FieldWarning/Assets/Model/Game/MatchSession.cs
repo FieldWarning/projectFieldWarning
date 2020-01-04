@@ -22,6 +22,7 @@ using PFW.Units.Component.Movement;
 using PFW.Model.Armory;
 
 using Mirror;
+using UnityEngine.SceneManagement;
 
 namespace PFW.Model.Game
 {
@@ -119,9 +120,20 @@ namespace PFW.Model.Game
             _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
 
             // TODO: Pass terrain from future location of starting matches (no Find)
-            Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
-            TerrainMap = new TerrainMap(terrains);
-            PathData = new PathfinderData(TerrainMap);
+
+            //Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
+            //TerrainMap = new TerrainMap(terrains);
+            //PathData = new PathfinderData(TerrainMap);
+            LoadedData loadedData = FindObjectOfType<LoadedData>();
+
+            if (loadedData == null)
+            {
+                SceneManager.LoadScene(4, LoadSceneMode.Single);
+                return;
+            }
+
+            TerrainMap = loadedData.terrainData;
+            PathData = loadedData.pathFinderData;
             Factory = new UnitFactory();
             Settings = new Settings();
 

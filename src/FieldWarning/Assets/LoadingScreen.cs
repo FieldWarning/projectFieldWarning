@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Threading;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -26,7 +27,7 @@ using UnityEngine.UI;
 /// </summary>
 public class LoadingScreen : MonoBehaviour
 {
-    static public Queue<Worker> SWorkers = new Queue<Worker>();
+    static public Queue<Loader> SWorkers = new Queue<Loader>();
 
     private Slider _slider;
     private TextMeshProUGUI _descLbl;
@@ -34,9 +35,12 @@ public class LoadingScreen : MonoBehaviour
     // the thread which runs all the workers.
     // NOTE: some mono specific processes cannot run inside other threads.
     private Thread _thread;
-    private Worker _currentWorker = null;
+    private Loader _currentWorker = null;
     private GameObject _HUD;
     private GameObject _managers;
+
+    public GameObject loadedData;
+
 
     // Start is called before the first frame update
     private void Start()
@@ -49,6 +53,7 @@ public class LoadingScreen : MonoBehaviour
         _slider = transform.Find("Slider").GetComponent<Slider>();
         _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
 
+        Instantiate(loadedData);
     }
 
     private void Update()
@@ -60,26 +65,18 @@ public class LoadingScreen : MonoBehaviour
             {
                 _currentWorker = SWorkers.Peek();
             }
-            
-            if (!_currentWorker.Started)
-            {
-               _currentWorker.Run();
-            }
 
-            _descLbl.text = _currentWorker.description;
-
-
-            // TODO: change formatting to make it look a bit better
-            _descLbl.text = _currentWorker.description;
-            
-
-            _slider.value = (float)_currentWorker.PercentDone;
-
-            if (_currentWorker.Finished)
+            if (_currentWorker.isFinished())
             {
                 SWorkers.Dequeue();
                 _slider.value = _slider.maxValue;
                 _currentWorker = null;
+            }
+            else
+            {
+                _descLbl.text = _currentWorker.GetDescription();
+
+                _slider.value = (float)_currentWorker.GetPercentComplete();
             }
         }
         else
@@ -91,7 +88,9 @@ public class LoadingScreen : MonoBehaviour
             GetComponent<Canvas>().worldCamera.GetComponent<SlidingCameraBehaviour>().LookAt(new Vector3(0, 0f, -50));
 
             // dispose of the screen when no more workers in queue
-            gameObject.SetActive(false);           
+            gameObject.SetActive(false);
+            SceneManager.LoadSceneAsync(2, LoadSceneMode.Single);
+
         }
     }
 }

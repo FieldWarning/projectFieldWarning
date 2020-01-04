@@ -18,70 +18,78 @@ using System.Threading;
 using UnityEngine;
 
 
-
-/*
 /// <summary>
 /// Handles which order to load / execute the various specified functions.
 /// </summary>
-public class Loading
+public class Loader
 {
-    public double PercentDone = 0;
-    public bool Finished = false;
-    public bool Started = false;
-    public string Name;
+    private Queue<Worker> workers = new Queue<Worker>();
+    public bool finished = false;
+    private Worker _currentWorker;
 
-   
-
-
-
-    // the list of functions along with their descriptions
-    private List<Worker> _workerFuncs = new List<Worker>();
-
-    // the current function being executed
-    public Worker CurrentWorker = null;
-
-    // this is the function signature that all loader functions have to abide by
-    public delegate IEnumerator LoadingCoroutineDelegate();
-
-    /// <summary>
-    /// The loading screen has a static structure list which reads all workers it contains and
-    /// executes them in separate threads
-    /// </summary>
-    /// <param name="name"></param>
-    public Loading(string name)
+    public Loader()
     {
-        this.Name = name;
-        //LoadingScreen.SWorkers.Enqueue(this);
+        LoadingScreen.SWorkers.Enqueue(this);
     }
 
-    public void AddMultiThreadedWorker(ParameterizedThreadStart func, string text)
+    public void AddCouroutine(WorkerCoroutineDelegate func, string desc)
     {
-        _workerFuncs.Add(new MultithreadedWorker(func, text));
+        workers.Enqueue(new CoroutineWorker(func, desc));
     }
 
-    public void AddCoroutineWorker(LoadingCoroutineDelegate func, string text)
+    public void AddMultithreadedRoutine(WorkerThreadDelegate func, string desc)
     {
-        _workerFuncs.Add(new CoroutineWorker(func,text));
+        workers.Enqueue(new MultithreadedWorker(func, desc));
     }
 
-    public void Start()
+    public void AddConcurrentRoutine(WorkerConcurrentDelegate func, string desc)
     {
-        Started = true;
+        workers.Enqueue(new ConcurrentWorker(func, desc));
+    }
 
-        foreach (var wf in _workerFuncs)
+    // TODO: make these into properties
+    public string GetDescription()
+    {
+        if (_currentWorker != null)
+            return _currentWorker.description;
+
+        return "";
+    }
+
+    public double GetPercentComplete()
+    {
+        if (_currentWorker != null)
+            return _currentWorker.PercentDone;
+
+        return 0;
+    }
+
+    public void SetPercentComplete(double percent)
+    {
+        if (_currentWorker != null)
+            _currentWorker.PercentDone = percent;
+    }
+
+    public bool isFinished()
+    {
+        if (workers.Count == 0)
         {
-            // each load starts with a fresh slate
-            PercentDone = 0;
-
-            wf.Run();
-
-            PercentDone = 100;
+            return true;
+        }
+        else if (_currentWorker == null)
+        {
+            _currentWorker = workers.Peek();
+            _currentWorker.Run();
         }
 
-        CurrentWorker = null;
-        Finished = true;
+        if (_currentWorker.Finished)
+        {
+            workers.Dequeue();
+            _currentWorker = null;
+        }
 
+        return false;
     }
 }
 
-    */
+    

@@ -18,34 +18,20 @@ using UnityEngine;
 
 public class LoadedData : MonoBehaviour
 {
-    TerrainMap terrainData;
-    PathfinderData pathFinderData;
+    public TerrainMap terrainData;
+    public PathfinderData pathFinderData;
 
-    private Loading _loader;
+    //private Loading _loader;
 
     // Start is called before the first frame update
     void Start()
     {
         // TODO: Pass terrain from future location of starting matches (no Find)
-        
-        
+        DontDestroyOnLoad(this.gameObject);
 
-        //_loader = new Loading("Terrain");
-        //_loader.AddWorker(TerrainDataRunner, "Loading Terrain Data");
-        TerrainDataRunner();
-       // _loader.AddWorker(PathFinderDataRunner, "Loading Path Data");
-       PathFinderDataRunner();
-    }
-
-
-    private void TerrainDataRunner()
-    {
         Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
         terrainData = new TerrainMap(terrains);
-    }
 
-    private void PathFinderDataRunner()
-    {
         pathFinderData = new PathfinderData(terrainData);
     }
 

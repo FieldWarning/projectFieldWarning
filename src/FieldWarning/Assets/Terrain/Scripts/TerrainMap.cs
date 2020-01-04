@@ -23,7 +23,7 @@ using PFW.Units.Component.Movement;
 using System.Collections;
 //using static Loading;
 
-public class TerrainMap
+public class TerrainMap :Loader
 {
     public const int PLAIN = 0;
     public const int ROAD = 1;
@@ -45,7 +45,7 @@ public class TerrainMap
     public const float BRIDGE_WIDTH = 3f * TerrainConstants.MAP_SCALE;
     public const float BRIDGE_HEIGHT = 1.0f; // temporary
 
-    public const string HEIGHT_MAP_SUFFIX = "_sample_water.dat";
+    public const string HEIGHT_MAP_SUFFIX = "_map_cache.dat";
     private readonly string _HEIGHT_MAP_PATH;
 
     public readonly Vector3 MapMin, MapMax, MapCenter;
@@ -159,26 +159,23 @@ public class TerrainMap
             // unless one day we release every map with it's compressed data.
             //_loader.AddWorker(LoadWater, null, true, "Loading water");
 
-            LoadingScreen.SWorkers.Enqueue(new CoroutineWorker(LoadWater, "Loading water."));
+            //LoadingScreen.SWorkers.Enqueue(new CoroutineWorker(LoadWaterRunner, "Loading water."));
+
+            AddCouroutine(LoadWaterRunner, "Load water");
 
             // Loading bridges from a separate thread throws an exception.
             // This is why we first cache the bridge positions outside the thread
             // before doing the below. same goes for roads and trees.
-            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadTrees, "Loading trees."));
-            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadRoads, "Loading roads."));
-            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadBridges, "Loading bridges."));
-            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(ExportFinishedMapRunner, "Creating Compressed Map File"));
+            AddMultithreadedRoutine(LoadTreesRunner, "Loading trees.");
+            AddMultithreadedRoutine(LoadRoadsRunner, "Loading roads.");
+            AddMultithreadedRoutine(LoadBridgesRunner, "Loading bridges.");
+            AddMultithreadedRoutine(ExportFinishedMapRunner, "Creating Compressed Map File");
 
-
-            //_loader.AddWorker(null, LoadTrees, false, "Setting tree positions");
-            //_loader.AddWorker(null, LoadRoads, false, "Connecting roads");
-            //_loader.AddWorker(null, LoadBridges, false, "Loading bridges");
-            // _loader.AddWorker(null, ExportFinishedMapRunner, false, "Creating Compressed Map File");
 
         } else
         {
             //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
-            LoadingScreen.SWorkers.Enqueue(new MultithreadedWorker(LoadCompressedMapRunner, "Reading Compressed Map Data"));
+            AddMultithreadedRoutine(LoadCompressedMapRunner, "Reading Compressed Map Data");
 
 
         }
@@ -189,12 +186,18 @@ public class TerrainMap
 
     }
 
-    private void ExportFinishedMapRunner(object obj)
+    private void ExportFinishedMapRunner()
     {
+ 
         ExportCompressedMap(_map , _HEIGHT_MAP_PATH);
     }
 
 
+    private IEnumerator LoadWaterRunner()
+    {
+
+        yield return LoadWater();
+    }
 
     /// <summary>
     /// Creates height map from original terrain data, slow
@@ -222,9 +225,12 @@ public class TerrainMap
                 }
 
             }
-            _loader.PercentDone = ((double)x / (double)_map.GetLength(0)) * 100.0;
-            if (_loader.PercentDone % 5 == 0)
-                yield return null;
+
+
+                SetPercentComplete( ((double)x / (double)_map.GetLength(0)) * 100.0);
+                if ((int)GetPercentComplete() % 2 == 0)
+                    yield return null;
+            
         }
 
 
@@ -280,7 +286,7 @@ public class TerrainMap
 
 
             writer.Write((char)'\n');
-            LoadingScreen.PercentDone = ((double)x / (double)map.GetLength(0)) * 100.0;
+            SetPercentComplete(((double)x / (double)map.GetLength(0)) * 100.0);
         }
 
         writer.Close();
@@ -346,16 +352,19 @@ public class TerrainMap
                 }
             }
 
-            if (_loader != null)
-                // this is our loading screen status
-                _loader.PercentDone = ((double)reader.BaseStream.Position / (double)reader.BaseStream.Length) * 100.0;
+
+            // this is our loading screen status
+            SetPercentComplete(((double)reader.BaseStream.Position / (double)reader.BaseStream.Length) * 100.0);
         }
 
         reader.Close();
 
     }
 
-
+    private void LoadTreesRunner()
+    {
+        LoadTrees();
+    }
     private void LoadTrees()
     {
 
@@ -366,14 +375,18 @@ public class TerrainMap
         {
             AssignCircularPatch(tree, TREE_RADIUS, FOREST);
             currIdx++;
-            if (_loader != null)
-            {
-                _loader.PercentDone = ((double)currIdx / (double)_treePositions.Count) * 100.0;
-            }
+
+            SetPercentComplete(((double)currIdx / (double)_treePositions.Count) * 100.0);
+ 
         }
     }
 
-    private void LoadRoads(object obj)
+    private void LoadRoadsRunner()
+    {
+        LoadRoads();
+    }
+
+    private void LoadRoads()
     {
         var currRoadIdx = 0;
         foreach (ERModularRoad road in _roads)
@@ -387,8 +400,8 @@ public class TerrainMap
                     AssignRectanglarPatch(previousVert, roadVert, ROAD_WIDTH_MULT * road.roadWidth, ROAD);
                 previousVert = roadVert;
                 currRoadVertIdx++;
-                if (_loader != null)
-                    _loader.PercentDone =  ((currRoadVertIdx / road.middleIndentVecs.Count) * 100) * (currRoadIdx / _roads.Length);
+
+               SetPercentComplete( ((currRoadVertIdx / road.middleIndentVecs.Count) * 100) * (currRoadIdx / _roads.Length));
             }
 
             currRoadIdx++;
@@ -396,7 +409,12 @@ public class TerrainMap
 
     }
 
-    private void LoadBridges(object obj)
+    private void LoadBridgesRunner()
+    {
+        LoadBridges();
+    }
+
+    private void LoadBridges()
     {
         foreach (Vector3 bridgePos in _bridgePositions)
         {
@@ -443,15 +461,15 @@ public class TerrainMap
     public void ReloadTerrainData()
     {
         LoadWater();
-        LoadTrees(null);
-        LoadRoads(null);
-        LoadBridges(null);
+        LoadTrees();
+        LoadRoads();
+        LoadBridges();
         ExportCompressedMap(_map, _HEIGHT_MAP_PATH);
     }
 
     // this function does one thing because it needs to have no params to 
     // be loaded by the worker thread
-    private void LoadCompressedMapRunner(object obj)
+    private void LoadCompressedMapRunner()
     {
         LoadCompressedMap(_HEIGHT_MAP_PATH);
     }
