@@ -121,12 +121,7 @@ namespace PFW.Model.Game
                 _visibilityManager = gameObject.AddComponent<VisibilityManager>();
             _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
 
-            // TODO: Pass terrain from future location of starting matches (no Find)
-
-            //Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
-            //TerrainMap = new TerrainMap(terrains);
-            //PathData = new PathfinderData(TerrainMap);
-
+            // LoadedData ideally comes from the loading scene
             _loadedData = FindObjectOfType<LoadedData>();
 
             if (_loadedData != null)
@@ -135,28 +130,24 @@ namespace PFW.Model.Game
                 PathData = _loadedData.pathFinderData;
                 Factory = new UnitFactory();
                 Settings = new Settings();
-
             }
-
-
-
-#if UNITY_EDITOR
-            // Default to hosting if entering play mode directly into a match scene:
-            if (!NetworkClient.isConnected)
-                _networkManager.StartHost();
-#endif
         }
 
-        public void Start()
-        {
-            
+        private void Start()
+        {  
             if (_loadedData == null)
             {
                 LoadingScreen.destinationScene = SceneManager.GetActiveScene().buildIndex;
-                SceneManager.LoadScene(4, LoadSceneMode.Single);
+                SceneManager.LoadScene("loading-scene", LoadSceneMode.Single);
+            } else
+            {
+#if UNITY_EDITOR
+                // Default to hosting if entering play mode directly into a match scene:
+                if (!NetworkClient.isConnected)
+                    _networkManager.StartHost();
+#endif
             }
-
-            
+        
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)

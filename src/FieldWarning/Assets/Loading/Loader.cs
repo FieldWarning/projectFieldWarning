@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using Loading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ public class Loader
             _currentWorker.PercentDone = percent;
     }
 
-    public bool isFinished()
+    public bool IsFinished()
     {
         if (workers.Count == 0)
         {

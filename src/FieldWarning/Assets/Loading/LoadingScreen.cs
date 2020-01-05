@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using Loading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ public class LoadingScreen : MonoBehaviour
     public GameObject loadedData;
 
 
-    public void Awake()
+    private void Awake()
     {
         Application.runInBackground = true;
     }
@@ -72,7 +73,7 @@ public class LoadingScreen : MonoBehaviour
                 _currentWorker = SWorkers.Peek();
             }
 
-            if (_currentWorker.isFinished())
+            if (_currentWorker.IsFinished())
             {
                 SWorkers.Dequeue();
                 _slider.value = _slider.maxValue;
@@ -96,7 +97,7 @@ public class LoadingScreen : MonoBehaviour
             var components = FindObjectsOfType<DontDestroyOnLoad>();
             foreach (var c in components)
             {
-                c.id++;
+                c.Id++;
                 Destroy(c.gameObject);
             }
             SceneManager.LoadSceneAsync(destinationScene, LoadSceneMode.Single);

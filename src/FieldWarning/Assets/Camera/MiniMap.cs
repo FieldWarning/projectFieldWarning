@@ -50,7 +50,9 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
             transform.parent.parent.GetComponent<RectTransform>().rect.width;
 
         TerrainMap map = MatchSession.Current.TerrainMap;
-
+        if (map == null)
+            return;
+        
         //_terrainSize = _terrain.terrainData.bounds.size;
         _terrainSize = map.MapMax - map.MapMin;
         _terrainPos = map.MapMin;

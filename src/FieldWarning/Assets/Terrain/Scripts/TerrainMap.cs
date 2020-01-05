@@ -50,9 +50,6 @@ public class TerrainMap :Loader
 
     public readonly Vector3 MapMin, MapMax, MapCenter;
 
-    // internal variable used for main thread notification
-    private bool _processing = false;
-
     private byte[,] _map;
     private int _mapSize;
     private float _terrainSpacingX, _terrainSpacingZ;
@@ -120,7 +117,7 @@ public class TerrainMap :Loader
 
         _mapSize = (int)(Mathf.Max(MapMax.x - MapMin.x, MapMax.z - MapMin.z) / 2f / MAP_SPACING);
 
-        _HEIGHT_MAP_PATH = getMapCachePath();
+        _HEIGHT_MAP_PATH = GetTerrainMapCachePath();
 
         var mapLen = 2 * _mapSize + 2 * EXTENSION;
         _map = new byte[mapLen, mapLen];
@@ -184,7 +181,7 @@ public class TerrainMap :Loader
 
     }
 
-    private string getMapCachePath()
+    private string GetTerrainMapCachePath()
     {
         string sceneName = SceneManager.GetActiveScene().name;
         string scenePathWithFilename = SceneManager.GetActiveScene().path;

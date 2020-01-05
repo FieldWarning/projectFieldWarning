@@ -3,3 +3,7 @@
 *_sample_height.dat.meta
 *_sample_water.dat
 *_sample_water.dat.meta
+*_map_terrain_cache.dat
+*_map_terrain_cache.dat.meta
+*_pathfinder_graph.dat
+*_pathfinder_graph.dat.meta

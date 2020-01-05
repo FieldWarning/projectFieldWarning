@@ -354,6 +354,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void ClampCameraAltitude()
     {
+        if (_session.TerrainMap == null)
+        {
+            Debug.Log("Unable to clamp camera altitude. No terrain data available.");
+            return;
+        }
+
         _targetPosition.y = Mathf.Clamp(
                 _targetPosition.y,
                 _session.TerrainMap.GetTerrainHeight(_targetPosition) + _minAltitude,
@@ -478,6 +484,13 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private void ClampCameraXZPosition()
     {
         TerrainMap map = _session.TerrainMap;
+
+        if (map == null)
+        {
+            Debug.Log("Unable to clamp camera to XZ position. No map data loaded.");
+            return;
+        }
+
         _targetPosition.x = Mathf.Clamp(
                 _targetPosition.x,
                 map.MapMin.x - _maxCameraHorizontalDistanceFromTerrain,
