@@ -24,13 +24,21 @@ namespace PFW.Units.Component.Movement
         // TODO documentation
         void PlanMovement();
 
-        // TODO documentation
+        /// <summary>
+        /// Align the object with the ground, e.g. tilting up along slopes.
+        /// </summary>
+        /// <param name="forward"></param>
+        /// <param name="right"></param>
         void UpdateMapOrientation(Vector3 forward, Vector3 right);
 
         // TODO documentation
         bool IsMoving();
 
-        // TODO documentation
+        /// <summary>
+        /// If this returns true, a new movement order may be enqueued 
+        /// on the movementComponent.
+        /// </summary>
+        /// <returns></returns>
         bool AreOrdersComplete();
     }
 }
