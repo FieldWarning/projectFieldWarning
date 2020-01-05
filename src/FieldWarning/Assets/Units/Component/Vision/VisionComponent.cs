@@ -116,16 +116,33 @@ namespace PFW.Units.Component.Vision
         {
             IsVisible = revealUnit;
             ToggleAllRenderers(gameObject, revealUnit);
-            MaybeTogglePlatoonVisibility(revealUnit);
+
+            // TODO: the SelectionManager does not really respect these layers
+            if (IsVisible)
+                gameObject.layer = LayerMask.NameToLayer("Selectable");
+            else
+                gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+            MaybeTogglePlatoonVisibility();
         }
 
-        private void MaybeTogglePlatoonVisibility(bool unitRevealed)
+        // If all units are invisible, make the platoon invisible. 
+        private void MaybeTogglePlatoonVisibility()
         {
             PlatoonBehaviour platoon = _unit.Platoon;
-            ToggleAllRenderers(
-                    platoon.gameObject,
-                    !platoon.Units.TrueForAll(
-                            u => !u.VisionComponent.IsVisible));
+            bool enable = !platoon.Units.TrueForAll(
+                            u => !u.VisionComponent.IsVisible);
+            ToggleAllRenderers(platoon.gameObject, enable);
+
+            // TODO: the SelectionManager does not really respect these layers
+            if (enable)
+            {
+                platoon.Icon.SetLayer(LayerMask.NameToLayer("Selectable"));
+            }
+            else
+            {
+                platoon.Icon.SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
+            }
         }
 
         private void ToggleAllRenderers(GameObject o, bool enable)

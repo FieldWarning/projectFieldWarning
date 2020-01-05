@@ -15,18 +15,22 @@ using UnityEngine;
 
 namespace PFW.Units.Component.Movement
 {
+    /// <summary>
+    /// Movement strategies are passive classes that are used
+    /// by the movement component to apply a certain type of movement.
+    /// </summary>
     public interface IMovementStrategy
     {
-        // TODO
-        void DoMovement();
+        // TODO documentation
+        void PlanMovement();
 
-        // ??
+        // TODO documentation
         void UpdateMapOrientation(Vector3 forward, Vector3 right);
 
-        // ??
+        // TODO documentation
         bool IsMoving();
 
-        // ??
+        // TODO documentation
         bool AreOrdersComplete();
     }
 }

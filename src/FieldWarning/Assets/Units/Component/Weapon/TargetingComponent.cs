@@ -87,15 +87,6 @@ namespace PFW.Units.Component.Weapon
             enabled = false;
         }
 
-        /// <summary>
-        /// Initialization order: Awake() when a gameobject is created,
-        /// WakeUp() enables the object, Start() runs on an enabled object.
-        /// </summary>
-        public void WakeUp()
-        {
-            enabled = true;
-        }
-
         private void Start()
         {
             // TODO remove:

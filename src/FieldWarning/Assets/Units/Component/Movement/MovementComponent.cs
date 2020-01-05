@@ -66,22 +66,14 @@ namespace PFW.Units.Component.Movement
             Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
             InitializeGhost(MatchSession.Current.TerrainMap);
             Dispatcher = dispatcher;
-        }
-
-        public void WakeUp()
-        {
-            enabled = true;
-            SetVisible(true);
-            foreach (TargetingComponent targeter in GetComponents<TargetingComponent>())
-                targeter.WakeUp();
 
             Pathfinder = new Pathfinder(this, MatchSession.Current.PathData);
-            _moveStrategy.Pathfinder = Pathfinder; // TODO move contents of initialize here
+            _moveStrategy.Pathfinder = Pathfinder;
         }
 
         private void Update()
         {
-            _moveStrategy.DoMovement();
+            _moveStrategy.PlanMovement();
 
             if (_moveStrategy.IsMoving())
                 _moveStrategy.UpdateMapOrientation(Forward, Right);
@@ -154,30 +146,6 @@ namespace PFW.Units.Component.Movement
         // Updates the unit's final heading to the specified value
         public void SetUnitFinalHeading(float heading) => 
                 _moveStrategy.SetUnitFinalHeading(heading);
-
-        private void SetLayer(int l)
-        {
-            gameObject.layer = l;
-        }
-
-        // TODO move out of here
-        public Renderer[] GetRenderers()
-        {
-            var renderers = GetComponentsInChildren<Renderer>();
-            return renderers;
-        }
-
-        public void SetVisible(bool vis)
-        {
-            var renderers = GetRenderers();
-            foreach (var r in renderers)
-                r.enabled = vis;
-
-            if (vis)
-                SetLayer(LayerMask.NameToLayer("Selectable"));
-            else
-                SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
-        }
 
 //        private float GetHeading()
 //        {

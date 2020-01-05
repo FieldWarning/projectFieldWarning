@@ -55,7 +55,7 @@ namespace PFW.Units.Component.Movement
             _finalHeading = heading;
         }
 
-        public void DoMovement()
+        public void PlanMovement()
         {
             float distanceToWaypoint = 
                     Pathfinder.HasDestination() ? 
@@ -274,7 +274,7 @@ namespace PFW.Units.Component.Movement
                 _rotVelocity = Mathf.Sign(remainingTurn) * rotationSpeed;
             }
 
-            var turn = _rotVelocity * Time.deltaTime;
+            float turn = _rotVelocity * Time.deltaTime;
             if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
                 turn = remainingTurn;
             TargetRotation.y += turn;

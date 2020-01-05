@@ -19,6 +19,7 @@ using PFW.Model.Armory;
 using PFW.Model.Game;
 using PFW.UI.Ingame;
 using PFW.Units.Component.Movement;
+using PFW.Units.Component.Vision;
 
 namespace PFW.Units
 {
@@ -153,7 +154,13 @@ namespace PFW.Units
         public void SetVisible(bool vis)
         {
             _icon.SetVisible(vis);
-            _units.ForEach(x => x.GetComponent<MovementComponent>().SetVisible(vis));
+            _units.ForEach(unit =>
+            {
+                foreach (Renderer renderer in unit.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.enabled = vis;
+                }
+            });
 
             // FIXME: It looks like UnitLabelAttacher looks for a GameObject ("UIWrapper") that
             //      no longer exists in the scene. Is this deprecated? Should it be removed?

@@ -111,6 +111,19 @@ namespace PFW.Units
             _armorComponent.Initialize();
         }
 
+        /// <summary>
+        /// Initialization order: Awake() when a gameobject is created,
+        /// WakeUp() enables the object, Start() runs on an enabled object.
+        /// </summary>
+        public void WakeUp()
+        {
+            _movementComponent.enabled = true;
+            VisionComponent.ToggleUnitVisibility(true);
+
+            foreach (TargetingComponent targeter in _targetingComponents)
+                targeter.enabled = true;
+        }
+
         public void SendFirePosOrder(Vector3 position)
         {
             foreach (var targeter in _targetingComponents)
@@ -151,7 +164,6 @@ namespace PFW.Units
             =>
             _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
 
-        public void WakeUp() => _movementComponent.WakeUp();
         public void Teleport(Vector3 position, float heading) =>
                 _movementComponent.Teleport(position, heading);
 
