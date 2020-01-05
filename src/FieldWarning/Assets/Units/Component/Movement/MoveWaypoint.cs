@@ -43,7 +43,7 @@ namespace PFW.Units.Component.Movement
                     Destination, Heading, Platoon.Units.Count);
             for (int i = 0; i < Platoon.Units.Count; i++)
             {
-                Platoon.Units[i].SetDestination(destinations[i], Heading);
+                Platoon.Units[i].SetDestination(destinations[i], Heading, MoveMode);
             }
         }
 

@@ -70,7 +70,7 @@ namespace PFW.Units.Component.Movement
             Data = data;
             _path = new List<PathNode>();
             FinalCompletionDist =
-                2f * TerrainConstants.MAP_SCALE + unit.Data.MinTurnRadius;
+                    2f * TerrainConstants.MAP_SCALE + unit.Data.MinTurnRadius;
             _nextUpdateTime = 0f;
         }
 
@@ -90,7 +90,8 @@ namespace PFW.Units.Component.Movement
 
             this.Command = command;
 
-            float pathTime = Data.FindPath(_path, _unit.transform.position, destination, _unit.Mobility, 0f, command);
+            float pathTime = Data.FindPath(
+                    _path, _unit.transform.position, destination, _unit.Mobility, 0f, command);
             if (pathTime >= FOREVER)
                 _path.Clear();
             return pathTime;
@@ -121,7 +122,8 @@ namespace PFW.Units.Component.Movement
         {
             PathNode targetNode = _path[_path.Count - 1];
 
-            float distance = Vector3.Distance(_unit.transform.position, PathfinderData.Position(targetNode));
+            float distance = Vector3.Distance(
+                    _unit.transform.position, PathfinderData.Position(targetNode));
             if (distance < (_path.Count > 1 ? COMPLETION_DIST : FinalCompletionDist))
             { // Unit arrived at the next path node
                 _path.RemoveAt(_path.Count - 1);
@@ -146,7 +148,11 @@ namespace PFW.Units.Component.Movement
                         _unit.transform.position);
 
             Vector3 newWaypoint = TakeStep(
-                Data, _unit.transform.position, targetPosition, _unit.Mobility, _unit.Data.Radius);
+                    Data, 
+                    _unit.transform.position, 
+                    targetPosition, 
+                    _unit.Mobility, 
+                    _unit.Data.Radius);
 
             if (newWaypoint != NO_POSITION)
             {
@@ -157,7 +163,13 @@ namespace PFW.Units.Component.Movement
 
                 // The unit has gotten stuck when following the previously computed path.
                 // Now recompute a new path to the destination using the global graph, this time using finite radius
-                float pathTime = Data.FindPath(_path, _unit.transform.position, PathfinderData.Position(_path[0]), _unit.Mobility, _unit.Data.Radius, Command);
+                float pathTime = Data.FindPath(
+                        _path, 
+                        _unit.transform.position, 
+                        PathfinderData.Position(_path[0]), 
+                        _unit.Mobility, 
+                        _unit.Data.Radius, 
+                        Command);
                 //float pathTime = SetPath (path[0].position, command);
 
                 bool isTrapped = pathTime == FOREVER;

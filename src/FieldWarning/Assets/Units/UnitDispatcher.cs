@@ -167,8 +167,8 @@ namespace PFW.Units
                 _movementComponent.Teleport(position, heading);
 
         public bool AreOrdersComplete() => _movementComponent.AreOrdersComplete();
-        public void SetDestination(Vector3 pos, float heading) =>
-                _movementComponent.SetDestination(pos, heading);
+        public void SetDestination(Vector3 pos, float heading, MoveCommandType moveMode) =>
+                _movementComponent.SetDestination(pos, heading, moveMode);
 
         public bool IsVisible => VisionComponent.IsVisible;
     }

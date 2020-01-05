@@ -30,10 +30,6 @@ namespace PFW.Units.Component.Movement
 
         public MobilityType Mobility;
 
-        // These are set by the subclass in DoMovement()
-        // protected Vector3 _position;
-        // protected Vector3 _rotation;
-
         // Forward and right directions on the horizontal plane
         public Vector3 Forward { get; private set; }
         public Vector3 Right { get; private set; }
@@ -87,9 +83,12 @@ namespace PFW.Units.Component.Movement
         private void UpdateCurrentRotation()
         {
             Vector3 diff = _moveStrategy.NextRotation - _currentRotation;
-            if (diff.sqrMagnitude > 1) {
+            if (diff.sqrMagnitude > 1) 
+            {
                 _currentRotation = _moveStrategy.NextRotation;
-            } else {
+            } 
+            else 
+            {
                 _currentRotation += ORIENTATION_RATE * Time.deltaTime * diff;
             }
 
@@ -100,18 +99,13 @@ namespace PFW.Units.Component.Movement
             Right = new Vector3(Forward.z, 0f, -Forward.x);
         }
 
-        // Waypoint-aware path setting. 
-        public void SetUnitDestination(MoveWaypoint waypoint)
-        {
-            float a = Pathfinder.SetPath(waypoint.Destination, waypoint.MoveMode);
-            if (a < Pathfinder.FOREVER)
-                _moveStrategy.FinalHeading = waypoint.Heading;
-        }
-
         // Sets the unit's destination location, with a specific given heading value
-        public void SetDestination(Vector3 d, float heading = NO_HEADING)
+        public void SetDestination(
+                Vector3 d, 
+                float heading = NO_HEADING, 
+                MoveCommandType moveMode = MoveCommandType.FAST)
         {
-            if (Pathfinder.SetPath(d, MoveCommandType.FAST) < Pathfinder.FOREVER)
+            if (Pathfinder.SetPath(d, moveMode) < Pathfinder.FOREVER)
                 _moveStrategy.FinalHeading = heading;
         }
 
