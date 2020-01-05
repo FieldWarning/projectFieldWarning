@@ -28,7 +28,7 @@ namespace PFW.Units
     /// The dispatcher represents the unit to the outside world
     /// while delegating all tasks to the various unit components.
     /// </summary>
-    public class UnitDispatcher : MonoBehaviour
+    public sealed class UnitDispatcher : MonoBehaviour
     {
         // Handles move orders:
         // private INavigationComponent _navigationComponent;
@@ -73,21 +73,15 @@ namespace PFW.Units
         // TODO move to a component class:
         private GameObject _selectionCircle;
 
-        public PlatoonBehaviour Platoon {
-            get {
-                return _movementComponent.Platoon;
-            }
-            set {
-                _movementComponent.Platoon = value;
-            }
-        }
+        public PlatoonBehaviour Platoon { get; set; }
 
         public void Initialize(PlatoonBehaviour platoon)
         {
             TargetTuple = new TargetTuple(this);
 
-            var behaviour = gameObject.GetComponent<SelectableBehavior>();
-            behaviour.Platoon = platoon;
+            var selectableBehaviour = gameObject.GetComponent<SelectableBehavior>();
+            selectableBehaviour.Platoon = platoon;
+            Platoon = platoon;
 
             _unitData = gameObject.GetComponent<DataComponent>();
 
@@ -167,8 +161,11 @@ namespace PFW.Units
                 _movementComponent.Teleport(position, heading);
 
         public bool AreOrdersComplete() => _movementComponent.AreOrdersComplete();
-        public void SetDestination(Vector3 pos, float heading, MoveCommandType moveMode) =>
-                _movementComponent.SetDestination(pos, heading, moveMode);
+        public void SetDestination(
+                Vector3 pos, 
+                float heading = MovementComponent.NO_HEADING, 
+                MoveCommandType moveMode = MoveCommandType.FAST) =>
+                        _movementComponent.SetDestination(pos, heading, moveMode);
 
         public bool IsVisible => VisionComponent.IsVisible;
     }

@@ -16,7 +16,7 @@ using PFW.Model.Game;
 using System.Collections.Generic;
 using UnityEngine;
 
-using PFW.Units.Component.Movement;
+using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
@@ -37,8 +37,8 @@ namespace PFW.UI.Ingame
 
         // Units currently in the zone
         // (Maybe exclude all non-commander units)
-        private List<MovementComponent> _units =
-            new List<MovementComponent>();
+        private List<UnitDispatcher> _units =
+            new List<UnitDispatcher>();
 
         // Update is called once per frame
         private void Update()
@@ -48,7 +48,7 @@ namespace PFW.UI.Ingame
             bool blueIncluded = false;
             PlayerData newOwner = null;
             for (int i = 0; i < _units.Count; i++) {
-                MovementComponent unit = _units.ToArray()[i];
+                UnitDispatcher unit = _units.ToArray()[i];
                 if (unit.AreOrdersComplete()) {
                     newOwner = unit.Platoon.Owner;
                     // Names are USSR and NATO
@@ -61,21 +61,21 @@ namespace PFW.UI.Ingame
             }
             if (redIncluded && blueIncluded || (!redIncluded && !blueIncluded)) {
                 if (_owner != null) {
-                    changeOwner(null);
+                    ChangeOwner(null);
                 }
             } else if (redIncluded) {
                 if (_owner != newOwner) {
-                    changeOwner(newOwner);
+                    ChangeOwner(newOwner);
                 }
             } else {
                 if (_owner != newOwner) {
-                    changeOwner(newOwner);
+                    ChangeOwner(newOwner);
                 }
             }
         }
 
         // Needs to play sound
-        private void changeOwner(PlayerData newOwner)
+        private void ChangeOwner(PlayerData newOwner)
         {
             if (_owner != null) {
                 _owner.IncomeTick -= Worth;
@@ -100,8 +100,8 @@ namespace PFW.UI.Ingame
             if (other.transform.parent == null)
                 return;
 
-            MovementComponent component =
-                    other.transform.parent.GetComponent<MovementComponent>();
+            UnitDispatcher component =
+                    other.transform.parent.GetComponent<UnitDispatcher>();
             if (component != null && component.isActiveAndEnabled)
                 _units.Add(component);
         }
@@ -109,8 +109,8 @@ namespace PFW.UI.Ingame
         // TODO: If the unit is killed, it will never be removed from the zone:
         private void OnTriggerExit(Collider other)
         {
-            MovementComponent component =
-                    other.transform.parent.GetComponent<MovementComponent>();
+            UnitDispatcher component =
+                    other.transform.parent.GetComponent<UnitDispatcher>();
 
             if (component != null)
                 _units.Remove(component);

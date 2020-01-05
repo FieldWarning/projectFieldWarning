@@ -25,7 +25,6 @@ namespace PFW.Units.Component.Movement
         private const float TRANSLATION_RATE = 5.0f;
 
         public DataComponent Data { get; private set; }
-        public PlatoonBehaviour Platoon { get; set; }
         public Pathfinder Pathfinder { get; private set; }
 
         public MobilityType Mobility;
@@ -51,7 +50,6 @@ namespace PFW.Units.Component.Movement
 
         public void Initialize()
         {
-            Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
             InitializeGhost(MatchSession.Current.TerrainMap);
 
             Pathfinder = new Pathfinder(this, MatchSession.Current.PathData);
