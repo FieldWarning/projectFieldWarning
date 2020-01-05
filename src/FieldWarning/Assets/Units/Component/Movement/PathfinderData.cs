@@ -53,25 +53,15 @@ namespace PFW.Units.Component.Movement
             string sceneName = SceneManager.GetActiveScene().name;
             string scenePathWithFilename = SceneManager.GetActiveScene().path;
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            _graphFile = Path.Combine(sceneDirectory, sceneName + GRAPH_FILE_SUFFIX);
+            _graphFile = Path.Combine(sceneDirectory, sceneName + map.TerrainId + GRAPH_FILE_SUFFIX);
 
 
             // maybe turn this into a multithreaded worker later
-            if (File.Exists(_graphFile))
-                AddConcurrentRoutine(ReadGraphRunner, "Reading Graph file");
-
-            // means we read something
-            if (_graph.Count == 0)
+            if (!ReadGraph(_graphFile))
             {
-                //BuildGraph();
-                BuildAll();
-                AddConcurrentRoutine(WriteGraph, "writing pathfinding graph to disk");
+                GenerateGraphRunner();
+                
             }
-        }
-
-        void ReadGraphRunner()
-        {
-            ReadGraph(_graphFile);
         }
 
         /// <summary>
@@ -111,15 +101,16 @@ namespace PFW.Units.Component.Movement
             stream.Close();
         }
 
-        private void BuildAll()
+        private void GenerateGraphRunner()
         {
             AddCouroutine(BuildRoadNodesRunner, "Creating Pathfinding road nodes");
-            AddMultithreadedRoutine(BuildGraphRunner, "Creating the rest of Pathfinding nodes");
+            AddCouroutine(BuildGraphRunner, "Creating the rest of Pathfinding nodes");
+            AddMultithreadedRoutine(WriteGraph, "Writing pathfinding cache to disk");
         }
 
-        private void BuildGraphRunner()
+        private IEnumerator BuildGraphRunner()
         {
-            BuildGraph();
+            yield return BuildGraph();
         }
 
         private IEnumerator BuildRoadNodesRunner()
@@ -162,14 +153,16 @@ namespace PFW.Units.Component.Movement
 
                 currIdx++;
                 SetPercentComplete(((double)currIdx / (double)roads.Length) * 100.0);
-                
+                yield return null;
             }
 
-            yield return null;
+            
             
         }
 
-        private void BuildGraph()
+
+        //TODO: maybe need to generate a height map file as well just for this, because it takes a long time
+        private IEnumerator BuildGraph()
         {
 
             // TODO: Add nodes for terrain features
@@ -249,8 +242,12 @@ namespace PFW.Units.Component.Movement
                         RemoveArc(_graph[i], _graph[j]);
                 }
 
-
-                SetPercentComplete ( ((double)i / (double)_graph.Count) * 100.0);
+                double percent = ((double)i / (double)_graph.Count) * 100.0;
+                SetPercentComplete(percent);
+                if ((int)percent % 2 == 0)
+                { 
+                    yield return null;
+                }
                 
             }
         }

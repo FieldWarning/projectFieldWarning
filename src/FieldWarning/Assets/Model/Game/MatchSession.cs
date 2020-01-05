@@ -77,6 +77,8 @@ namespace PFW.Model.Game
 
         private NetworkManager _networkManager;
 
+        private LoadedData _loadedData;
+
         public void Awake()
         {
             Debug.Log("Match Session started.");
@@ -124,24 +126,37 @@ namespace PFW.Model.Game
             //Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
             //TerrainMap = new TerrainMap(terrains);
             //PathData = new PathfinderData(TerrainMap);
-            LoadedData loadedData = FindObjectOfType<LoadedData>();
 
-            if (loadedData == null)
+            _loadedData = FindObjectOfType<LoadedData>();
+
+            if (_loadedData != null)
             {
-                SceneManager.LoadScene(4, LoadSceneMode.Single);
-                return;
+                TerrainMap = _loadedData.terrainData;
+                PathData = _loadedData.pathFinderData;
+                Factory = new UnitFactory();
+                Settings = new Settings();
+
             }
 
-            TerrainMap = loadedData.terrainData;
-            PathData = loadedData.pathFinderData;
-            Factory = new UnitFactory();
-            Settings = new Settings();
+
 
 #if UNITY_EDITOR
             // Default to hosting if entering play mode directly into a match scene:
             if (!NetworkClient.isConnected)
                 _networkManager.StartHost();
 #endif
+        }
+
+        public void Start()
+        {
+            
+            if (_loadedData == null)
+            {
+                LoadingScreen.destinationScene = SceneManager.GetActiveScene().buildIndex;
+                SceneManager.LoadScene(4, LoadSceneMode.Single);
+            }
+
+            
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)

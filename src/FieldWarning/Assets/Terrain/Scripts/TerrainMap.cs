@@ -45,7 +45,7 @@ public class TerrainMap :Loader
     public const float BRIDGE_WIDTH = 3f * TerrainConstants.MAP_SCALE;
     public const float BRIDGE_HEIGHT = 1.0f; // temporary
 
-    public const string HEIGHT_MAP_SUFFIX = "_map_cache.dat";
+    public const string HEIGHT_MAP_SUFFIX = "_map_terrain_cache.dat";
     private readonly string _HEIGHT_MAP_PATH;
 
     public readonly Vector3 MapMin, MapMax, MapCenter;
@@ -66,14 +66,18 @@ public class TerrainMap :Loader
 
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
+
+    public int TerrainId;
+
     List<Vector3> _treePositions = new List<Vector3>();
     List<Vector3> _bridgePositions = new List<Vector3>();
 
     // this is only needed for map testing
     private byte[,] originalTestMap = null;
 
-    public TerrainMap(Terrain[] terrains1D)
+    public TerrainMap(Terrain[] terrains1D, int terrainId)
     {
+        this.TerrainId = terrainId;
         WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
         if (water != null) {
             WATER_HEIGHT = water.transform.position.y;
@@ -116,10 +120,7 @@ public class TerrainMap :Loader
 
         _mapSize = (int)(Mathf.Max(MapMax.x - MapMin.x, MapMax.z - MapMin.z) / 2f / MAP_SPACING);
 
-        string sceneName = SceneManager.GetActiveScene().name;
-        string scenePathWithFilename = SceneManager.GetActiveScene().path;
-        string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-        _HEIGHT_MAP_PATH = Path.Combine(sceneDirectory, sceneName + HEIGHT_MAP_SUFFIX);
+        _HEIGHT_MAP_PATH = getMapCachePath();
 
         var mapLen = 2 * _mapSize + 2 * EXTENSION;
         _map = new byte[mapLen, mapLen];
@@ -147,7 +148,6 @@ public class TerrainMap :Loader
 
         //_loader = new Loading("Terrain");
 
-        //TODO create some debug UI to dump the map when needed
         // TODO need to also somehow verify the height map is valid?? 
         // not sure how to do this each time without reading the original data.
         if (!File.Exists(_HEIGHT_MAP_PATH))
@@ -176,14 +176,20 @@ public class TerrainMap :Loader
         {
             //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
             AddMultithreadedRoutine(LoadCompressedMapRunner, "Reading Compressed Map Data");
-
-
         }
 
 
         // leave this commented out until we make a change and need to retest the map
         //_loader.AddWorker(MapTester);
 
+    }
+
+    private string getMapCachePath()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        string scenePathWithFilename = SceneManager.GetActiveScene().path;
+        string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
+        return Path.Combine(sceneDirectory, sceneName + TerrainId + HEIGHT_MAP_SUFFIX); 
     }
 
     private void ExportFinishedMapRunner()
@@ -204,7 +210,7 @@ public class TerrainMap :Loader
     /// </summary>
     private IEnumerator LoadWater()
     {
-
+        //833,16891= WATER
         Debug.Log("Creating original test map.");
 
         int len = _map.GetLength(0);
@@ -227,9 +233,9 @@ public class TerrainMap :Loader
             }
 
 
-                SetPercentComplete( ((double)x / (double)_map.GetLength(0)) * 100.0);
-                if ((int)GetPercentComplete() % 2 == 0)
-                    yield return null;
+            SetPercentComplete( ((double)x / (double)_map.GetLength(0)) * 100.0);
+            if ((int)GetPercentComplete() % 2 == 0)
+                yield return null;
             
         }
 
@@ -460,7 +466,10 @@ public class TerrainMap :Loader
 
     public void ReloadTerrainData()
     {
-        LoadWater();
+        
+        var waterFunc = LoadWater();
+        while (waterFunc.MoveNext()) { }
+
         LoadTrees();
         LoadRoads();
         LoadBridges();
