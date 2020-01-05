@@ -38,9 +38,9 @@ namespace PFW.Units.Component.Movement
         private readonly MobilityType _mobility;
 
 
-        public Vector3 TargetPosition;
-        public Vector3 TargetRotation;
-        private float _finalHeading;
+        public Vector3 NextPosition;
+        public Vector3 NextRotation;
+        public float FinalHeading;
 
         public VehicleMovementStrategy(
                 DataComponent data, TerrainMap map, Transform transform, MobilityType mobility)
@@ -50,16 +50,12 @@ namespace PFW.Units.Component.Movement
             _transform = transform;
             _mobility = mobility;
         }
-        public void SetUnitFinalHeading(float heading)
-        {
-            _finalHeading = heading;
-        }
 
         public void PlanMovement()
         {
             float distanceToWaypoint = 
                     Pathfinder.HasDestination() ? 
-                            (Pathfinder.GetWaypoint() - TargetPosition).magnitude : 0f;
+                            (Pathfinder.GetWaypoint() - NextPosition).magnitude : 0f;
             float linSpeed = Mathf.Abs(_linVelocity);
             float rotationSpeed = CalculateRotationSpeed(linSpeed);
 
@@ -68,8 +64,8 @@ namespace PFW.Units.Component.Movement
             float turnForward = 0f;
             float turnReverse = 0f;
             if (targetHeading != NO_HEADING) {
-                turnForward = (targetHeading - TargetRotation.y - Mathf.PI / 2).unwrapRadian();
-                turnReverse = (targetHeading - TargetRotation.y + Mathf.PI / 2).unwrapRadian();
+                turnForward = (targetHeading - NextRotation.y - Mathf.PI / 2).unwrapRadian();
+                turnReverse = (targetHeading - NextRotation.y + Mathf.PI / 2).unwrapRadian();
             }
             bool isReverse = ShouldReverse(
                     _linVelocity, distanceToWaypoint, rotationSpeed, turnForward, turnReverse);
@@ -138,13 +134,14 @@ namespace PFW.Units.Component.Movement
             return !Pathfinder.HasDestination();
         }
 
-        // Target heading currently only depends on the waypoint and final heading, but units will also need to face armor and weapons
+        // Target heading currently only depends on the waypoint and final heading, 
+        // but units will also need to face armor and weapons
         private float GetTargetHeading()
         {
-            float destinationHeading = _finalHeading;
+            float destinationHeading = FinalHeading;
 
             if (Pathfinder.HasDestination()) {
-                var diff = Pathfinder.GetWaypoint() - TargetPosition;
+                var diff = Pathfinder.GetWaypoint() - NextPosition;
                 if (diff.magnitude > Pathfinder.FinalCompletionDist)
                     destinationHeading = diff.getRadianAngle();
             }
@@ -260,10 +257,10 @@ namespace PFW.Units.Component.Movement
                     }
                 }
 
-                TargetPosition += _transform.forward * _linVelocity * Time.deltaTime;
+                NextPosition += _transform.forward * _linVelocity * Time.deltaTime;
             }
 
-            TargetPosition.y = _terrainHeight;
+            NextPosition.y = _terrainHeight;
         }
 
         private void DoRotationalMotion(float remainingTurn, float rotationSpeed)
@@ -277,13 +274,13 @@ namespace PFW.Units.Component.Movement
             float turn = _rotVelocity * Time.deltaTime;
             if (Mathf.Abs(turn) > Mathf.Abs(remainingTurn))
                 turn = remainingTurn;
-            TargetRotation.y += turn;
+            NextRotation.y += turn;
 
             float accelTiltForward = _data.SuspensionForward * _forwardAccel;
             float accelTiltRight = _data.SuspensionSide * _linVelocity * _rotVelocity;
 
-            TargetRotation.x = _terrainTiltForward + accelTiltForward;
-            TargetRotation.z = _terrainTiltRight - accelTiltRight;
+            NextRotation.x = _terrainTiltForward + accelTiltForward;
+            NextRotation.z = _terrainTiltRight - accelTiltRight;
         }
 
         // Bounce off impassable terrain, hopefully back to somewhere the unit belongs
@@ -305,7 +302,7 @@ namespace PFW.Units.Component.Movement
             if (bounceDirection.magnitude < 0.01f)
                 bounceDirection = -_transform.forward;
 
-            TargetPosition += bounceDirection.normalized * _data.MovementSpeed * Time.deltaTime;
+            NextPosition += bounceDirection.normalized * _data.MovementSpeed * Time.deltaTime;
         }
     }
 }

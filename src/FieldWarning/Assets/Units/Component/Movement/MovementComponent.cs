@@ -84,10 +84,10 @@ namespace PFW.Units.Component.Movement
 
         private void UpdateCurrentPosition()
         {
-            Vector3 diff = (_moveStrategy.TargetPosition - transform.position) * Time.deltaTime;
+            Vector3 diff = (_moveStrategy.NextPosition - transform.position) * Time.deltaTime;
             Vector3 newPosition = transform.position;
             newPosition.x += TRANSLATION_RATE * diff.x;
-            newPosition.y = _moveStrategy.TargetPosition.y;
+            newPosition.y = _moveStrategy.NextPosition.y;
             newPosition.z += TRANSLATION_RATE * diff.z;
 
             transform.position = newPosition;
@@ -95,9 +95,9 @@ namespace PFW.Units.Component.Movement
 
         private void UpdateCurrentRotation()
         {
-            Vector3 diff = _moveStrategy.TargetRotation - _currentRotation;
+            Vector3 diff = _moveStrategy.NextRotation - _currentRotation;
             if (diff.sqrMagnitude > 1) {
-                _currentRotation = _moveStrategy.TargetRotation;
+                _currentRotation = _moveStrategy.NextRotation;
             } else {
                 _currentRotation += ORIENTATION_RATE * Time.deltaTime * diff;
             }
@@ -109,59 +109,31 @@ namespace PFW.Units.Component.Movement
             Right = new Vector3(Forward.z, 0f, -Forward.x);
         }
 
-        // Waypoint-aware path setting. TODO there are like 5 methods for this,
-        // perhaps some can be cut?
+        // Waypoint-aware path setting. 
         public void SetUnitDestination(MoveWaypoint waypoint)
         {
             float a = Pathfinder.SetPath(waypoint.Destination, waypoint.MoveMode);
             if (a < Pathfinder.FOREVER)
-                SetUnitFinalHeading(waypoint.Heading);
-        }
-
-        // Sets the unit's destination location, with a default heading value
-        public void SetDestination(Vector3 d)
-        {
-            SetDestination(d, NO_HEADING);
+                _moveStrategy.FinalHeading = waypoint.Heading;
         }
 
         // Sets the unit's destination location, with a specific given heading value
-        public void SetDestination(Vector3 d, float heading)
+        public void SetDestination(Vector3 d, float heading = NO_HEADING)
         {
             if (Pathfinder.SetPath(d, MoveCommandType.FAST) < Pathfinder.FOREVER)
-                SetUnitFinalHeading(heading);
+                _moveStrategy.FinalHeading = heading;
         }
-
-        // Updates the unit's final heading so that it faces the specified location
-        public void SetUnitFinalFacing(Vector3 v)
-        {
-            Vector3 diff;
-            if (Pathfinder.HasDestination())
-                diff = v - Pathfinder.GetDestination();
-            else
-                diff = v - transform.position;
-
-            SetUnitFinalHeading(diff.getRadianAngle());
-        }
-
-        // Updates the unit's final heading to the specified value
-        public void SetUnitFinalHeading(float heading) => 
-                _moveStrategy.SetUnitFinalHeading(heading);
-
-//        private float GetHeading()
-//        {
-//            return (Pathfinder.GetDestination() - transform.position).getDegreeAngle();
-//        }
 
         public bool AreOrdersComplete() => _moveStrategy.AreOrdersComplete();
 
         // Heading given in radians
         public void Teleport(Vector3 pos, float heading)
         {
-            _moveStrategy.TargetPosition = pos;
+            _moveStrategy.NextPosition = pos;
             transform.position = pos;
 
-            _moveStrategy.TargetRotation = new Vector3(0f, heading, 0f);
-            transform.eulerAngles = Mathf.Rad2Deg * _moveStrategy.TargetRotation;
+            _moveStrategy.NextRotation = new Vector3(0f, heading, 0f);
+            transform.eulerAngles = Mathf.Rad2Deg * _moveStrategy.NextRotation;
             _moveStrategy.UpdateMapOrientation(Forward, Right);
         }
     }
