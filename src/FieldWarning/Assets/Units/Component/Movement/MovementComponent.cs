@@ -15,7 +15,6 @@ using UnityEngine;
 
 using PFW.Model.Game;
 using PFW.Units.Component.Data;
-using PFW.Units.Component.Weapon;
 
 namespace PFW.Units.Component.Movement
 {
@@ -44,14 +43,7 @@ namespace PFW.Units.Component.Movement
         // automatically change to some new equivalent angles
         private Vector3 _currentRotation;
 
-        public UnitDispatcher Dispatcher;
-
         private VehicleMovementStrategy _moveStrategy;
-
-        private void Start()
-        {
-            MatchSession.Current.RegisterUnitBirth(Dispatcher);
-        }
 
         // This needs to be separate from Initialize because it is also needed by the ghost platoon
         public void InitializeGhost(TerrainMap map)
@@ -61,11 +53,10 @@ namespace PFW.Units.Component.Movement
             _moveStrategy = new VehicleMovementStrategy(Data, map, transform, Mobility);
         }
 
-        public void Initialize(UnitDispatcher dispatcher)
+        public void Initialize()
         {
             Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
             InitializeGhost(MatchSession.Current.TerrainMap);
-            Dispatcher = dispatcher;
 
             Pathfinder = new Pathfinder(this, MatchSession.Current.PathData);
             _moveStrategy.Pathfinder = Pathfinder;

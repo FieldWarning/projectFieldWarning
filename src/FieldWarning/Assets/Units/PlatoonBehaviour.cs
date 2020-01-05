@@ -130,7 +130,11 @@ namespace PFW.Units
             unitInstance.SetActive(false);
             collider.enabled = true;
 
-            Units.Add(new UnitDispatcher(unitInstance, this));
+            // TODO perhaps add in UnitFitter as all other components
+            UnitDispatcher unit = unitInstance.GetComponent<UnitDispatcher>();
+            unit.Initialize(this);
+            unit.enabled = true;
+            Units.Add(unit);
         }
 
         // Activates all units, moving from ghost/preview mode to a real platoon

@@ -67,13 +67,14 @@ namespace PFW.Units.Component.Vision
                 GameObject go = c.gameObject;
 
                 // this finds colliders, health bars and all other crap except units
-                var unitBehaviour = go.GetComponentInParent<MovementComponent>();
-                if (unitBehaviour == null || !unitBehaviour.enabled)
+                UnitDispatcher unit = go.GetComponentInParent<UnitDispatcher>();
+                if (unit == null || !unit.enabled)
                     continue;
 
-                /* This assumes that all selectables with colliders have a visibility manager, which may be a bad assumption: */
-                if (unitBehaviour.Platoon.Owner.Team != _team)
-                    unitBehaviour.Dispatcher.VisionComponent.MaybeReveal(this);
+                // This assumes that all selectables with colliders have 
+                // a visibility manager, which may be a bad assumption:
+                if (unit.Platoon.Owner.Team != _team)
+                    unit.VisionComponent.MaybeReveal(this);
             }
         }
 
