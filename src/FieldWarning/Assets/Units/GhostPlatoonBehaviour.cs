@@ -123,7 +123,8 @@ namespace PFW.Units
             GameObject _unitPrefab = _unit.Prefab;
             GameObject unit = MatchSession.Current.Factory.MakeGhostUnit(
                     gameObject, _unitPrefab);
-            unit.GetComponent<MovementComponent>().InitData(MatchSession.Current.TerrainMap);
+            unit.GetComponent<MovementComponent>().InitializeGhost(
+                    MatchSession.Current.TerrainMap);
             _units.Add(unit);
         }
 
@@ -145,7 +146,7 @@ namespace PFW.Units
             var positions = Formations.GetLineFormation(center, heading, _units.Count);
             for (int i = 0; i < _units.Count; i++) {
                 _units[i].GetComponent<MovementComponent>()
-                        .SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading);
+                        .Teleport(positions[i], Mathf.PI / 2 - heading);
             }
         }
 

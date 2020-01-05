@@ -19,7 +19,7 @@ using PFW.Units.Component.Weapon;
 
 namespace PFW.Units.Component.Movement
 {
-    public abstract class MovementComponent : MonoBehaviour
+    public sealed class MovementComponent : MonoBehaviour
     {
         public const float NO_HEADING = float.MaxValue;
         private const float ORIENTATION_RATE = 5.0f;
@@ -32,54 +32,39 @@ namespace PFW.Units.Component.Movement
         public MobilityType Mobility;
 
         // These are set by the subclass in DoMovement()
-        protected Vector3 _position;
-        protected Vector3 _rotation;
+        // protected Vector3 _position;
+        // protected Vector3 _rotation;
 
         // Forward and right directions on the horizontal plane
         public Vector3 Forward { get; private set; }
         public Vector3 Right { get; private set; }
 
-        // This is redundant with transform.rotation.localEulerAngles, but it is necessary because
-        // the localEulerAngles will sometimes automatically change to some new equivalent angles
+        // This is redundant with transform.rotation.localEulerAngles, 
+        // but it is necessary because the localEulerAngles will sometimes 
+        // automatically change to some new equivalent angles
         private Vector3 _currentRotation;
-
-        protected TerrainMap _terrainMap { get; private set; }
-
-        private TerrainCollider _Ground;
-        protected TerrainCollider Ground {
-            get {
-                if (_Ground == null) {
-                    _Ground = GameObject.Find("Terrain").GetComponent<TerrainCollider>();
-                }
-                return _Ground;
-            }
-        }
-
-        protected float _finalHeading;
 
         public UnitDispatcher Dispatcher;
 
-        public virtual void Awake()
-        {
-        }
+        private VehicleMovementStrategy _moveStrategy;
 
-        public virtual void Start()
+        private void Start()
         {
             MatchSession.Current.RegisterUnitBirth(Dispatcher);
         }
 
-        // This needs to be separate from Initialize because this stuff is also needed by the ghost platoon
-        public void InitData(TerrainMap map)
+        // This needs to be separate from Initialize because it is also needed by the ghost platoon
+        public void InitializeGhost(TerrainMap map)
         {
-            _terrainMap = map;
             Data = gameObject.GetComponent<DataComponent>();
             Mobility = MobilityType.MobilityTypes[Data.MobilityTypeIndex];
+            _moveStrategy = new VehicleMovementStrategy(Data, map, transform, Mobility);
         }
 
         public void Initialize(UnitDispatcher dispatcher)
         {
             Platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
-            InitData(MatchSession.Current.TerrainMap);
+            InitializeGhost(MatchSession.Current.TerrainMap);
             Dispatcher = dispatcher;
         }
 
@@ -87,18 +72,19 @@ namespace PFW.Units.Component.Movement
         {
             enabled = true;
             SetVisible(true);
-            foreach (TargetingComponent targeter in gameObject.GetComponents<TargetingComponent>())
+            foreach (TargetingComponent targeter in GetComponents<TargetingComponent>())
                 targeter.WakeUp();
 
             Pathfinder = new Pathfinder(this, MatchSession.Current.PathData);
+            _moveStrategy.Pathfinder = Pathfinder; // TODO move contents of initialize here
         }
 
-        public virtual void Update()
+        private void Update()
         {
-            DoMovement();
+            _moveStrategy.DoMovement();
 
-            if (IsMoving())
-                UpdateMapOrientation();
+            if (_moveStrategy.IsMoving())
+                _moveStrategy.UpdateMapOrientation(Forward, Right);
 
             UpdateCurrentRotation();
             UpdateCurrentPosition();
@@ -106,10 +92,10 @@ namespace PFW.Units.Component.Movement
 
         private void UpdateCurrentPosition()
         {
-            Vector3 diff = (_position - transform.position) * Time.deltaTime;
+            Vector3 diff = (_moveStrategy.TargetPosition - transform.position) * Time.deltaTime;
             Vector3 newPosition = transform.position;
             newPosition.x += TRANSLATION_RATE * diff.x;
-            newPosition.y = _position.y;
+            newPosition.y = _moveStrategy.TargetPosition.y;
             newPosition.z += TRANSLATION_RATE * diff.z;
 
             transform.position = newPosition;
@@ -117,9 +103,9 @@ namespace PFW.Units.Component.Movement
 
         private void UpdateCurrentRotation()
         {
-            Vector3 diff = _rotation - _currentRotation;
+            Vector3 diff = _moveStrategy.TargetRotation - _currentRotation;
             if (diff.sqrMagnitude > 1) {
-                _currentRotation = _rotation;
+                _currentRotation = _moveStrategy.TargetRotation;
             } else {
                 _currentRotation += ORIENTATION_RATE * Time.deltaTime * diff;
             }
@@ -130,8 +116,6 @@ namespace PFW.Units.Component.Movement
                     -Mathf.Sin(_currentRotation.y), 0f, Mathf.Cos(_currentRotation.y));
             Right = new Vector3(Forward.z, 0f, -Forward.x);
         }
-
-        protected abstract void UpdateMapOrientation();
 
         // Waypoint-aware path setting. TODO there are like 5 methods for this,
         // perhaps some can be cut?
@@ -168,21 +152,20 @@ namespace PFW.Units.Component.Movement
         }
 
         // Updates the unit's final heading to the specified value
-        public virtual void SetUnitFinalHeading(float heading)
-        {
-            _finalHeading = heading;
-        }
-
-        protected abstract void DoMovement();
-
-        protected abstract bool IsMoving();
+        public void SetUnitFinalHeading(float heading) => 
+                _moveStrategy.SetUnitFinalHeading(heading);
 
         private void SetLayer(int l)
         {
             gameObject.layer = l;
         }
 
-        protected abstract Renderer[] GetRenderers();
+        // TODO move out of here
+        public Renderer[] GetRenderers()
+        {
+            var renderers = GetComponentsInChildren<Renderer>();
+            return renderers;
+        }
 
         public void SetVisible(bool vis)
         {
@@ -196,26 +179,22 @@ namespace PFW.Units.Component.Movement
                 SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
         }
 
-        protected float getHeading()
+//        private float GetHeading()
+//        {
+//            return (Pathfinder.GetDestination() - transform.position).getDegreeAngle();
+//        }
+
+        public bool AreOrdersComplete() => _moveStrategy.AreOrdersComplete();
+
+        // Heading given in radians
+        public void Teleport(Vector3 pos, float heading)
         {
-            return (Pathfinder.GetDestination() - transform.position).getDegreeAngle();
-        }
+            _moveStrategy.TargetPosition = pos;
+            transform.position = pos;
 
-
-        public abstract void SetOriginalOrientation(Vector3 pos, float heading);
-
-        public abstract bool AreOrdersComplete();
-
-        // Returns the unit's speed on the current terrain
-        public float GetTerrainSpeedMultiplier()
-        {
-            float terrainSpeed = Mobility.GetUnitSpeed(
-                    Pathfinder.Data._map,
-                    transform.position,
-                    0f,
-                    -transform.forward);
-            //terrainSpeed = Mathf.Max(terrainSpeed, 0.5f * TerrainConstants.MAP_SCALE); // Never let the speed to go exactly 0, just so units don't get stuck
-            return terrainSpeed;
+            _moveStrategy.TargetRotation = new Vector3(0f, heading, 0f);
+            transform.eulerAngles = Mathf.Rad2Deg * _moveStrategy.TargetRotation;
+            _moveStrategy.UpdateMapOrientation(Forward, Right);
         }
     }
 }

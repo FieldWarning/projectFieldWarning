@@ -53,7 +53,8 @@ public sealed class MobilityType
     // Gives the relative speed of a unit with the given MobilityType at the given location
     // Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
     // If radius > 0, check for units in the way, otherwise just look at terrain
-    public float GetUnitSpeed(TerrainMap map, Vector3 location, float unitRadius, Vector3 direction)
+    public float GetUnitSpeedMultiplier(
+            TerrainMap map, Vector3 location, float unitRadius, Vector3 direction)
     {
         Terrain terrain = map.GetTerrainAtPos(location);
         if (terrain == null)

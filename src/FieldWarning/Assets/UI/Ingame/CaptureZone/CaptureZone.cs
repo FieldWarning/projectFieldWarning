@@ -35,10 +35,10 @@ namespace PFW.UI.Ingame
         // an int or otherwise shorten the code
         private PlayerData _owner;
 
-        // Vehicles currently in the zone
-        // (Maybe exclude all non-commander vehicles)
-        private List<VehicleMovementComponent> _vehicles =
-            new List<VehicleMovementComponent>();
+        // Units currently in the zone
+        // (Maybe exclude all non-commander units)
+        private List<MovementComponent> _units =
+            new List<MovementComponent>();
 
         // Update is called once per frame
         private void Update()
@@ -47,10 +47,10 @@ namespace PFW.UI.Ingame
             bool redIncluded = false;
             bool blueIncluded = false;
             PlayerData newOwner = null;
-            for (int i = 0; i < _vehicles.Count; i++) {
-                VehicleMovementComponent vehicle = _vehicles.ToArray()[i];
-                if (vehicle.AreOrdersComplete()) {
-                    newOwner = vehicle.Platoon.Owner;
+            for (int i = 0; i < _units.Count; i++) {
+                MovementComponent unit = _units.ToArray()[i];
+                if (unit.AreOrdersComplete()) {
+                    newOwner = unit.Platoon.Owner;
                     // Names are USSR and NATO
                     if (newOwner.Team.Name == "USSR") {
                         redIncluded = true;
@@ -100,20 +100,20 @@ namespace PFW.UI.Ingame
             if (other.transform.parent == null)
                 return;
 
-            VehicleMovementComponent component =
-                    other.transform.parent.GetComponent<VehicleMovementComponent>();
+            MovementComponent component =
+                    other.transform.parent.GetComponent<MovementComponent>();
             if (component != null && component.isActiveAndEnabled)
-                _vehicles.Add(component);
+                _units.Add(component);
         }
 
         // TODO: If the unit is killed, it will never be removed from the zone:
         private void OnTriggerExit(Collider other)
         {
-            VehicleMovementComponent component =
-                    other.transform.parent.GetComponent<VehicleMovementComponent>();
+            MovementComponent component =
+                    other.transform.parent.GetComponent<MovementComponent>();
 
             if (component != null)
-                _vehicles.Remove(component);
+                _units.Remove(component);
         }
     }
 }

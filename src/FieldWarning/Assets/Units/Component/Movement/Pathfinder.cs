@@ -221,10 +221,10 @@ namespace PFW.Units.Component.Movement
                 waypoint = TakeStep(data, waypoint, destination, mobility, radius);
                 if (waypoint == NO_POSITION)
                     return FOREVER;
-                time += STEP_SIZE / mobility.GetUnitSpeed(data._map, waypoint, radius, (waypoint - previous).normalized);
+                time += STEP_SIZE / mobility.GetUnitSpeedMultiplier(data._map, waypoint, radius, (waypoint - previous).normalized);
                 distance = (destination - waypoint).magnitude;
             }
-            time += distance / mobility.GetUnitSpeed(data._map, waypoint, radius, (destination - waypoint).normalized);
+            time += distance / mobility.GetUnitSpeedMultiplier(data._map, waypoint, radius, (destination - waypoint).normalized);
 
             return time;
         }
@@ -249,7 +249,7 @@ namespace PFW.Units.Component.Movement
 
                     Vector3 direction1 = ang1 > 0f ? Quaternion.AngleAxis(ang1 * direction, Vector3.up) * straight : straight;
                     Vector3 midpoint = start + direction1 * STEP_SIZE;
-                    float midspeed = mobility.GetUnitSpeed(data._map, midpoint, radius, direction1);
+                    float midspeed = mobility.GetUnitSpeedMultiplier(data._map, midpoint, radius, direction1);
 
                     if (midspeed > 0f)
                     {
@@ -258,7 +258,7 @@ namespace PFW.Units.Component.Movement
 
                             Vector3 direction2 = ang2 > 0f ? Quaternion.AngleAxis(ang2 * direction, Vector3.up) * straight : straight;
                             Vector3 endpoint = midpoint + straight * STEP_SIZE;
-                            float endspeed = mobility.GetUnitSpeed(data._map, endpoint, radius, direction2);
+                            float endspeed = mobility.GetUnitSpeedMultiplier(data._map, endpoint, radius, direction2);
 
                             if (endspeed > 0f)
                             {

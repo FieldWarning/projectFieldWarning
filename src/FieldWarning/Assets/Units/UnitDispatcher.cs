@@ -152,8 +152,8 @@ namespace PFW.Units
             _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
 
         public void WakeUp() => _movementComponent.WakeUp();
-        public void SetOriginalOrientation(Vector3 position, float heading) =>
-                _movementComponent.SetOriginalOrientation(position, heading);
+        public void Teleport(Vector3 position, float heading) =>
+                _movementComponent.Teleport(position, heading);
 
         public bool AreOrdersComplete() => _movementComponent.AreOrdersComplete();
         public void SetDestination(Vector3 pos, float heading) =>

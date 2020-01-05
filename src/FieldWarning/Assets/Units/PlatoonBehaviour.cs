@@ -152,7 +152,7 @@ namespace PFW.Units
                     spawnCenter, GhostPlatoon.FinalHeading, Units.Count);
             Units.ForEach(u => u.WakeUp());
             for (int i = 0; i < Units.Count; i++)
-                Units[i].SetOriginalOrientation(
+                Units[i].Teleport(
                         positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
             SetDestination(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);

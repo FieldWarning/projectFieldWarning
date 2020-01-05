@@ -24,7 +24,6 @@ namespace PFW.Units.Component.Weapon
     public class TargetingComponent : MonoBehaviour
     {
         public MovementComponent Unit { get; private set; }
-        public PlatoonBehaviour Platoon { get; set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
 

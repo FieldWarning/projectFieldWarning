@@ -130,8 +130,8 @@ namespace PFW.Units.Component.Vision
 
         private void ToggleAllRenderers(GameObject o, bool enable)
         {
-            var allRenderers = o.GetComponentsInChildren<Renderer>();
-            foreach (var childRenderer in allRenderers)
+            Renderer[] allRenderers = o.GetComponentsInChildren<Renderer>();
+            foreach (Renderer childRenderer in allRenderers)
                 childRenderer.enabled = enable;
         }
     }
