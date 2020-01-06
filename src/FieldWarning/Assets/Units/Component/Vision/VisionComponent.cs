@@ -67,13 +67,14 @@ namespace PFW.Units.Component.Vision
                 GameObject go = c.gameObject;
 
                 // this finds colliders, health bars and all other crap except units
-                var unitBehaviour = go.GetComponentInParent<MovementComponent>();
-                if (unitBehaviour == null || !unitBehaviour.enabled)
+                UnitDispatcher unit = go.GetComponentInParent<UnitDispatcher>();
+                if (unit == null || !unit.enabled)
                     continue;
 
-                /* This assumes that all selectables with colliders have a visibility manager, which may be a bad assumption: */
-                if (unitBehaviour.Platoon.Owner.Team != _team)
-                    unitBehaviour.Dispatcher.VisionComponent.MaybeReveal(this);
+                // This assumes that all selectables with colliders have 
+                // a visibility manager, which may be a bad assumption:
+                if (unit.Platoon.Owner.Team != _team)
+                    unit.VisionComponent.MaybeReveal(this);
             }
         }
 
@@ -116,22 +117,39 @@ namespace PFW.Units.Component.Vision
         {
             IsVisible = revealUnit;
             ToggleAllRenderers(gameObject, revealUnit);
-            MaybeTogglePlatoonVisibility(revealUnit);
+
+            // TODO: the SelectionManager does not really respect these layers
+            if (IsVisible)
+                gameObject.layer = LayerMask.NameToLayer("Selectable");
+            else
+                gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+            MaybeTogglePlatoonVisibility();
         }
 
-        private void MaybeTogglePlatoonVisibility(bool unitRevealed)
+        // If all units are invisible, make the platoon invisible. 
+        private void MaybeTogglePlatoonVisibility()
         {
             PlatoonBehaviour platoon = _unit.Platoon;
-            ToggleAllRenderers(
-                    platoon.gameObject,
-                    !platoon.Units.TrueForAll(
-                            u => !u.VisionComponent.IsVisible));
+            bool enable = !platoon.Units.TrueForAll(
+                            u => !u.VisionComponent.IsVisible);
+            ToggleAllRenderers(platoon.gameObject, enable);
+
+            // TODO: the SelectionManager does not really respect these layers
+            if (enable)
+            {
+                platoon.Icon.SetLayer(LayerMask.NameToLayer("Selectable"));
+            }
+            else
+            {
+                platoon.Icon.SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
+            }
         }
 
         private void ToggleAllRenderers(GameObject o, bool enable)
         {
-            var allRenderers = o.GetComponentsInChildren<Renderer>();
-            foreach (var childRenderer in allRenderers)
+            Renderer[] allRenderers = o.GetComponentsInChildren<Renderer>();
+            foreach (Renderer childRenderer in allRenderers)
                 childRenderer.enabled = enable;
         }
     }

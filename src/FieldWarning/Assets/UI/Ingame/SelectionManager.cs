@@ -229,7 +229,8 @@ namespace PFW.UI.Ingame
             bool inside = false;
             inside |= platoon.Units.Any(x => IsInside(x.Transform.position));
 
-            // TODO: This checks if the center of the icon is within the selection box. It should instead check if any of the four corners of the icon are within the box:
+            // TODO: This checks if the center of the icon is within the selection box. 
+            // It should instead check if any of the four corners of the icon are within the box:
             inside |= IsInside(platoon.Icon.transform.GetChild(0).position);
             return inside;
         }

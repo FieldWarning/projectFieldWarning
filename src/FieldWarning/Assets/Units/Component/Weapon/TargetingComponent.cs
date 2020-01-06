@@ -23,8 +23,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class TargetingComponent : MonoBehaviour
     {
-        public MovementComponent Unit { get; private set; }
-        public PlatoonBehaviour Platoon { get; set; }
+        public UnitDispatcher Unit { get; private set; }
         private bool _movingTowardsTarget = false;
         private TargetTuple _target;
 
@@ -84,21 +83,13 @@ namespace PFW.Units.Component.Weapon
 
         private void Awake()
         {
-            Unit = gameObject.GetComponent<MovementComponent>();
             enabled = false;
-        }
-
-        /// <summary>
-        /// Initialization order: Awake() when a gameobject is created,
-        /// WakeUp() enables the object, Start() runs on an enabled object.
-        /// </summary>
-        public void WakeUp()
-        {
-            enabled = true;
         }
 
         private void Start()
         {
+            Unit = gameObject.GetComponent<UnitDispatcher>();
+
             // TODO remove:
             if (_weaponType == WeaponType.CANNON)
                 _weapon = new Cannon(
