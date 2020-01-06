@@ -52,7 +52,7 @@ namespace PFW.Units
             DataComponent.CreateDataComponent(prototype, config.Data, config.Mobility);
 
             prototype.AddComponent<UnitDispatcher>().enabled = false;
-            prototype.AddComponent<MovementComponent>();
+            prototype.AddComponent<MovementComponent>().enabled = false;
             prototype.AddComponent<VisionComponent>();
             prototype.AddComponent<HealthComponent>();
             prototype.AddComponent<ArmorComponent>();

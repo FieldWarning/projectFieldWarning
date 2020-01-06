@@ -97,8 +97,8 @@ namespace PFW.Units
 
         public void Destroy()
         {
-            Destroy(_ghostPlatoon.gameObject);
-            Destroy(_realPlatoon.gameObject);
+            _ghostPlatoon.Destroy();
+            _realPlatoon.Destroy();
             Destroy(gameObject);
         }
 
@@ -119,7 +119,6 @@ namespace PFW.Units
         private void AddSingleExistingUnit(UnitDispatcher realUnit)
         {
             _ghostPlatoon.AddSingleUnit();
-            realUnit.GameObject.transform.parent = _realPlatoon.transform;
             _realPlatoon.Units.Add(realUnit);
         }
 

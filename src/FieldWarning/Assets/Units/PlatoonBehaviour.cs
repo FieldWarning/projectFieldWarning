@@ -115,7 +115,7 @@ namespace PFW.Units
         public void AddSingleUnit()
         {
             var unitInstance = MatchSession.Current.Factory.MakeUnit(
-                gameObject, Unit.Prefab, Owner.Team.Color);
+                    Unit.Prefab, Owner.Team.Color);
             //Networking.CommandConnection.Connection.CmdSpawnObject(unitInstance);
 
             var collider = unitInstance.GetComponentInChildren<BoxCollider>();
@@ -191,14 +191,13 @@ namespace PFW.Units
             Destroy(gameObject);
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             Destroy(_waypointOverlay.gameObject);
         }
 
         /// <summary>
         /// Destroy the platoon and all units in it.
-        /// TODO: 1/13/2020: seems like no one ever calls this?
         /// </summary>
         public void Destroy()
         {
