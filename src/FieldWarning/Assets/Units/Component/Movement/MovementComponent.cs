@@ -52,6 +52,8 @@ namespace PFW.Units.Component.Movement
         {
             InitializeGhost(MatchSession.Current.TerrainMap);
 
+            // TODO perhaps pathfinder should use a movementstrategy and be created
+            // in the movement strategy directly.
             Pathfinder = new Pathfinder(this, MatchSession.Current.PathData);
             _moveStrategy.Pathfinder = Pathfinder;
         }
@@ -63,6 +65,10 @@ namespace PFW.Units.Component.Movement
             if (_moveStrategy.IsMoving())
                 _moveStrategy.UpdateMapOrientation(Forward, Right);
 
+            // TODO I think the values generated from the movement strategy should
+            // be applied directly, especially since it already scales them based on
+            // delta time. The fact that this code does more calculation
+            // and applies delta time again seems like a bug, should investigate.
             UpdateCurrentRotation();
             UpdateCurrentPosition();
         }

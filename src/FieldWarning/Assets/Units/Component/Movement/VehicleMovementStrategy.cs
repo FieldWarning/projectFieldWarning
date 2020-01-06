@@ -106,6 +106,7 @@ namespace PFW.Units.Component.Movement
                 if (terrain == null)
                     return;
 
+                // TODO SampleHeight is very slow, we should cache this information.
                 // Apparently our forward and backward are opposite of the Unity convention
                 float frontHeight = terrain.SampleHeight(
                         _transform.position + forward * _data.Length / 2);
