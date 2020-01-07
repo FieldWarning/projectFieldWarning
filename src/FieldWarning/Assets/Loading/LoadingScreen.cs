@@ -32,12 +32,7 @@ namespace PFW.Loading
         private Slider _slider;
         private TextMeshProUGUI _descLbl;
 
-        // the thread which runs all the workers.
-        // NOTE: some mono specific processes cannot run inside other threads.
-        private Thread _thread;
         private Loader _currentWorker = null;
-        private GameObject _HUD;
-        private GameObject _managers;
 
         public GameObject loadedData;
 
@@ -50,9 +45,6 @@ namespace PFW.Loading
         // Start is called before the first frame update
         private void Start()
         {
-            // need to deactivate camera so its not moved by the player.. since this is a loading screen
-
-
             _slider = transform.Find("Slider").GetComponent<Slider>();
             _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
 
@@ -85,9 +77,6 @@ namespace PFW.Loading
             }
             else
             {
-                // this stuff only gets ran once because we set this object to inactive
-
-
                 // dispose of the screen when no more workers in queue
                 gameObject.SetActive(false);
 

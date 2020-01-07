@@ -43,7 +43,7 @@ namespace PFW.Loading
         public string GetDescription()
         {
             if (_currentWorker != null)
-                return _currentWorker.description;
+                return _currentWorker.Description;
 
             return "";
         }
@@ -71,10 +71,10 @@ namespace PFW.Loading
             else if (_currentWorker == null)
             {
                 _currentWorker = workers.Peek();
-                _currentWorker.Run();
+                _currentWorker.Start();
             }
 
-            if (_currentWorker.Finished)
+            if (_currentWorker.IsFinished())
             {
                 workers.Dequeue();
                 _currentWorker = null;
