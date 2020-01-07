@@ -12,10 +12,7 @@
  */
 
 using PFW.Units.Component.Movement;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LoadedData : MonoBehaviour
 {
@@ -26,7 +23,7 @@ public class LoadedData : MonoBehaviour
     //private Loading _loader;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
 
@@ -35,11 +32,5 @@ public class LoadedData : MonoBehaviour
         terrainData = new TerrainMap(terrains, scene);
         
         pathFinderData = new PathfinderData(terrainData);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

@@ -11,21 +11,18 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Loading
+namespace PFW.Loading
 {
-
     /// <summary>
     /// A component that keeps the object active even if a new scene gets loaded.
     /// </summary>
     public class DontDestroyOnLoad : MonoBehaviour
     {
         // used to keep track of duplicates
-        public int Id = 0;
+        private int _id = 0;
 
         // Start is called before the first frame update
         private void Awake()
@@ -38,7 +35,7 @@ namespace Loading
             var components = FindObjectsOfType<DontDestroyOnLoad>();
             foreach (var c in components)
             {
-                if (c.gameObject.name == gameObject.name && Id != c.Id)
+                if (c.gameObject.name == gameObject.name && _id != c._id)
                 {
                     DestroyImmediate(this.gameObject);
                     return;
@@ -48,7 +45,7 @@ namespace Loading
 
         private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
         {
-            Id++;
+            _id++;
         }
     }
 }

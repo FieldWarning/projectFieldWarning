@@ -79,9 +79,8 @@ namespace PFW.Model.Game
 
         private LoadedData _loadedData;
 
-        public void Awake()
+        private void Awake()
         {
-            Debug.Log("Match Session started.");
             Current = this;
             _networkManager = FindObjectOfType<NetworkManager>();
 
@@ -139,7 +138,8 @@ namespace PFW.Model.Game
             {
                 LoadingScreen.destinationScene = SceneManager.GetActiveScene().buildIndex;
                 SceneManager.LoadScene("loading-scene", LoadSceneMode.Single);
-            } else
+            } 
+            else
             {
 #if UNITY_EDITOR
                 // Default to hosting if entering play mode directly into a match scene:
@@ -147,7 +147,6 @@ namespace PFW.Model.Game
                     _networkManager.StartHost();
 #endif
             }
-        
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)

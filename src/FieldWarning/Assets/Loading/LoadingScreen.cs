@@ -11,16 +11,12 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using Loading;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
 
 /// <summary>
 /// The loading screen handles the creation of thread for the workers and
@@ -65,7 +61,6 @@ public class LoadingScreen : MonoBehaviour
 
     private void Update()
     {
-
         if (SWorkers.Count > 0)
         {
             if (_currentWorker == null)

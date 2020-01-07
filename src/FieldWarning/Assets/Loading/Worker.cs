@@ -15,13 +15,11 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 
-namespace Loading
+namespace PFW.Loading
 {
-
     public delegate IEnumerator WorkerCoroutineDelegate();
     public delegate void WorkerThreadDelegate();
     public delegate void WorkerConcurrentDelegate();
-
 
     public abstract class Worker
     {
@@ -96,13 +94,5 @@ namespace Loading
             function();
             SetProgressToFinished();
         }
-
     }
 }
-
-
-
-
-
-
-

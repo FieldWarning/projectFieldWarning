@@ -11,12 +11,9 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using Loading;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using UnityEngine;
+
+using PFW.Loading;
 
 
 /// <summary>
