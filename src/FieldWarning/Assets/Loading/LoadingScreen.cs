@@ -18,79 +18,81 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>
-/// The loading screen handles the creation of thread for the workers and
-/// querying for how much work is left. This displays the current work performed to the UI.
-/// </summary>
-public class LoadingScreen : MonoBehaviour
+namespace PFW.Loading
 {
-    static public Queue<Loader> SWorkers = new Queue<Loader>();
-    static public int destinationScene;
-
-    private Slider _slider;
-    private TextMeshProUGUI _descLbl;
-
-    // the thread which runs all the workers.
-    // NOTE: some mono specific processes cannot run inside other threads.
-    private Thread _thread;
-    private Loader _currentWorker = null;
-    private GameObject _HUD;
-    private GameObject _managers;
-
-    public GameObject loadedData;
-
-
-    private void Awake()
+    /// <summary>
+    /// The loading screen handles the creation of thread for the workers and
+    /// querying for how much work is left. This displays the current work performed to the UI.
+    /// </summary>
+    public class LoadingScreen : MonoBehaviour
     {
-        Application.runInBackground = true;
-    }
+        static public Queue<Loader> SWorkers = new Queue<Loader>();
+        static public int destinationScene;
 
-    // Start is called before the first frame update
-    private void Start()
-    {
-        // need to deactivate camera so its not moved by the player.. since this is a loading screen
+        private Slider _slider;
+        private TextMeshProUGUI _descLbl;
+
+        // the thread which runs all the workers.
+        // NOTE: some mono specific processes cannot run inside other threads.
+        private Thread _thread;
+        private Loader _currentWorker = null;
+        private GameObject _HUD;
+        private GameObject _managers;
+
+        public GameObject loadedData;
 
 
-        _slider = transform.Find("Slider").GetComponent<Slider>();
-        _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
-
-        Instantiate(loadedData);
-        LoadedData.scene = destinationScene;
-    }
-
-
-    private void Update()
-    {
-        if (SWorkers.Count > 0)
+        private void Awake()
         {
-            if (_currentWorker == null)
-            {
-                _currentWorker = SWorkers.Peek();
-            }
+            Application.runInBackground = true;
+        }
 
-            if (_currentWorker.IsFinished())
+        // Start is called before the first frame update
+        private void Start()
+        {
+            // need to deactivate camera so its not moved by the player.. since this is a loading screen
+
+
+            _slider = transform.Find("Slider").GetComponent<Slider>();
+            _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
+
+            Instantiate(loadedData);
+            LoadedData.scene = destinationScene;
+        }
+
+
+        private void Update()
+        {
+            if (SWorkers.Count > 0)
             {
-                SWorkers.Dequeue();
-                _slider.value = _slider.maxValue;
-                _currentWorker = null;
+                if (_currentWorker == null)
+                {
+                    _currentWorker = SWorkers.Peek();
+                }
+
+                if (_currentWorker.IsFinished())
+                {
+                    SWorkers.Dequeue();
+                    _slider.value = _slider.maxValue;
+                    _currentWorker = null;
+                }
+                else
+                {
+                    _descLbl.text = _currentWorker.GetDescription();
+
+                    _slider.value = (float)_currentWorker.GetPercentComplete();
+                }
             }
             else
             {
-                _descLbl.text = _currentWorker.GetDescription();
+                // this stuff only gets ran once because we set this object to inactive
 
-                _slider.value = (float)_currentWorker.GetPercentComplete();
+
+                // dispose of the screen when no more workers in queue
+                gameObject.SetActive(false);
+
+                SceneManager.LoadSceneAsync(destinationScene, LoadSceneMode.Single);
             }
-        }
-        else
-        {
-            // this stuff only gets ran once because we set this object to inactive
-
-
-            // dispose of the screen when no more workers in queue
-            gameObject.SetActive(false);
-
-            SceneManager.LoadSceneAsync(destinationScene, LoadSceneMode.Single);
-
         }
     }
 }

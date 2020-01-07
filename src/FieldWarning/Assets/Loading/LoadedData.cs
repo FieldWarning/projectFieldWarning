@@ -14,23 +14,26 @@
 using PFW.Units.Component.Movement;
 using UnityEngine;
 
-public class LoadedData : MonoBehaviour
+namespace PFW.Loading
 {
-    public TerrainMap terrainData;
-    public PathfinderData pathFinderData;
-    public static int scene;
-
-    //private Loading _loader;
-
-    // Start is called before the first frame update
-    private void Start()
+    public class LoadedData : MonoBehaviour
     {
-        DontDestroyOnLoad(this.gameObject);
+        public TerrainMap terrainData;
+        public PathfinderData pathFinderData;
+        public static int scene;
 
-        Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
+        //private Loading _loader;
 
-        terrainData = new TerrainMap(terrains, scene);
-        
-        pathFinderData = new PathfinderData(terrainData);
+        // Start is called before the first frame update
+        private void Start()
+        {
+            DontDestroyOnLoad(this.gameObject);
+
+            Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
+
+            terrainData = new TerrainMap(terrains, scene);
+
+            pathFinderData = new PathfinderData(terrainData);
+        }
     }
 }
