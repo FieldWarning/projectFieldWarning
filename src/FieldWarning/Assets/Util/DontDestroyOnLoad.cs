@@ -14,6 +14,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Loading
 {
@@ -30,7 +31,24 @@ namespace Loading
         private void Awake()
         {
             DontDestroyOnLoad(this.gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
 
+            // checks to see if there are other objects that identically named but have different id's...
+            // those are duplicates... remove them.
+            var components = FindObjectsOfType<DontDestroyOnLoad>();
+            foreach (var c in components)
+            {
+                if (c.gameObject.name == gameObject.name && Id != c.Id)
+                {
+                    DestroyImmediate(this.gameObject);
+                    return;
+                }
+            }
+        }
+
+        private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
+        {
+            Id++;
         }
     }
 }

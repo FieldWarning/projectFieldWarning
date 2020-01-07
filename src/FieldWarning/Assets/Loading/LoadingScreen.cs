@@ -94,12 +94,6 @@ public class LoadingScreen : MonoBehaviour
             // dispose of the screen when no more workers in queue
             gameObject.SetActive(false);
 
-            var components = FindObjectsOfType<DontDestroyOnLoad>();
-            foreach (var c in components)
-            {
-                c.Id++;
-                Destroy(c.gameObject);
-            }
             SceneManager.LoadSceneAsync(destinationScene, LoadSceneMode.Single);
 
         }

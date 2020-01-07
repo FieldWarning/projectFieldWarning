@@ -565,6 +565,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
     /// </summary>
     private void MaybeChangeTerrainMaterial()
     {
+
+        if (_session.TerrainMap == null)
+        {
+            Debug.Log("Unable to change material. Terrain data not loaded.");
+            return;
+        }
         float camAltitude = transform.position.y - _session.TerrainMap.GetTerrainHeight(transform.position);
 
         foreach (TerrainMaterial mat in _terrainMaterials) {
