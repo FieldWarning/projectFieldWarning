@@ -12,17 +12,22 @@
  */
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
+
 using Priority_Queue;
 using EasyRoads3Dv3;
 
+using PFW.Loading;
+
 namespace PFW.Units.Component.Movement
 {
-    public class PathfinderData
+    public class PathfinderData : Loader
     {
         private const string GRAPH_FILE_SUFFIX = "_pathfinder_graph.dat";
 
@@ -35,11 +40,14 @@ namespace PFW.Units.Component.Movement
         public TerrainMap _map;
         public List<PathNode> _graph;
 
+        private string _graphFile;
+
         /// <summary>
         /// If a node is in the open set, it has been seen
         /// but it hasn't been visited yet.
         /// </summary>
         private FastPriorityQueue<PathNode> _openSet;
+
 
         public PathfinderData(TerrainMap map)
         {
@@ -49,12 +57,14 @@ namespace PFW.Units.Component.Movement
             string sceneName = SceneManager.GetActiveScene().name;
             string scenePathWithFilename = SceneManager.GetActiveScene().path;
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            string graphFile = Path.Combine(sceneDirectory, sceneName + GRAPH_FILE_SUFFIX);
+            _graphFile = Path.Combine(sceneDirectory, sceneName + map.TerrainId + GRAPH_FILE_SUFFIX);
 
-            if (!ReadGraph(graphFile))
+
+            // maybe turn this into a multithreaded worker later
+            if (!ReadGraph(_graphFile))
             {
-                BuildGraph();
-                WriteGraph(graphFile);
+                GenerateGraphRunner();
+                
             }
         }
 
@@ -86,23 +96,39 @@ namespace PFW.Units.Component.Movement
             }
         }
 
-        private void WriteGraph(String file)
+        private void WriteGraph()
         {
-            Stream stream = File.Open(file, FileMode.Create);
+            Stream stream = File.Open(_graphFile, FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
 
             formatter.Serialize(stream, _graph);
             stream.Close();
         }
 
-        private void BuildGraph()
+        private void GenerateGraphRunner()
+        {
+            AddCouroutine(BuildRoadNodesRunner, "Creating Pathfinding road nodes");
+            AddCouroutine(BuildGraphRunner, "Creating the rest of Pathfinding nodes");
+            AddMultithreadedRoutine(WriteGraph, "Writing pathfinding cache to disk");
+        }
+
+        private IEnumerator BuildGraphRunner()
+        {
+            yield return BuildGraph();
+        }
+
+        private IEnumerator BuildRoadNodesRunner()
+        {
+            yield return BuildRoadNodes();
+        }
+
+        private IEnumerator BuildRoadNodes()
         {
             _graph.Clear();
-
-            // TODO: Add nodes for terrain features
-
             // Add nodes for roads
             ERModularRoad[] roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
+
+            int currIdx = 0;
             foreach (ERModularRoad road in roads)
             {
                 for (int i = 0; i < road.middleIndentVecs.Count; i++)
@@ -127,7 +153,25 @@ namespace PFW.Units.Component.Movement
                         }
                     }
                 }
+
+
+                currIdx++;
+                SetPercentComplete(((double)currIdx / (double)roads.Length) * 100.0);
+                yield return null;
             }
+
+            
+            
+        }
+
+
+        //TODO: maybe need to generate a height map file as well just for this, because it takes a long time
+        private IEnumerator BuildGraph()
+        {
+
+            // TODO: Add nodes for terrain features
+
+
 
             /*// Fill in any big open spaces with a sparse grid in case the above missed anything important
             Vector3 newPos = new Vector3(0f, 0f, 0f);
@@ -152,6 +196,7 @@ namespace PFW.Units.Component.Movement
                     if ((Position(_graph[i]) - Position(_graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
                         _graph.RemoveAt(j);
                 }
+
             }
 
             _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
@@ -200,6 +245,14 @@ namespace PFW.Units.Component.Movement
                     if (!necessary)
                         RemoveArc(_graph[i], _graph[j]);
                 }
+
+                double percent = ((double)i / (double)_graph.Count) * 100.0;
+                SetPercentComplete(percent);
+                if ((int)percent % 2 == 0)
+                { 
+                    yield return null;
+                }
+                
             }
         }
 

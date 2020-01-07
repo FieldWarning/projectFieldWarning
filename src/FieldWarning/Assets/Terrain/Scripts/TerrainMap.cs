@@ -11,17 +11,20 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using EasyRoads3Dv3;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityStandardAssets.Water;
 
+using EasyRoads3Dv3;
+
+using PFW.Loading;
 using PFW.Units.Component.Movement;
 
-public class TerrainMap
+public class TerrainMap : Loader
 {
     public const int PLAIN = 0;
     public const int ROAD = 1;
@@ -43,7 +46,7 @@ public class TerrainMap
     public const float BRIDGE_WIDTH = 3f * TerrainConstants.MAP_SCALE;
     public const float BRIDGE_HEIGHT = 1.0f; // temporary
 
-    public const string HEIGHT_MAP_SUFFIX = "_sample_water.dat";
+    public const string HEIGHT_MAP_SUFFIX = "_map_terrain_cache.dat";
     private readonly string _HEIGHT_MAP_PATH;
 
     public readonly Vector3 MapMin, MapMax, MapCenter;
@@ -55,20 +58,24 @@ public class TerrainMap
     // 2D array of terrain pieces for quickly finding which piece is at a given location
     private Terrain[,] _terrains;
 
-    private Loading _loader;
+    //private Loading _loader;
 
     public readonly float WATER_HEIGHT;
 
     private GameObject[] _bridges;
     private ERModularRoad[] _roads;
+
+    public int TerrainId;
+
     List<Vector3> _treePositions = new List<Vector3>();
     List<Vector3> _bridgePositions = new List<Vector3>();
 
     // this is only needed for map testing
-    private byte[,] originalTestMap = null;
+    // private byte[,] originalTestMap = null;
 
-    public TerrainMap(Terrain[] terrains1D)
+    public TerrainMap(Terrain[] terrains1D, int terrainId)
     {
+        this.TerrainId = terrainId;
         WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
         if (water != null) {
             WATER_HEIGHT = water.transform.position.y;
@@ -111,10 +118,10 @@ public class TerrainMap
 
         _mapSize = (int)(Mathf.Max(MapMax.x - MapMin.x, MapMax.z - MapMin.z) / 2f / MAP_SPACING);
 
-        string sceneName = SceneManager.GetActiveScene().name;
-        string scenePathWithFilename = SceneManager.GetActiveScene().path;
-        string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-        _HEIGHT_MAP_PATH = Path.Combine(sceneDirectory, sceneName + HEIGHT_MAP_SUFFIX);
+        _HEIGHT_MAP_PATH = GetTerrainMapCachePath();
+
+        var mapLen = 2 * _mapSize + 2 * EXTENSION;
+        _map = new byte[mapLen, mapLen];
 
         _roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
         _bridges = GameObject.FindGameObjectsWithTag("Bridge");
@@ -129,94 +136,107 @@ public class TerrainMap
             }
         }
 
-        // get our bridge positions so we dont have to be in the main thread to access bridge into
 
+        // get our bridge positions so we dont have to be in the main thread to access bridge into
         for (int i = 0; i < _bridges.Length; i++)
         {
             GameObject bridge = _bridges[i];
             _bridgePositions.Add(bridge.transform.position);
         }
 
-        _loader = new Loading("Terrain");
+        //_loader = new Loading("Terrain");
 
-        //TODO create some debug UI to dump the map when needed
         // TODO need to also somehow verify the height map is valid?? 
         // not sure how to do this each time without reading the original data.
         if (!File.Exists(_HEIGHT_MAP_PATH))
         {
-            _map = CreateHeightMapFromtTerrainData();
-            WriteWaterMap(_map, _HEIGHT_MAP_PATH);
+            // this cannot be in another thread because it uses the terrain and cannot cache the terrain because
+            // it is just as slow, so no point in putting it in a worker. Nothing we can really do about this 
+            // unless one day we release every map with it's compressed data.
+            //_loader.AddWorker(LoadWater, null, true, "Loading water");
+
+            //LoadingScreen.SWorkers.Enqueue(new CoroutineWorker(LoadWaterRunner, "Loading water."));
+
+            AddCouroutine(LoadWaterRunner, "Load water");
+
+            // Loading bridges from a separate thread throws an exception.
+            // This is why we first cache the bridge positions outside the thread
+            // before doing the below. same goes for roads and trees.
+            AddMultithreadedRoutine(LoadTreesRunner, "Loading trees.");
+            AddMultithreadedRoutine(LoadRoadsRunner, "Loading roads.");
+            AddMultithreadedRoutine(LoadBridgesRunner, "Loading bridges.");
+            AddMultithreadedRoutine(ExportFinishedMapRunner, "Creating Compressed Map File");
+
+
         } else
         {
-            _loader.AddWorker(LoadWaterMap, "Placing water");
+            //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
+            AddMultithreadedRoutine(LoadCompressedMapRunner, "Reading Compressed Map Data");
         }
 
 
-        // Loading bridges from a separate thread throws an exception.
-        // This is why we first cache the bridge positions outside the thread
-        // before doing the below. same goes for roads and trees.
-        _loader.AddWorker(LoadTrees, "Setting tree positions");
-        _loader.AddWorker(LoadRoads, "Connecting roads");
-        _loader.AddWorker(LoadBridges, "Loading bridges");
-       
         // leave this commented out until we make a change and need to retest the map
         //_loader.AddWorker(MapTester);
 
     }
 
-    private void MapTester()
+    private string GetTerrainMapCachePath()
     {
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-        for (var x = 0; x < nEntry; x++)
-        {
-            for (var z = 0; z < nEntry; z++)
-            {
-                if (originalTestMap[x, z] != _map[x, z])
-                {
-                    Debug.Log("Map mismatch:");
-                    Debug.Log(x + "," + z);
-                }
+        string sceneName = SceneManager.GetActiveScene().name;
+        string scenePathWithFilename = SceneManager.GetActiveScene().path;
+        string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
+        return Path.Combine(sceneDirectory, sceneName + TerrainId + HEIGHT_MAP_SUFFIX); 
+    }
 
-            }
-        }
+    private void ExportFinishedMapRunner()
+    {
+ 
+        ExportCompressedMap(_map , _HEIGHT_MAP_PATH);
+    }
 
-        Debug.Log("Map tester finished!");
+
+    private IEnumerator LoadWaterRunner()
+    {
+
+        yield return LoadWater();
     }
 
     /// <summary>
     /// Creates height map from original terrain data, slow
     /// </summary>
-    private byte[,] CreateHeightMapFromtTerrainData()
+    private IEnumerator LoadWater()
     {
-
+        //833,16891= WATER
         Debug.Log("Creating original test map.");
 
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-
-        byte[,] map = new byte[nEntry, nEntry];
-
-        for (var x = 0; x < nEntry; x++)
+        int len = _map.GetLength(0);
+        for (var x = 0; x < _map.GetLength(0); x++)
         {
-            for (var z = 0; z < nEntry; z += GRANULARITY)
+            for (var z = 0; z < _map.GetLength(0); z += GRANULARITY)
             {
-                map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
+                _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
-                if (z + GRANULARITY >= nEntry)
+                if (z + GRANULARITY >= _map.GetLength(0))
                 {
-                    byte savedVal = map[x, z];
+                    byte savedVal = _map[x, z];
 
-                    for (int i = 0; i < nEntry - z; i++)
+                    for (int i = 0; i < _map.GetLength(0) - z; i++)
                     {
-                        map[x, z + i] = savedVal;
+                        _map[x, z + i] = savedVal;
                     }
                 }
 
             }
+
+
+            SetPercentComplete( ((double)x / (double)_map.GetLength(0)) * 100.0);
+            if ((int)GetPercentComplete() % 2 == 0)
+                yield return null;
+            
         }
 
-        Debug.Log("Done creating original test map.");
 
-        return map;
+        Debug.Log("Done creating original test map.");
     }
 
 
@@ -231,25 +251,24 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void WriteWaterMap(byte[,] map, string path)
+    public void ExportCompressedMap(byte[,] map,  string path)
     {
-
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
+        
         BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
-        for (int x = 0; x < nEntry; x++)
+        for (int x = 0; x < map.GetLength(0); x++)
         {
             byte temp = 0;
             byte last = 0;
             int lastcnt = 0;
 
-            for (int z = 0; z < nEntry; z += GRANULARITY)
+            for (int z = 0; z < map.GetLength(0); z += GRANULARITY)
             {
                 temp = map[x, z];
 
 
                 if (last == temp || lastcnt == 0)
                 {
-                    lastcnt += (z+GRANULARITY>=nEntry)?nEntry-z:GRANULARITY;
+                    lastcnt += (z+GRANULARITY>= map.GetLength(0)) ? map.GetLength(0) - z:GRANULARITY;
                 }
                 else
                 {
@@ -260,6 +279,8 @@ public class TerrainMap
                 }
 
                 last = temp;
+
+                
             }
 
             writer.Write(temp);
@@ -267,6 +288,7 @@ public class TerrainMap
 
 
             writer.Write((char)'\n');
+            SetPercentComplete(((double)x / (double)map.GetLength(0)) * 100.0);
         }
 
         writer.Close();
@@ -286,12 +308,9 @@ public class TerrainMap
     ///
     /// </summary>
     /// <param name="path"></param>
-    public void LoadWaterMap(string path)
+    public void LoadCompressedMap(string path)
     {
         //TODO : not much error checking is done in thsi function
-
-        int nEntry = 2 * _mapSize + 2 * EXTENSION;
-        var inputMap = new byte[nEntry, nEntry];
 
         // read the entire file into memory
         var file = File.ReadAllBytes(path);
@@ -330,22 +349,24 @@ public class TerrainMap
                 // populate the rest of the same type
                 while (zCoord < zEnd)
                 {
-                    inputMap[xCoord, zCoord] = bType;
+                    _map[xCoord, zCoord] = bType;
                     zCoord++;
                 }
             }
 
-            if (_loader != null)
-                // this is our loading screen status
-                _loader.PercentDone = ((double)reader.BaseStream.Position / (double)reader.BaseStream.Length) * 100.0;
+
+            // this is our loading screen status
+            SetPercentComplete(((double)reader.BaseStream.Position / (double)reader.BaseStream.Length) * 100.0);
         }
 
         reader.Close();
 
-        _map = inputMap;
     }
 
-
+    private void LoadTreesRunner()
+    {
+        LoadTrees();
+    }
     private void LoadTrees()
     {
 
@@ -356,9 +377,15 @@ public class TerrainMap
         {
             AssignCircularPatch(tree, TREE_RADIUS, FOREST);
             currIdx++;
-            if (_loader != null)
-                _loader.PercentDone = ((double)currIdx / (double)_treePositions.Count) * 100.0;
+
+            SetPercentComplete(((double)currIdx / (double)_treePositions.Count) * 100.0);
+ 
         }
+    }
+
+    private void LoadRoadsRunner()
+    {
+        LoadRoads();
     }
 
     private void LoadRoads()
@@ -375,12 +402,18 @@ public class TerrainMap
                     AssignRectanglarPatch(previousVert, roadVert, ROAD_WIDTH_MULT * road.roadWidth, ROAD);
                 previousVert = roadVert;
                 currRoadVertIdx++;
-                if (_loader != null)
-                    _loader.PercentDone =  ((currRoadVertIdx / road.middleIndentVecs.Count) * 100) * (currRoadIdx / _roads.Length);
+
+               SetPercentComplete( ((currRoadVertIdx / road.middleIndentVecs.Count) * 100) * (currRoadIdx / _roads.Length));
             }
 
             currRoadIdx++;
         }
+
+    }
+
+    private void LoadBridgesRunner()
+    {
+        LoadBridges();
     }
 
     private void LoadBridges()
@@ -429,19 +462,21 @@ public class TerrainMap
 
     public void ReloadTerrainData()
     {
-        _map = CreateHeightMapFromtTerrainData();
-        WriteWaterMap(_map, _HEIGHT_MAP_PATH);
-        LoadWaterMap(_HEIGHT_MAP_PATH);
+        
+        var waterFunc = LoadWater();
+        while (waterFunc.MoveNext()) { }
+
         LoadTrees();
         LoadRoads();
         LoadBridges();
+        ExportCompressedMap(_map, _HEIGHT_MAP_PATH);
     }
 
     // this function does one thing because it needs to have no params to 
     // be loaded by the worker thread
-    private void LoadWaterMap()
+    private void LoadCompressedMapRunner()
     {
-        LoadWaterMap(_HEIGHT_MAP_PATH);
+        LoadCompressedMap(_HEIGHT_MAP_PATH);
     }
 
     private void AssignRectanglarPatch(Vector3 start, Vector3 end, float width, byte value)

@@ -50,7 +50,13 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
             transform.parent.parent.GetComponent<RectTransform>().rect.width;
 
         TerrainMap map = MatchSession.Current.TerrainMap;
-
+        if (map == null)
+        {
+            // Hack: When loading a map, the camera is moved to the loading scene,
+            // where the terrain map is not yet loaded. Don't throw errors in that case.
+            return;
+        }
+        
         //_terrainSize = _terrain.terrainData.bounds.size;
         _terrainSize = map.MapMax - map.MapMin;
         _terrainPos = map.MapMin;

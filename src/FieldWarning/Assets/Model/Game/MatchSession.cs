@@ -14,14 +14,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using PFW.Loading;
+using PFW.Model.Armory;
 using PFW.UI.Prototype;
 using PFW.UI.Ingame;
 using PFW.Units;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Movement;
-using PFW.Model.Armory;
 
 using Mirror;
+using UnityEngine.SceneManagement;
 
 namespace PFW.Model.Game
 {
@@ -76,7 +78,9 @@ namespace PFW.Model.Game
 
         private NetworkManager _networkManager;
 
-        public void Awake()
+        private LoadedData _loadedData;
+
+        private void Awake()
         {
             Current = this;
             _networkManager = FindObjectOfType<NetworkManager>();
@@ -117,18 +121,33 @@ namespace PFW.Model.Game
                 _visibilityManager = gameObject.AddComponent<VisibilityManager>();
             _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
 
-            // TODO: Pass terrain from future location of starting matches (no Find)
-            Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
-            TerrainMap = new TerrainMap(terrains);
-            PathData = new PathfinderData(TerrainMap);
-            Factory = new UnitFactory();
-            Settings = new Settings();
+            // LoadedData ideally comes from the loading scene
+            _loadedData = FindObjectOfType<LoadedData>();
 
+            if (_loadedData != null)
+            {
+                TerrainMap = _loadedData.terrainData;
+                PathData = _loadedData.pathFinderData;
+                Factory = new UnitFactory();
+                Settings = new Settings();
+            }
+        }
+
+        private void Start()
+        {  
+            if (_loadedData == null)
+            {
+                LoadingScreen.destinationScene = SceneManager.GetActiveScene().buildIndex;
+                SceneManager.LoadScene("loading-scene", LoadSceneMode.Single);
+            } 
+            else
+            {
 #if UNITY_EDITOR
-            // Default to hosting if entering play mode directly into a match scene:
-            if (!NetworkClient.isConnected)
-                _networkManager.StartHost();
+                // Default to hosting if entering play mode directly into a match scene:
+                if (!NetworkClient.isConnected)
+                    _networkManager.StartHost();
 #endif
+            }
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)

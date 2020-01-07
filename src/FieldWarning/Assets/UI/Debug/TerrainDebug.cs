@@ -28,6 +28,10 @@ public class TerrainDebug : MonoBehaviour
 
         var terrainType = _matchSession.TerrainMap.GetTerrainType(hit.point);
 
+        // TODO should add this to debug at some point.
+        var terrainAtPos = _matchSession.TerrainMap.GetTerrainAtPos(hit.point);
+
+
         var typeField = transform.Find("TypeField").GetComponent<TextMeshProUGUI>();
         typeField.text = terrainType.ToString();
     }
