@@ -71,8 +71,6 @@ namespace PFW.UI.Ingame
             }
         }
 
-        private Vector3 _boxSelectStart;
-
         private void Awake()
         {
             _selectionManager = new SelectionManager();

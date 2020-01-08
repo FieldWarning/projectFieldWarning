@@ -134,10 +134,10 @@ namespace PFW.Model.Game
         }
 
         private void Start()
-        {  
+        {
             if (_loadedData == null)
             {
-                LoadingScreen.destinationScene = SceneManager.GetActiveScene().buildIndex;
+                LoadingScreen.DestinationScene = SceneManager.GetActiveScene().buildIndex;
                 SceneManager.LoadScene("loading-scene", LoadSceneMode.Single);
             } 
             else

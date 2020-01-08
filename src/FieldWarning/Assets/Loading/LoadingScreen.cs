@@ -27,14 +27,15 @@ namespace PFW.Loading
     public class LoadingScreen : MonoBehaviour
     {
         static public Queue<Loader> SWorkers = new Queue<Loader>();
-        static public int destinationScene;
+        static public int DestinationScene;
 
         private Slider _slider;
         private TextMeshProUGUI _descLbl;
 
         private Loader _currentWorker = null;
 
-        public GameObject loadedData;
+        [SerializeField]
+        private GameObject _loadedData = null;
 
 
         private void Awake()
@@ -48,8 +49,8 @@ namespace PFW.Loading
             _slider = transform.Find("Slider").GetComponent<Slider>();
             _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
 
-            Instantiate(loadedData);
-            LoadedData.scene = destinationScene;
+            Instantiate(_loadedData);
+            LoadedData.scene = DestinationScene;
         }
 
 
@@ -80,7 +81,7 @@ namespace PFW.Loading
                 // dispose of the screen when no more workers in queue
                 gameObject.SetActive(false);
 
-                SceneManager.LoadSceneAsync(destinationScene, LoadSceneMode.Single);
+                SceneManager.LoadSceneAsync(DestinationScene, LoadSceneMode.Single);
             }
         }
     }
