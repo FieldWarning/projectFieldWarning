@@ -19,6 +19,7 @@ using PFW.Model.Armory;
 using PFW.Model.Game;
 using PFW.UI.Ingame;
 using PFW.Units.Component.Movement;
+using PFW.Units.Component.Vision;
 
 namespace PFW.Units
 {
@@ -123,7 +124,8 @@ namespace PFW.Units
             GameObject _unitPrefab = _unit.Prefab;
             GameObject unit = MatchSession.Current.Factory.MakeGhostUnit(
                     gameObject, _unitPrefab);
-            unit.GetComponent<MovementComponent>().InitData(MatchSession.Current.TerrainMap);
+            unit.GetComponent<MovementComponent>().InitializeGhost(
+                    MatchSession.Current.TerrainMap);
             _units.Add(unit);
         }
 
@@ -145,14 +147,20 @@ namespace PFW.Units
             var positions = Formations.GetLineFormation(center, heading, _units.Count);
             for (int i = 0; i < _units.Count; i++) {
                 _units[i].GetComponent<MovementComponent>()
-                        .SetOriginalOrientation(positions[i], Mathf.PI / 2 - heading);
+                        .Teleport(positions[i], Mathf.PI / 2 - heading);
             }
         }
 
         public void SetVisible(bool vis)
         {
             _icon.SetVisible(vis);
-            _units.ForEach(x => x.GetComponent<MovementComponent>().SetVisible(vis));
+            _units.ForEach(unit =>
+            {
+                foreach (Renderer renderer in unit.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.enabled = vis;
+                }
+            });
 
             // FIXME: It looks like UnitLabelAttacher looks for a GameObject ("UIWrapper") that
             //      no longer exists in the scene. Is this deprecated? Should it be removed?

@@ -15,7 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Loading
+namespace PFW.Loading
 {
     /// <summary>
     /// This class is basically a coroutine runner proxy.

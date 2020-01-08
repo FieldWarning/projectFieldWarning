@@ -11,19 +11,20 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using EasyRoads3Dv3;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityStandardAssets.Water;
 
-using PFW.Units.Component.Movement;
-using System.Collections;
-//using static Loading;
+using EasyRoads3Dv3;
 
-public class TerrainMap :Loader
+using PFW.Loading;
+using PFW.Units.Component.Movement;
+
+public class TerrainMap : Loader
 {
     public const int PLAIN = 0;
     public const int ROAD = 1;
@@ -70,7 +71,7 @@ public class TerrainMap :Loader
     List<Vector3> _bridgePositions = new List<Vector3>();
 
     // this is only needed for map testing
-    private byte[,] originalTestMap = null;
+    // private byte[,] originalTestMap = null;
 
     public TerrainMap(Terrain[] terrains1D, int terrainId)
     {
@@ -149,8 +150,6 @@ public class TerrainMap :Loader
         // not sure how to do this each time without reading the original data.
         if (!File.Exists(_HEIGHT_MAP_PATH))
         {
-
-
             // this cannot be in another thread because it uses the terrain and cannot cache the terrain because
             // it is just as slow, so no point in putting it in a worker. Nothing we can really do about this 
             // unless one day we release every map with it's compressed data.

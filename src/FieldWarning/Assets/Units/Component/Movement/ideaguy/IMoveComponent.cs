@@ -11,29 +11,16 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using PFW.Units.Component.Movement;
 using UnityEngine;
 
-namespace PFW.Loading
+namespace PFW.Units.Component.Movement
 {
-    public class LoadedData : MonoBehaviour
+    public interface IMoveComponent
     {
-        public TerrainMap terrainData;
-        public PathfinderData pathFinderData;
-        public static int scene;
+        int EstimateTravelTime(Vector3 start, Vector3 dest);
 
-        //private Loading _loader;
-
-        // Start is called before the first frame update
-        private void Start()
-        {
-            DontDestroyOnLoad(this.gameObject);
-
-            Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
-
-            terrainData = new TerrainMap(terrains, scene);
-
-            pathFinderData = new PathfinderData(terrainData);
-        }
+        void ApplyMovement(MoveWaypoint w, Time deltaTime);
+        // void EnqueueWaypoint(Vector3 dest);
+        // void EnqueueWaypointReverse(Vector3 dest);
     }
 }

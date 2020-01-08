@@ -20,6 +20,7 @@ using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
 using PFW.Units.Component.Armor;
+using PFW.Model.Game;
 
 namespace PFW.Units
 {
@@ -27,7 +28,7 @@ namespace PFW.Units
     /// The dispatcher represents the unit to the outside world
     /// while delegating all tasks to the various unit components.
     /// </summary>
-    public class UnitDispatcher
+    public sealed class UnitDispatcher : MonoBehaviour
     {
         // Handles move orders:
         // private INavigationComponent _navigationComponent;
@@ -61,7 +62,7 @@ namespace PFW.Units
         /// The target tuple for targeting this unit. Do NOT manually
         /// create additional target tuples.
         /// </summary>
-        public readonly TargetTuple TargetTuple;
+        public TargetTuple TargetTuple { get; private set; }
 
         // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
         public VisionComponent VisionComponent;
@@ -72,43 +73,50 @@ namespace PFW.Units
         // TODO move to a component class:
         private GameObject _selectionCircle;
 
-        public static GameObject SELECTION_CIRCLE_PREFAB =
-                Resources.Load<GameObject>("SelectionCircle");
+        public PlatoonBehaviour Platoon { get; set; }
 
-        public PlatoonBehaviour Platoon {
-            get {
-                return _movementComponent.Platoon;
-            }
-            set {
-                _movementComponent.Platoon = value;
-            }
-        }
-
-        public UnitDispatcher(GameObject unitInstance, PlatoonBehaviour platoon)
+        public void Initialize(PlatoonBehaviour platoon)
         {
             TargetTuple = new TargetTuple(this);
 
-            var behaviour = unitInstance.GetComponent<SelectableBehavior>();
-            behaviour.Platoon = platoon;
+            var selectableBehaviour = gameObject.GetComponent<SelectableBehavior>();
+            selectableBehaviour.Platoon = platoon;
+            Platoon = platoon;
 
-            _unitData = unitInstance.GetComponent<DataComponent>();
+            _unitData = gameObject.GetComponent<DataComponent>();
 
-            _voiceComponent      = unitInstance.transform.Find("VoiceComponent")
+            _voiceComponent      = gameObject.transform.Find("VoiceComponent")
                                                .GetComponent<VoiceComponent>();
-            _movementComponent   = unitInstance.GetComponent<MovementComponent>();
-            _targetingComponents = unitInstance.GetComponents<TargetingComponent>();
-            _healthComponent     = unitInstance.GetComponent<HealthComponent>();
-            _armorComponent      = unitInstance.GetComponent<ArmorComponent>();
-            VisionComponent      = unitInstance.GetComponent<VisionComponent>();
+            _movementComponent   = gameObject.GetComponent<MovementComponent>();
+            _targetingComponents = gameObject.GetComponents<TargetingComponent>();
+            _healthComponent     = gameObject.GetComponent<HealthComponent>();
+            _armorComponent      = gameObject.GetComponent<ArmorComponent>();
+            VisionComponent      = gameObject.GetComponent<VisionComponent>();
 
             // Only used in this class, not really configurable, and no way to get a reference
             // to it here if it's instantiated in the UnitFitter. I think it's fine to leave it here.
-            _selectionCircle = GameObject.Instantiate(SELECTION_CIRCLE_PREFAB, Transform);
+            _selectionCircle = GameObject.Instantiate(
+                    Resources.Load<GameObject>("SelectionCircle"), Transform);
 
-            _movementComponent.Initialize(this);
+            _movementComponent.Initialize();
             _healthComponent.Initialize(this);
             VisionComponent.Initialize(this);
             _armorComponent.Initialize();
+        }
+
+        /// <summary>
+        /// Initialization order: Awake() when a gameobject is created,
+        /// WakeUp() enables the object, Start() runs on an enabled object.
+        /// </summary>
+        public void WakeUp()
+        {
+            _movementComponent.enabled = true;
+            VisionComponent.ToggleUnitVisibility(true);
+
+            foreach (TargetingComponent targeter in _targetingComponents)
+                targeter.enabled = true;
+
+            MatchSession.Current.RegisterUnitBirth(this);
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -139,8 +147,6 @@ namespace PFW.Units
                 _voiceComponent.PlaySelectionVoiceline(true);
         #endregion
 
-        public T GetComponent<T>() => _movementComponent.GetComponent<T>();
-
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _unitData.MaxHealth;
 
@@ -151,13 +157,15 @@ namespace PFW.Units
             =>
             _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
 
-        public void WakeUp() => _movementComponent.WakeUp();
-        public void SetOriginalOrientation(Vector3 position, float heading) =>
-                _movementComponent.SetOriginalOrientation(position, heading);
+        public void Teleport(Vector3 position, float heading) =>
+                _movementComponent.Teleport(position, heading);
 
         public bool AreOrdersComplete() => _movementComponent.AreOrdersComplete();
-        public void SetDestination(Vector3 pos, float heading) =>
-                _movementComponent.SetDestination(pos, heading);
+        public void SetDestination(
+                Vector3 pos, 
+                float heading = MovementComponent.NO_HEADING, 
+                MoveCommandType moveMode = MoveCommandType.FAST) =>
+                        _movementComponent.SetDestination(pos, heading, moveMode);
 
         public bool IsVisible => VisionComponent.IsVisible;
     }

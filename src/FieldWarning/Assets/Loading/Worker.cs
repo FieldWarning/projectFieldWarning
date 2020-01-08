@@ -15,94 +15,87 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 
-namespace Loading
+namespace PFW.Loading
 {
-
     public delegate IEnumerator WorkerCoroutineDelegate();
     public delegate void WorkerThreadDelegate();
     public delegate void WorkerConcurrentDelegate();
 
-
     public abstract class Worker
     {
         public double PercentDone = 0;
-        public bool Finished = false;
-        public bool Started = false;
-        public string description;
+        public readonly string Description;
 
         public Worker(string desc)
         {
-
-            description = desc;
+            Description = desc;
         }
 
         protected void SetProgressToStarted()
         {
-            Started = true;
             PercentDone = 0;
         }
 
         protected void SetProgressToFinished()
         {
             PercentDone = 100;
-            Finished = true;
         }
 
-        public abstract void Run();
+        public bool IsFinished()
+        {
+            return PercentDone == 100;
+        }
+
+        public abstract void Start();
     }
 
+    /// <summary>
+    /// Coroutines give us 'fake' multithreading(they must run on the main thread).
+    /// </summary>
     public class CoroutineWorker : Worker
     {
-        private WorkerCoroutineDelegate function;
+        private readonly WorkerCoroutineDelegate _function;
 
         public CoroutineWorker(WorkerCoroutineDelegate func, string desc) : base(desc)
         {
-            this.function = func;
+            _function = func;
         }
 
-        public override void Run()
+        public override void Start()
         {
             var runner = GameObject.FindObjectOfType<CoroutineRunner>();
-            runner.StartCoroutine(coroutine());
+            runner.StartCoroutine(Run());
 
         }
 
-        public IEnumerator coroutine()
+        public IEnumerator Run()
         {
             SetProgressToStarted();
-            yield return function();
+            yield return _function();
             SetProgressToFinished();
         }
     }
 
     public class MultithreadedWorker : Worker
     {
-        private WorkerThreadDelegate function;
+        private readonly WorkerThreadDelegate _function;
 
         public MultithreadedWorker(WorkerThreadDelegate func, string desc) : base(desc)
         {
-            this.function = func;
+            _function = func;
         }
 
-        public override void Run()
+        public override void Start()
         {
-            Thread _thread = new Thread(thread);
+            Thread _thread = new Thread(Run);
             _thread.Start();
         }
 
-        private void thread(object obj)
+        private void Run(object obj)
         {
             SetProgressToStarted();
-            function();
+            _function();
             SetProgressToFinished();
         }
-
     }
 }
-
-
-
-
-
-
-

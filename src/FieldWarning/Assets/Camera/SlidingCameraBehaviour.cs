@@ -131,17 +131,22 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         List<MicroSplatTerrain> splatList = new List<MicroSplatTerrain>();
 
-        foreach (Terrain terrain in GameObject.FindObjectsOfType<Terrain>()) {
+        foreach (Terrain terrain in GameObject.FindObjectsOfType<Terrain>()) 
+        {
             splatList.AddRange(terrain.GetComponents<MicroSplatTerrain>());
         }
 
-        if (splatList.Count > 0) {
+        if (splatList.Count > 0) 
+        {
             _microSplatTerrains = splatList.ToArray();
-        } else {
+        } 
+        else 
+        {
             throw new Exception("Camera not set up correctly, microsplat reference missing!");
         }
 
-        if (_terrainMaterials == null || _terrainMaterials.Count == 0) {
+        if (_terrainMaterials == null || _terrainMaterials.Count == 0) 
+        {
             throw new Exception("Camera not set up correctly, terrain materials missing!");
         }
 
@@ -193,21 +198,26 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private void Update()
     {
         // Camera panning:
-        if (!_session.isChatFocused) {
+        if (!_session.isChatFocused) 
+        {
             _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
             _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();
         }
 
-        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) {
+        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) 
+        {
             //Try border panning with mouse
             PanFromScreenBorder();
-        } else {
+        } 
+        else 
+        {
             SetPanningCursor(ScreenCorner.None);
         }
 
         AimedZoom();
 
-        if (Input.GetMouseButton(2)) {
+        if (Input.GetMouseButton(2)) 
+        {
             RotateCamera();
         }
     }
@@ -222,7 +232,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     public void LookAt(Vector3 target)
     {
-
         var toTarget = target - _targetPosition;
         var rotFromX =
                 Vector3.Angle(
@@ -269,9 +278,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
         var oldAltitude = _targetPosition.y;
 
         // Zoom in:
-        if (dzoom > 0) {
+        if (dzoom > 0) 
+        {
             ApplyZoomIn(dzoom);
-        } else if (dzoom < 0) {
+        } 
+        else if (dzoom < 0) 
+        {
             ApplyZoomOut(dzoom);
         }
 
@@ -304,13 +316,15 @@ public class SlidingCameraBehaviour : MonoBehaviour
             return;
 
         // Zoom toward cursor:
-        if (scroll > 0) {
+        if (scroll > 0) 
+        {
             // Use a ray from the cursor to find what we'll be zooming into:
             Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             // If the cursor is not pointing at anything, zooming in is forbidden:
-            if (!Physics.Raycast(ray, out hit)) {
+            if (!Physics.Raycast(ray, out hit)) 
+            {
                 return;
             }
             _zoomDestination = hit.point;
@@ -345,8 +359,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
     /// <param name="oldAltitude"></param>
     private void TiltCameraIfNearGround(float oldAltitude)
     {
-        if (transform.position.y < _tiltThreshold || _targetPosition.y < _tiltThreshold) {
-
+        if (transform.position.y < _tiltThreshold || _targetPosition.y < _tiltThreshold)
+        {
             _rotateX += (_targetPosition.y - oldAltitude) * _zoomTiltSpeed;
             _rotateX = Mathf.Clamp(_rotateX, _minCameraAngle, _maxCameraAngle);
         }
@@ -356,7 +370,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         if (_session.TerrainMap == null)
         {
-            Debug.Log("Unable to clamp camera altitude. No terrain data available.");
+            // Hack: When loading a map, the camera is moved to the loading scene,
+            // where the terrain map is not yet loaded. Don't throw errors in that case.
             return;
         }
 
@@ -422,61 +437,71 @@ public class SlidingCameraBehaviour : MonoBehaviour
                 && mousePosition.y >= 0)
                 || (mousePosition.x <= _borderPanningCornerSize
                 && mousePosition.x >= 0
-                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) {
+                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) 
+        {
             return ScreenCorner.BottomLeft;
 
-        } else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+        } 
+        else if ((mousePosition.x >= Screen.width - _borderPanningOffset
                 && mousePosition.x <= Screen.width
                 && mousePosition.y <= _borderPanningCornerSize && mousePosition.y >= 0)
                 || (mousePosition.x >= Screen.width - _borderPanningCornerSize
                 && mousePosition.x <= Screen.width
-                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) {
+                && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0)) 
+        {
             return ScreenCorner.BottomRight;
-
-        } else if ((mousePosition.x <= _borderPanningOffset
+        } 
+        else if ((mousePosition.x <= _borderPanningOffset
                 && mousePosition.x >= 0
                 && mousePosition.y >= Screen.height - _borderPanningCornerSize
                 && mousePosition.y <= Screen.height)
                 || (mousePosition.x <= _borderPanningCornerSize
                 && mousePosition.x >= 0
                 && mousePosition.y >= Screen.height - _borderPanningOffset
-                && mousePosition.y <= Screen.height)) {
+                && mousePosition.y <= Screen.height)) 
+        {
             return ScreenCorner.TopLeft;
-
-        } else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+        } 
+        else if ((mousePosition.x >= Screen.width - _borderPanningOffset
                 && mousePosition.x <= Screen.width
                 && mousePosition.y >= Screen.height - _borderPanningCornerSize
                 && mousePosition.y <= Screen.height)
                 || (mousePosition.x >= Screen.width - _borderPanningCornerSize
                 && mousePosition.x <= Screen.width
                 && mousePosition.y >= Screen.height - _borderPanningOffset
-                && mousePosition.y <= Screen.height)) {
+                && mousePosition.y <= Screen.height)) 
+        {
             return ScreenCorner.TopRight;
-
-        } else if (mousePosition.x <= _borderPanningOffset
+        } 
+        else if (mousePosition.x <= _borderPanningOffset
                 && mousePosition.x >= 0
                 && mousePosition.y >= 0
-                && mousePosition.y <= Screen.height) {
+                && mousePosition.y <= Screen.height) 
+        {
             return ScreenCorner.Left;
-
-        } else if (mousePosition.x >= Screen.width - _borderPanningOffset
+        } 
+        else if (mousePosition.x >= Screen.width - _borderPanningOffset
                 && mousePosition.x <= Screen.width
-                && mousePosition.y >= 0 && mousePosition.y <= Screen.height) {
+                && mousePosition.y >= 0 && mousePosition.y <= Screen.height) 
+        {
             return ScreenCorner.Right;
-
-        } else if (mousePosition.y <= _borderPanningOffset
+        } 
+        else if (mousePosition.y <= _borderPanningOffset
                 && mousePosition.y >= 0
                 && mousePosition.x >= 0
-                && mousePosition.x <= Screen.width) {
+                && mousePosition.x <= Screen.width) 
+        {
             return ScreenCorner.Bottom;
-
-        } else if (mousePosition.y >= Screen.height - _borderPanningOffset
+        }
+        else if (mousePosition.y >= Screen.height - _borderPanningOffset
                 && mousePosition.y <= Screen.height
                 && mousePosition.x >= 0
-                && mousePosition.x <= Screen.width) {
+                && mousePosition.x <= Screen.width) 
+        {
             return ScreenCorner.Top;
-
-        } else {
+        } 
+        else
+        {
             return ScreenCorner.None;
         }
     }
@@ -487,7 +512,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
         if (map == null)
         {
-            Debug.Log("Unable to clamp camera to XZ position. No map data loaded.");
+            // Hack: When loading a map, the camera is moved to the loading scene,
+            // where the terrain map is not yet loaded. Don't throw errors in that case.
             return;
         }
 
@@ -505,7 +531,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
     {
         Cursor.visible = false;
         DisableAllPanningArrows();
-        switch (corner) {
+        switch (corner)
+        {
         case ScreenCorner.TopLeft:
             _cornerArrowTopLeft.transform.position = Input.mousePosition;
             _cornerArrowTopLeft.enabled = true;
@@ -568,14 +595,16 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
         if (_session.TerrainMap == null)
         {
-            Debug.Log("Unable to change material. Terrain data not loaded.");
+            // Hack: When loading a map, the camera is moved to the loading scene,
+            // where the terrain map is not yet loaded. Don't throw errors in that case.
             return;
         }
         float camAltitude = transform.position.y - _session.TerrainMap.GetTerrainHeight(transform.position);
 
-        foreach (TerrainMaterial mat in _terrainMaterials) {
-            if (camAltitude < mat.MaxAltitude) {
-
+        foreach (TerrainMaterial mat in _terrainMaterials) 
+        {
+            if (camAltitude < mat.MaxAltitude) 
+            {
                 foreach (MicroSplatTerrain microSplate in _microSplatTerrains)
                 {
                     if (microSplate.templateMaterial != mat.Material)

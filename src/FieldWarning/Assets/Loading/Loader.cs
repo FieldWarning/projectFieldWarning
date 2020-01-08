@@ -11,81 +11,77 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using Loading;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using UnityEngine;
 
-
-/// <summary>
-/// Handles which order to load / execute the various specified functions.
-/// </summary>
-public class Loader
+namespace PFW.Loading
 {
-    private Queue<Worker> workers = new Queue<Worker>();
-    public bool finished = false;
-    private Worker _currentWorker;
-
-    public Loader()
+    /// <summary>
+    /// Handles which order to load / execute the various specified functions.
+    /// </summary>
+    public class Loader
     {
-        LoadingScreen.SWorkers.Enqueue(this);
-    }
+        private Queue<Worker> workers = new Queue<Worker>();
+        public bool finished = false;
+        private Worker _currentWorker;
 
-    public void AddCouroutine(WorkerCoroutineDelegate func, string desc)
-    {
-        workers.Enqueue(new CoroutineWorker(func, desc));
-    }
-
-    public void AddMultithreadedRoutine(WorkerThreadDelegate func, string desc)
-    {
-        workers.Enqueue(new MultithreadedWorker(func, desc));
-    }
-
-    // TODO: make these into properties
-    public string GetDescription()
-    {
-        if (_currentWorker != null)
-            return _currentWorker.description;
-
-        return "";
-    }
-
-    public double GetPercentComplete()
-    {
-        if (_currentWorker != null)
-            return _currentWorker.PercentDone;
-
-        return 0;
-    }
-
-    public void SetPercentComplete(double percent)
-    {
-        if (_currentWorker != null)
-            _currentWorker.PercentDone = percent;
-    }
-
-    public bool IsFinished()
-    {
-        if (workers.Count == 0)
+        public Loader()
         {
-            return true;
-        }
-        else if (_currentWorker == null)
-        {
-            _currentWorker = workers.Peek();
-            _currentWorker.Run();
+            LoadingScreen.SWorkers.Enqueue(this);
         }
 
-        if (_currentWorker.Finished)
+        public void AddCouroutine(WorkerCoroutineDelegate func, string desc)
         {
-            workers.Dequeue();
-            _currentWorker = null;
+            workers.Enqueue(new CoroutineWorker(func, desc));
         }
 
-        return false;
+        public void AddMultithreadedRoutine(WorkerThreadDelegate func, string desc)
+        {
+            workers.Enqueue(new MultithreadedWorker(func, desc));
+        }
+
+        // TODO: make these into properties
+        public string GetDescription()
+        {
+            if (_currentWorker != null)
+                return _currentWorker.Description;
+
+            return "";
+        }
+
+        public double GetPercentComplete()
+        {
+            if (_currentWorker != null)
+                return _currentWorker.PercentDone;
+
+            return 0;
+        }
+
+        public void SetPercentComplete(double percent)
+        {
+            if (_currentWorker != null)
+                _currentWorker.PercentDone = percent;
+        }
+
+        public bool IsFinished()
+        {
+            if (workers.Count == 0)
+            {
+                return true;
+            }
+            else if (_currentWorker == null)
+            {
+                _currentWorker = workers.Peek();
+                _currentWorker.Start();
+            }
+
+            if (_currentWorker.IsFinished())
+            {
+                workers.Dequeue();
+                _currentWorker = null;
+            }
+
+            return false;
+        }
     }
 }
-
     

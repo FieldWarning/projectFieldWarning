@@ -130,7 +130,11 @@ namespace PFW.Units
             unitInstance.SetActive(false);
             collider.enabled = true;
 
-            Units.Add(new UnitDispatcher(unitInstance, this));
+            // TODO perhaps add in UnitFitter as all other components
+            UnitDispatcher unit = unitInstance.GetComponent<UnitDispatcher>();
+            unit.Initialize(this);
+            unit.enabled = true;
+            Units.Add(unit);
         }
 
         // Activates all units, moving from ghost/preview mode to a real platoon
@@ -152,7 +156,7 @@ namespace PFW.Units
                     spawnCenter, GhostPlatoon.FinalHeading, Units.Count);
             Units.ForEach(u => u.WakeUp());
             for (int i = 0; i < Units.Count; i++)
-                Units[i].SetOriginalOrientation(
+                Units[i].Teleport(
                         positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
             SetDestination(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
