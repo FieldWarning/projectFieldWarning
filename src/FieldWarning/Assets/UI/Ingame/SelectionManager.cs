@@ -22,15 +22,19 @@ using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Ingame
 {
+
     /**
      * Responsible for the set of selected units.
      *
      * Tracks which units are currently selected, adds and removes
      * units from the selection, dispatches orders to the selected units.
      */
-    public class SelectionManager
+    public class SelectionManager : MonoBehaviour
     {
+        private List<WaypointOverlayBehavior> _selectedWaypointOverlays = new List<WaypointOverlayBehavior>();
+
         private List<PlatoonBehaviour> _selection;
+
         public bool Empty {
             get {
                 return _selection.Count == 0;
@@ -75,7 +79,12 @@ namespace PFW.UI.Ingame
             }
         }
 
-        public void Update(MouseMode mouseMode)
+        private void Start()
+        {
+            
+        }
+
+        public void UpdateMouseMode(MouseMode mouseMode)
         {
             _mouseMode = mouseMode;
 
@@ -245,18 +254,49 @@ namespace PFW.UI.Ingame
 
         private void UnselectAll(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
+            foreach (var wp in _selectedWaypointOverlays)
+            {
+                if (wp != null)
+                {
+                    Destroy(wp.gameObject);
+                }
+            }
+
+            _selectedWaypointOverlays.Clear();
             selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
+
             selectedPlatoons.Clear();
         }
 
         private void SetSelected(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
             selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
+
             // Randomly choose one platoon to play a selected voiceline
             if (selectedPlatoons.Count != 0 && !justPreviewing) {
                 int randInt = Random.Range(0, selectedPlatoons.Count);
                 selectedPlatoons[randInt].PlaySelectionVoiceline();
             }
+
+            if (selectedPlatoons.Count > 0)
+            {
+                
+
+                foreach (PlatoonBehaviour pb in _selection)
+                {
+
+                    List<Vector3> wps = new List<Vector3>();
+                    wps.Add(pb.transform.position);
+                    wps.Add(pb.ActiveWaypoint.Destination);
+
+
+
+                    _selectedWaypointOverlays.Add(OverlayFactory.instance.CreateWaypointOverlay(pb));
+                }
+                
+
+            }
+
         }
 
         // Responsible for drawing the selection rectangle
