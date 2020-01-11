@@ -20,8 +20,7 @@ namespace PFW.Loading
     /// </summary>
     public class Loader
     {
-        private Queue<Worker> workers = new Queue<Worker>();
-        public bool finished = false;
+        private Queue<Worker> _workers = new Queue<Worker>();
         private Worker _currentWorker;
 
         public Loader()
@@ -31,12 +30,12 @@ namespace PFW.Loading
 
         public void AddCouroutine(WorkerCoroutineDelegate func, string desc)
         {
-            workers.Enqueue(new CoroutineWorker(func, desc));
+            _workers.Enqueue(new CoroutineWorker(func, desc));
         }
 
         public void AddMultithreadedRoutine(WorkerThreadDelegate func, string desc)
         {
-            workers.Enqueue(new MultithreadedWorker(func, desc));
+            _workers.Enqueue(new MultithreadedWorker(func, desc));
         }
 
         // TODO: make these into properties
@@ -64,19 +63,19 @@ namespace PFW.Loading
 
         public bool IsFinished()
         {
-            if (workers.Count == 0)
+            if (_workers.Count == 0)
             {
                 return true;
             }
             else if (_currentWorker == null)
             {
-                _currentWorker = workers.Peek();
+                _currentWorker = _workers.Peek();
                 _currentWorker.Start();
             }
 
             if (_currentWorker.IsFinished())
             {
-                workers.Dequeue();
+                _workers.Dequeue();
                 _currentWorker = null;
             }
 
