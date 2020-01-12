@@ -18,7 +18,7 @@ public class OverlayFactory
 {
     private static OverlayFactory instance; // Needed
 
-    OverlayFactory()
+    private OverlayFactory()
     { 
         instance = this;
     }
