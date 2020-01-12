@@ -29,7 +29,7 @@ namespace PFW.UI.Ingame
      * Tracks which units are currently selected, adds and removes
      * units from the selection, dispatches orders to the selected units.
      */
-    public class SelectionManager : MonoBehaviour
+    public class SelectionManager
     {
         private List<WaypointOverlayBehavior> _selectedWaypointOverlays = new List<WaypointOverlayBehavior>();
 
@@ -254,12 +254,9 @@ namespace PFW.UI.Ingame
 
         private void UnselectAll(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
-            foreach (var wp in _selectedWaypointOverlays)
+            foreach (WaypointOverlayBehavior wp in _selectedWaypointOverlays)
             {
-                if (wp != null)
-                {
-                    Destroy(wp.gameObject);
-                }
+                wp.Destroy(); 
             }
 
             _selectedWaypointOverlays.Clear();
@@ -280,21 +277,15 @@ namespace PFW.UI.Ingame
 
             if (selectedPlatoons.Count > 0)
             {
-                
-
                 foreach (PlatoonBehaviour pb in _selection)
                 {
-
                     List<Vector3> wps = new List<Vector3>();
                     wps.Add(pb.transform.position);
                     wps.Add(pb.ActiveWaypoint.Destination);
 
-
-
-                    _selectedWaypointOverlays.Add(OverlayFactory.instance.CreateWaypointOverlay(pb));
+                    _selectedWaypointOverlays.Add(
+                        OverlayFactory.Instance().CreateWaypointOverlay(pb));
                 }
-                
-
             }
 
         }

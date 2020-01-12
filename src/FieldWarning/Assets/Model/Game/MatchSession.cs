@@ -112,6 +112,7 @@ namespace PFW.Model.Game
             GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
 
             _inputManager = FindObjectOfType<InputManager>();
+
             if (!_visibilityManager)
                 _inputManager = gameObject.AddComponent<InputManager>();
             _inputManager.Session = _inputManager.Session ?? this;
