@@ -22,7 +22,12 @@ namespace PFW.Loading
     public class DontDestroyOnLoad : MonoBehaviour
     {
         // used to keep track of duplicates
-        private int _id = 0;
+        // New objects have a lower id
+        public int Id = 0;
+
+        // For duplicates, we erase ourselves if we are the old duplicate and
+        // keep the new
+        public bool KeepNewer = true;
 
         // Start is called before the first frame update
         private void Awake()
@@ -35,9 +40,21 @@ namespace PFW.Loading
             var components = FindObjectsOfType<DontDestroyOnLoad>();
             foreach (var c in components)
             {
-                if (c.gameObject.name == gameObject.name && _id != c._id)
+                
+                // we are checking to make sure there indeed is a duplicate named object
+                if (c.gameObject.name == gameObject.name)
                 {
-                    DestroyImmediate(this.gameObject);
+                    // This determines if we should keep the new or old duplicate
+                    if (KeepNewer && Id > c.Id)
+                    {
+                        DestroyImmediate(this.gameObject);
+                        
+                    }
+                    else if (!KeepNewer && Id < c.Id)
+                    {
+                        DestroyImmediate(this.gameObject);
+                    }
+
                     return;
                 }
             }
@@ -45,7 +62,7 @@ namespace PFW.Loading
 
         private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
         {
-            _id++;
+            Id++;
         }
     }
 }

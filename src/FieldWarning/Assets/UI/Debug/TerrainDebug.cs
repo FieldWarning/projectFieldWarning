@@ -31,6 +31,9 @@ public class TerrainDebug : MonoBehaviour
         // TODO should add this to debug at some point.
         var terrainAtPos = _matchSession.TerrainMap.GetTerrainAtPos(hit.point);
 
+        
+        var heightField = transform.Find("HeightField").GetComponent<TextMeshProUGUI>();
+        heightField.text = _matchSession.TerrainMap.GetTerrainHeight(hit.point).ToString();
 
         var typeField = transform.Find("TypeField").GetComponent<TextMeshProUGUI>();
         typeField.text = terrainType.ToString();

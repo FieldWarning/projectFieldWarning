@@ -92,7 +92,7 @@ namespace PFW.UI.Ingame
 
         private void Update()
         {
-            _selectionManager.Update(CurMouseMode);
+            _selectionManager.UpdateMouseMode(CurMouseMode);
 
             switch (CurMouseMode) {
 
