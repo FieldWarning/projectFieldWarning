@@ -37,6 +37,10 @@ namespace PFW.Units
         public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
 
         public PlayerData Owner { get; private set; }
+
+        private WaypointOverlayBehavior _waypointOverlay;
+
+
         public override bool OnSerialize(NetworkWriter writer, bool initialState)
         {
             bool canSend = false;
@@ -116,6 +120,8 @@ namespace PFW.Units
             Unit = unit;
             Owner = owner;
             Icon.BaseColor = Owner.Team.Color;
+            _waypointOverlay = OverlayFactory.Instance().CreateWaypointOverlay(this);
+            _waypointOverlay.gameObject.transform.parent = gameObject.transform;
         }
 
         // Create an inactive unit (to be activated when Spawn() is called)
@@ -172,12 +178,15 @@ namespace PFW.Units
         {
             Icon?.SetSelected(selected);
             Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
+
+            _waypointOverlay.gameObject.SetActive(selected);
         }
 
         public void SetEnabled(bool enabled)
         {
             this.enabled = enabled;
             Icon?.SetVisible(enabled);
+            _waypointOverlay.gameObject.SetActive(enabled);
         }
 
         public void SendFirePosOrder(Vector3 position)
@@ -195,8 +204,14 @@ namespace PFW.Units
             Destroy(gameObject);
         }
 
+        void OnDestroy()
+        {
+            Destroy(_waypointOverlay.gameObject);
+        }
+
         /// <summary>
         /// Destroy the platoon and all units in it.
+        /// TODO: 1/13/2020: seems like no one ever calls this?
         /// </summary>
         public void Destroy()
         {
