@@ -62,7 +62,6 @@ public class WaypointOverlayBehavior : MonoBehaviour
     public void Initialize(PlatoonBehaviour platoon)
     {
         _platoon = platoon;
-        
 
         _lineR = transform.Find("Line").GetComponent<LineRenderer>();
         _lineR.startColor = Color.green;

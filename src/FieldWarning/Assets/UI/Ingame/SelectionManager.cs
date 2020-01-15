@@ -31,8 +31,6 @@ namespace PFW.UI.Ingame
      */
     public class SelectionManager
     {
-        private List<WaypointOverlayBehavior> _selectedWaypointOverlays = new List<WaypointOverlayBehavior>();
-
         private List<PlatoonBehaviour> _selection;
 
         public bool Empty {
@@ -254,12 +252,6 @@ namespace PFW.UI.Ingame
 
         private void UnselectAll(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
-            foreach (WaypointOverlayBehavior wp in _selectedWaypointOverlays)
-            {
-                wp.Destroy(); 
-            }
-
-            _selectedWaypointOverlays.Clear();
             selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
 
             selectedPlatoons.Clear();
@@ -274,20 +266,6 @@ namespace PFW.UI.Ingame
                 int randInt = Random.Range(0, selectedPlatoons.Count);
                 selectedPlatoons[randInt].PlaySelectionVoiceline();
             }
-
-            if (selectedPlatoons.Count > 0)
-            {
-                foreach (PlatoonBehaviour pb in _selection)
-                {
-                    List<Vector3> wps = new List<Vector3>();
-                    wps.Add(pb.transform.position);
-                    wps.Add(pb.ActiveWaypoint.Destination);
-
-                    _selectedWaypointOverlays.Add(
-                        OverlayFactory.Instance().CreateWaypointOverlay(pb));
-                }
-            }
-
         }
 
         // Responsible for drawing the selection rectangle
