@@ -92,12 +92,14 @@ namespace PFW.UI.Ingame
             if (Input.GetButtonDown("Chat")) {
                 // If chat is being closed handle the typed message
                 if (_chat.activeSelf == true) {
-                    // TODO Replace with the player name once we get accounts working
-                    string user = "[" + (_connection.isClientOnly ? "guest" : "host") + "]:";
-                    string newMessage = user + _inputField.text + "\n";
-                    _connection.CmdUpdateChat(newMessage);
+                    if (!string.IsNullOrWhiteSpace(_inputField.text))
+                    {
+                        // TODO Replace with the player name once we get accounts working
+                        string user = "[" + (_connection.isClientOnly ? "guest" : "host") + "]:";
+                        string newMessage = user + _inputField.text + "\n";
+                        _connection.CmdUpdateChat(newMessage);
+                    }
                     _session.isChatFocused = false;
-
                 } else {
                     // activated chat
                     _session.isChatFocused = true;
@@ -108,7 +110,7 @@ namespace PFW.UI.Ingame
                 _chat.SetActive(!_chat.activeSelf);
                 _inputField.Select();
                 _inputField.ActivateInputField();
-                _inputField.text = "Your message here..";
+                _inputField.text = string.Empty;
             }
         }
     }
