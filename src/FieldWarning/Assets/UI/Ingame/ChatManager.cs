@@ -29,7 +29,7 @@ namespace PFW.UI.Ingame
      */
     public class ChatManager : NetworkBehaviour
     {
-        private const int MAX_MESSAGES = 10;
+        private const int MAX_MESSAGES = 20;
 
         [SerializeField]
         private GameObject _chat = null;
