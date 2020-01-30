@@ -16,8 +16,8 @@ public partial class MicroSplatTerrainEditor : Editor
    public static void GenerateTerrainNormalMap(MicroSplatTerrain bt)
    {
       Terrain t = bt.GetComponent<Terrain>();
-      int w = t.terrainData.heightmapWidth;
-      int h = t.terrainData.heightmapHeight;
+      int w = t.terrainData.heightmapResolution;
+      int h = t.terrainData.heightmapResolution;
 
       Texture2D data = new Texture2D(w, h, TextureFormat.RGBA32, true, true);
       for (int x = 0; x < w; ++x)
@@ -63,8 +63,8 @@ public partial class MicroSplatTerrainEditor : Editor
    public static void GenerateTerrainBlendData(MicroSplatTerrain bt)
    {
       Terrain t = bt.GetComponent<Terrain>();
-      int w = t.terrainData.heightmapWidth;
-      int h = t.terrainData.heightmapHeight;
+      int w = t.terrainData.heightmapResolution;
+      int h = t.terrainData.heightmapResolution;
      
       Texture2D data = new Texture2D(w, h, TextureFormat.RGBAHalf, true, true);
       for (int x = 0; x < w; ++x)
