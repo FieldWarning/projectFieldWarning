@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -21,12 +21,12 @@ namespace PFW.Loading
     /// </summary>
     public class DontDestroyOnLoad : MonoBehaviour
     {
-        // used to keep track of what to keep
-        public int Id = 0;
+        // Tracks which object to keep (lower id -> object is newer)
+        private int _id = 0;
 
-        // For duplicates, we erase ourselves if we are the old duplicate and
-        // keep the new
-        public bool KeepNewer = true;
+        // When a duplicate is detected, do we erase the newer or older instance?
+        [SerializeField]
+        private bool _keepOlder = true;
 
         // Start is called before the first frame update
         private void Awake()
@@ -37,38 +37,38 @@ namespace PFW.Loading
 
         private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
         {
-            Id++;
+            _id++;
 
-            // checks to see if there are other objects that identically named but have different id's...
-            // those are duplicates... remove them.
-            var components = FindObjectsOfType<DontDestroyOnLoad>();
-            foreach (var c in components)
+            // checks to see if there are other objects that identically named 
+            // but have different ids; those are duplicates -> remove them.
+            DontDestroyOnLoad[] components = FindObjectsOfType<DontDestroyOnLoad>();
+            foreach (DontDestroyOnLoad c in components)
             {
-
-                // we are checking to make sure there indeed is a duplicate named object but not ourselves
-                if (c.gameObject.name != gameObject.name || Id == c.Id)
+                // Only proceed if this really is a duplicate 
+                // with the same name who is also not this exact object
+                if (c.gameObject.name != gameObject.name || _id == c._id)
                 {
                     continue;
                 }
 
-                if (!KeepNewer)
+                if (_keepOlder)
                 {
-                    if (Id < c.Id)
+                    if (_id < c._id)
                     {
-                        Debug.Log("Destroying duplicate. Id: " + Id);
-                        DestroyImmediate(this.gameObject);
-                        return;
-                    }
-                } else
-                {
-                    if (Id > c.Id)
-                    {
-                        Debug.Log("Destroying duplicate. Id: " + Id);
+                        Debug.Log("Destroying duplicate. Id: " + _id);
                         DestroyImmediate(this.gameObject);
                         return;
                     }
                 }
-                
+                else
+                {
+                    if (_id > c._id)
+                    {
+                        Debug.Log("Destroying duplicate. Id: " + _id);
+                        DestroyImmediate(this.gameObject);
+                        return;
+                    }
+                }
             }
         }
     }
