@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using PFW.Units.Component.OrderQueue;
 using UnityEngine;
 
 namespace PFW.Units.Component.Movement
@@ -19,7 +20,7 @@ namespace PFW.Units.Component.Movement
     {
         int EstimateTravelTime(Vector3 start, Vector3 dest);
 
-        void ApplyMovement(MoveOrder w, Time deltaTime);
+        void ApplyMovement(OrderData w, Time deltaTime);
         // void EnqueueWaypoint(Vector3 dest);
         // void EnqueueWaypointReverse(Vector3 dest);
     }

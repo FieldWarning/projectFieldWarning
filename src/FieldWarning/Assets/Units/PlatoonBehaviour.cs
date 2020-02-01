@@ -179,7 +179,7 @@ namespace PFW.Units
 
         public void SendFirePosOrder(Vector3 position, bool enqueue = false)
         {
-            OrderQueue.SendOrder(new FirePositionOrder(position, this), enqueue);
+            OrderQueue.SendOrder(OrderData.FirePositionOrder(this, position), enqueue);
         }
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace PFW.Units
             MoveCommandType mode = MoveCommandType.NORMAL,
             bool enqueue = false)
         {
-            MoveOrder order = new MoveOrder(this, destination, heading, mode);
+            var order = OrderData.MoveOrder(this, destination, heading, mode);
             OrderQueue.SendOrder(order, enqueue);
         }
 
