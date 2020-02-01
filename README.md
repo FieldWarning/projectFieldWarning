@@ -1,6 +1,6 @@
 # Project: Field Warning
 Project: Field Warning is a community-made RTS game centered around squad and company-scale warfare.
-We are currently on Unity version **2018.3.6**.
+We are currently on Unity version **2019.3.0**.
 
 ## Downloading and Installing
 **We recommend using [GitHub Desktop](https://desktop.github.com) to download**;

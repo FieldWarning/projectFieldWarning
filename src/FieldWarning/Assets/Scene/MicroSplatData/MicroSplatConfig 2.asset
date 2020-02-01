@@ -17,7 +17,7 @@ MonoBehaviour:
   textureMode: 1
   clusterMode: 0
   packingMode: 0
-  hash: -361577472
+  hash: -117685248
   diffuseArray: {fileID: 18700000, guid: d5bdefaf3f87e7646a0f01f6e6ddf7f6, type: 2}
   normalSAOArray: {fileID: 18700000, guid: b4feeffda20783a4c862ef80b16cf4d7, type: 2}
   smoothAOArray: {fileID: 0}
