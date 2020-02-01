@@ -28,8 +28,7 @@ namespace PFW.UI.Ingame.UnitLabel
         {
             var overlayPrefab = Resources.Load<GameObject>("WaypointOverlay");
 
-            var waypointOverlayBehavior = Object.Instantiate(
-                    overlayPrefab, Vector3.zero, Quaternion.identity)
+            var waypointOverlayBehavior = Object.Instantiate(overlayPrefab, Vector3.zero, Quaternion.identity)
                 .GetComponent<WaypointOverlayBehavior>();
 
             waypointOverlayBehavior.Initialize(pb);
