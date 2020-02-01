@@ -129,32 +129,36 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void Awake()
     {
+        // NOTE: becareful when accessing terrain data here as there is a duplicate from when the scene loads.
+        // This duplicate terrain eventually deletes itself when it realizes its a duplicate.. but it maybe too late from
+        // this AWAKE. Therefore; I moved the accessing of Terrain to Start.
+    }
+
+    private void Start()
+    {
         List<MicroSplatTerrain> splatList = new List<MicroSplatTerrain>();
 
-        foreach (Terrain terrain in GameObject.FindObjectsOfType<Terrain>()) 
+        foreach (Terrain terrain in GameObject.FindObjectsOfType<Terrain>())
         {
             splatList.AddRange(terrain.GetComponents<MicroSplatTerrain>());
         }
 
-        if (splatList.Count > 0) 
+        if (splatList.Count > 0)
         {
             _microSplatTerrains = splatList.ToArray();
-        } 
-        else 
+        }
+        else
         {
             throw new Exception("Camera not set up correctly, microsplat reference missing!");
         }
 
-        if (_terrainMaterials == null || _terrainMaterials.Count == 0) 
+        if (_terrainMaterials == null || _terrainMaterials.Count == 0)
         {
             throw new Exception("Camera not set up correctly, terrain materials missing!");
         }
 
         _cam = GetComponent<Camera>();
-    }
 
-    private void Start()
-    {
         _rotateX = transform.eulerAngles.x;
         _rotateY = transform.eulerAngles.y;
         _targetPosition = transform.position;

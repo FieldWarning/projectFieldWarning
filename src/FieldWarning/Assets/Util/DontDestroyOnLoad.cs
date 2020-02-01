@@ -21,8 +21,7 @@ namespace PFW.Loading
     /// </summary>
     public class DontDestroyOnLoad : MonoBehaviour
     {
-        // used to keep track of duplicates
-        // New objects have a lower id
+        // used to keep track of what to keep
         public int Id = 0;
 
         // For duplicates, we erase ourselves if we are the old duplicate and
@@ -34,35 +33,43 @@ namespace PFW.Loading
         {
             DontDestroyOnLoad(this.gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
+        {
+            Id++;
 
             // checks to see if there are other objects that identically named but have different id's...
             // those are duplicates... remove them.
             var components = FindObjectsOfType<DontDestroyOnLoad>();
             foreach (var c in components)
             {
-                
-                // we are checking to make sure there indeed is a duplicate named object
-                if (c.gameObject.name == gameObject.name)
+
+                // we are checking to make sure there indeed is a duplicate named object but not ourselves
+                if (c.gameObject.name != gameObject.name || Id == c.Id)
                 {
-                    // This determines if we should keep the new or old duplicate
-                    if (KeepNewer && Id > c.Id)
-                    {
-                        DestroyImmediate(this.gameObject);
-                        
-                    }
-                    else if (!KeepNewer && Id < c.Id)
-                    {
-                        DestroyImmediate(this.gameObject);
-                    }
-
-                    return;
+                    continue;
                 }
-            }
-        }
 
-        private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
-        {
-            Id++;
+                if (!KeepNewer)
+                {
+                    if (Id < c.Id)
+                    {
+                        Debug.Log("Destroying duplicate. Id: " + Id);
+                        DestroyImmediate(this.gameObject);
+                        return;
+                    }
+                } else
+                {
+                    if (Id > c.Id)
+                    {
+                        Debug.Log("Destroying duplicate. Id: " + Id);
+                        DestroyImmediate(this.gameObject);
+                        return;
+                    }
+                }
+                
+            }
         }
     }
 }
