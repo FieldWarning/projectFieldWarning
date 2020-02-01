@@ -147,7 +147,10 @@ namespace PFW.Units.Component.Weapon
 
                 // If shooting at the ground, stop after the first shot:
                 if (shotFired && _target.IsGround)
+                {
                     _target = null;
+                    _turretComponent.SetTarget(null, _turretPriority);
+                }
 
             } else {
                 FindAndTargetClosestEnemy();
@@ -191,6 +194,8 @@ namespace PFW.Units.Component.Weapon
                 Logger.LogTargeting("Dropping a target because it is out of range.", gameObject);
             }
         }
+
+        public bool HasTarget => _target != null;
     }
 
     enum WeaponType

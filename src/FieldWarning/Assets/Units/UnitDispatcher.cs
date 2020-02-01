@@ -12,7 +12,7 @@
  */
 
 using System.Collections.Generic;
-
+using System.Linq;
 using UnityEngine;
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
@@ -124,6 +124,8 @@ namespace PFW.Units
             foreach (var targeter in _targetingComponents)
                 targeter.SetTarget(position);
         }
+
+        public bool HasTarget => _targetingComponents.All(tc => tc.HasTarget);
 
         /// <summary>
         /// Called when a unit enters or leaves the player's selection.

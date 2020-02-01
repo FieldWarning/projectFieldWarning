@@ -33,11 +33,7 @@ namespace PFW.UI.Ingame
     {
         private List<PlatoonBehaviour> _selection;
 
-        public bool Empty {
-            get {
-                return _selection.Count == 0;
-            }
-        }
+        public bool Empty => _selection.Count == 0;
 
         private Vector3 _mouseStart;
         private Vector3 _mouseEnd;
@@ -92,12 +88,14 @@ namespace PFW.UI.Ingame
 
         public void DispatchFirePosCommand()
         {
-            RaycastHit hit;
-            if (!Util.GetTerrainClickLocation(out hit))
+            if (!Util.GetTerrainClickLocation(out RaycastHit hit))
                 return;
 
+            bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
             foreach (var platoon in _selection)
-                platoon.SendFirePosOrder(hit.point);
+            {
+                platoon.SendFirePosOrder(hit.point, shouldQueue);
+            }
         }
 
         public void DispatchUnloadCommand()
@@ -123,27 +121,14 @@ namespace PFW.UI.Ingame
             if (Empty)
                 return;
 
-            List<Vector3> destinations = _selection.ConvertAll(
-                    x => x.GhostPlatoon.transform.position);
             bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
 
-            // Enqueue or set a destination:
-            if (shouldQueue)
-            {
-                _selection.ForEach(x => x.AddDestination(
-                        x.GhostPlatoon.transform.position,
-                        useGhostHeading ? 
-                                x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,
-                        moveMode));
-            }
-            else
-            {
-                _selection.ForEach(x => x.SetDestination(
-                        x.GhostPlatoon.transform.position,
-                        useGhostHeading ?
-                                x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,
-                        moveMode));
-            }
+            _selection.ForEach(x => x.SetDestination(
+                x.GhostPlatoon.transform.position,
+                useGhostHeading ? 
+                    x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,
+                moveMode,
+                shouldQueue));
 
             // A random platoon in selection plays the move command voice line
             int randInt = Random.Range(0, _selection.Count);
@@ -159,8 +144,7 @@ namespace PFW.UI.Ingame
         {
             // Work on a shallow copy, because the actual selection gets changed
             // every time a platoon in it is destroyed (split):
-            List<PlatoonBehaviour> selectionCopy =
-                new List<PlatoonBehaviour>(_selection);
+            List<PlatoonBehaviour> selectionCopy = new List<PlatoonBehaviour>(_selection);
 
             UnselectAll(_selection, false);
 

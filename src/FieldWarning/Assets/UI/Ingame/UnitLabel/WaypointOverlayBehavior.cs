@@ -11,66 +11,83 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using PFW.Units;
-using PFW.Units.Component.Movement;
 using System.Collections.Generic;
+using System.Linq;
+using PFW.Units;
+using PFW.Units.Component.OrderQueue;
 using UnityEngine;
 
-public class WaypointOverlayBehavior : MonoBehaviour
+namespace PFW.UI.Ingame.UnitLabel
 {
-
-    private PlatoonBehaviour _platoon;
-    
-    private LineRenderer _lineR;
-
-    public void Destroy()
+    public class WaypointOverlayBehavior : MonoBehaviour
     {
-        Destroy(gameObject);
-    }
+        private PlatoonBehaviour _platoon;
+        private LineRenderer _lineR;
 
-    // Update is called once per frame
-    private void Update()
-    {
-        if (_platoon.ActiveWaypoint == null)
+        public void Destroy()
         {
-            // TODO: should prob just set inactive...
-            _lineR.gameObject.SetActive(false);
-            return;
+            Destroy(gameObject);
         }
 
-        _lineR.gameObject.SetActive(true);
-
-        // +2 for the active waypoint and our self
-        _lineR.positionCount = _platoon.Waypoints.Count + 2;
-
-        _lineR.SetPosition(0, _platoon.transform.position);
-
-        // destination is normally dequeued so we need to get this separately from
-        // the rest of the waypoints
-        _lineR.SetPosition(1, _platoon.ActiveWaypoint.Destination);
-
-
-        int idx = 0;
-        foreach (MoveWaypoint wp in _platoon.Waypoints)
+        private void Update()
         {
-            // +2 for the destination and ourselves previously inserted into this line
-            _lineR.SetPosition(idx + 2, wp.Destination);
-            idx++;
+            List<OrderData> moveOrders = _platoon.OrderQueue.Orders
+                .Where(o => o.OrderType == OrderType.MOVE_ORDER)
+                .ToList();
+
+            int moveOrderCount = moveOrders.Count;
+
+            var activeOrder = _platoon.OrderQueue.ActiveOrder;
+            if (activeOrder?.OrderType == OrderType.MOVE_ORDER)
+            {
+                moveOrderCount++;
+            }
+
+            if (moveOrderCount == 0)
+            {
+                // TODO: should prob just set inactive...
+                _lineR.gameObject.SetActive(false);
+                return;
+            }
+
+            _lineR.gameObject.SetActive(true);
+
+
+            // +1 for current position (self)
+            _lineR.positionCount = moveOrderCount + 1;
+
+            _lineR.SetPosition(0, _platoon.transform.position);
+
+            int idx = 1;
+            // destination is normally dequeued so we need to get this separately from
+            // the rest of the waypoints
+            if (activeOrder?.OrderType == OrderType.MOVE_ORDER)
+            {
+                _lineR.SetPosition(1, activeOrder.TargetPosition);
+                idx++;
+            }
+
+            foreach (OrderData order in moveOrders)
+            {
+                // +2 for the destination and ourselves previously inserted into this line
+                _lineR.SetPosition(idx, order.TargetPosition);
+                idx++;
+            }
         }
-    }
 
-    public void Initialize(PlatoonBehaviour platoon)
-    {
-        _platoon = platoon;
+        public void Initialize(PlatoonBehaviour platoon)
+        {
+            _platoon = platoon;
 
-        _lineR = transform.Find("Line").GetComponent<LineRenderer>();
-        _lineR.startColor = Color.green;
-        _lineR.endColor = Color.green;
-        _lineR.useWorldSpace = true;
-        _lineR.sortingLayerName = "OnTop";
-        _lineR.sortingOrder = 20;
-        
-        _lineR.startWidth = 0.005f;
-        _lineR.endWidth = 0.10f;
+            _lineR = transform.Find("Line").GetComponent<LineRenderer>();
+            _lineR.startColor = Color.green;
+            _lineR.endColor = Color.green;
+            _lineR.useWorldSpace = true;
+            _lineR.sortingLayerName = "OnTop";
+            _lineR.sortingOrder = 20;
+
+            _lineR.startWidth = 0.005f;
+            _lineR.endWidth = 0.10f;
+        }
     }
 }

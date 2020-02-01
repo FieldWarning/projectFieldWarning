@@ -14,6 +14,7 @@
 using UnityEngine;
 
 using System;
+using PFW.Units.Component.OrderQueue;
 
 namespace PFW.Units.Component.Movement
 {
@@ -41,7 +42,7 @@ namespace PFW.Units.Component.Movement
         //    }
         //}
 
-        public void ApplyMovement(MoveWaypoint w, Time deltaTime)
+        public void ApplyMovement(OrderData w, Time deltaTime)
         {
             throw new NotImplementedException();
         }

@@ -13,14 +13,13 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using Mirror;
-
 using PFW.UI.Ingame;
 using PFW.Units.Component.Movement;
 using PFW.Model.Game;
-
 using PFW.Model.Armory;
+using PFW.UI.Ingame.UnitLabel;
+using PFW.Units.Component.OrderQueue;
 
 namespace PFW.Units
 {
@@ -28,9 +27,7 @@ namespace PFW.Units
     {
         public Unit Unit;
         public IconBehaviour Icon;
-        public MoveWaypoint ActiveWaypoint;
         public GhostPlatoonBehaviour GhostPlatoon;
-        public Queue<MoveWaypoint> Waypoints = new Queue<MoveWaypoint>();
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
         public bool IsInitialized = false;
 
@@ -40,6 +37,7 @@ namespace PFW.Units
 
         private WaypointOverlayBehavior _waypointOverlay;
 
+        public OrderQueue OrderQueue { get; } = new OrderQueue();
 
         public override bool OnSerialize(NetworkWriter writer, bool initialState)
         {
@@ -100,18 +98,7 @@ namespace PFW.Units
             Units.ForEach(x => pos += x.Transform.position);
             transform.position = pos / Units.Count;
 
-            if (ActiveWaypoint == null || ActiveWaypoint.OrderComplete()) 
-            {
-                if (Waypoints.Any())
-                {
-                    ActiveWaypoint = Waypoints.Dequeue();
-                    ActiveWaypoint.ProcessWaypoint();
-                } 
-                else 
-                {
-                    ActiveWaypoint = null;
-                }
-            }
+            OrderQueue.HandleUpdate();
         }
 
         // Call after creating an object of this class, pretend it is a constructor
@@ -120,7 +107,7 @@ namespace PFW.Units
             Unit = unit;
             Owner = owner;
             Icon.BaseColor = Owner.Team.Color;
-            _waypointOverlay = OverlayFactory.Instance().CreateWaypointOverlay(this);
+            _waypointOverlay = OverlayFactory.Instance.CreateWaypointOverlay(this);
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
         }
 
@@ -147,7 +134,8 @@ namespace PFW.Units
         // Only use from PlatoonRoot (the lifetime manager class for platoons)
         public void Spawn(Vector3 spawnCenter)
         {
-            Units.ForEach(x => {
+            Units.ForEach(x =>
+            {
                 x.GameObject.SetActive(true);
                 //Networking.CommandConnection.Connection.CmdSpawnObject(x.GameObject);
             });
@@ -159,11 +147,11 @@ namespace PFW.Units
             transform.position = spawnCenter;
 
             List<Vector3> positions = Formations.GetLineFormation(
-                    spawnCenter, GhostPlatoon.FinalHeading, Units.Count);
+                spawnCenter, GhostPlatoon.FinalHeading, Units.Count);
             Units.ForEach(u => u.WakeUp());
             for (int i = 0; i < Units.Count; i++)
                 Units[i].Teleport(
-                        positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
+                    positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
             SetDestination(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
             GhostPlatoon.SetVisible(false);
@@ -189,10 +177,9 @@ namespace PFW.Units
             _waypointOverlay.gameObject.SetActive(enabled);
         }
 
-        public void SendFirePosOrder(Vector3 position)
+        public void SendFirePosOrder(Vector3 position, bool enqueue = false)
         {
-            Units.ForEach(u => u.SendFirePosOrder(position));
-            PlayAttackCommandVoiceline();
+            OrderQueue.SendOrder(OrderData.FirePositionOrder(this, position), enqueue);
         }
 
         /// <summary>
@@ -222,30 +209,21 @@ namespace PFW.Units
         }
 
         #region Movement
-        // Set the destination of the platoon, overwriting any previous move target.
+
         public void SetDestination(
-                Vector3 destination, 
-                float heading = MovementComponent.NO_HEADING,
-                MoveCommandType mode = MoveCommandType.NORMAL)
+            Vector3 destination,
+            float heading = MovementComponent.NO_HEADING,
+            MoveCommandType mode = MoveCommandType.NORMAL,
+            bool enqueue = false)
         {
-            MoveWaypoint waypoint = new MoveWaypoint(this, destination, heading, mode);
-            Waypoints.Clear();
-            ActiveWaypoint = null;
-            Waypoints.Enqueue(waypoint);
+            var order = OrderData.MoveOrder(this, destination, heading, mode);
+            OrderQueue.SendOrder(order, enqueue);
         }
 
-        // Add a destination for the platoon, appending to any existing move orders.
-        public void AddDestination(
-                Vector3 destination, 
-                float heading = MovementComponent.NO_HEADING,
-                MoveCommandType mode = MoveCommandType.NORMAL)
-        {
-            MoveWaypoint waypoint = new MoveWaypoint(this, destination, heading, mode);
-            Waypoints.Enqueue(waypoint);
-        }
         #endregion
 
         #region PlayVoicelines
+
         // For the time being, always play the voiceline of the first unit
         // Until we agree on a default unit in platoon that plays
         public void PlaySelectionVoiceline()
@@ -262,6 +240,7 @@ namespace PFW.Units
         {
             Units[0].PlayAttackCommandVoiceline();
         }
+
         #endregion
     }
 }

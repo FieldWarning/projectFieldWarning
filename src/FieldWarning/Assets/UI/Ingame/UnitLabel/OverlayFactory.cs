@@ -14,36 +14,26 @@
 using PFW.Units;
 using UnityEngine;
 
-public class OverlayFactory
+namespace PFW.UI.Ingame.UnitLabel
 {
-    private static OverlayFactory instance; // Needed
-
-    private OverlayFactory()
-    { 
-        instance = this;
-    }
-
-    public static OverlayFactory Instance()
+    public sealed class OverlayFactory
     {
-        if (instance == null)
+        private OverlayFactory()
         {
-            instance = new OverlayFactory();
         }
 
-        return instance;
-    }
+        public static OverlayFactory Instance { get; } = new OverlayFactory();
 
-    public WaypointOverlayBehavior CreateWaypointOverlay(PlatoonBehaviour pb)
-    {
-        var overlayPrefab = Resources.Load<GameObject>("WaypointOverlay");
+        public WaypointOverlayBehavior CreateWaypointOverlay(PlatoonBehaviour pb)
+        {
+            var overlayPrefab = Resources.Load<GameObject>("WaypointOverlay");
 
-        var waypointOverlayBehavior = 
-            Object.Instantiate(overlayPrefab, Vector3.zero, Quaternion.identity).
-                GetComponent<WaypointOverlayBehavior>();
+            var waypointOverlayBehavior = Object.Instantiate(overlayPrefab, Vector3.zero, Quaternion.identity)
+                .GetComponent<WaypointOverlayBehavior>();
 
-        waypointOverlayBehavior.Initialize(pb);
+            waypointOverlayBehavior.Initialize(pb);
 
-        return waypointOverlayBehavior;
-
+            return waypointOverlayBehavior;
+        }
     }
 }
