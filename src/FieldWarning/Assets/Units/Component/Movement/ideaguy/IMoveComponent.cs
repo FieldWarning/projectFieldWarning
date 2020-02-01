@@ -19,7 +19,7 @@ namespace PFW.Units.Component.Movement
     {
         int EstimateTravelTime(Vector3 start, Vector3 dest);
 
-        void ApplyMovement(MoveWaypoint w, Time deltaTime);
+        void ApplyMovement(MoveOrder w, Time deltaTime);
         // void EnqueueWaypoint(Vector3 dest);
         // void EnqueueWaypointReverse(Vector3 dest);
     }

@@ -21,6 +21,7 @@ namespace PFW.Units.Component.Health
     public class HealthComponent : MonoBehaviour
     {
         public float Health { get; private set; }
+
         private PlatoonBehaviour _platoon;
         private UnitDispatcher _dispatcher;
         private TargetTuple _targetTuple;

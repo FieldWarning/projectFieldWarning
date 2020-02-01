@@ -41,7 +41,7 @@ namespace PFW.Units.Component.Movement
         //    }
         //}
 
-        public void ApplyMovement(MoveWaypoint w, Time deltaTime)
+        public void ApplyMovement(MoveOrder w, Time deltaTime)
         {
             throw new NotImplementedException();
         }

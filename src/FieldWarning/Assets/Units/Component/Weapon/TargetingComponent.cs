@@ -191,6 +191,8 @@ namespace PFW.Units.Component.Weapon
                 Logger.LogTargeting("Dropping a target because it is out of range.", gameObject);
             }
         }
+
+        public bool HasTarget => _target != null;
     }
 
     enum WeaponType
