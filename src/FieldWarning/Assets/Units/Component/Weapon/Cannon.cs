@@ -14,8 +14,6 @@
 using System;
 using UnityEngine;
 
-using PFW.Units.Component.Movement;
-
 namespace PFW.Units.Component.Weapon
 {
     /// <summary>
@@ -28,9 +26,10 @@ namespace PFW.Units.Component.Weapon
         private AudioSource _source { get; }
 
         // TODO Should aim to make actual objects fire and not effects:
-        private ParticleSystem _shotEffect;
-        private AudioClip _shotSound;
-        private float _shotVolume;
+        private readonly ParticleSystem _shotEffect;
+        private readonly AudioClip _shotSound;
+        private readonly ParticleSystem _muzzleFlashEffect;
+        private readonly float _shotVolume;
         private static System.Random _random;
 
         public Cannon(
@@ -38,12 +37,14 @@ namespace PFW.Units.Component.Weapon
             AudioSource source,
             ParticleSystem shotEffect,
             AudioClip shotSound,
+            ParticleSystem muzzleFlashEffect,
             float shotVolume = 1.0f)
         {
             _data = data;
             _source = source;
             _shotEffect = shotEffect;
             _shotSound = shotSound;
+            _muzzleFlashEffect = muzzleFlashEffect;
             _shotVolume = shotVolume;
             _random = new System.Random(Environment.TickCount);
         }
@@ -54,6 +55,11 @@ namespace PFW.Units.Component.Weapon
             _source.PlayOneShot(_shotSound, _shotVolume);
             // particle
             _shotEffect.Play();
+
+            if (_muzzleFlashEffect != null)
+            {
+                _muzzleFlashEffect.Play();
+            }
 
             if (target.IsUnit) {
                 float roll = _random.NextFloat(0.0, 100.0);

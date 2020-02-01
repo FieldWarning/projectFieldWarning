@@ -16,18 +16,18 @@ using UnityEngine;
 namespace PFW.Units.Component.Weapon
 {
     /// <summary>
-    /// Classes implementing this interface implement firing logic,
-    /// including audio/visual effects and calling damage callbacks.
+    ///     Classes implementing this interface implement firing logic,
+    ///     including audio/visual effects and calling damage callbacks.
     /// </summary>
     public interface IWeapon
     {
         /// <summary>
-        /// Fire on the provided target if the weapon is not reloading etc.
+        ///     Fire on the provided target if the weapon is not reloading etc.
         /// </summary>
         /// <param name="target"></param>
         /// <param name="deltaTime">Time since the last invocation.</param>
         /// <param name="displacement">Distance from the firing unit to the target unit</param>
         /// <returns>True if a shot was fired, false otherwise.</returns>
-        bool TryShoot(TargetTuple target, float deltatime, Vector3 displacement);
+        bool TryShoot(TargetTuple target, float deltaTime, Vector3 displacement);
     }
 }
