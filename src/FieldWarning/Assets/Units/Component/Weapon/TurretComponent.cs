@@ -11,6 +11,7 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -69,7 +70,11 @@ namespace PFW.Units.Component.Weapon
         private void Update()
         {
             if (_target == null || !_target.Exists)
+            {
+                TurnTurretBackToDefaultPosition();
+                IsFacingTarget = _isHowitzer;
                 return;
+            }
 
             bool aimed = false;
             float targetHorizontalAngle = 0f;
@@ -98,9 +103,9 @@ namespace PFW.Units.Component.Weapon
                 }
             }
 
+            float turn = Time.deltaTime * RotationRate;
             float horizontalAngle = _turret.localEulerAngles.y;
             float verticalAngle = _turret.localEulerAngles.x;
-            float turn = Time.deltaTime * RotationRate;
             float deltaAngle;
 
             deltaAngle = (targetHorizontalAngle - horizontalAngle).unwrapDegree();
@@ -132,6 +137,38 @@ namespace PFW.Units.Component.Weapon
             if (_isHowitzer)
                 IsFacingTarget = true;
             #endregion
+        }
+
+        private void TurnTurretBackToDefaultPosition()
+        {
+            float turn = Time.deltaTime * RotationRate;
+            Vector3 localEulerAngles = _turret.localEulerAngles;
+
+            float targetHorizontalAngle = 0f;
+            float targetVerticalAngle = 0f;
+            float horizontalAngle = localEulerAngles.y;
+            float verticalAngle = localEulerAngles.x;
+
+            if (Math.Abs(horizontalAngle) < 0.1f && Math.Abs(verticalAngle) < 0.1f)
+                return;
+            
+            float deltaAngle;
+
+            deltaAngle = (targetHorizontalAngle - horizontalAngle).unwrapDegree();
+            if (Mathf.Abs(deltaAngle) > turn) {
+                horizontalAngle += (deltaAngle > 0 ? 1 : -1) * turn;
+            } else {
+                horizontalAngle = targetHorizontalAngle;
+            }
+
+            deltaAngle = (targetVerticalAngle - verticalAngle).unwrapDegree();
+            if (Mathf.Abs(deltaAngle) > turn) {
+                verticalAngle += (deltaAngle > 0 ? 1 : -1) * turn;
+            } else {
+                verticalAngle = targetVerticalAngle;
+            }
+            
+            _turret.localEulerAngles = new Vector3(verticalAngle, horizontalAngle, 0);
         }
 
         public void WakeUp()
