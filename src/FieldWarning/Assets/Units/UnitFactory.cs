@@ -14,14 +14,38 @@ using UnityEngine;
 
 using PFW.Model.Armory;
 using PFW.Units;
+using PFW.Units.Component.Armor;
+using PFW.Units.Component.Data;
+using PFW.Units.Component.Health;
+using PFW.Units.Component.Vision;
+using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Prototype
 {
     public class UnitFactory
     {
+        /// <summary>
+        ///     After a unit is spawned in a basic state that mirror
+        ///     can transmit, augment it with 'art'
+        ///     (aka non-networking components) based on the config.
+        ///     This can't be done before spawning the unit as prefabs
+        ///     have to be avaialble at compile time for 
+        ///     Mirror to be able to spawn them.
+        ///     Assumption: The config is the same for all clients.
+        /// </summary>
         public void MakeUnit(Unit armoryUnit, GameObject unit, PlatoonBehaviour platoon)
         {
-            armoryUnit.Augment(unit, false);
+            MakeUnitCommon(unit, armoryUnit.Config);
+
+            unit.AddComponent<VisionComponent>();
+            unit.AddComponent<HealthComponent>();
+            unit.AddComponent<ArmorComponent>();
+
+            // TODO: Load different voice type depending on Owner country
+            GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
+            GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
+            voiceGo.name = "VoiceComponent";
+
             Color minimapColor = platoon.Owner.Team.Color;
             AddMinimapIcon(unit, minimapColor);
 
@@ -33,7 +57,11 @@ namespace PFW.UI.Prototype
 
         public void MakeGhostUnit(Unit armoryUnit, GameObject unit)
         {
-            armoryUnit.Augment(unit, true);
+            MakeUnitCommon(unit, armoryUnit.Config);
+
+            UnitDispatcher unitDispatcher = unit.GetComponent<UnitDispatcher>();
+            Object.Destroy(unitDispatcher);
+
             unit.SetActive(true);
             unit.name = "Ghost" + unit.name;
 
@@ -50,6 +78,24 @@ namespace PFW.UI.Prototype
             minimapIcon.transform.parent = unit.transform;
             // The icon is placed slightly above ground to prevent flickering
             minimapIcon.transform.localPosition = new Vector3(0,0.01f,0);
+        }
+
+        /// <summary>
+        ///     Unit initialization shared by both real units and their ghosts.
+        /// </summary>
+        /// <param name="freshUnit"></param>
+        /// <param name="config"></param>
+        private static void MakeUnitCommon(GameObject freshUnit, UnitConfig config)
+        {
+            freshUnit.name = config.Name;
+            freshUnit.SetActive(false);
+
+            DataComponent.CreateDataComponent(freshUnit, config.Data, config.Mobility);
+
+            // freshUnit.AddComponent<UnitDispatcher>().enabled = false;
+            // freshUnit.AddComponent<MovementComponent>().enabled = false;
+            freshUnit.AddComponent<SelectableBehavior>();
+            // prototype.AddComponent<NetworkIdentity>();
         }
     }
 }
