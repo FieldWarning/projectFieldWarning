@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -31,9 +31,9 @@ namespace PFW.Loading
 
             Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
 
-            foreach(Terrain t in terrains)
+            foreach (Terrain terrain in terrains)
             {
-                MicroSplatTerrain msTerrain =  Terrain.FindObjectOfType<MicroSplatTerrain>();
+                MicroSplatTerrain msTerrain = terrain.GetComponent<MicroSplatTerrain>();
                 msTerrain.Sync();
             }
 
