@@ -65,20 +65,27 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         [SerializeField]
         private int _turretPriority = 0;
+
         // Where the shell spawns:
         [SerializeField]
         private Transform _shotStarterPosition = null;
+
         // TODO Should aim to make actual objects fire and not effects:
         [SerializeField]
         private ParticleSystem _shotEffect = null;
+
         [SerializeField]
         private AudioClip _shotSound = null;
+
         [SerializeField]
         private float _shotVolume = 1.0F;
 
         // TODO remove, only used for initialization which should not be done here
         [SerializeField]
         private WeaponType _weaponType = WeaponType.CANNON;
+
+        [SerializeField]
+        private ParticleSystem _muzzleFlashEffect = null;
         // ---------------- END PREFAB -----------------
 
         private void Awake()
@@ -93,7 +100,12 @@ namespace PFW.Units.Component.Weapon
             // TODO remove:
             if (_weaponType == WeaponType.CANNON)
                 _weapon = new Cannon(
-                        _data, _audioSource, _shotEffect, _shotSound, _shotVolume);
+                        _data,
+                        _audioSource,
+                        _shotEffect,
+                        _shotSound,
+                        _muzzleFlashEffect,
+                        _shotVolume);
             else if (_weaponType == WeaponType.HOWITZER)
                 _weapon = new Howitzer(
                         _data,
