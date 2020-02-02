@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -31,11 +31,14 @@ namespace PFW.Model.Armory
     {
         // Identifies which category the unit is in.
         public byte CategoryId;
-        // Unique for a deck+category pair, should match the index in the unit list.
+        // Unique for a deck+category pair, 
+        // should match the index in the unit list.
         public int Id;
 
         public string Name { get; }
         public int Price { get; }
+
+        private readonly UnitConfig _config;
 
         //[Tooltip("The gameobject this will be cloned from.")]
         public GameObject Prefab { get; }
@@ -44,7 +47,17 @@ namespace PFW.Model.Armory
         {
             Name = config.Name;
             Price = config.Price;
-            Prefab = UnitFitter.CreatePrefab(config);
+            Prefab = Resources.Load<GameObject>(config.PrefabPath);
+            _config = config;
         }
+
+        /// <summary>
+        ///     After a unit is spawned in a basic state that mirror
+        ///     can transmit, augment it with 'art'
+        ///     (aka non-networking components) based on the config.
+        ///     Assumption: The config is the same for all clients.
+        /// </summary>
+        public void Augment(GameObject gameObject, bool isGhost) =>
+                UnitFitter.Augment(gameObject, _config, isGhost);
     }
 }

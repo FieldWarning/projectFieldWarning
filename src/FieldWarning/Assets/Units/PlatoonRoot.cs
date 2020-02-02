@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -12,6 +12,7 @@
  */
 
 
+using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
@@ -32,9 +33,13 @@ namespace PFW.Units
         [SerializeField]
         private PlatoonBehaviour _realPlatoon = null;
 
-        // Establish references to the platoon objects after spawning, on non-owners
+        /// <summary>
+        ///     After all units are spawned by the server, call this to get the
+        ///     clients to associate their platoon object to its units and ghost.
+        /// </summary>
         [ClientRpc]
-        public void RpcEstablishReferences(uint realPlatoonNetId, uint ghostPlatoonNetId) 
+        public void RpcEstablishReferences(
+                uint realPlatoonNetId, uint ghostPlatoonNetId, uint[] unitNetIds) 
         {
             NetworkIdentity identity;
             if (NetworkIdentity.spawned.TryGetValue(ghostPlatoonNetId, out identity))
@@ -45,6 +50,18 @@ namespace PFW.Units
             {
                 _realPlatoon = identity.gameObject.GetComponent<PlatoonBehaviour>();
                 _realPlatoon.GhostPlatoon = _ghostPlatoon;
+            }
+
+            // Also find, augment and link to the units:
+            foreach (uint unitNetId in unitNetIds) 
+            {
+                if (NetworkIdentity.spawned.TryGetValue(unitNetId, out identity)) 
+                {
+                    UnitDispatcher unit = identity.GetComponent<UnitDispatcher>();
+                    MatchSession.Current.Factory.MakeUnit(
+                        _realPlatoon.Unit, unit.gameObject, _realPlatoon);
+                    AddSingleExistingUnit(unit);
+                }
             }
         }
 
@@ -102,12 +119,6 @@ namespace PFW.Units
             Destroy(gameObject);
         }
 
-        [ClientRpc]  // TODO remove and spawn the units on the server to sync them
-        public void RpcAddSingleUnit()
-        {
-            AddSingleUnit();
-        }
-
         // Meant for a platoon still in ghost mode: Spawn() should be called to activate the units
         public void AddSingleUnit()
         {
@@ -115,7 +126,11 @@ namespace PFW.Units
             _realPlatoon.AddSingleUnit();
         }
 
-        // Meant to put already existing units into the platoon (when merging or splitting platoons)
+        /// <summary>
+        ///     Meant to put already existing units into the platoon
+        ///     (such as when merging or splitting platoons).
+        /// </summary>
+        /// <param name="realUnit"></param>
         private void AddSingleExistingUnit(UnitDispatcher realUnit)
         {
             _ghostPlatoon.AddSingleUnit();

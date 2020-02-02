@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -51,12 +51,11 @@ namespace PFW.Networking
             ChatManager.UpdateMessageText(msg);
         }
 
-        // Spawn an object for all network participants.
-        // NetworkServer.Spawn() can only be called by objects with authority, e.g. this one
         [Command]
-        public void CmdSpawnObject(GameObject go)
+        public void CmdSpawnUnit() 
         {
-            NetworkServer.Spawn(go);
+            // TODO
+            return;
         }
 
         [Command]
@@ -98,12 +97,16 @@ namespace PFW.Networking
                     NetworkServer.Spawn(ghostPlatoon.gameObject);
                     NetworkServer.Spawn(realPlatoon.gameObject);
                     NetworkServer.Spawn(go);
-                    root.RpcEstablishReferences(realPlatoon.netId, ghostPlatoon.netId);
 
+                    uint[] unitIds = new uint[unitCount];
                     for (int i = 0; i < unitCount; i++)
                     {
-                        root.RpcAddSingleUnit();
+                        realPlatoon.AddSingleUnit();
+                        NetworkServer.Spawn(realPlatoon.Units[i].gameObject);
+                        unitIds[i] = realPlatoon.Units[i].GetComponent<NetworkIdentity>().netId;
                     }
+
+                    root.RpcEstablishReferences(realPlatoon.netId, ghostPlatoon.netId, unitIds);
 
                     ghostPlatoon.RpcSetOrientation(destinationCenter, destinationHeading);
 

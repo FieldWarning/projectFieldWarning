@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -114,20 +114,17 @@ namespace PFW.Units
         // Create an inactive unit (to be activated when Spawn() is called)
         public void AddSingleUnit()
         {
-            var unitInstance = MatchSession.Current.Factory.MakeUnit(
-                    Unit.Prefab, Owner.Team.Color);
-            //Networking.CommandConnection.Connection.CmdSpawnObject(unitInstance);
+            GameObject unit = Instantiate(Unit.Prefab);
+            MatchSession.Current.Factory.MakeUnit(
+                    Unit, unit, this);
 
-            var collider = unitInstance.GetComponentInChildren<BoxCollider>();
+            BoxCollider collider =
+                    unit.GetComponentInChildren<BoxCollider>();
 
-            unitInstance.SetActive(false);
+            unit.SetActive(false);
             collider.enabled = true;
 
-            // TODO perhaps add in UnitFitter as all other components
-            UnitDispatcher unit = unitInstance.GetComponent<UnitDispatcher>();
-            unit.Initialize(this);
-            unit.enabled = true;
-            Units.Add(unit);
+            Units.Add(unit.GetComponent<UnitDispatcher>());
         }
 
         // Activates all units, moving from ghost/preview mode to a real platoon

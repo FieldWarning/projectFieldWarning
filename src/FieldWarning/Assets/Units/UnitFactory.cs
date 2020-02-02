@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -12,36 +12,40 @@
 */
 using UnityEngine;
 
-using PFW.Units.Component.Movement;
+using PFW.Model.Armory;
+using PFW.Units;
 
 namespace PFW.UI.Prototype
 {
     public class UnitFactory
     {
-        public GameObject MakeUnit(GameObject prefab, Color minimapColor)
+        public void MakeUnit(Unit armoryUnit, GameObject unit, PlatoonBehaviour platoon)
         {
-            GameObject unit = Object.Instantiate(prefab);
+            armoryUnit.Augment(unit, false);
+            Color minimapColor = platoon.Owner.Team.Color;
             AddMinimapIcon(unit, minimapColor);
 
-            return unit;
+            UnitDispatcher unitDispatcher =
+                    unit.GetComponent<UnitDispatcher>();
+            unitDispatcher.Initialize(platoon);
+            unitDispatcher.enabled = true;
         }
 
-        public GameObject MakeGhostUnit(GameObject prefab)
+        public void MakeGhostUnit(Unit armoryUnit, GameObject unit)
         {
-            GameObject unit = Object.Instantiate(prefab);
+            armoryUnit.Augment(unit, true);
             unit.SetActive(true);
             unit.name = "Ghost" + unit.name;
 
             Shader shader = Resources.Load<Shader>("Ghost");
             unit.ApplyShaderRecursively(shader);
             unit.transform.position = 100 * Vector3.down;
-
-            return unit;
         }
 
         private void AddMinimapIcon(GameObject unit, Color minimapColor)
         {
-            var minimapIcon = GameObject.Instantiate(Resources.Load<GameObject>("MiniMapIcon"));
+            GameObject minimapIcon = Object.Instantiate(
+                    Resources.Load<GameObject>("MiniMapIcon"));
             minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
             minimapIcon.transform.parent = unit.transform;
             // The icon is placed slightly above ground to prevent flickering

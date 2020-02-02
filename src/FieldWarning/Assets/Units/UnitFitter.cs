@@ -14,57 +14,53 @@
 using UnityEngine;
 
 using PFW.Model.Armory;
-using PFW.Units.Component.Data;
-using PFW.Units.Component.Movement;
-using PFW.Units.Component.Vision;
-using PFW.Units.Component.Health;
 using PFW.Units.Component.Armor;
+using PFW.Units.Component.Data;
+using PFW.Units.Component.Health;
+using PFW.Units.Component.Vision;
+using PFW.Units.Component.Movement;
+
 
 namespace PFW.Units
 {
     public static class UnitFitter
     {
-        static GameObject prototypeRoot;
-
         /// <summary>
-        /// Builds up a unit structure with appropriate components
-        /// based on the provided config.
+        ///     Builds up a unit structure with appropriate components
+        ///     based on the provided config.
+        ///     This can't be done before spawning the unit as prefabs
+        ///     have to be avaialble at compile time for 
+        ///     Mirror to be able to spawn them.
         /// </summary>
-        /// <param name="config"></param>
         /// <returns>A prefab that can be used to instantiate units.</returns>
-        public static GameObject CreatePrefab(UnitConfig config)
+        public static void Augment(GameObject freshUnit, UnitConfig config, bool isGhost)
         {
-            if (prototypeRoot == null)
-                prototypeRoot = new GameObject("Unit Prototypes");
+            freshUnit.name = config.Name;
+            freshUnit.SetActive(false);
 
-            //GameObject basePrefab = GameObject.Find("m1ax");
-            GameObject basePrefab = Resources.Load<GameObject>(config.PrefabPath);
-            GameObject prototype = GameObject.Instantiate(basePrefab, prototypeRoot.transform);
-            prototype.name = config.Name;
-            prototype.SetActive(false);
+            DataComponent.CreateDataComponent(freshUnit, config.Data, config.Mobility);
 
-            //prototype.AddComponent<NetworkIdentity>();
-            //networkManager.spawnPrefabs.Add(prototype);
+            // freshUnit.AddComponent<UnitDispatcher>().enabled = false;
+            // freshUnit.AddComponent<MovementComponent>().enabled = false;
+            freshUnit.AddComponent<SelectableBehavior>();
+            // prototype.AddComponent<NetworkIdentity>();
 
-            // TODO: if (isClient..)
-            //ClientScene.RegisterPrefab(prototype);
+            if (isGhost) 
+            {
+                UnitDispatcher unitDispatcher = freshUnit.GetComponent<UnitDispatcher>();
+                Object.Destroy(unitDispatcher);
+            } 
+            else
+            {
+                freshUnit.AddComponent<VisionComponent>();
+                freshUnit.AddComponent<HealthComponent>();
+                freshUnit.AddComponent<ArmorComponent>();
 
-            DataComponent.CreateDataComponent(prototype, config.Data, config.Mobility);
-
-            prototype.AddComponent<UnitDispatcher>().enabled = false;
-            prototype.AddComponent<MovementComponent>().enabled = false;
-            prototype.AddComponent<VisionComponent>();
-            prototype.AddComponent<HealthComponent>();
-            prototype.AddComponent<ArmorComponent>();
-            prototype.AddComponent<SelectableBehavior>();
-            //prototype.AddComponent<NetworkIdentity>();
-
-            // TODO: Load different voice type depending on Owner country
-            var voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
-            var voiceGo = GameObject.Instantiate(voicePrefab, prototype.transform);
-            voiceGo.name = "VoiceComponent";
-
-            return prototype;
+                // TODO: Load different voice type depending on Owner country
+                GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
+                GameObject voiceGo = Object.Instantiate(voicePrefab, freshUnit.transform);
+                voiceGo.name = "VoiceComponent";
+            }
         }
     }
 }

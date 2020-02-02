@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -55,8 +55,8 @@ namespace PFW.Units
         #endregion
 
         private MovementComponent _movementComponent;
-        public Transform Transform => _movementComponent.transform;
-        public GameObject GameObject => _movementComponent.gameObject;
+        public Transform Transform => transform;
+        public GameObject GameObject => gameObject;
 
         /// <summary>
         /// The target tuple for targeting this unit. Do NOT manually
@@ -64,7 +64,8 @@ namespace PFW.Units
         /// </summary>
         public TargetTuple TargetTuple { get; private set; }
 
-        // TODO: This is only held by this class as a way to get it to VisibilityManager. Figure out the best way to do that.
+        // TODO: This is only held by this class as a way to get it to 
+        //       VisibilityManager. Figure out the best way to do that.
         public VisionComponent VisionComponent;
 
         private DataComponent _unitData;
@@ -79,7 +80,8 @@ namespace PFW.Units
         {
             TargetTuple = new TargetTuple(this);
 
-            var selectableBehaviour = gameObject.GetComponent<SelectableBehavior>();
+            SelectableBehavior selectableBehaviour = 
+                    gameObject.GetComponent<SelectableBehavior>();
             selectableBehaviour.Platoon = platoon;
             Platoon = platoon;
 
@@ -93,9 +95,11 @@ namespace PFW.Units
             _armorComponent      = gameObject.GetComponent<ArmorComponent>();
             VisionComponent      = gameObject.GetComponent<VisionComponent>();
 
-            // Only used in this class, not really configurable, and no way to get a reference
-            // to it here if it's instantiated in the UnitFitter. I think it's fine to leave it here.
-            _selectionCircle = GameObject.Instantiate(
+            // Only used in this class, not really configurable,
+            // and no way to get a reference to it here if it's
+            // instantiated in the UnitFitter.
+            // I think it's fine to leave it here.
+            _selectionCircle = Instantiate(
                     Resources.Load<GameObject>("SelectionCircle"), Transform);
 
             _movementComponent.Initialize();
