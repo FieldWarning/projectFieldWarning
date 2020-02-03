@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -121,9 +121,8 @@ namespace PFW.Units
 
         public void AddSingleUnit()
         {
-            GameObject _unitPrefab = _unit.Prefab;
-            GameObject unit = MatchSession.Current.Factory.MakeGhostUnit(
-                    gameObject, _unitPrefab);
+            GameObject unit = Instantiate(_unit.Prefab);
+            MatchSession.Current.Factory.MakeGhostUnit(_unit, unit);
             unit.GetComponent<MovementComponent>().InitializeGhost(
                     MatchSession.Current.TerrainMap);
             _units.Add(unit);
@@ -161,15 +160,11 @@ namespace PFW.Units
                     renderer.enabled = vis;
                 }
             });
-
-            // FIXME: It looks like UnitLabelAttacher looks for a GameObject ("UIWrapper") that
-            //      no longer exists in the scene. Is this deprecated? Should it be removed?
-            // _units.ForEach(x => x.GetComponent<UnitLabelAttacher>().SetVisibility(vis));
         }
 
         public void Destroy()
         {
-            foreach (var u in _units)
+            foreach (GameObject u in _units)
                 Destroy(u);
 
             Destroy(gameObject);

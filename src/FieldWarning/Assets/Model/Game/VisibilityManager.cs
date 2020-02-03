@@ -24,7 +24,7 @@ public class VisibilityManager : MonoBehaviour
     // Old code:
     private static readonly float MAP_SIZE = 1000;
     private static readonly float MAX_VIEW_DISTANCE = 50;
-    private static readonly int REGIONS_COUNT = Mathf.CeilToInt(MAP_SIZE / MAX_VIEW_DISTANCE);
+    // private static readonly int REGIONS_COUNT = Mathf.CeilToInt(MAP_SIZE / MAX_VIEW_DISTANCE);
     public static readonly float MIN_VIEW_DISTANCE = 10;
 
     private void Update()

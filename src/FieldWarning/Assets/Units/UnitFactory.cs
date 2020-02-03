@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -12,42 +12,90 @@
 */
 using UnityEngine;
 
+using PFW.Model.Armory;
+using PFW.Units;
+using PFW.Units.Component.Armor;
+using PFW.Units.Component.Data;
+using PFW.Units.Component.Health;
+using PFW.Units.Component.Vision;
 using PFW.Units.Component.Movement;
 
 namespace PFW.UI.Prototype
 {
     public class UnitFactory
     {
-        public GameObject MakeUnit(GameObject parent, GameObject prefab, Color minimapColor)
+        /// <summary>
+        ///     After a unit is spawned in a basic state that mirror
+        ///     can transmit, augment it with 'art'
+        ///     (aka non-networking components) based on the config.
+        ///     This can't be done before spawning the unit as prefabs
+        ///     have to be avaialble at compile time for 
+        ///     Mirror to be able to spawn them.
+        ///     Assumption: The config is the same for all clients.
+        /// </summary>
+        public void MakeUnit(Unit armoryUnit, GameObject unit, PlatoonBehaviour platoon)
         {
-            GameObject unit = Object.Instantiate(prefab);
-            unit.transform.parent = parent.transform;
+            MakeUnitCommon(unit, armoryUnit.Config);
+
+            unit.AddComponent<VisionComponent>();
+            unit.AddComponent<HealthComponent>();
+            unit.AddComponent<ArmorComponent>();
+
+            // TODO: Load different voice type depending on Owner country
+            GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
+            GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
+            voiceGo.name = "VoiceComponent";
+
+            Color minimapColor = platoon.Owner.Team.Color;
             AddMinimapIcon(unit, minimapColor);
 
-            return unit;
+            UnitDispatcher unitDispatcher =
+                    unit.GetComponent<UnitDispatcher>();
+            unitDispatcher.Initialize(platoon);
+            unitDispatcher.enabled = true;
         }
 
-        public GameObject MakeGhostUnit(GameObject parent, GameObject prefab)
+        public void MakeGhostUnit(Unit armoryUnit, GameObject unit)
         {
-            GameObject unit = Object.Instantiate(prefab);
+            MakeUnitCommon(unit, armoryUnit.Config);
+
+            UnitDispatcher unitDispatcher = unit.GetComponent<UnitDispatcher>();
+            Object.Destroy(unitDispatcher);
+
             unit.SetActive(true);
-            unit.transform.parent = parent.transform;
-            unit.GetComponent<MovementComponent>().enabled = false;
+            unit.name = "Ghost" + unit.name;
 
             Shader shader = Resources.Load<Shader>("Ghost");
             unit.ApplyShaderRecursively(shader);
             unit.transform.position = 100 * Vector3.down;
-
-            return unit;
         }
 
         private void AddMinimapIcon(GameObject unit, Color minimapColor)
         {
-            var minimapIcon = GameObject.Instantiate(Resources.Load<GameObject>("MiniMapIcon"));
+            GameObject minimapIcon = Object.Instantiate(
+                    Resources.Load<GameObject>("MiniMapIcon"));
             minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
             minimapIcon.transform.parent = unit.transform;
             // The icon is placed slightly above ground to prevent flickering
             minimapIcon.transform.localPosition = new Vector3(0,0.01f,0);
+        }
+
+        /// <summary>
+        ///     Unit initialization shared by both real units and their ghosts.
+        /// </summary>
+        /// <param name="freshUnit"></param>
+        /// <param name="config"></param>
+        private static void MakeUnitCommon(GameObject freshUnit, UnitConfig config)
+        {
+            freshUnit.name = config.Name;
+            freshUnit.SetActive(false);
+
+            DataComponent.CreateDataComponent(freshUnit, config.Data, config.Mobility);
+
+            // freshUnit.AddComponent<UnitDispatcher>().enabled = false;
+            // freshUnit.AddComponent<MovementComponent>().enabled = false;
+            freshUnit.AddComponent<SelectableBehavior>();
+            // prototype.AddComponent<NetworkIdentity>();
         }
     }
 }
