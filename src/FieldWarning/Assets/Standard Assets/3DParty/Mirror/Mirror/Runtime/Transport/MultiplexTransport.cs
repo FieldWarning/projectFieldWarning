@@ -46,9 +46,9 @@ namespace Mirror
             // wire all the base transports to my events
             foreach (Transport transport in transports)
             {
-                transport.OnClientConnected.AddListener(OnClientConnected.Invoke );
+                transport.OnClientConnected.AddListener(OnClientConnected.Invoke);
                 transport.OnClientDataReceived.AddListener(OnClientDataReceived.Invoke);
-                transport.OnClientError.AddListener(OnClientError.Invoke );
+                transport.OnClientError.AddListener(OnClientError.Invoke);
                 transport.OnClientDisconnected.AddListener(OnClientDisconnected.Invoke);
             }
         }
@@ -161,6 +161,14 @@ namespace Mirror
                 });
             }
         }
+
+        // for now returns the first uri,
+        // should we return all available uris?
+        public override Uri ServerUri()
+        {
+            return transports[0].ServerUri();
+        }
+
 
         public override bool ServerActive()
         {
