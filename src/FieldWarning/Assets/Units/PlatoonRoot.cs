@@ -65,8 +65,13 @@ namespace PFW.Units
             }
         }
 
-        // Create a pair of platoon and ghost platoon with units, but don't
-        // activate any real units yet (only ghost mode).
+        /// <summary>
+        ///     Create a pair of platoon and ghost platoon with units, but don't
+        ///     activate any real units yet (only ghost mode).
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="owner"></param>
+        /// <returns></returns>
         public static PlatoonRoot CreateGhostMode(Unit unit, PlayerData owner)
         {
             GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
@@ -87,7 +92,10 @@ namespace PFW.Units
             return root;
         }
 
-        // Create the preview on the other clients and immediately activate it (see RpcSpawn)
+        /// <summary>
+        ///     Create the preview on the other clients and immediately activate it (see RpcSpawn)
+        /// </summary>
+        /// <param name="spawnPos"></param>
         public void Spawn(Vector3 spawnPos)
         {
             CommandConnection.Connection.CmdSpawnPlatoon(
@@ -102,8 +110,11 @@ namespace PFW.Units
             Destroy();
         }
 
-        // For a ghost mode platoon root, activate the real units also.
-        // Effectively spawns the platoon, turning it from a preview into a real one.
+        /// <summary>
+        ///     For a ghost mode platoon root, activate the real units also.
+        ///     Effectively spawns the platoon, turning it from a preview into a real one.
+        /// </summary>
+        /// <param name="spawnPos"></param>
         [ClientRpc]
         public void RpcSpawn(Vector3 spawnPos)
         {
@@ -119,7 +130,10 @@ namespace PFW.Units
             Destroy(gameObject);
         }
 
-        // Meant for a platoon still in ghost mode: Spawn() should be called to activate the units
+        /// <summary>
+        ///     Meant for a platoon still in ghost mode: Spawn() should be called 
+        ///     to activate the units
+        /// </summary>
         public void AddSingleUnit()
         {
             _ghostPlatoon.AddSingleUnit();
@@ -137,8 +151,10 @@ namespace PFW.Units
             _realPlatoon.Units.Add(realUnit);
         }
 
-        // Makes platoons of N units into N platoons of 1 unit
-        // TODO multiplayer
+        /// <summary>
+        ///     Makes platoons of N units into N platoons of 1 unit
+        ///     TODO multiplayer
+        /// </summary>
         public void Split()
         {
             while (_realPlatoon.Units.Count > 1) {
@@ -148,7 +164,8 @@ namespace PFW.Units
 
                 PlatoonRoot newPlatoon = CreateGhostMode(_realPlatoon.Unit, _realPlatoon.Owner);
                 newPlatoon.AddSingleExistingUnit(u);
-                // We aren't really spawning the units but binding them to the platoon and activating it:
+                // We aren't really spawning the units but binding them 
+                // to the platoon and activating it:
                 newPlatoon.Spawn(u.Transform.position);
             }
         }

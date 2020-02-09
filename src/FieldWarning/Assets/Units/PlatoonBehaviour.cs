@@ -101,7 +101,12 @@ namespace PFW.Units
             OrderQueue.HandleUpdate();
         }
 
-        // Call after creating an object of this class, pretend it is a constructor
+        /// <summary>
+        ///     Call after creating an object of this class, 
+        ///     pretend this is a constructor.
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="owner"></param>
         public void Initialize(Unit unit, PlayerData owner)
         {
             Unit = unit;
@@ -111,7 +116,9 @@ namespace PFW.Units
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
         }
 
-        // Create an inactive unit (to be activated when Spawn() is called)
+        /// <summary>
+        ///     Create an inactive unit (to be activated when Spawn() is called)
+        /// </summary>
         public void AddSingleUnit()
         {
             GameObject unit = Instantiate(Unit.Prefab);
@@ -127,8 +134,11 @@ namespace PFW.Units
             Units.Add(unit.GetComponent<UnitDispatcher>());
         }
 
-        // Activates all units, moving from ghost/preview mode to a real platoon
-        // Only use from PlatoonRoot (the lifetime manager class for platoons)
+        /// <summary>
+        ///     Activates all units, moving from ghost/preview mode to a real platoon
+        ///     Only use from PlatoonRoot (the lifetime manager class for platoons)
+        /// </summary>
+        /// <param name="spawnCenter"></param>
         public void Spawn(Vector3 spawnCenter)
         {
             Units.ForEach(x =>
@@ -156,9 +166,15 @@ namespace PFW.Units
             MatchSession.Current.RegisterPlatoonBirth(this);
         }
 
-        // Called when a platoon enters or leaves the player's selection.
-        // justPreviewing - true when the unit should be shaded as if selected, but the
-        //                  actual selected set has not been changed yet
+
+        /// <summary>
+        ///     Called when a platoon enters or leaves the player's selection.
+        /// </summary>
+        /// <param name="selected"></param>
+        /// <param name="justPreviewing"> 
+        ///     true when the unit should be shaded as if selected, but the
+        ///     actual selected set has not been changed yet
+        /// </param>
         public void SetSelected(bool selected, bool justPreviewing)
         {
             Icon?.SetSelected(selected);
@@ -180,7 +196,7 @@ namespace PFW.Units
         }
 
         /// <summary>
-        /// Destroy just the platoon object, without touching its units.
+        ///     Destroy just the platoon object, without touching its units.
         /// </summary>
         private void DestroyWithoutUnits()
         {
@@ -194,7 +210,22 @@ namespace PFW.Units
         }
 
         /// <summary>
-        /// Destroy the platoon and all units in it.
+        ///     Units call this to notify when they are destroyed.
+        /// </summary>
+        public void OnUnitDestroyed(UnitDispatcher unit)
+        {
+            Units.Remove(unit);
+            GhostPlatoon.RemoveOneGhostUnit();
+
+            if (Units.Count == 0)
+            {
+                Destroy(gameObject);
+                MatchSession.Current.RegisterPlatoonDeath(this);
+            }
+        }
+
+        /// <summary>
+        ///     Destroy the platoon and all units in it.
         /// </summary>
         public void Destroy()
         {

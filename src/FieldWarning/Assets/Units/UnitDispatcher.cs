@@ -184,16 +184,8 @@ namespace PFW.Units
 
             MatchSession.Current.RegisterUnitDeath(this);
 
-            Platoon.Units.Remove(this);
+            Platoon.OnUnitDestroyed(this);
             Destroy(gameObject);
-
-            Platoon.GhostPlatoon.RemoveOneGhostUnit();
-
-            if (Platoon.Units.Count == 0)
-            {
-                GameObject.Destroy(Platoon.gameObject);
-                MatchSession.Current.RegisterPlatoonDeath(Platoon);
-            }
         }
     }
 }

@@ -101,9 +101,12 @@ namespace PFW.Networking
                     uint[] unitIds = new uint[unitCount];
                     for (int i = 0; i < unitCount; i++)
                     {
-                        realPlatoon.AddSingleUnit();
-                        NetworkServer.Spawn(realPlatoon.Units[i].gameObject);
-                        unitIds[i] = realPlatoon.Units[i].GetComponent<NetworkIdentity>().netId;
+                        GameObject unitGO = Instantiate(unit.Prefab);
+                        // Any added unit initialization must be done in an RPC,
+                        // otherwise it won't show up on the clients!
+
+                        NetworkServer.Spawn(unitGO);
+                        unitIds[i] = unitGO.GetComponent<NetworkIdentity>().netId;
                     }
 
                     root.RpcEstablishReferences(realPlatoon.netId, ghostPlatoon.netId, unitIds);
