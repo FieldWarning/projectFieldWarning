@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -14,7 +14,6 @@
 using UnityEngine;
 
 using PFW.Model.Game;
-using PFW.Units.Component.Movement;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -47,7 +46,7 @@ namespace PFW.Units.Component.Weapon
             _turretComponent.SetTarget(_target, _turretPriority);
         }
 
-        private IWeapon _weapon { get; set; }
+        private IWeapon _weapon;
 
         // --------------- BEGIN PREFAB ----------------
         [SerializeField]
