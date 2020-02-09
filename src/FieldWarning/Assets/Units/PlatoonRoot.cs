@@ -12,7 +12,6 @@
  */
 
 
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
@@ -58,10 +57,22 @@ namespace PFW.Units
                 if (NetworkIdentity.spawned.TryGetValue(unitNetId, out identity)) 
                 {
                     UnitDispatcher unit = identity.GetComponent<UnitDispatcher>();
-                    MatchSession.Current.Factory.MakeUnit(
-                        _realPlatoon.Unit, unit.gameObject, _realPlatoon);
                     AddSingleExistingUnit(unit);
                 }
+            }
+        }
+
+        /// <summary>
+        ///     Initialization of units beyond the compiled prefab contents
+        ///     can only be done using an RPC like this one.
+        /// </summary>
+        [ClientRpc]
+        public void RpcInitializeUnits()
+        {
+            foreach (UnitDispatcher unit in _realPlatoon.Units)
+            {
+                MatchSession.Current.Factory.MakeUnit(
+                    _realPlatoon.Unit, unit.gameObject, _realPlatoon);
             }
         }
 
@@ -145,29 +156,10 @@ namespace PFW.Units
         ///     (such as when merging or splitting platoons).
         /// </summary>
         /// <param name="realUnit"></param>
-        private void AddSingleExistingUnit(UnitDispatcher realUnit)
+        public void AddSingleExistingUnit(UnitDispatcher realUnit)
         {
             _ghostPlatoon.AddSingleUnit();
             _realPlatoon.Units.Add(realUnit);
-        }
-
-        /// <summary>
-        ///     Makes platoons of N units into N platoons of 1 unit
-        ///     TODO multiplayer
-        /// </summary>
-        public void Split()
-        {
-            while (_realPlatoon.Units.Count > 1) {
-                UnitDispatcher u = _realPlatoon.Units[0];
-                _realPlatoon.Units.RemoveAt(0);
-                _ghostPlatoon.RemoveOneGhostUnit();
-
-                PlatoonRoot newPlatoon = CreateGhostMode(_realPlatoon.Unit, _realPlatoon.Owner);
-                newPlatoon.AddSingleExistingUnit(u);
-                // We aren't really spawning the units but binding them 
-                // to the platoon and activating it:
-                newPlatoon.Spawn(u.Transform.position);
-            }
         }
 
         public void SetGhostOrientation(Vector3 center, float heading) =>

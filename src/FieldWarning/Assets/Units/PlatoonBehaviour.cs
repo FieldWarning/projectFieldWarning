@@ -210,9 +210,24 @@ namespace PFW.Units
         }
 
         /// <summary>
-        ///     Units call this to notify when they are destroyed.
+        ///     TODO wont need this once the unit list is a syncvar..
         /// </summary>
-        public void OnUnitDestroyed(UnitDispatcher unit)
+        [ClientRpc]
+        public void RpcRemoveUnit(uint unitNetId)
+        {
+            NetworkIdentity identity;
+            if (NetworkIdentity.spawned.TryGetValue(unitNetId, out identity))
+            {
+                UnitDispatcher unit = identity.GetComponent<UnitDispatcher>();
+                RemoveUnit(unit);
+            }
+        }
+
+        /// <summary>
+        ///     Call this to notify when a unit is destroyed
+        ///     or otherwise removed from the platoon.
+        /// </summary>
+        public void RemoveUnit(UnitDispatcher unit)
         {
             Units.Remove(unit);
             GhostPlatoon.RemoveOneGhostUnit();

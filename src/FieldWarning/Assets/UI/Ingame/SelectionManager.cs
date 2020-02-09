@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -19,6 +19,7 @@ using PFW.Model.Game;
 using static PFW.UI.Ingame.InputManager;
 using PFW.Units;
 using PFW.Units.Component.Movement;
+using PFW.Networking;
 
 namespace PFW.UI.Ingame
 {
@@ -140,7 +141,7 @@ namespace PFW.UI.Ingame
         /**
          * Send a split command to all currently selected platoons
          */
-        public void DispatchSplitCommand(PlayerData owner)
+        public void DispatchSplitCommand()
         {
             // Work on a shallow copy, because the actual selection gets changed
             // every time a platoon in it is destroyed (split):
@@ -148,7 +149,7 @@ namespace PFW.UI.Ingame
 
             UnselectAll(_selection, false);
 
-            selectionCopy.ForEach(p => p.gameObject.GetComponentInParent<PlatoonRoot>().Split());
+            selectionCopy.ForEach(p => CommandConnection.Connection.CmdSplitPlatoon(p.netId));
         }
 
         public void MaybeDropSelectionAfterOrder()

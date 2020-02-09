@@ -184,7 +184,7 @@ namespace PFW.Units
 
             MatchSession.Current.RegisterUnitDeath(this);
 
-            Platoon.OnUnitDestroyed(this);
+            Platoon.RemoveUnit(this);
             Destroy(gameObject);
         }
     }
