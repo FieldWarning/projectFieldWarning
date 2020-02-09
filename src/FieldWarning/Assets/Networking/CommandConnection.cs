@@ -72,30 +72,17 @@ namespace PFW.Networking
                     uint unitNetId = u.GetComponent<NetworkIdentity>().netId;
                     platoon.RpcRemoveUnit(unitNetId);
 
-                    GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
-                    PlatoonRoot root = go.GetComponent<PlatoonRoot>();
-
-                    // mirror does not support networking nested objects, so 
-                    // everything has to be spawned at the toplevel..
-                    GhostPlatoonBehaviour ghostPlatoon = Instantiate(
-                            Resources.Load<GameObject>(
-                                    "GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
-                    PlatoonBehaviour realPlatoon = Instantiate(
-                            Resources.Load<GameObject>(
-                                    "Platoon")).GetComponent<PlatoonBehaviour>();
-
-                    ghostPlatoon.Initialize(platoon.Unit, platoon.Owner);
-                    realPlatoon.Initialize(platoon.Unit, platoon.Owner);
+                    PlatoonBehaviour newPlatoon = PlatoonBehaviour.CreateGhostMode(
+                            platoon.Unit, platoon.Owner);
+                    GhostPlatoonBehaviour ghostPlatoon = newPlatoon.GhostPlatoon;
 
                     NetworkServer.Spawn(ghostPlatoon.gameObject);
-                    NetworkServer.Spawn(realPlatoon.gameObject);
-                    NetworkServer.Spawn(go);
+                    NetworkServer.Spawn(newPlatoon.gameObject);
 
-                    root.RpcEstablishReferences(
-                            realPlatoon.netId,
+                    newPlatoon.RpcEstablishReferences(
                             ghostPlatoon.netId,
                             new[] { unitNetId });
-                    root.RpcSpawn(u.Transform.position);
+                    newPlatoon.RpcActivate(u.Transform.position);
 
                     newPlatoonsCount--;
                 }
@@ -123,24 +110,11 @@ namespace PFW.Networking
                 {
                     Unit unit = owner.Deck.Categories[categoryId][unitId];
 
-                    GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
-                    PlatoonRoot root = go.GetComponent<PlatoonRoot>();
-
-                    // mirror does not support networking nested objects, so 
-                    // everything has to be spawned at the toplevel..
-                    GhostPlatoonBehaviour ghostPlatoon = Instantiate(
-                            Resources.Load<GameObject>(
-                                    "GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
-                    PlatoonBehaviour realPlatoon = Instantiate(
-                            Resources.Load<GameObject>(
-                                    "Platoon")).GetComponent<PlatoonBehaviour>();
-
-                    ghostPlatoon.Initialize(unit, owner);
-                    realPlatoon.Initialize(unit, owner);
+                    PlatoonBehaviour newPlatoon = PlatoonBehaviour.CreateGhostMode(unit, owner);
+                    GhostPlatoonBehaviour ghostPlatoon = newPlatoon.GhostPlatoon;
 
                     NetworkServer.Spawn(ghostPlatoon.gameObject);
-                    NetworkServer.Spawn(realPlatoon.gameObject);
-                    NetworkServer.Spawn(go);
+                    NetworkServer.Spawn(newPlatoon.gameObject);
 
                     uint[] unitIds = new uint[unitCount];
                     for (int i = 0; i < unitCount; i++)
@@ -153,13 +127,12 @@ namespace PFW.Networking
                         unitIds[i] = unitGO.GetComponent<NetworkIdentity>().netId;
                     }
 
-                    root.RpcEstablishReferences(realPlatoon.netId, ghostPlatoon.netId, unitIds);
-                    root.RpcInitializeUnits();
+                    newPlatoon.RpcEstablishReferences(ghostPlatoon.netId, unitIds);
+                    newPlatoon.RpcInitializeUnits();
 
                     ghostPlatoon.RpcSetOrientation(destinationCenter, destinationHeading);
 
-                    root.RpcSpawn(spawnPos);
-                    // Destroy(root.gameObject);
+                    newPlatoon.RpcActivate(spawnPos);
                 }
                 else
                 {

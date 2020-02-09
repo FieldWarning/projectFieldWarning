@@ -209,7 +209,7 @@ namespace PFW.UI.Ingame
         {
             if (Input.GetMouseButton(1)) {
                 foreach (var g in _currentBuyTransaction.PreviewPlatoons) {
-                    g.Destroy();
+                    g.DestroyPreview();
                 }
 
                 int unitPrice = _currentBuyTransaction.Unit.Price;

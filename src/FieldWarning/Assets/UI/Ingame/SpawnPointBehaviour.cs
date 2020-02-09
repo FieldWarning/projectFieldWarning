@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -25,7 +25,7 @@ public class SpawnPointBehaviour : MonoBehaviour
     public const float MIN_SPAWN_INTERVAL = 2f;
     public const float QUEUE_DELAY = 1f;
 
-    private Queue<PlatoonRoot> _spawnQueue = new Queue<PlatoonRoot>();
+    private Queue<PlatoonBehaviour> _spawnQueue = new Queue<PlatoonBehaviour>();
     private float _spawnTime = MIN_SPAWN_INTERVAL;
 
     private void Start()
@@ -45,7 +45,7 @@ public class SpawnPointBehaviour : MonoBehaviour
             return;
 
 
-        PlatoonRoot previewPlatoon = _spawnQueue.Dequeue();
+        PlatoonBehaviour previewPlatoon = _spawnQueue.Dequeue();
         previewPlatoon.Spawn(transform.position);
 
         if (_spawnQueue.Count > 0)
@@ -54,7 +54,7 @@ public class SpawnPointBehaviour : MonoBehaviour
             _spawnTime = QUEUE_DELAY;
     }
 
-    public void BuyPlatoons(List<PlatoonRoot> previewPlatoons)
+    public void BuyPlatoons(List<PlatoonBehaviour> previewPlatoons)
     {
         // TODO show the preview to allies over the network
         previewPlatoons.ForEach(x => _spawnQueue.Enqueue(x));

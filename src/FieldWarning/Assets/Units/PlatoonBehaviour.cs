@@ -20,6 +20,7 @@ using PFW.Model.Game;
 using PFW.Model.Armory;
 using PFW.UI.Ingame.UnitLabel;
 using PFW.Units.Component.OrderQueue;
+using PFW.Networking;
 
 namespace PFW.Units
 {
@@ -101,6 +102,90 @@ namespace PFW.Units
             OrderQueue.HandleUpdate();
         }
 
+        #region Lifetime logic + platoon splitting
+
+        /// <summary>
+        ///     Create a pair of platoon and ghost platoon with units, but don't
+        ///     activate any real units yet (only ghost mode).
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+        public static PlatoonBehaviour CreateGhostMode(Unit unit, PlayerData owner)
+        {
+            PlatoonBehaviour realPlatoon= Instantiate(
+                    Resources.Load<GameObject>(
+                            "Platoon")).GetComponent<PlatoonBehaviour>();
+            realPlatoon.GhostPlatoon = Instantiate(
+                    Resources.Load<GameObject>(
+                            "GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
+
+            realPlatoon.GhostPlatoon.Initialize(unit, owner);
+            realPlatoon.Initialize(unit, owner);
+
+            return realPlatoon;
+        }
+
+        /// <summary>
+        ///     Create the preview on the other clients and immediately activate it (see RpcSpawn)
+        /// </summary>
+        /// <param name="spawnPos"></param>
+        public void Spawn(Vector3 spawnPos)
+        {
+            CommandConnection.Connection.CmdSpawnPlatoon(
+                    Owner.Id,
+                    Unit.CategoryId,
+                    Unit.Id,
+                    Units.Count,
+                    spawnPos,
+                    GhostPlatoon.transform.position,
+                    GhostPlatoon.FinalHeading);
+
+            DestroyPreview();
+        }
+
+        /// <summary>
+        ///     After all units are spawned by the server, call this to get the
+        ///     clients to associate their platoon object to its units and ghost.
+        /// </summary>
+        [ClientRpc]
+        public void RpcEstablishReferences(
+                uint ghostPlatoonNetId, uint[] unitNetIds)
+        {
+            NetworkIdentity identity;
+            if (NetworkIdentity.spawned.TryGetValue(ghostPlatoonNetId, out identity))
+            {
+                GhostPlatoon = identity.gameObject.GetComponent<GhostPlatoonBehaviour>();
+            }
+
+            // Also find, augment and link to the units:
+            foreach (uint unitNetId in unitNetIds)
+            {
+                if (NetworkIdentity.spawned.TryGetValue(unitNetId, out identity))
+                {
+                    UnitDispatcher unit = identity.GetComponent<UnitDispatcher>();
+                    AddSingleExistingUnit(unit);
+                }
+            }
+        }
+
+        public void SetGhostOrientation(Vector3 center, float heading) =>
+                GhostPlatoon.SetPositionAndOrientation(center, heading);
+
+        /// <summary>
+        ///     Initialization of units beyond the compiled prefab contents
+        ///     can only be done using an RPC like this one.
+        /// </summary>
+        [ClientRpc]
+        public void RpcInitializeUnits()
+        {
+            foreach (UnitDispatcher unit in Units)
+            {
+                MatchSession.Current.Factory.MakeUnit(
+                    Unit, unit.gameObject, this);
+            }
+        }
+
         /// <summary>
         ///     Call after creating an object of this class, 
         ///     pretend this is a constructor.
@@ -117,10 +202,13 @@ namespace PFW.Units
         }
 
         /// <summary>
-        ///     Create an inactive unit (to be activated when Spawn() is called)
+        ///     Meant for a platoon still in ghost mode: Spawn() should be called 
+        ///     to activate the units.
         /// </summary>
         public void AddSingleUnit()
         {
+            GhostPlatoon.AddSingleUnit();
+
             GameObject unit = Instantiate(Unit.Prefab);
             MatchSession.Current.Factory.MakeUnit(
                     Unit, unit, this);
@@ -135,11 +223,34 @@ namespace PFW.Units
         }
 
         /// <summary>
+        ///     Meant to put already existing units into the platoon
+        ///     (such as when merging or splitting platoons).
+        /// </summary>
+        /// <param name="realUnit"></param>
+        public void AddSingleExistingUnit(UnitDispatcher realUnit)
+        {
+            GhostPlatoon.AddSingleUnit();
+            Units.Add(realUnit);
+        }
+
+        /// <summary>
+        ///     For a ghost mode platoon root, activate the real units also.
+        ///     Effectively spawns the platoon, turning it from a preview into a real one.
+        /// </summary>
+        /// <param name="spawnPos"></param>
+        [ClientRpc]
+        public void RpcActivate(Vector3 spawnPos)
+        {
+            gameObject.SetActive(true);
+            Activate(spawnPos);
+        }
+
+        /// <summary>
         ///     Activates all units, moving from ghost/preview mode to a real platoon
         ///     Only use from PlatoonRoot (the lifetime manager class for platoons)
         /// </summary>
         /// <param name="spawnCenter"></param>
-        public void Spawn(Vector3 spawnCenter)
+        public void Activate(Vector3 spawnCenter)
         {
             Units.ForEach(x =>
             {
@@ -164,35 +275,6 @@ namespace PFW.Units
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);
-        }
-
-
-        /// <summary>
-        ///     Called when a platoon enters or leaves the player's selection.
-        /// </summary>
-        /// <param name="selected"></param>
-        /// <param name="justPreviewing"> 
-        ///     true when the unit should be shaded as if selected, but the
-        ///     actual selected set has not been changed yet
-        /// </param>
-        public void SetSelected(bool selected, bool justPreviewing)
-        {
-            Icon?.SetSelected(selected);
-            Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
-
-            _waypointOverlay.gameObject.SetActive(selected);
-        }
-
-        public void SetEnabled(bool enabled)
-        {
-            this.enabled = enabled;
-            Icon?.SetVisible(enabled);
-            _waypointOverlay.gameObject.SetActive(enabled);
-        }
-
-        public void SendFirePosOrder(Vector3 position, bool enqueue = false)
-        {
-            OrderQueue.SendOrder(OrderData.FirePositionOrder(this, position), enqueue);
         }
 
         /// <summary>
@@ -244,10 +326,51 @@ namespace PFW.Units
         /// </summary>
         public void Destroy()
         {
-            foreach (var p in Units)
-                Destroy(p.GameObject);
+            foreach (UnitDispatcher u in Units)
+                Destroy(u.GameObject);
 
             DestroyWithoutUnits();
+        }
+
+        /// <summary>
+        ///     Destroy a platoon that is a buy preview.
+        ///     TODO simplify, this method can probably be merged with another.
+        /// </summary>
+        public void DestroyPreview()
+        {
+            Destroy();
+            GhostPlatoon.Destroy();
+        }
+
+        #endregion
+
+
+        /// <summary>
+        ///     Called when a platoon enters or leaves the player's selection.
+        /// </summary>
+        /// <param name="selected"></param>
+        /// <param name="justPreviewing"> 
+        ///     true when the unit should be shaded as if selected, but the
+        ///     actual selected set has not been changed yet
+        /// </param>
+        public void SetSelected(bool selected, bool justPreviewing)
+        {
+            Icon?.SetSelected(selected);
+            Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
+
+            _waypointOverlay.gameObject.SetActive(selected);
+        }
+
+        public void SetEnabled(bool enabled)
+        {
+            this.enabled = enabled;
+            Icon?.SetVisible(enabled);
+            _waypointOverlay.gameObject.SetActive(enabled);
+        }
+
+        public void SendFirePosOrder(Vector3 position, bool enqueue = false)
+        {
+            OrderQueue.SendOrder(OrderData.FirePositionOrder(this, position), enqueue);
         }
 
         #region Movement
