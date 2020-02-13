@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -22,9 +22,7 @@ namespace PFW.Units.Component.Health
     {
         public float Health { get; private set; }
 
-        private PlatoonBehaviour _platoon;
         private UnitDispatcher _dispatcher;
-        private TargetTuple _targetTuple;
 
         private void Awake()
         {
@@ -34,33 +32,14 @@ namespace PFW.Units.Component.Health
         public void Initialize(UnitDispatcher dispatcher)
         {
             _dispatcher = dispatcher;
-            _platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
-            _targetTuple = dispatcher.TargetTuple;
         }
 
         public void UpdateHealth(float newHealth)
         {
             if (newHealth <= 0)
-                Destroy();
+                _dispatcher.Destroy();
             else
                 Health = newHealth;
-        }
-
-        public void Destroy()
-        {
-            _targetTuple.Reset();
-
-            MatchSession.Current.RegisterUnitDeath(_dispatcher);
-
-            _platoon.Units.Remove(_dispatcher);
-            GameObject.Destroy(gameObject);
-
-            _platoon.GhostPlatoon.RemoveOneGhostUnit();
-
-            if (_platoon.Units.Count == 0) {
-                GameObject.Destroy(_platoon.gameObject);
-                MatchSession.Current.RegisterPlatoonDeath(_platoon);
-            }
         }
     }
 }

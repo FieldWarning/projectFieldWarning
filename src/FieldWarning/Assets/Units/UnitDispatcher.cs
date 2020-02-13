@@ -174,5 +174,18 @@ namespace PFW.Units
                         _movementComponent.SetDestination(pos, heading, moveMode);
 
         public bool IsVisible => VisionComponent.IsVisible;
+
+        /// <summary>
+        /// Destroy this unit.
+        /// </summary>
+        public void Destroy()
+        {
+            TargetTuple.Reset();
+
+            MatchSession.Current.RegisterUnitDeath(this);
+
+            Platoon.RemoveUnit(this);
+            Destroy(gameObject);
+        }
     }
 }

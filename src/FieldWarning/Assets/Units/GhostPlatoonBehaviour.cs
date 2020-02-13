@@ -102,7 +102,12 @@ namespace PFW.Units
             InitializeIcon(_icon);
         }
 
-        // Call after creating an object of this class, pretend it is a constructor
+        /// <summary>
+        ///     Call after creating an object of this class, 
+        ///     pretend this is a constructor
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="owner"></param>
         public void Initialize(Unit unit, PlayerData owner)
         {
             _owner = owner;
@@ -112,7 +117,11 @@ namespace PFW.Units
             InitializeIcon(_icon);
         }
 
-        // Each GhostPlatoon gameobject has an icon under it, spawned in the prefab.
+        /// <summary>
+        ///     Each GhostPlatoon gameobject has an icon under it, 
+        ///     spawned in the prefab.
+        /// </summary>
+        /// <param name="icon"></param>
         private void InitializeIcon(IconBehaviour icon)
         {
             _icon.BaseColor = _owner.Team.Color;

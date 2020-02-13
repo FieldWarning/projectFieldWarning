@@ -11,7 +11,6 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 
-using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
@@ -51,11 +50,43 @@ namespace PFW.Networking
             ChatManager.UpdateMessageText(msg);
         }
 
+        /// <summary>
+        /// From a platoon with N units, make N platoons with 1 unit each.
+        /// </summary>
+        /// <param name="platoonNetId"></param>
         [Command]
-        public void CmdSpawnUnit() 
+        public void CmdSplitPlatoon(uint platoonNetId)
         {
-            // TODO
-            return;
+            NetworkIdentity identity;
+            if (NetworkIdentity.spawned.TryGetValue(platoonNetId, out identity))
+            {
+                PlatoonBehaviour platoon = identity.gameObject.GetComponent<PlatoonBehaviour>();
+
+                // We do not do something like 'while (Units.Count > 0)'
+                // because the RPCs finish executing and hence update the unit count
+                // way after the loop has concluded!
+                int newPlatoonsCount = platoon.Units.Count - 1;
+                while (newPlatoonsCount > 0)
+                {
+                    UnitDispatcher u = platoon.Units[newPlatoonsCount];
+                    uint unitNetId = u.GetComponent<NetworkIdentity>().netId;
+                    platoon.RpcRemoveUnit(unitNetId);
+
+                    PlatoonBehaviour newPlatoon = PlatoonBehaviour.CreateGhostMode(
+                            platoon.Unit, platoon.Owner);
+                    GhostPlatoonBehaviour ghostPlatoon = newPlatoon.GhostPlatoon;
+
+                    NetworkServer.Spawn(ghostPlatoon.gameObject);
+                    NetworkServer.Spawn(newPlatoon.gameObject);
+
+                    newPlatoon.RpcEstablishReferences(
+                            ghostPlatoon.netId,
+                            new[] { unitNetId });
+                    newPlatoon.RpcActivate(u.Transform.position);
+
+                    newPlatoonsCount--;
+                }
+            }
         }
 
         [Command]
@@ -79,38 +110,29 @@ namespace PFW.Networking
                 {
                     Unit unit = owner.Deck.Categories[categoryId][unitId];
 
-                    GameObject go = Instantiate(Resources.Load<GameObject>("PlatoonRoot"));
-                    PlatoonRoot root = go.GetComponent<PlatoonRoot>();
-
-                    // mirror does not support networking nested objects, so 
-                    // everything has to be spawned at the toplevel..
-                    GhostPlatoonBehaviour ghostPlatoon = Instantiate(
-                            Resources.Load<GameObject>(
-                                    "GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
-                    PlatoonBehaviour realPlatoon = Instantiate(
-                            Resources.Load<GameObject>(
-                                    "Platoon")).GetComponent<PlatoonBehaviour>();
-
-                    ghostPlatoon.Initialize(unit, owner);
-                    realPlatoon.Initialize(unit, owner);
+                    PlatoonBehaviour newPlatoon = PlatoonBehaviour.CreateGhostMode(unit, owner);
+                    GhostPlatoonBehaviour ghostPlatoon = newPlatoon.GhostPlatoon;
 
                     NetworkServer.Spawn(ghostPlatoon.gameObject);
-                    NetworkServer.Spawn(realPlatoon.gameObject);
-                    NetworkServer.Spawn(go);
+                    NetworkServer.Spawn(newPlatoon.gameObject);
 
                     uint[] unitIds = new uint[unitCount];
                     for (int i = 0; i < unitCount; i++)
                     {
-                        realPlatoon.AddSingleUnit();
-                        NetworkServer.Spawn(realPlatoon.Units[i].gameObject);
-                        unitIds[i] = realPlatoon.Units[i].GetComponent<NetworkIdentity>().netId;
+                        GameObject unitGO = Instantiate(unit.Prefab);
+                        // Any added unit initialization must be done in an RPC,
+                        // otherwise it won't show up on the clients!
+
+                        NetworkServer.Spawn(unitGO);
+                        unitIds[i] = unitGO.GetComponent<NetworkIdentity>().netId;
                     }
 
-                    root.RpcEstablishReferences(realPlatoon.netId, ghostPlatoon.netId, unitIds);
+                    newPlatoon.RpcEstablishReferences(ghostPlatoon.netId, unitIds);
+                    newPlatoon.RpcInitializeUnits();
 
                     ghostPlatoon.RpcSetOrientation(destinationCenter, destinationHeading);
 
-                    root.RpcSpawn(spawnPos);
+                    newPlatoon.RpcActivate(spawnPos);
                 }
                 else
                 {
