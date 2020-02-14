@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -23,13 +23,13 @@ namespace PFW.UI.Ingame
 {
     public class BuyTransaction
     {
-        private PlatoonRoot _newestPlatoon;
+        private PlatoonBehaviour _newestPlatoon;
 
         private int _smallestPlatoonSize;
 
         public Unit Unit { get; }
         public PlayerData Owner { get; }
-        public List<PlatoonRoot> PreviewPlatoons { get; }
+        public List<PlatoonBehaviour> PreviewPlatoons { get; }
 
         public int UnitCount {
             get {
@@ -42,7 +42,7 @@ namespace PFW.UI.Ingame
             Unit = unit;
             Owner = owner;
 
-            PreviewPlatoons = new List<PlatoonRoot>();
+            PreviewPlatoons = new List<PlatoonBehaviour>();
             StartNewPlatoon();
         }
 
@@ -63,7 +63,7 @@ namespace PFW.UI.Ingame
         private void StartNewPlatoon()
         {
             _smallestPlatoonSize = MIN_PLATOON_SIZE;
-            _newestPlatoon = PlatoonRoot.CreateGhostMode(Unit, Owner);
+            _newestPlatoon = PlatoonBehaviour.CreateGhostMode(Unit, Owner);
             for (int i = 0; i < MIN_PLATOON_SIZE; i++)
                 _newestPlatoon.AddSingleUnit();
 
