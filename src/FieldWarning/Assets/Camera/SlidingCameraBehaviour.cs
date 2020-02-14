@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -86,8 +86,12 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private float _heightSpeedScaling = 0.75f;
     [SerializeField]
     private float _zoomOutAngle = 45f;
+
     [SerializeField]
     private MatchSession _session = null;
+
+    public GameObject FollowObject = null;
+    private Vector3 FollowDistance;
 
     private Vector3 _zoomOutDirection;
 
@@ -263,6 +267,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private void LateUpdate()
     {
+
+
         var dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
         var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
         _targetPosition += transform.TransformDirection(dx * Vector3.right);
@@ -281,20 +287,15 @@ public class SlidingCameraBehaviour : MonoBehaviour
         var dzoom = _leftoverZoom < GetScaledZoomSpeed() ? _leftoverZoom : GetScaledZoomSpeed();
         var oldAltitude = _targetPosition.y;
 
-        // Zoom in:
-        if (dzoom > 0) 
-        {
-            ApplyZoomIn(dzoom);
-        } 
-        else if (dzoom < 0) 
-        {
-            ApplyZoomOut(dzoom);
-        }
-
+        ApplyZoom(dzoom);
+        
         _leftoverZoom -= dzoom;
+
         TiltCameraIfNearGround(oldAltitude);
         ClampCameraAltitude();
         ClampCameraXZPosition();
+
+
 
         // Note: It is mathematically incorrect to directly lerp on deltaTime like this,
         // since we would get infinitely closer to the target but never reach it.
@@ -307,6 +308,17 @@ public class SlidingCameraBehaviour : MonoBehaviour
                         Quaternion.Euler(_rotateX, _rotateY, 0f),
                         Time.deltaTime * _rotLerpSpeed);
 
+        // lock the camera on target (after we zoom).. apply lerp for smmoothing as well (use _targetPosition)
+        if (FollowObject)
+        {
+            if (dzoom != 0)
+            {
+                FollowDistance = _targetPosition - FollowObject.transform.position;
+            }
+
+            _targetPosition = FollowObject.transform.position + FollowDistance;
+        }
+
         MaybeChangeTerrainMaterial();
     }
 
@@ -316,25 +328,39 @@ public class SlidingCameraBehaviour : MonoBehaviour
     private void AimedZoom()
     {
         var scroll = Input.GetAxis("Mouse ScrollWheel");
+        
         if (scroll == 0)
             return;
+
+        // Use a ray from the cursor to find what we'll be zooming into:
+        Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        // If the cursor is not pointing at anything, zooming in is forbidden:
+        if (!Physics.Raycast(ray, out hit))
+        {
+            FollowObject = null;
+            return;
+        }
+
+        // TODO: need to tag all unit icons to know when to zoom in instead of using "Icon"
+        if (hit.transform.parent.gameObject.tag == "Platoon")
+        {
+            FollowObject = hit.transform.gameObject;
+        }
+        else
+        {
+            FollowObject = null;
+        }
 
         // Zoom toward cursor:
         if (scroll > 0) 
         {
-            // Use a ray from the cursor to find what we'll be zooming into:
-            Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            // If the cursor is not pointing at anything, zooming in is forbidden:
-            if (!Physics.Raycast(ray, out hit)) 
-            {
-                return;
-            }
             _zoomDestination = hit.point;
         }
 
         _leftoverZoom += scroll * GetScaledZoomSpeed();
+        
     }
 
     private void RotateCamera()
@@ -344,6 +370,32 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
         // So we don't look too far up or down:
         _rotateX = Mathf.Clamp(_rotateX, _minCameraAngle, _maxCameraAngle);
+    }
+
+    private void ApplyZoom(float dzoom)
+    {
+
+        if (dzoom == 0)
+        {
+            return;
+        }
+
+        // Zoom in:
+        if (dzoom > 0)
+        {
+            ApplyZoomIn(dzoom);
+        }
+        else if (dzoom < 0)
+        {
+            ApplyZoomOut(dzoom);
+        }
+
+        // we want to save off the zoom distance only after a valid zoom happens
+        //if (FollowObject)
+        //{
+        //    FollowDistance = _targetPosition - FollowObject.transform.position;
+        //}
+        
     }
 
     private void ApplyZoomIn(float dzoom)
