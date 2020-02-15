@@ -34,7 +34,7 @@ namespace PFW.Units.Component.Weapon
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
             Logger.LogTargeting("Received target from the outside.", gameObject);
-            var distance = Vector3.Distance(Unit.transform.position, target.Position);
+            float distance = Vector3.Distance(Unit.transform.position, target.Position);
 
             _target = target;
 
@@ -173,14 +173,15 @@ namespace PFW.Units.Component.Weapon
             Logger.LogTargeting("Scanning for a target.", gameObject);
 
             // TODO utilize precomputed distance lists from session
-            // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
+            // Maybe add Sphere shaped collider with the radius of the range and then 
+            // use trigger enter and exit to keep a list of in range Units
 
             foreach (UnitDispatcher enemy in MatchSession.Current.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
                 if (!enemy.VisionComponent.IsSpotted)
                     continue;
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
+                float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
                 if (distance < _data.FireRange) {
                     Logger.LogTargeting("Target found and selected after scanning.", gameObject);
                     SetTarget(enemy.TargetTuple, false);

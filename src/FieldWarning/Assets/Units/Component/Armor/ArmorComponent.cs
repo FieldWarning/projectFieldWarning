@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -24,14 +24,13 @@ using static PFW.Units.Component.Damage.DamageData;
 
 namespace PFW.Units.Component.Armor
 {
-    class ArmorComponent : MonoBehaviour
+    sealed class ArmorComponent : MonoBehaviour
     {
         /// <summary>
         /// The movement component where we obtain the front and right vectors
         /// used in deciding which face of the armor is hit
         /// </summary>
-        public MovementComponent Unit { get; private set; }
-        private PlatoonBehaviour _platoon;
+        private MovementComponent _unit;
         private HealthComponent _healthComponent;
 
         /// <summary>
@@ -40,16 +39,14 @@ namespace PFW.Units.Component.Armor
         /// </summary>
         public ArmorAttributes[] ArmorData = new ArmorAttributes[4];
 
-        private void Awake()
+        public void Initialize(
+                HealthComponent healthComponent, 
+                DataComponent data, 
+                MovementComponent movement)
         {
-            ArmorData = gameObject.GetComponent<DataComponent>().ArmorData;
-            Unit = gameObject.GetComponent<MovementComponent>();
-            _healthComponent = gameObject.GetComponent<HealthComponent>();
-        }
-
-        public void Initialize()
-        {
-            _platoon = gameObject.GetComponent<SelectableBehavior>().Platoon;
+            ArmorData = data.ArmorData;
+            _unit = movement;
+            _healthComponent = healthComponent;
         }
 
         /// <summary>
@@ -134,14 +131,14 @@ namespace PFW.Units.Component.Armor
             Vector3 displacementToFiringUnit = -displacementToThis;
 
             // Project this vector to the horizontal plane of the unit
-            Vector3 planeNormal = Vector3.Cross(Unit.Forward, Unit.Right);
+            Vector3 planeNormal = Vector3.Cross(_unit.Forward, _unit.Right);
             Vector3 incomingFire = Vector3.ProjectOnPlane(displacementToFiringUnit, planeNormal);
 
             // Calculate the angle, since Unity always return a positive value, we have
             // 0 to 45 deg => front
             // 45 to 135 deg => side
             // 135 to 180 deg => rear
-            float shotAngle = Vector3.Angle(Unit.Forward, incomingFire);
+            float shotAngle = Vector3.Angle(_unit.Forward, incomingFire);
 
             switch (shotAngle)
             {

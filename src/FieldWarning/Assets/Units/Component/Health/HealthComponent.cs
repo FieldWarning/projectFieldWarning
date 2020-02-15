@@ -12,9 +12,7 @@
 */
 using UnityEngine;
 
-using PFW.Model.Game;
 using PFW.Units.Component.Data;
-using PFW.Units.Component.Weapon;
 
 namespace PFW.Units.Component.Health
 {
@@ -24,14 +22,10 @@ namespace PFW.Units.Component.Health
 
         private UnitDispatcher _dispatcher;
 
-        private void Awake()
-        {
-            Health = gameObject.GetComponent<DataComponent>().MaxHealth;
-        }
-
-        public void Initialize(UnitDispatcher dispatcher)
+        public void Initialize(UnitDispatcher dispatcher, DataComponent data)
         {
             _dispatcher = dispatcher;
+            Health = data.MaxHealth;
         }
 
         public void UpdateHealth(float newHealth)

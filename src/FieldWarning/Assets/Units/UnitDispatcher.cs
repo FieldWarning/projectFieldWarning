@@ -13,7 +13,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+
 using UnityEngine;
+using Mirror;
+
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
@@ -28,7 +31,7 @@ namespace PFW.Units
     /// The dispatcher represents the unit to the outside world
     /// while delegating all tasks to the various unit components.
     /// </summary>
-    public sealed class UnitDispatcher : MonoBehaviour
+    public sealed class UnitDispatcher : NetworkBehaviour
     {
         // Handles move orders:
         // private INavigationComponent _navigationComponent;
@@ -103,9 +106,9 @@ namespace PFW.Units
                     Resources.Load<GameObject>("SelectionCircle"), Transform);
 
             _movementComponent.Initialize();
-            _healthComponent.Initialize(this);
+            _healthComponent.Initialize(this, _unitData);
             VisionComponent.Initialize(this);
-            _armorComponent.Initialize();
+            _armorComponent.Initialize(_healthComponent, _unitData, _movementComponent);
         }
 
         /// <summary>
@@ -185,7 +188,18 @@ namespace PFW.Units
             MatchSession.Current.RegisterUnitDeath(this);
 
             Platoon.RemoveUnit(this);
+
             Destroy(gameObject);
+        }
+
+        public override void OnNetworkDestroy()
+        {
+            Debug.Log("networkDetroy");
+            TargetTuple.Reset();
+
+            MatchSession.Current.RegisterUnitDeath(this);
+
+            Platoon.RemoveUnit(this);
         }
     }
 }
