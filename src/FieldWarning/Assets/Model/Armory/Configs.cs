@@ -44,9 +44,10 @@ namespace PFW.Model.Armory
         public string Name;
         public int Price;
         public string PrefabPath;
+        public string ArtPrefabPath;
         public UnitDataConfig Data;
         public MobilityConfig Mobility;
-        public List<UnitWeaponConfig> Weapons;
+        public Weapons Weapons;
     }
 
     [Serializable]
@@ -76,13 +77,33 @@ namespace PFW.Model.Armory
     }
 
     [Serializable]
+    public class Weapons
+    {
+        public Turret Turret;
+    }
+
+    [Serializable]
+    public class Turret 
+    {
+        public List<UnitWeaponConfig> Children;
+        public string TurretRef;
+        public string MountRef;
+        public int ArcHorizontal;
+        public int ArcUp;
+        public int ArcDown;
+        public int RotationRate;
+    }
+
+    [Serializable]
     public class UnitWeaponConfig
     {
-        public string ComponentRef;
-        public string TypeRef;
+        public string TurretRef;
+        public string MountRef;
+        public string WeaponType;
         public int Priority;
-        public string SoundRef;
-        public string EffectRef;
-        public int Volume;
+        public int ArcHorizontal;
+        public int ArcUp;
+        public int ArcDown;
+        public int RotationRate;
     }
 }

@@ -95,6 +95,84 @@
                     "description": "TODO: Add description"
                 }
             }
+        },
+        
+        "Weapons": {
+            "type": "object",
+            "description": "TODO",
+            "properties": {
+                "Children": {
+                    "type": "array",
+                    "description": "TODO",
+                    "items": {
+                        "type": "object",
+                        "description": "TODO",
+                        "required": [ 
+                            "Priority",
+                            "Handle"
+                        ],
+                        "properties": {
+                            "Priority": {
+                                "type": "number",
+                                "description": "When multiple turrets are trying to rotate a shared parent to aim at their chosen targets, the turret with a higher priority number wins. For example, a tank turret with a cannon and coax machinegun will always turn toward infantry if the machinegun has higher priority, and toward enemy armor if the cannon has higher priority."
+                            },
+                            "WeaponType": {
+                                "type": "string",
+                                "description": "TODO: Add description",
+                                "enum": [ "cannon", "howitzer" ]
+                            },
+                            "TurretRef": {
+                                "type": "string",
+                                "description": "TODO: Add description"
+                            },
+                            "MountRef": {
+                                "type": "string",
+                                "description": "TODO: Add description"
+                            },
+                            "ArcHorizontal": {
+                                "type": "number",
+                                "description": "TODO: Add description"
+                            },
+                            "ArcUp": {
+                                "type": "number",
+                                "description": "TODO: Add description"
+                            },
+                            "ArcDown": {
+                                "type": "number",
+                                "description": "TODO: Add description"
+                            },
+                            "RotationRate": {
+                                "type": "number",
+                                "description": "TODO: Add description"
+                            }
+                        }
+                    }
+                },
+                "TurretRef": {
+                    "type": "string",
+                    "description": "Used to find the child of the art object representing the turret."
+                },
+                "MountRef": {
+                    "type": "string",
+                    "description": "TODO: Add description"
+                },
+                "ArcHorizontal": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "ArcUp": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "ArcDown": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                },
+                "RotationRate": {
+                    "type": "number",
+                    "description": "TODO: Add description"
+                }
+            }
         }
     },
 
@@ -134,7 +212,11 @@
             "description": "(float) The cost of purchasing this unit."
         },
         "PrefabPath": {
-            "description": "Path to the unit's prefab, relative to any Resources directory.\n\nNOTE: The prefab should not have any components besides the `Transform`, as all necessary components will be added programatically at runtime according to the properties specified in this config file.",
+            "description": "Path to the unit's prefab, relative to any Resources directory.\n\nNOTE: The prefab should mainly have networked components that need to be synched between clients and the server, and will be augmented with 'art' after being spawned.",
+            "type": "string"
+        },
+        "ArtPrefabPath": {
+            "description": "Path to the unit's art prefab, relative to any Resources directory.\n\nArt is the non-networked part of a unit, added clientside after the unit has been spawned.",
             "type": "string"
         },
         "Data": {
@@ -142,6 +224,9 @@
         },
         "Mobility": {
             "$ref": "#/definitions/Mobility"
+        },
+        "Weapons": {
+            "$ref": "#/definitions/Weapons"
         }
     }
 }

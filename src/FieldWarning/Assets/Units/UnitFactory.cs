@@ -19,6 +19,7 @@ using PFW.Units.Component.Data;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Movement;
+using PFW.Units.Component.Weapon;
 
 namespace PFW.UI.Prototype
 {
@@ -35,7 +36,8 @@ namespace PFW.UI.Prototype
         /// </summary>
         public void MakeUnit(Unit armoryUnit, GameObject unit, PlatoonBehaviour platoon)
         {
-            MakeUnitCommon(unit, armoryUnit.Config);
+            MakeUnitCommon(unit, armoryUnit);
+            AssociateTurretComponentsToArt(unit, armoryUnit);
 
             // TODO: Load different voice type depending on Owner country
             GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
@@ -53,7 +55,7 @@ namespace PFW.UI.Prototype
 
         public void MakeGhostUnit(Unit armoryUnit, GameObject unit)
         {
-            MakeUnitCommon(unit, armoryUnit.Config);
+            MakeUnitCommon(unit, armoryUnit);
 
             UnitDispatcher unitDispatcher = unit.GetComponent<UnitDispatcher>();
             Object.Destroy(unitDispatcher);
@@ -81,17 +83,91 @@ namespace PFW.UI.Prototype
         /// </summary>
         /// <param name="freshUnit"></param>
         /// <param name="config"></param>
-        private static void MakeUnitCommon(GameObject freshUnit, UnitConfig config)
+        private static void MakeUnitCommon(GameObject freshUnit, Unit armoryUnit)
         {
-            freshUnit.name = config.Name;
+            freshUnit.name = armoryUnit.Name;
             freshUnit.SetActive(false);
 
-            DataComponent.CreateDataComponent(freshUnit, config.Data, config.Mobility);
+            GameObject art = Object.Instantiate(armoryUnit.ArtPrefab);
+            art.transform.parent = freshUnit.transform;
+
+            DataComponent.CreateDataComponent(
+                    freshUnit, armoryUnit.Config.Data, armoryUnit.Config.Mobility);
 
             // freshUnit.AddComponent<UnitDispatcher>().enabled = false;
             // freshUnit.AddComponent<MovementComponent>().enabled = false;
             freshUnit.AddComponent<SelectableBehavior>();
             // prototype.AddComponent<NetworkIdentity>();
+        }
+
+        /// <summary>
+        /// The turret and targeting components on the base prefab
+        /// need to be given references to the parts of the art that
+        /// they can rotate.
+        /// </summary>
+        private static void AssociateTurretComponentsToArt(
+                GameObject freshUnit, Unit armoryUnit) 
+        {
+            TargetingComponent[] targetingComponents = freshUnit.GetComponents<TargetingComponent>();
+            TurretComponent[] turretComponents = freshUnit.GetComponents<TurretComponent>();
+
+            Turret turretConfig = armoryUnit.Config.Weapons.Turret;
+            // TODO Currently only supporting the prefab with 
+            // 2 turrets, 2 targeting components, and one parent turret
+            if (targetingComponents.GetLength(0) == 2 && turretComponents.GetLength(0) == 3)
+            {
+                // Use the extra turret as the parent:
+                TurretComponent toplevelTurret = turretComponents[2];
+                toplevelTurret.Initialize(
+                        RecursiveFindChild(freshUnit.transform, turretConfig.MountRef),
+                        RecursiveFindChild(freshUnit.transform, turretConfig.TurretRef),
+                        null,
+                        turretConfig.ArcHorizontal,
+                        turretConfig.ArcUp,
+                        turretConfig.ArcDown,
+                        turretConfig.RotationRate,
+                        false);
+
+                for (int i = 0; i < targetingComponents.GetLength(0); i++)
+                {
+                    targetingComponents[i].Initialize(
+                            turretComponents[i],
+                            turretConfig.Children[i].Priority,
+                            turretConfig.Children[i].WeaponType == "cannon" ? 
+                                    WeaponType.CANNON : WeaponType.HOWITZER
+                            );
+                    turretComponents[i].Initialize(
+                            RecursiveFindChild(freshUnit.transform, turretConfig.Children[i].MountRef),
+                            RecursiveFindChild(freshUnit.transform, turretConfig.Children[i].TurretRef),
+                            toplevelTurret,
+                            turretConfig.Children[i].ArcHorizontal,
+                            turretConfig.Children[i].ArcUp,
+                            turretConfig.Children[i].ArcDown,
+                            turretConfig.Children[i].RotationRate,
+                            false);
+                }
+            }
+        }
+
+        private static Transform RecursiveFindChild(Transform parent, string childName)
+        {
+            foreach (Transform child in parent)
+            {
+                if (child.name == childName)
+                {
+                    return child;
+                }
+                else
+                {
+                    Transform result = RecursiveFindChild(child, childName);
+                    if (result)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

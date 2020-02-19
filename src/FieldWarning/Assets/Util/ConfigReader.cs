@@ -11,8 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -31,6 +29,7 @@ namespace PFW
 
             TextAsset configFile = Resources.Load<TextAsset>($"{categoryKey}/{modelDesignation}");
             UnitConfig config = JsonUtility.FromJson<UnitConfig>(configFile.text);
+            Debug.Log(config.ArtPrefabPath);
 
             return new Unit(config);
         }

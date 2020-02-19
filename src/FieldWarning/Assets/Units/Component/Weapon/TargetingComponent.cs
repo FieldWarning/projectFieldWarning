@@ -79,13 +79,41 @@ namespace PFW.Units.Component.Weapon
         [SerializeField]
         private float _shotVolume = 1.0F;
 
-        // TODO remove, only used for initialization which should not be done here
-        [SerializeField]
-        private WeaponType _weaponType = WeaponType.CANNON;
-
         [SerializeField]
         private ParticleSystem _muzzleFlashEffect = null;
         // ---------------- END PREFAB -----------------
+
+        /// <summary>
+        /// Constructor equivalent for MonoBehaviours.
+        /// </summary>
+        public void Initialize(
+                TurretComponent turret,
+                int priority,
+                WeaponType type)
+        {
+            _turretComponent = turret;
+            _turretPriority = priority;
+
+            // TODO just pass the weapon from the outside?
+            if (type == WeaponType.CANNON)
+                _weapon = new Cannon(
+                        _data,
+                        _audioSource,
+                        _shotEffect,
+                        _shotSound,
+                        _muzzleFlashEffect,
+                        _shotVolume);
+            else if (type == WeaponType.HOWITZER)
+                _weapon = new Howitzer(
+                        _data,
+                        _audioSource,
+                        _shotEffect,
+                        _shotSound,
+                        _shotStarterPosition,
+                        _shotVolume);
+
+            Logger.LogTargeting("Created a weapon in TargetingComponent.Initialize().", gameObject);
+        }
 
         private void Awake()
         {
@@ -95,26 +123,6 @@ namespace PFW.Units.Component.Weapon
         private void Start()
         {
             Unit = gameObject.GetComponent<UnitDispatcher>();
-
-            // TODO remove:
-            if (_weaponType == WeaponType.CANNON)
-                _weapon = new Cannon(
-                        _data,
-                        _audioSource,
-                        _shotEffect,
-                        _shotSound,
-                        _muzzleFlashEffect,
-                        _shotVolume);
-            else if (_weaponType == WeaponType.HOWITZER)
-                _weapon = new Howitzer(
-                        _data,
-                        _audioSource,
-                        _shotEffect,
-                        _shotSound,
-                        _shotStarterPosition,
-                        _shotVolume);
-
-            Logger.LogTargeting("Created a weapon in TargetingComponent.Start().", gameObject);
         }
 
         private void StopMovingIfInRangeOfTarget()
@@ -210,7 +218,7 @@ namespace PFW.Units.Component.Weapon
         public bool HasTarget => _target != null;
     }
 
-    enum WeaponType
+    public enum WeaponType
     {
         CANNON,
         HOWITZER

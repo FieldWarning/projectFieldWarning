@@ -1,0 +1,64 @@
+{
+    "$schema": "../UnitConfigSchema.json",
+
+    "ID": "Unit__TNK--TestTank",
+    "CategoryKey": "TNK",
+    "Name": "TestTank",
+    "Price": 20,
+    "PrefabPath": "2Turret",
+    "ArtPrefabPath": "SampleTankArt",
+
+    "Data": {
+        "MovementSpeed": 500,
+        "ReverseSpeed": 15,
+        "AccelRate": 13,
+        "MaxRotationSpeed": 50,
+        "MinTurnRadius": 0,
+        "MaxLateralAccel": 15,
+        "Suspension": 0.01,
+        "MaxHealth": 10,
+        "Length": 12,
+        "Width": 7
+    },
+
+    "Mobility": {
+        "SlopeSensitivity": 2,
+        "DirectionalSlopeSensitivity": 0.6,
+        "PlainSpeed": 0.4,
+        "ForestSpeed": 0.2,
+        "WaterSpeed": 0
+    },
+    
+    "Weapons": {
+        "Turret": {
+            "Children": [
+                {
+                    "Priority": 1,
+                    "WeaponType": "cannon",
+                    "TurretRef": "Main_Barrel",
+                    "MountRef": "Main_Turret",
+                    "ArcHorizontal": 3,
+                    "ArcUp": 40,
+                    "ArcDown": 20,
+                    "RotationRate": 40
+                },
+                {
+                    "Priority": 2,
+                    "WeaponType": "cannon",
+                    "TurretRef": "Minigun",
+                    "MountRef": "Main_Turret",
+                    "ArcHorizontal": 90,
+                    "ArcUp": 40,
+                    "ArcDown": 20,
+                    "RotationRate": 40
+                }
+            ],
+            "TurretRef": "Main_Turret",
+            "MountRef": "Main_Body",
+            "ArcHorizontal": 180,
+            "ArcUp": 0,
+            "ArcDown": 0,
+            "RotationRate": 40
+        }
+    }
+}

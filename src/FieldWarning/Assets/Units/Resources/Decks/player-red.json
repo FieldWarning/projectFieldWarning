@@ -9,11 +9,12 @@
         "Unit__INF--Riflemen",
         "Unit__INF--Marines"
     ],
-    "TNK": [
+  "TNK": [
         "Unit__TNK--FastTank",
+        "Unit__TNK--TestTank",
         "Unit__TNK--M1A1",
         "Unit__TNK--M1A2"
-    ],
+  ],
     "REC": [
         "Unit__REC--ArmyRangers"
     ],
