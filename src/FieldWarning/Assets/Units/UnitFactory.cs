@@ -111,7 +111,7 @@ namespace PFW.UI.Prototype
             TargetingComponent[] targetingComponents = freshUnit.GetComponents<TargetingComponent>();
             TurretComponent[] turretComponents = freshUnit.GetComponents<TurretComponent>();
 
-            Turret turretConfig = armoryUnit.Config.Weapons.Turret;
+            TurretConfig turretConfig = armoryUnit.Config.Weapons.Turret;
             // TODO Currently only supporting the prefab with 
             // 2 turrets, 2 targeting components, and one parent turret
             if (targetingComponents.GetLength(0) == 2 && turretComponents.GetLength(0) == 3)
@@ -133,8 +133,7 @@ namespace PFW.UI.Prototype
                     targetingComponents[i].Initialize(
                             turretComponents[i],
                             turretConfig.Children[i].Priority,
-                            turretConfig.Children[i].WeaponType == "cannon" ? 
-                                    WeaponType.CANNON : WeaponType.HOWITZER
+                            turretConfig.Children[i].Weapon
                             );
                     turretComponents[i].Initialize(
                             RecursiveFindChild(freshUnit.transform, turretConfig.Children[i].MountRef),

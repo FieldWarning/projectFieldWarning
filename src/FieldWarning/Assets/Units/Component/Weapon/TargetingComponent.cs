@@ -14,6 +14,7 @@
 using UnityEngine;
 
 using PFW.Model.Game;
+using PFW.Model.Armory;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -47,10 +48,9 @@ namespace PFW.Units.Component.Weapon
         }
 
         private IWeapon _weapon;
+        private WeaponConfig _data = null;
 
         // --------------- BEGIN PREFAB ----------------
-        [SerializeField]
-        private WeaponData _data = null;
 
         // TODO the weapon class should create its own audio source:
         [SerializeField]
@@ -89,23 +89,24 @@ namespace PFW.Units.Component.Weapon
         public void Initialize(
                 TurretComponent turret,
                 int priority,
-                WeaponType type)
+                WeaponConfig weaponData)
         {
             _turretComponent = turret;
             _turretPriority = priority;
+            _data = weaponData;
 
             // TODO just pass the weapon from the outside?
-            if (type == WeaponType.CANNON)
+            if (weaponData.WeaponType == WeaponType.CANNON)
                 _weapon = new Cannon(
-                        _data,
+                        weaponData,
                         _audioSource,
                         _shotEffect,
                         _shotSound,
                         _muzzleFlashEffect,
                         _shotVolume);
-            else if (type == WeaponType.HOWITZER)
+            else
                 _weapon = new Howitzer(
-                        _data,
+                        weaponData,
                         _audioSource,
                         _shotEffect,
                         _shotSound,
@@ -216,12 +217,6 @@ namespace PFW.Units.Component.Weapon
         }
 
         public bool HasTarget => _target != null;
-    }
-
-    public enum WeaponType
-    {
-        CANNON,
-        HOWITZER
     }
 }
 

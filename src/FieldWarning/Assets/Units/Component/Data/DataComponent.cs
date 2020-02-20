@@ -38,7 +38,7 @@ namespace PFW.Units.Component.Data
         public float OptimumTurnSpeed;
         public float SuspensionForward, SuspensionSide;
         public float AccelDampTime;
-        public ArmorAttributes[] ArmorData = new ArmorAttributes[4];
+        public int[] Armor = new int[4];
 
         public static DataComponent CreateDataComponent(
                 GameObject parent,
@@ -71,11 +71,5 @@ namespace PFW.Units.Component.Data
 
             return c;
         }
-    }
-
-    public struct ArmorAttributes
-    {
-        public float Armor;
-        public DamageData.Era EraData;
     }
 }

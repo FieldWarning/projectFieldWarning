@@ -11,16 +11,11 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections.Generic;
-
 using UnityEngine;
 
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Movement;
-using PFW.Units.Component.Damage;
-using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Health;
-using static PFW.Units.Component.Damage.DamageData;
 
 namespace PFW.Units.Component.Armor
 {
@@ -37,97 +32,69 @@ namespace PFW.Units.Component.Armor
         /// An array of ArmorAttributes to store armor values
         /// on front / side / rear/ top respectively
         /// </summary>
-        public ArmorAttributes[] ArmorData = new ArmorAttributes[4];
+        public int[] ArmorData = new int[4];
 
         public void Initialize(
                 HealthComponent healthComponent, 
                 DataComponent data, 
                 MovementComponent movement)
         {
-            ArmorData = data.ArmorData;
+            ArmorData = data.Armor;
             _unit = movement;
             _healthComponent = healthComponent;
         }
 
         /// <summary>
-        /// Calculate the total damage dealt within a successful hit, then update health, armor and ERA values accordingly
+        /// Calculate the total damage dealt within a successful hit, then update health.
         /// </summary>
         public void HandleHit(
-            List<WeaponData.WeaponDamage> receivedDamage,
+            int firepower,
             Vector3? displacementToThis,
             float? distanceToCentre)
         {
             Logger.LogDamage($"ArmorComponent::HandleHit() called");
-            ArmorAttributes armorOfImpact = new ArmorAttributes();
-            int armorIndex;
+            int armorOfImpact;
 
             if (displacementToThis == null)
             {
                 armorOfImpact = DetermineSideOfImpact();
-                armorIndex = 4;
             }
             else
             {
-                armorOfImpact = DetermineSideOfImpact(
-                    displacementToThis.GetValueOrDefault(),
-                    out armorIndex);
+                armorOfImpact = DetermineSideOfImpact(displacementToThis.GetValueOrDefault());
             }
 
-            DamageData.Target unitAsTarget = ConstructTargetStruct(armorOfImpact);
+            float receivedDamage = 0;
 
-            // Calculate its damage using its damage type
-            foreach (WeaponData.WeaponDamage damageInstance in receivedDamage) {
+            // Simple KE formula:
+            if (armorOfImpact == 0)
+            {
+                receivedDamage = 2 * firepower;
+            }
+            else if (armorOfImpact == 1)
+            {
+                receivedDamage = firepower;
+            }
+            else
+            {
+                // Each point of firepower more than the armor value equals 0.5 damage,
+                // but if we have 10 more firepower than armor, those points count double.
+                float overkill = Mathf.Max(firepower - armorOfImpact - 10, 0);
+                receivedDamage = (firepower + overkill - armorOfImpact) / 2 + 1;
+            }
 
-                switch (damageInstance.DamageType) {
-                    case DamageType.KE:
-                        KEDamage keDamage = new KEDamage(
-                                new KineticData(damageInstance),
-                                unitAsTarget,
-                                displacementToThis.GetValueOrDefault().magnitude
-                        );
-                        unitAsTarget = keDamage.CalculateDamage();
-                        break;
-                    case DamageType.HEAT:
-                        HeatDamage heatDamage = new HeatDamage(
-                                new HeatData(damageInstance),
-                                unitAsTarget);
-                        unitAsTarget = heatDamage.CalculateDamage();
-                        break;
-                    case DamageType.HE:
-                        HEDamage heDamage = new HEDamage(
-                                new HEData(damageInstance),
-                                unitAsTarget, distanceToCentre.GetValueOrDefault()
-                        );
-                        unitAsTarget = heDamage.CalculateDamage();
-                        break;
-                    case DamageType.FIRE:
-                        FireDamage fireDamage = new FireDamage(
-                                new FireData(damageInstance),
-                                unitAsTarget);
-                        unitAsTarget = fireDamage.CalculateDamage();
-                        break;
-                    case DamageType.SMALLARMS:
-                        SmallArmsDamage lightarmsDamage = new SmallArmsDamage(
-                                new SmallArmsData(damageInstance),
-                                unitAsTarget);
-                        break;
-                    default:
-                        Debug.LogError("Not a valid damage type!");
-                        break;
-                }
-
-                _healthComponent.UpdateHealth(unitAsTarget.Health);
-                ArmorData[armorIndex].Armor = unitAsTarget.Armor;
-                ArmorData[armorIndex].EraData = unitAsTarget.EraData;
+            if (receivedDamage > 0)
+            {
+                _healthComponent.UpdateHealth(_healthComponent.Health - receivedDamage);
             }
         }
 
         /// <summary>
         /// Use the displacement vector to calculate the angle of the shot
         /// </summary>
-        public ArmorAttributes DetermineSideOfImpact(Vector3 displacementToThis, out int index)
+        public int DetermineSideOfImpact(Vector3 displacementToThis)
         {
-            index = 0;
+            int index = 0;
             Vector3 displacementToFiringUnit = -displacementToThis;
 
             // Project this vector to the horizontal plane of the unit
@@ -156,25 +123,10 @@ namespace PFW.Units.Component.Armor
             return ArmorData[index];
         }
 
-        public ArmorAttributes DetermineSideOfImpact()
+        public int DetermineSideOfImpact()
         {
             // When no displacement vector is supplied, the damage is dealt to the top armor
             return ArmorData[4];
-        }
-
-        /// <summary>
-        /// Use this data of the armor being hit to construct a Target struct for the Damage classes to use as input
-        /// </summary>
-        public DamageData.Target ConstructTargetStruct(ArmorAttributes armorOfImpact)
-        {
-            DamageData.Target target = new DamageData.Target();
-
-            target.Armor = armorOfImpact.Armor;
-            target.EraData = armorOfImpact.EraData;
-
-            target.Health = _healthComponent.Health;
-
-            return target;
         }
     }
 }

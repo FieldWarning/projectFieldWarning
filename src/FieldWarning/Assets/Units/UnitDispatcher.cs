@@ -160,11 +160,11 @@ namespace PFW.Units
         public float MaxHealth => _unitData.MaxHealth;
 
         public void HandleHit(
-            List<WeaponData.WeaponDamage> receivedDamage,
+            int firepower,
             Vector3? displacementToTarget,
             float? distanceToCentre)
             =>
-            _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
+            _armorComponent.HandleHit(firepower, displacementToTarget, distanceToCentre);
 
         public void Teleport(Vector3 position, float heading) =>
                 _movementComponent.Teleport(position, heading);

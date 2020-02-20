@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -11,9 +11,9 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+using PFW.Model.Armory;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -25,7 +25,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class Howitzer : IWeapon
     {
-        private WeaponData _data { get; }
+        private WeaponConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _audioSource { get; }
 
@@ -39,12 +39,12 @@ namespace PFW.Units.Component.Weapon
 
 
         public Howitzer(
-            WeaponData data,
-            AudioSource source,
-            ParticleSystem shotEffect,
-            AudioClip shotSound,
-            Transform shotStarterPosition,
-            float shotVolume = 1.0F)
+                WeaponConfig data,
+                AudioSource source,
+                ParticleSystem shotEffect,
+                AudioClip shotSound,
+                Transform shotStarterPosition,
+                float shotVolume = 1.0F)
         {
             _data = data;
             _audioSource = source;
@@ -75,7 +75,7 @@ namespace PFW.Units.Component.Weapon
             if (_reloadTimeLeft > 0)
                 return false;
 
-            _reloadTimeLeft = _data.ReloadTime;
+            _reloadTimeLeft = _data.SalvoReload;
             return Shoot(target);
         }
     }
