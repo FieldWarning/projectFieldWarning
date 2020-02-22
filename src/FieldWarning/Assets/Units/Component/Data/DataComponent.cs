@@ -14,7 +14,6 @@
 using UnityEngine;
 
 using PFW.Model.Armory;
-using PFW.Units.Component.Damage;
 
 namespace PFW.Units.Component.Data
 {
@@ -33,31 +32,38 @@ namespace PFW.Units.Component.Data
         public float Width;
         public int MobilityTypeIndex;
 
+        public int FrontArmor;
+        public int SideArmor;
+        public int RearArmor;
+        public int TopArmor;
+
         // These variables are not read in from an external file
         public float Radius;
         public float OptimumTurnSpeed;
         public float SuspensionForward, SuspensionSide;
         public float AccelDampTime;
-        public int[] Armor = new int[4];
 
         public static DataComponent CreateDataComponent(
                 GameObject parent,
-                UnitDataConfig config,
-                MobilityConfig mobilityConfig)
+                UnitConfig config)
         {
-            parent.AddComponent<DataComponent>();
-            var c = parent.GetComponent<DataComponent>();
+            UnitDataConfig unitConfig = config.Data;
+            MobilityConfig mobilityConfig = config.Mobility;
+            ArmorConfig armorConfig = config.Armor;
 
-            c.MovementSpeed =    config.MovementSpeed      * TerrainConstants.MAP_SCALE;
-            c.ReverseSpeed =     config.ReverseSpeed       * TerrainConstants.MAP_SCALE;
-            c.AccelRate =        config.AccelRate          * TerrainConstants.MAP_SCALE;
-            c.MaxRotationSpeed = config.MaxRotationSpeed;
-            c.MinTurnRadius =    config.MinTurnRadius      * TerrainConstants.MAP_SCALE;
-            c.MaxLateralAccel =  config.MaxLateralAccel    * TerrainConstants.MAP_SCALE;
-            c.Suspension =       config.Suspension         / TerrainConstants.MAP_SCALE;
-            c.MaxHealth =        config.MaxHealth;
-            c.Length =           config.Length             * TerrainConstants.MAP_SCALE;
-            c.Width =            config.Width              * TerrainConstants.MAP_SCALE;
+            parent.AddComponent<DataComponent>();
+            DataComponent c = parent.GetComponent<DataComponent>();
+
+            c.MovementSpeed =    unitConfig.MovementSpeed      * TerrainConstants.MAP_SCALE;
+            c.ReverseSpeed =     unitConfig.ReverseSpeed       * TerrainConstants.MAP_SCALE;
+            c.AccelRate =        unitConfig.AccelRate          * TerrainConstants.MAP_SCALE;
+            c.MaxRotationSpeed = unitConfig.MaxRotationSpeed;
+            c.MinTurnRadius =    unitConfig.MinTurnRadius      * TerrainConstants.MAP_SCALE;
+            c.MaxLateralAccel =  unitConfig.MaxLateralAccel    * TerrainConstants.MAP_SCALE;
+            c.Suspension =       unitConfig.Suspension         / TerrainConstants.MAP_SCALE;
+            c.MaxHealth =        unitConfig.MaxHealth;
+            c.Length =           unitConfig.Length             * TerrainConstants.MAP_SCALE;
+            c.Width =            unitConfig.Width              * TerrainConstants.MAP_SCALE;
 
             c.MobilityTypeIndex = MobilityType.GetIndexForConfig(mobilityConfig);
 
@@ -68,6 +74,11 @@ namespace PFW.Units.Component.Data
             c.SuspensionSide = c.Suspension * c.Radius / c.Width;
 
             c.AccelDampTime = 0.15f * c.MovementSpeed / c.AccelRate;
+
+            c.FrontArmor = armorConfig.FrontArmor;
+            c.SideArmor = armorConfig.SideArmor;
+            c.RearArmor = armorConfig.RearArmor;
+            c.TopArmor = armorConfig.TopArmor;
 
             return c;
         }

@@ -32,14 +32,14 @@ namespace PFW.Units.Component.Armor
         /// An array of ArmorAttributes to store armor values
         /// on front / side / rear/ top respectively
         /// </summary>
-        public int[] ArmorData = new int[4];
+        private DataComponent _data;
 
         public void Initialize(
                 HealthComponent healthComponent, 
                 DataComponent data, 
                 MovementComponent movement)
         {
-            ArmorData = data.Armor;
+            _data = data;
             _unit = movement;
             _healthComponent = healthComponent;
         }
@@ -94,7 +94,7 @@ namespace PFW.Units.Component.Armor
         /// </summary>
         public int DetermineSideOfImpact(Vector3 displacementToThis)
         {
-            int index = 0;
+            int armor = _data.FrontArmor;
             Vector3 displacementToFiringUnit = -displacementToThis;
 
             // Project this vector to the horizontal plane of the unit
@@ -110,23 +110,23 @@ namespace PFW.Units.Component.Armor
             switch (shotAngle)
             {
                 case float n when (n >= 0 && n <= 45f):
-                    index = 0;
+                    armor = _data.FrontArmor;
                     break;
                 case float n when (n > 45f && n <= 135f):
-                    index = 1;
+                    armor = _data.SideArmor;
                     break;
                 case float n when (n > 135f && n <= 180f):
-                    index = 2;
+                    armor = _data.RearArmor;
                     break;
             }
 
-            return ArmorData[index];
+            return armor;
         }
 
         public int DetermineSideOfImpact()
         {
             // When no displacement vector is supplied, the damage is dealt to the top armor
-            return ArmorData[4];
+            return _data.TopArmor;
         }
     }
 }

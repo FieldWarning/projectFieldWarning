@@ -46,8 +46,18 @@ namespace PFW.Model.Armory
         public string PrefabPath;
         public string ArtPrefabPath;
         public UnitDataConfig Data;
+        public ArmorConfig Armor;
         public MobilityConfig Mobility;
         public WeaponsConfig Weapons;
+    }
+
+    [Serializable]
+    public class ArmorConfig
+    {
+        public int FrontArmor;
+        public int SideArmor;
+        public int RearArmor;
+        public int TopArmor;
     }
 
     [Serializable]
