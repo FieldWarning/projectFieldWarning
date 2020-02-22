@@ -22,7 +22,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class Cannon : IWeapon
     {
-        private WeaponConfig _data { get; }
+        private CannonConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _source { get; }
 
@@ -34,7 +34,7 @@ namespace PFW.Units.Component.Weapon
         private static System.Random _random;
 
         public Cannon(
-            WeaponConfig data,
+            CannonConfig data,
             AudioSource source,
             ParticleSystem shotEffect,
             AudioClip shotSound,

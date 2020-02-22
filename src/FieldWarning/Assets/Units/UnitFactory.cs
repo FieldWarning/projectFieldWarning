@@ -132,8 +132,7 @@ namespace PFW.UI.Prototype
                 {
                     targetingComponents[i].Initialize(
                             turretComponents[i],
-                            turretConfig.Children[i].Priority,
-                            turretConfig.Children[i].Weapon
+                            turretConfig.Children[i]
                             );
                     turretComponents[i].Initialize(
                             RecursiveFindChild(freshUnit.transform, turretConfig.Children[i].MountRef),

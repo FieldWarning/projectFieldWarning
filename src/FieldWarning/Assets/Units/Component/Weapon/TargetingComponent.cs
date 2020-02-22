@@ -39,7 +39,7 @@ namespace PFW.Units.Component.Weapon
 
             _target = target;
 
-            if (distance > _data.FireRange && autoApproach) {
+            if (distance > _fireRange && autoApproach) {
                 _movingTowardsTarget = true;
                 Unit.SetDestination(target.Position);
             }
@@ -48,7 +48,7 @@ namespace PFW.Units.Component.Weapon
         }
 
         private IWeapon _weapon;
-        private WeaponConfig _data = null;
+        private int _fireRange;
 
         // --------------- BEGIN PREFAB ----------------
 
@@ -88,30 +88,39 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         public void Initialize(
                 TurretComponent turret,
-                int priority,
-                WeaponConfig weaponData)
+                UnitWeaponConfig weaponData)
         {
             _turretComponent = turret;
-            _turretPriority = priority;
-            _data = weaponData;
+            _turretPriority = weaponData.Priority;
 
             // TODO just pass the weapon from the outside?
-            if (weaponData.WeaponType == WeaponType.CANNON)
+            if (weaponData.Cannon != null)
+            {
                 _weapon = new Cannon(
-                        weaponData,
+                        weaponData.Cannon,
                         _audioSource,
                         _shotEffect,
                         _shotSound,
                         _muzzleFlashEffect,
                         _shotVolume);
-            else
+                _fireRange = weaponData.Cannon.FireRange;
+            }
+            else if (weaponData.Howitzer != null)
+            {
                 _weapon = new Howitzer(
-                        weaponData,
+                        weaponData.Howitzer,
                         _audioSource,
                         _shotEffect,
                         _shotSound,
                         _shotStarterPosition,
                         _shotVolume);
+                _fireRange = weaponData.Howitzer.FireRange;
+            }
+            else 
+            {
+                Debug.LogError("Couldn't create a weapon in targeting component. " +
+                    "No weapon specified in the config?");
+            }
 
             Logger.LogTargeting("Created a weapon in TargetingComponent.Initialize().", gameObject);
         }
@@ -129,7 +138,7 @@ namespace PFW.Units.Component.Weapon
         private void StopMovingIfInRangeOfTarget()
         {
             if (_movingTowardsTarget) {
-                if (Vector3.Distance(Unit.transform.position, _target.Position) < _data.FireRange) {
+                if (Vector3.Distance(Unit.transform.position, _target.Position) < _fireRange) {
                     _movingTowardsTarget = false;
                     Unit.SetDestination(Unit.transform.position);
 
@@ -191,7 +200,7 @@ namespace PFW.Units.Component.Weapon
 
                 // See if they are in range of weapon:
                 float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
-                if (distance < _data.FireRange) {
+                if (distance < _fireRange) {
                     Logger.LogTargeting("Target found and selected after scanning.", gameObject);
                     SetTarget(enemy.TargetTuple, false);
                     break;
@@ -210,7 +219,7 @@ namespace PFW.Units.Component.Weapon
                 return;
 
             float distance = Vector3.Distance(Unit.transform.position, _target.Position);
-            if (distance > _data.FireRange) {
+            if (distance > _fireRange) {
                 _target = null;
                 Logger.LogTargeting("Dropping a target because it is out of range.", gameObject);
             }

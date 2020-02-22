@@ -25,7 +25,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class Howitzer : IWeapon
     {
-        private WeaponConfig _data { get; }
+        private HowitzerConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _audioSource { get; }
 
@@ -39,7 +39,7 @@ namespace PFW.Units.Component.Weapon
 
 
         public Howitzer(
-                WeaponConfig data,
+                HowitzerConfig data,
                 AudioSource source,
                 ParticleSystem shotEffect,
                 AudioClip shotSound,

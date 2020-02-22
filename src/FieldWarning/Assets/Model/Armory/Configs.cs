@@ -104,13 +104,15 @@ namespace PFW.Model.Armory
         public int ArcUp;
         public int ArcDown;
         public int RotationRate;
-        public WeaponConfig Weapon;
+
+        // One of these:
+        public CannonConfig Cannon;
+        public HowitzerConfig Howitzer;
     }
 
     [Serializable]
-    public class WeaponConfig
+    public class CannonConfig
     {
-        public WeaponType WeaponType;
         public int Damage;
         public int FireRange;
         public int Accuracy;
@@ -119,9 +121,14 @@ namespace PFW.Model.Armory
         public float SalvoReload;
     }
 
-    public enum WeaponType
+    [Serializable]
+    public class HowitzerConfig
     {
-        CANNON,
-        HOWITZER
+        public int Damage;
+        public int FireRange;
+        public int Accuracy;
+        public float ShotReload;
+        public int SalvoLength;
+        public float SalvoReload;
     }
 }
