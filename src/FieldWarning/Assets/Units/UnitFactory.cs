@@ -111,7 +111,7 @@ namespace PFW.UI.Prototype
             TargetingComponent[] targetingComponents = freshUnit.GetComponents<TargetingComponent>();
             TurretComponent[] turretComponents = freshUnit.GetComponents<TurretComponent>();
 
-            TurretConfig turretConfig = armoryUnit.Config.Weapons.Turret;
+            TurretConfig turretConfig = armoryUnit.Config.Turrets[0];
             // TODO Currently only supporting the prefab with 
             // 2 turrets, 2 targeting components, and one parent turret
             if (targetingComponents.GetLength(0) == 2 && turretComponents.GetLength(0) == 3)

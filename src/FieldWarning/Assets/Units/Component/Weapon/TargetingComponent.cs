@@ -88,7 +88,7 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         public void Initialize(
                 TurretComponent turret,
-                UnitWeaponConfig weaponData)
+                TurretConfig weaponData)
         {
             _turretComponent = turret;
             _turretPriority = weaponData.Priority;

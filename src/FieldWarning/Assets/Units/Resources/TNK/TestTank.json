@@ -36,50 +36,48 @@
         "WaterSpeed": 0
     },
     
-    "Weapons": {
-        "Turret": {
-            "Children": [
-                {
-                    "Priority": 1,
-                    "TurretRef": "Main_Barrel",
-                    "MountRef": "Main_Turret",
-                    "ArcHorizontal": 3,
-                    "ArcUp": 40,
-                    "ArcDown": 20,
-                    "RotationRate": 40,
-                    "Cannon": {
-                        "Damage": 4,
-                        "FireRange" : 20,
-                        "Accuracy": 40,
-                        "ShotReload": 0.5,
-                        "SalvoLength": 10,
-                        "SalvoReload": 8
-                    }
-                },
-                {
-                    "Priority": 2,
-                    "TurretRef": "Minigun",
-                    "MountRef": "Main_Turret",
-                    "ArcHorizontal": 90,
-                    "ArcUp": 40,
-                    "ArcDown": 20,
-                    "RotationRate": 40,
-                    "Cannon": {
-                        "Damage": 4,
-                        "FireRange" : 200,
-                        "Accuracy": 30,
-                        "ShotReload": 8,
-                        "SalvoLength": 1,
-                        "SalvoReload": 8
-                    }
+    "Turrets": [{
+        "TurretRef": "Main_Turret",
+        "MountRef": "Main_Body",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "Main_Barrel",
+                "MountRef": "Main_Turret",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "Damage": 4,
+                    "FireRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8
                 }
-            ],
-            "TurretRef": "Main_Turret",
-            "MountRef": "Main_Body",
-            "ArcHorizontal": 180,
-            "ArcUp": 0,
-            "ArcDown": 0,
-            "RotationRate": 40
-        }
-    }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Minigun",
+                "MountRef": "Main_Turret",
+                "ArcHorizontal": 90,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "Damage": 4,
+                    "FireRange" : 200,
+                    "Accuracy": 30,
+                    "ShotReload": 8,
+                    "SalvoLength": 1,
+                    "SalvoReload": 8
+                }
+            }
+        ]
+    }]
 }

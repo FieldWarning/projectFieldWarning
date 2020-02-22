@@ -48,7 +48,7 @@ namespace PFW.Model.Armory
         public UnitDataConfig Data;
         public ArmorConfig Armor;
         public MobilityConfig Mobility;
-        public WeaponsConfig Weapons;
+        public List<TurretConfig> Turrets;
     }
 
     [Serializable]
@@ -87,35 +87,20 @@ namespace PFW.Model.Armory
     }
 
     [Serializable]
-    public class WeaponsConfig
-    {
-        public TurretConfig Turret;
-    }
-
-    [Serializable]
     public class TurretConfig
     {
-        public List<UnitWeaponConfig> Children;
         public string TurretRef;
         public string MountRef;
         public int ArcHorizontal;
         public int ArcUp;
         public int ArcDown;
         public int RotationRate;
-    }
 
-    [Serializable]
-    public class UnitWeaponConfig
-    {
-        public string TurretRef;
-        public string MountRef;
+        // Only relevant on child turrets:
         public int Priority;
-        public int ArcHorizontal;
-        public int ArcUp;
-        public int ArcDown;
-        public int RotationRate;
 
         // One of these:
+        public List<TurretConfig> Children;
         public CannonConfig Cannon;
         public HowitzerConfig Howitzer;
     }
