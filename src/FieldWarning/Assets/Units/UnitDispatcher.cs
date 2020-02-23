@@ -128,7 +128,7 @@ namespace PFW.Units
 
         public void SendFirePosOrder(Vector3 position)
         {
-            foreach (var targeter in _targetingComponents)
+            foreach (TargetingComponent targeter in _targetingComponents)
                 targeter.SetTarget(position);
         }
 
@@ -183,23 +183,18 @@ namespace PFW.Units
         /// </summary>
         public void Destroy()
         {
-            TargetTuple.Reset();
+            // Protect against gameobject being destroyed twice
+            // (once by mirror, once by local logic)
+            if (gameObject)
+            {
+                TargetTuple.Reset();
 
-            MatchSession.Current.RegisterUnitDeath(this);
+                MatchSession.Current.RegisterUnitDeath(this);
 
-            Platoon.RemoveUnit(this);
+                Platoon.RemoveUnit(this);
 
-            Destroy(gameObject);
-        }
-
-        public override void OnNetworkDestroy()
-        {
-            Debug.Log("networkDetroy");
-            TargetTuple.Reset();
-
-            MatchSession.Current.RegisterUnitDeath(this);
-
-            Platoon.RemoveUnit(this);
+                Destroy(gameObject);
+            }
         }
     }
 }
