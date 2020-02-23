@@ -29,7 +29,6 @@ namespace PFW
 
             TextAsset configFile = Resources.Load<TextAsset>($"{categoryKey}/{modelDesignation}");
             UnitConfig config = JsonUtility.FromJson<UnitConfig>(configFile.text);
-            Debug.Log(config.ArtPrefabPath);
 
             return new Unit(config);
         }

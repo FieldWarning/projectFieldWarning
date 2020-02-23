@@ -100,7 +100,8 @@ namespace PFW.Model.Armory
         public int Priority;
 
         // One of these:
-        public List<TurretConfig> Children;
+        public List<TurretConfig> Children;  // JSONUtility generates a
+                                             // warning about the recursion..
         public CannonConfig Cannon;
         public HowitzerConfig Howitzer;
     }
