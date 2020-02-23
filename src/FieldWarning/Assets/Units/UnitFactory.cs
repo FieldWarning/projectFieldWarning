@@ -14,11 +14,7 @@ using UnityEngine;
 
 using PFW.Model.Armory;
 using PFW.Units;
-using PFW.Units.Component.Armor;
 using PFW.Units.Component.Data;
-using PFW.Units.Component.Health;
-using PFW.Units.Component.Vision;
-using PFW.Units.Component.Movement;
 using PFW.Units.Component.Weapon;
 
 namespace PFW.UI.Prototype
@@ -37,7 +33,6 @@ namespace PFW.UI.Prototype
         public void MakeUnit(Unit armoryUnit, GameObject unit, PlatoonBehaviour platoon)
         {
             MakeUnitCommon(unit, armoryUnit);
-            AssociateTurretComponentsToArt(unit, armoryUnit);
 
             // TODO: Load different voice type depending on Owner country
             GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
@@ -98,7 +93,12 @@ namespace PFW.UI.Prototype
             // freshUnit.AddComponent<MovementComponent>().enabled = false;
             freshUnit.AddComponent<SelectableBehavior>();
             // prototype.AddComponent<NetworkIdentity>();
+
+            AssociateTurretComponentsToArt(freshUnit, armoryUnit);
         }
+
+        private static GameObject _shotEmitterResource;
+        private static GameObject _muzzleFlashResource;
 
         /// <summary>
         /// The turret and targeting components on the base prefab
@@ -130,13 +130,34 @@ namespace PFW.UI.Prototype
 
                 for (int i = 0; i < targetingComponents.GetLength(0); i++)
                 {
+                    // Hack: The old tank prefab has a particle system for shooting that we want to remove,
+                    // so instead of adding it to the models or having it in the config 
+                    // we hardcode it in here.
+                    // TODO might have to use a different object for the old arty effect.
+                    if (!_shotEmitterResource)
+                    {
+                        _shotEmitterResource = Resources.Load<GameObject>("shot_emitter");
+                    }
+                    if (!_muzzleFlashResource)
+                    {
+                        _muzzleFlashResource = Resources.Load<GameObject>("muzzle_flash");
+                    }
+
+                    Transform turretArt = RecursiveFindChild(
+                            freshUnit.transform, turretConfig.Children[i].TurretRef);
+
+                    GameObject shotGO = GameObject.Instantiate(_shotEmitterResource, turretArt);
+                    GameObject muzzleFlashGO = GameObject.Instantiate(_muzzleFlashResource, turretArt);
+
                     targetingComponents[i].Initialize(
                             turretComponents[i],
-                            turretConfig.Children[i]
+                            turretConfig.Children[i],
+                            shotGO.GetComponent<ParticleSystem>(),
+                            muzzleFlashGO.GetComponent<ParticleSystem>()
                             );
                     turretComponents[i].Initialize(
                             RecursiveFindChild(freshUnit.transform, turretConfig.Children[i].MountRef),
-                            RecursiveFindChild(freshUnit.transform, turretConfig.Children[i].TurretRef),
+                            turretArt,
                             toplevelTurret,
                             turretConfig.Children[i].ArcHorizontal,
                             turretConfig.Children[i].ArcUp,

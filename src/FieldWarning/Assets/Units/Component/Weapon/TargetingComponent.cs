@@ -69,15 +69,15 @@ namespace PFW.Units.Component.Weapon
         [SerializeField]
         private Transform _shotStarterPosition = null;
 
-        // TODO Should aim to make actual objects fire and not effects:
-        [SerializeField]
-        private ParticleSystem _shotEffect = null;
-
         [SerializeField]
         private AudioClip _shotSound = null;
 
         [SerializeField]
         private float _shotVolume = 1.0F;
+
+        // TODO Should aim to make actual objects fire and not effects:
+        [SerializeField]
+        private ParticleSystem _shotEffect = null;
 
         [SerializeField]
         private ParticleSystem _muzzleFlashEffect = null;
@@ -88,10 +88,15 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         public void Initialize(
                 TurretComponent turret,
-                TurretConfig weaponData)
+                TurretConfig weaponData,
+                ParticleSystem shotEffect,
+                ParticleSystem muzzleFlashEffect)
         {
             _turretComponent = turret;
             _turretPriority = weaponData.Priority;
+
+            _shotEffect = shotEffect;
+            _muzzleFlashEffect = muzzleFlashEffect;
 
             // TODO just pass the weapon from the outside?
             if (weaponData.Cannon != null)
