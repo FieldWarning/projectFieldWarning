@@ -183,18 +183,16 @@ namespace PFW.Units
         /// </summary>
         public void Destroy()
         {
-            // Protect against gameobject being destroyed twice
-            // (once by mirror, once by local logic)
-            if (gameObject)
-            {
-                TargetTuple.Reset();
-
-                MatchSession.Current.RegisterUnitDeath(this);
-
-                Platoon.RemoveUnit(this);
-
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
+        }
+        
+        public override void OnNetworkDestroy()
+        {
+            TargetTuple.Reset();
+                
+            MatchSession.Current.RegisterUnitDeath(this);
+                
+            Platoon.RemoveUnit(this);
         }
     }
 }
