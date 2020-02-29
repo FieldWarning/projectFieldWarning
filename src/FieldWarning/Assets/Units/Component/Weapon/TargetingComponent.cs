@@ -14,6 +14,7 @@
 using UnityEngine;
 
 using PFW.Model.Game;
+using PFW.Model.Armory;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -34,11 +35,11 @@ namespace PFW.Units.Component.Weapon
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
             Logger.LogTargeting("Received target from the outside.", gameObject);
-            var distance = Vector3.Distance(Unit.transform.position, target.Position);
+            float distance = Vector3.Distance(Unit.transform.position, target.Position);
 
             _target = target;
 
-            if (distance > _data.FireRange && autoApproach) {
+            if (distance > _fireRange && autoApproach) {
                 _movingTowardsTarget = true;
                 Unit.SetDestination(target.Position);
             }
@@ -47,10 +48,9 @@ namespace PFW.Units.Component.Weapon
         }
 
         private IWeapon _weapon;
+        private int _fireRange;
 
         // --------------- BEGIN PREFAB ----------------
-        [SerializeField]
-        private WeaponData _data = null;
 
         // TODO the weapon class should create its own audio source:
         [SerializeField]
@@ -69,23 +69,66 @@ namespace PFW.Units.Component.Weapon
         [SerializeField]
         private Transform _shotStarterPosition = null;
 
-        // TODO Should aim to make actual objects fire and not effects:
-        [SerializeField]
-        private ParticleSystem _shotEffect = null;
-
         [SerializeField]
         private AudioClip _shotSound = null;
 
         [SerializeField]
         private float _shotVolume = 1.0F;
 
-        // TODO remove, only used for initialization which should not be done here
+        // TODO Should aim to make actual objects fire and not effects:
         [SerializeField]
-        private WeaponType _weaponType = WeaponType.CANNON;
+        private ParticleSystem _shotEffect = null;
 
         [SerializeField]
         private ParticleSystem _muzzleFlashEffect = null;
         // ---------------- END PREFAB -----------------
+
+        /// <summary>
+        /// Constructor equivalent for MonoBehaviours.
+        /// </summary>
+        public void Initialize(
+                TurretComponent turret,
+                TurretConfig weaponData,
+                ParticleSystem shotEffect,
+                ParticleSystem muzzleFlashEffect)
+        {
+            _turretComponent = turret;
+            _turretPriority = weaponData.Priority;
+
+            _shotEffect = shotEffect;
+            _muzzleFlashEffect = muzzleFlashEffect;
+
+            // TODO just pass the weapon from the outside?
+            if (weaponData.Cannon != null)
+            {
+                _weapon = new Cannon(
+                        weaponData.Cannon,
+                        _audioSource,
+                        _shotEffect,
+                        _shotSound,
+                        _muzzleFlashEffect,
+                        _shotVolume);
+                _fireRange = weaponData.Cannon.FireRange;
+            }
+            else if (weaponData.Howitzer != null)
+            {
+                _weapon = new Howitzer(
+                        weaponData.Howitzer,
+                        _audioSource,
+                        _shotEffect,
+                        _shotSound,
+                        _shotStarterPosition,
+                        _shotVolume);
+                _fireRange = weaponData.Howitzer.FireRange;
+            }
+            else 
+            {
+                Debug.LogError("Couldn't create a weapon in targeting component. " +
+                    "No weapon specified in the config?");
+            }
+
+            Logger.LogTargeting("Created a weapon in TargetingComponent.Initialize().", gameObject);
+        }
 
         private void Awake()
         {
@@ -95,32 +138,12 @@ namespace PFW.Units.Component.Weapon
         private void Start()
         {
             Unit = gameObject.GetComponent<UnitDispatcher>();
-
-            // TODO remove:
-            if (_weaponType == WeaponType.CANNON)
-                _weapon = new Cannon(
-                        _data,
-                        _audioSource,
-                        _shotEffect,
-                        _shotSound,
-                        _muzzleFlashEffect,
-                        _shotVolume);
-            else if (_weaponType == WeaponType.HOWITZER)
-                _weapon = new Howitzer(
-                        _data,
-                        _audioSource,
-                        _shotEffect,
-                        _shotSound,
-                        _shotStarterPosition,
-                        _shotVolume);
-
-            Logger.LogTargeting("Created a weapon in TargetingComponent.Start().", gameObject);
         }
 
         private void StopMovingIfInRangeOfTarget()
         {
             if (_movingTowardsTarget) {
-                if (Vector3.Distance(Unit.transform.position, _target.Position) < _data.FireRange) {
+                if (Vector3.Distance(Unit.transform.position, _target.Position) < _fireRange) {
                     _movingTowardsTarget = false;
                     Unit.SetDestination(Unit.transform.position);
 
@@ -173,15 +196,16 @@ namespace PFW.Units.Component.Weapon
             Logger.LogTargeting("Scanning for a target.", gameObject);
 
             // TODO utilize precomputed distance lists from session
-            // Maybe add Sphere shaped collider with the radius of the range and then use trigger enter and exit to keep a list of in range Units
+            // Maybe add Sphere shaped collider with the radius of the range and then 
+            // use trigger enter and exit to keep a list of in range Units
 
             foreach (UnitDispatcher enemy in MatchSession.Current.EnemiesByTeam[Unit.Platoon.Owner.Team]) {
                 if (!enemy.VisionComponent.IsSpotted)
                     continue;
 
                 // See if they are in range of weapon:
-                var distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
-                if (distance < _data.FireRange) {
+                float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
+                if (distance < _fireRange) {
                     Logger.LogTargeting("Target found and selected after scanning.", gameObject);
                     SetTarget(enemy.TargetTuple, false);
                     break;
@@ -200,19 +224,13 @@ namespace PFW.Units.Component.Weapon
                 return;
 
             float distance = Vector3.Distance(Unit.transform.position, _target.Position);
-            if (distance > _data.FireRange) {
+            if (distance > _fireRange) {
                 _target = null;
                 Logger.LogTargeting("Dropping a target because it is out of range.", gameObject);
             }
         }
 
         public bool HasTarget => _target != null;
-    }
-
-    enum WeaponType
-    {
-        CANNON,
-        HOWITZER
     }
 }
 

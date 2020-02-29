@@ -44,9 +44,20 @@ namespace PFW.Model.Armory
         public string Name;
         public int Price;
         public string PrefabPath;
+        public string ArtPrefabPath;
         public UnitDataConfig Data;
+        public ArmorConfig Armor;
         public MobilityConfig Mobility;
-        public List<UnitWeaponConfig> Weapons;
+        public List<TurretConfig> Turrets;
+    }
+
+    [Serializable]
+    public class ArmorConfig
+    {
+        public int FrontArmor;
+        public int SideArmor;
+        public int RearArmor;
+        public int TopArmor;
     }
 
     [Serializable]
@@ -76,13 +87,44 @@ namespace PFW.Model.Armory
     }
 
     [Serializable]
-    public class UnitWeaponConfig
+    public class TurretConfig
     {
-        public string ComponentRef;
-        public string TypeRef;
+        public string TurretRef;
+        public string MountRef;
+        public int ArcHorizontal;
+        public int ArcUp;
+        public int ArcDown;
+        public int RotationRate;
+
+        // Only relevant on child turrets:
         public int Priority;
-        public string SoundRef;
-        public string EffectRef;
-        public int Volume;
+
+        // One of these:
+        public List<TurretConfig> Children;  // JSONUtility generates a
+                                             // warning about the recursion..
+        public CannonConfig Cannon;
+        public HowitzerConfig Howitzer;
+    }
+
+    [Serializable]
+    public class CannonConfig
+    {
+        public int Damage;
+        public int FireRange;
+        public int Accuracy;
+        public float ShotReload;
+        public int SalvoLength;
+        public float SalvoReload;
+    }
+
+    [Serializable]
+    public class HowitzerConfig
+    {
+        public int Damage;
+        public int FireRange;
+        public int Accuracy;
+        public float ShotReload;
+        public int SalvoLength;
+        public float SalvoReload;
     }
 }

@@ -42,12 +42,14 @@ namespace PFW.Model.Armory
 
         //[Tooltip("The gameobject this will be cloned from.")]
         public GameObject Prefab { get; }
+        public GameObject ArtPrefab { get; }
 
         public Unit(UnitConfig config)
         {
             Name = config.Name;
             Price = config.Price;
             Prefab = Resources.Load<GameObject>(config.PrefabPath);
+            ArtPrefab = Resources.Load<GameObject>(config.ArtPrefabPath);
             Config = config;
         }
     }

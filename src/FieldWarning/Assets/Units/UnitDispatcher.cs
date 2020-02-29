@@ -13,7 +13,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+
 using UnityEngine;
+using Mirror;
+
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
@@ -28,7 +31,7 @@ namespace PFW.Units
     /// The dispatcher represents the unit to the outside world
     /// while delegating all tasks to the various unit components.
     /// </summary>
-    public sealed class UnitDispatcher : MonoBehaviour
+    public sealed class UnitDispatcher : NetworkBehaviour
     {
         // Handles move orders:
         // private INavigationComponent _navigationComponent;
@@ -103,9 +106,9 @@ namespace PFW.Units
                     Resources.Load<GameObject>("SelectionCircle"), Transform);
 
             _movementComponent.Initialize();
-            _healthComponent.Initialize(this);
+            _healthComponent.Initialize(this, _unitData);
             VisionComponent.Initialize(this);
-            _armorComponent.Initialize();
+            _armorComponent.Initialize(_healthComponent, _unitData, _movementComponent);
         }
 
         /// <summary>
@@ -125,7 +128,7 @@ namespace PFW.Units
 
         public void SendFirePosOrder(Vector3 position)
         {
-            foreach (var targeter in _targetingComponents)
+            foreach (TargetingComponent targeter in _targetingComponents)
                 targeter.SetTarget(position);
         }
 
@@ -157,11 +160,11 @@ namespace PFW.Units
         public float MaxHealth => _unitData.MaxHealth;
 
         public void HandleHit(
-            List<WeaponData.WeaponDamage> receivedDamage,
+            int firepower,
             Vector3? displacementToTarget,
             float? distanceToCentre)
             =>
-            _armorComponent.HandleHit(receivedDamage,displacementToTarget, distanceToCentre);
+            _armorComponent.HandleHit(firepower, displacementToTarget, distanceToCentre);
 
         public void Teleport(Vector3 position, float heading) =>
                 _movementComponent.Teleport(position, heading);
@@ -180,12 +183,16 @@ namespace PFW.Units
         /// </summary>
         public void Destroy()
         {
-            TargetTuple.Reset();
-
-            MatchSession.Current.RegisterUnitDeath(this);
-
-            Platoon.RemoveUnit(this);
             Destroy(gameObject);
+        }
+        
+        public override void OnNetworkDestroy()
+        {
+            TargetTuple.Reset();
+                
+            MatchSession.Current.RegisterUnitDeath(this);
+                
+            Platoon.RemoveUnit(this);
         }
     }
 }

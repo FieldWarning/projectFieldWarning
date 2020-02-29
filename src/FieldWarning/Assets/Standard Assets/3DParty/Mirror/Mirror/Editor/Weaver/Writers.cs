@@ -53,11 +53,6 @@ namespace Mirror.Weaver
                 Weaver.Error($"{variable} is not a supported type. Use a supported type or provide a custom writer");
                 return null;
             }
-            if (td.IsDerivedFrom(Weaver.ScriptableObjectType))
-            {
-                Weaver.Error($"Cannot generate writer for scriptable object {variable}. Use a supported type or provide a custom writer");
-                return null;
-            }
             if (td.IsDerivedFrom(Weaver.ComponentType))
             {
                 Weaver.Error($"Cannot generate writer for component type {variable}. Use a supported type or provide a custom writer");
@@ -84,7 +79,7 @@ namespace Mirror.Weaver
             }
             else
             {
-                newWriterFunc = GenerateStructWriterFunction(variable, recursionCount);
+                newWriterFunc = GenerateClassOrStructWriterFunction(variable, recursionCount);
             }
 
             if (newWriterFunc == null)
@@ -105,7 +100,7 @@ namespace Mirror.Weaver
             Weaver.WeaveLists.generateContainerClass.Methods.Add(newWriterFunc);
         }
 
-        static MethodDefinition GenerateStructWriterFunction(TypeReference variable, int recursionCount)
+        static MethodDefinition GenerateClassOrStructWriterFunction(TypeReference variable, int recursionCount)
         {
             if (recursionCount > MaxRecursionCount)
             {

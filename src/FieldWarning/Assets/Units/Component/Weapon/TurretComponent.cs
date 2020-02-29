@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -12,8 +12,6 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PFW.Units.Component.Weapon
@@ -66,6 +64,30 @@ namespace PFW.Units.Component.Weapon
 
         public bool IsFacingTarget { get; private set; } = false;
 
+        /// <summary>
+        /// Constructor equivalent for MonoBehaviours.
+        /// 
+        /// parent may be null.
+        /// </summary>
+        public void Initialize(
+                Transform mount,
+                Transform turret,
+                TurretComponent parent,
+                int arcHorizontal, 
+                int arcUp, 
+                int arcDown, 
+                int rotationRate,
+                bool isHowitzer)
+        {
+            _mount = mount;
+            _turret = turret;
+            _parentTurret = parent;
+            ArcHorizontal = arcHorizontal;
+            ArcUp = arcUp;
+            ArcDown = arcDown;
+            RotationRate = rotationRate;
+            _isHowitzer = isHowitzer;
+        }
 
         private void Update()
         {
@@ -88,7 +110,8 @@ namespace PFW.Units.Component.Weapon
                 // shotEmitter.LookAt(pos);
 
                 Vector3 directionToTarget = pos - _turret.position;
-                Quaternion rotationToTarget = Quaternion.LookRotation(_mount.transform.InverseTransformDirection(directionToTarget));
+                Quaternion rotationToTarget = Quaternion.LookRotation(
+                        _mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetHorizontalAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
                 if (Mathf.Abs(targetHorizontalAngle) > ArcHorizontal) {

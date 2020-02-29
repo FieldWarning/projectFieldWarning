@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -13,6 +13,7 @@
 
 using System;
 using UnityEngine;
+using PFW.Model.Armory;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -21,7 +22,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class Cannon : IWeapon
     {
-        private WeaponData _data { get; }
+        private CannonConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _source { get; }
 
@@ -33,7 +34,7 @@ namespace PFW.Units.Component.Weapon
         private static System.Random _random;
 
         public Cannon(
-            WeaponData data,
+            CannonConfig data,
             AudioSource source,
             ParticleSystem shotEffect,
             AudioClip shotSound,
@@ -79,7 +80,8 @@ namespace PFW.Units.Component.Weapon
             if (_reloadTimeLeft > 0)
                 return false;
 
-            _reloadTimeLeft = _data.ReloadTime;
+            // TODO implement salvo + shot reload
+            _reloadTimeLeft = _data.SalvoReload;
             FireWeapon(target, displacement);
             return true;
         }
