@@ -59,7 +59,9 @@ namespace PFW.UI.Ingame
             }
         }
 
-        // Create the smallest platoon allowed
+        /// <summary>
+        /// Create the smallest platoon allowed.
+        /// </summary>
         private void StartNewPlatoon()
         {
             _smallestPlatoonSize = MIN_PLATOON_SIZE;
@@ -82,7 +84,11 @@ namespace PFW.UI.Ingame
             return clone;
         }
 
-        // Places the ghost units (unit silhouettes) in view of the player:
+        /// <summary>
+        /// Places the ghost units (unit silhouettes) in view of the player.
+        /// </summary>
+        /// <param name="center"></param>
+        /// <param name="facingPoint"></param>
         public void PreviewPurchase(Vector3 center, Vector3 facingPoint)
         {
             Vector3 diff = facingPoint - center;
