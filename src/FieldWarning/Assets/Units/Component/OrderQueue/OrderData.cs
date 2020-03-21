@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -41,7 +41,7 @@ namespace PFW.Units.Component.OrderQueue
         public MoveCommandType MoveCommandType { get; }
         #endregion
 
-        public static OrderData MoveOrder(
+        public static OrderData MakeMoveOrder(
             PlatoonBehaviour platoon,
             Vector3 destination,
             float heading = MovementComponent.NO_HEADING,
@@ -55,7 +55,7 @@ namespace PFW.Units.Component.OrderQueue
                 moveCommandType);
         }
 
-        public static OrderData FirePositionOrder(
+        public static OrderData MakeFirePositionOrder(
             PlatoonBehaviour platoonBehaviour,
             Vector3 targetGround)
         {

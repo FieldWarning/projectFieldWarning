@@ -124,7 +124,8 @@ namespace PFW.UI.Ingame
 
             bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
 
-            _selection.ForEach(x => x.SetDestination(
+            _selection.ForEach(x => CommandConnection.Connection.CmdOrderMovement(
+                x.netId,
                 x.GhostPlatoon.transform.position,
                 useGhostHeading ? 
                     x.GhostPlatoon.FinalHeading : MovementComponent.NO_HEADING,

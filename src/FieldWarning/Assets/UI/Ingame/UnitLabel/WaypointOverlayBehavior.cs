@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -37,7 +37,7 @@ namespace PFW.UI.Ingame.UnitLabel
 
             int moveOrderCount = moveOrders.Count;
 
-            var activeOrder = _platoon.OrderQueue.ActiveOrder;
+            OrderData activeOrder = _platoon.OrderQueue.ActiveOrder;
             if (activeOrder?.OrderType == OrderType.MOVE_ORDER)
             {
                 moveOrderCount++;

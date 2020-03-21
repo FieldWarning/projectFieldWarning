@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -13,7 +13,6 @@
 
 using UnityEngine;
 
-using static PFW.Units.Component.Movement.MovementComponent;
 using PFW.Units.Component.Data;
 
 namespace PFW.Units.Component.Movement
@@ -63,7 +62,7 @@ namespace PFW.Units.Component.Movement
             float targetHeading = GetTargetHeading();
             float turnForward = 0f;
             float turnReverse = 0f;
-            if (targetHeading != NO_HEADING) {
+            if (targetHeading != MovementComponent.NO_HEADING) {
                 turnForward = (targetHeading - NextRotation.y - Mathf.PI / 2).unwrapRadian();
                 turnReverse = (targetHeading - NextRotation.y + Mathf.PI / 2).unwrapRadian();
             }

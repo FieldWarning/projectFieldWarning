@@ -246,11 +246,10 @@ namespace PFW.Units
         }
 
         /// <summary>
-        ///     Activates all units, moving from ghost/preview mode to a real platoon
-        ///     Only use from PlatoonRoot (the lifetime manager class for platoons)
+        ///     Activates all units, moving from ghost/preview mode to a real platoon.
         /// </summary>
         /// <param name="spawnCenter"></param>
-        public void Activate(Vector3 spawnCenter)
+        private void Activate(Vector3 spawnCenter)
         {
             Units.ForEach(x =>
             {
@@ -271,7 +270,7 @@ namespace PFW.Units
                 Units[i].Teleport(
                     positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
-            SetDestination(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
+            OrderMovement(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);
@@ -370,18 +369,37 @@ namespace PFW.Units
 
         public void SendFirePosOrder(Vector3 position, bool enqueue = false)
         {
-            OrderQueue.SendOrder(OrderData.FirePositionOrder(this, position), enqueue);
+            OrderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
         }
 
         #region Movement
 
-        public void SetDestination(
+        [ClientRpc]
+        public void RpcOrderMovement(
+            Vector3 destination,
+            float heading,
+            MoveCommandType mode,
+            bool enqueue)
+        {
+            OrderMovement(destination, heading, mode, enqueue);
+        }
+
+        /// <summary>
+        /// Give the platoon a movement order.
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="heading">
+        /// What direction should the units face when they arrive?
+        /// </param>
+        /// <param name="mode"></param>
+        /// <param name="enqueue"></param>
+        public void OrderMovement(
             Vector3 destination,
             float heading = MovementComponent.NO_HEADING,
             MoveCommandType mode = MoveCommandType.NORMAL,
             bool enqueue = false)
         {
-            var order = OrderData.MoveOrder(this, destination, heading, mode);
+            OrderData order = OrderData.MakeMoveOrder(this, destination, heading, mode);
             OrderQueue.SendOrder(order, enqueue);
         }
 

@@ -18,6 +18,7 @@ using PFW.Model.Armory;
 using PFW.Model.Game;
 using PFW.UI.Ingame;
 using PFW.Units;
+using PFW.Units.Component.Movement;
 using static PFW.Constants;
 
 namespace PFW.Networking
@@ -91,10 +92,10 @@ namespace PFW.Networking
 
         [Command]
         public void CmdSpawnPlatoon(
-                byte playerId, 
-                byte categoryId, 
-                int unitId, 
-                int unitCount, 
+                byte playerId,
+                byte categoryId,
+                int unitId,
+                int unitCount,
                 Vector3 spawnPos,
                 Vector3 destinationCenter,
                 float destinationHeading)
@@ -144,6 +145,25 @@ namespace PFW.Networking
                 // Got an invalid player id, server is trying to crash us?
                 Debug.LogError(
                     "Client asked to create a platoon with an invalid player id.");
+            }
+        }
+
+        /// <summary>
+        /// See PlatoonBehaviour::OrderMovement
+        /// </summary>
+        [Command]
+        public void CmdOrderMovement(
+                uint platoonNetId,
+                Vector3 destination,
+                float heading,
+                MoveCommandType mode,
+                bool enqueue)
+        {
+            NetworkIdentity identity;
+            if (NetworkIdentity.spawned.TryGetValue(platoonNetId, out identity))
+            {
+                PlatoonBehaviour platoon = identity.gameObject.GetComponent<PlatoonBehaviour>();
+                platoon.RpcOrderMovement(destination, heading, mode, enqueue);
             }
         }
     }
