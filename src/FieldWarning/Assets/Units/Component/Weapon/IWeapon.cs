@@ -27,7 +27,12 @@ namespace PFW.Units.Component.Weapon
         /// <param name="target"></param>
         /// <param name="deltaTime">Time since the last invocation.</param>
         /// <param name="displacement">Distance from the firing unit to the target unit</param>
+        /// <param name="isServer">Non-server code should only affect art.</param>
         /// <returns>True if a shot was fired, false otherwise.</returns>
-        bool TryShoot(TargetTuple target, float deltaTime, Vector3 displacement);
+        bool TryShoot(
+                TargetTuple target,
+                float deltaTime,
+                Vector3 displacement,
+                bool isServer);
     }
 }

@@ -13,6 +13,7 @@
 
 using UnityEngine;
 
+using Mirror;
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Movement;
 using PFW.Units.Component.Health;
@@ -47,6 +48,7 @@ namespace PFW.Units.Component.Armor
         /// <summary>
         /// Calculate the total damage dealt within a successful hit, then update health.
         /// </summary>
+        [Server]
         public void HandleHit(
             int firepower,
             Vector3? displacementToThis,
@@ -92,7 +94,7 @@ namespace PFW.Units.Component.Armor
         /// <summary>
         /// Use the displacement vector to calculate the angle of the shot
         /// </summary>
-        public int DetermineSideOfImpact(Vector3 displacementToThis)
+        private int DetermineSideOfImpact(Vector3 displacementToThis)
         {
             int armor = _data.FrontArmor;
             Vector3 displacementToFiringUnit = -displacementToThis;
@@ -123,7 +125,7 @@ namespace PFW.Units.Component.Armor
             return armor;
         }
 
-        public int DetermineSideOfImpact()
+        private int DetermineSideOfImpact()
         {
             // When no displacement vector is supplied, the damage is dealt to the top armor
             return _data.TopArmor;

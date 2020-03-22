@@ -12,6 +12,7 @@
  */
 
 using UnityEngine;
+using Mirror;
 
 using PFW.Model.Game;
 using PFW.Model.Armory;
@@ -21,7 +22,7 @@ namespace PFW.Units.Component.Weapon
     /// <summary>
     /// Manages a single weapon by picking targets for it.
     /// </summary>
-    public class TargetingComponent : MonoBehaviour
+    public class TargetingComponent : NetworkBehaviour
     {
         public UnitDispatcher Unit { get; private set; }
         private bool _movingTowardsTarget = false;
@@ -157,18 +158,20 @@ namespace PFW.Units.Component.Weapon
         {
             StopMovingIfInRangeOfTarget();
 
-            if (_target != null && _target.Exists) {
+            if (_target != null && _target.Exists)
+            {
                 MaybeDropOutOfRangeTarget();
 
-                if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted) {
+                if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted)
+                {
                     Logger.LogTargeting(
                         "Dropping a target because it is no longer spotted.", gameObject);
                     _target = null;
                 }
             }
 
-            if (_target != null && _target.Exists) {
-
+            if (_target != null && _target.Exists) 
+            {
                 bool targetInRange = !_movingTowardsTarget;
                 bool shotFired = false;
 
@@ -176,7 +179,8 @@ namespace PFW.Units.Component.Weapon
                 {
                     // The displacement from the unit to the target
                     Vector3 displacement = _target.Position - Unit.transform.position;
-                    shotFired = _weapon.TryShoot(_target, Time.deltaTime, displacement);
+                    shotFired = _weapon.TryShoot(
+                        _target, Time.deltaTime, displacement, isServer);
                 }
 
                 // If shooting at the ground, stop after the first shot:
@@ -185,8 +189,9 @@ namespace PFW.Units.Component.Weapon
                     _target = null;
                     _turretComponent.SetTarget(null, _turretPriority);
                 }
-
-            } else {
+            } 
+            else 
+            {
                 FindAndTargetClosestEnemy();
             }
         }

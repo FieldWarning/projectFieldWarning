@@ -50,7 +50,7 @@ namespace PFW.Units.Component.Weapon
             _random = new System.Random(Environment.TickCount);
         }
 
-        private void FireWeapon(TargetTuple target, Vector3 displacement)
+        private void FireWeapon(TargetTuple target, Vector3 displacement, bool isServer)
         {
             // sound
             _source.PlayOneShot(_shotSound, _shotVolume);
@@ -62,19 +62,30 @@ namespace PFW.Units.Component.Weapon
                 _muzzleFlashEffect.Play();
             }
 
-            if (target.IsUnit) {
-                float roll = _random.NextFloat(0.0, 100.0);
-                // HIT
-                if (roll <= _data.Accuracy) {
-                    Debug.LogWarning("Cannon shell dispersion is not implemented yet");
-                    target.Enemy.HandleHit(_data.Damage, displacement, null);
+            if (isServer)
+            {
+                if (target.IsUnit)
+                {
+                    float roll = _random.NextFloat(0.0, 100.0);
+                    // HIT
+                    if (roll <= _data.Accuracy)
+                    {
+                        Debug.LogWarning("Cannon shell dispersion is not implemented yet");
+                        target.Enemy.HandleHit(_data.Damage, displacement, null);
+                    }
                 }
-            } else {
-                // TODO: fire pos damage not implemented
+                else
+                {
+                    // TODO: fire pos damage not implemented
+                }
             }
         }
 
-        public bool TryShoot(TargetTuple target, float deltaTime, Vector3 displacement)
+        public bool TryShoot(
+                TargetTuple target, 
+                float deltaTime, 
+                Vector3 displacement, 
+                bool isServer)
         {
             _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
@@ -82,7 +93,7 @@ namespace PFW.Units.Component.Weapon
 
             // TODO implement salvo + shot reload
             _reloadTimeLeft = _data.SalvoReload;
-            FireWeapon(target, displacement);
+            FireWeapon(target, displacement, isServer);
             return true;
         }
     }

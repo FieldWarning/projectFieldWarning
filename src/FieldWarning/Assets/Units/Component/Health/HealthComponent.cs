@@ -11,14 +11,16 @@
 * the License for the specific language governing permissions and limitations under the License.
 */
 using UnityEngine;
+using Mirror;
 
 using PFW.Units.Component.Data;
 
 namespace PFW.Units.Component.Health
 {
-    public class HealthComponent : MonoBehaviour
+    public class HealthComponent : NetworkBehaviour
     {
-        public float Health { get; private set; }
+        [SyncVar]
+        public float Health;
 
         private UnitDispatcher _dispatcher;
 
@@ -28,6 +30,7 @@ namespace PFW.Units.Component.Health
             Health = data.MaxHealth;
         }
 
+        [Server]
         public void UpdateHealth(float newHealth)
         {
             if (newHealth <= 0)

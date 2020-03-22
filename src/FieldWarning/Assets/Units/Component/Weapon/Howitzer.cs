@@ -54,7 +54,7 @@ namespace PFW.Units.Component.Weapon
             _shotStarterPosition = shotStarterPosition;
         }
 
-        private bool Shoot(TargetTuple target)
+        private bool Shoot(TargetTuple target, bool isServer)
         {
             //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
 
@@ -66,17 +66,26 @@ namespace PFW.Units.Component.Weapon
 
             shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
 
+            if (isServer) 
+            {
+                // TODO apply damage;
+            }
+
             return true;
         }
 
-        public bool TryShoot(TargetTuple target, float deltaTime, Vector3 displacement)
+        public bool TryShoot(
+                TargetTuple target,
+                float deltaTime,
+                Vector3 displacement,
+                bool isServer)
         {
             _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
                 return false;
 
             _reloadTimeLeft = _data.SalvoReload;
-            return Shoot(target);
+            return Shoot(target, isServer);
         }
     }
 }
