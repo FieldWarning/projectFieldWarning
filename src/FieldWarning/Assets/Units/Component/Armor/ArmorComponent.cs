@@ -48,7 +48,6 @@ namespace PFW.Units.Component.Armor
         /// <summary>
         /// Calculate the total damage dealt within a successful hit, then update health.
         /// </summary>
-        [Server]
         public void HandleHit(
             int firepower,
             Vector3? displacementToThis,

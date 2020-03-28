@@ -16,6 +16,7 @@ using PFW.Model.Armory;
 using PFW.Units;
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
+using static PFW.Util;
 
 namespace PFW.UI.Prototype
 {
@@ -94,7 +95,15 @@ namespace PFW.UI.Prototype
             freshUnit.AddComponent<SelectableBehavior>();
             // prototype.AddComponent<NetworkIdentity>();
 
-            AssociateTurretComponentsToArt(freshUnit, armoryUnit);
+            if (armoryUnit.Prefab.name == "2Turret")
+            {
+                AssociateTurretComponentsToArt(freshUnit, armoryUnit);
+            }
+            else
+            {
+                TurretSystem turretSystem = freshUnit.GetComponent<TurretSystem>();
+                turretSystem.Initialize(freshUnit, armoryUnit);
+            }
         }
 
         private static GameObject _shotEmitterResource;
@@ -166,27 +175,6 @@ namespace PFW.UI.Prototype
                             false);
                 }
             }
-        }
-
-        private static Transform RecursiveFindChild(Transform parent, string childName)
-        {
-            foreach (Transform child in parent)
-            {
-                if (child.name == childName)
-                {
-                    return child;
-                }
-                else
-                {
-                    Transform result = RecursiveFindChild(child, childName);
-                    if (result)
-                    {
-                        return result;
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }

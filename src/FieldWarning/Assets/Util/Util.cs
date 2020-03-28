@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -21,6 +21,33 @@ namespace PFW
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             return Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Terrain"), QueryTriggerInteraction.Ignore);
+        }
+
+        /// <summary>
+        /// Find the first child by name, depth-first search.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="childName"></param>
+        /// <returns></returns>
+        public static Transform RecursiveFindChild(Transform parent, string childName)
+        {
+            foreach (Transform child in parent)
+            {
+                if (child.name == childName)
+                {
+                    return child;
+                }
+                else
+                {
+                    Transform result = RecursiveFindChild(child, childName);
+                    if (result)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
