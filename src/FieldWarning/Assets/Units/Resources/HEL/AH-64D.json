@@ -5,7 +5,7 @@
 	"CategoryKey": "HEL",
 	"Name": "AH64D Apache",
 	"Price": 20,
-    "PrefabPath": "LandUnit",
+    "PrefabPath": "GroundUnit",
     "ArtPrefabPath": "SampleTankArt",
 
 	"Data": {

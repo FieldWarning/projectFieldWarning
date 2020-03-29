@@ -5,7 +5,7 @@
     "CategoryKey": "TNK",
     "Name": "Bloodhound",
     "Price": 15,
-    "PrefabPath": "LandUnit",
+    "PrefabPath": "GroundUnit",
     "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
 
     "Data": {

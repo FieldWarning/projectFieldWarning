@@ -5,7 +5,7 @@
 	"CategoryKey": "INF",
 	"Name": "Riflemen",
 	"Price": 20,
-    "PrefabPath": "LandUnit",
+    "PrefabPath": "GroundUnit",
     "ArtPrefabPath": "SampleTankArt",
 
 	"Data": {
