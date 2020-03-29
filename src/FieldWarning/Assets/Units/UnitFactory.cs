@@ -95,86 +95,8 @@ namespace PFW.UI.Prototype
             freshUnit.AddComponent<SelectableBehavior>();
             // prototype.AddComponent<NetworkIdentity>();
 
-            if (armoryUnit.Prefab.name == "2Turret")
-            {
-                AssociateTurretComponentsToArt(freshUnit, armoryUnit);
-            }
-            else
-            {
-                TurretSystem turretSystem = freshUnit.GetComponent<TurretSystem>();
-                turretSystem.Initialize(freshUnit, armoryUnit);
-            }
-        }
-
-        private static GameObject _shotEmitterResource;
-        private static GameObject _muzzleFlashResource;
-
-        /// <summary>
-        /// The turret and targeting components on the base prefab
-        /// need to be given references to the parts of the art that
-        /// they can rotate.
-        /// </summary>
-        private static void AssociateTurretComponentsToArt(
-                GameObject freshUnit, Unit armoryUnit) 
-        {
-            TargetingComponent[] targetingComponents = freshUnit.GetComponents<TargetingComponent>();
-            TurretComponent[] turretComponents = freshUnit.GetComponents<TurretComponent>();
-
-            TurretConfig turretConfig = armoryUnit.Config.Turrets[0];
-            // TODO Currently only supporting the prefab with 
-            // 2 turrets, 2 targeting components, and one parent turret
-            if (targetingComponents.GetLength(0) == 2 && turretComponents.GetLength(0) == 3)
-            {
-                // Use the extra turret as the parent:
-                TurretComponent toplevelTurret = turretComponents[2];
-                toplevelTurret.Initialize(
-                        RecursiveFindChild(freshUnit.transform, turretConfig.MountRef),
-                        RecursiveFindChild(freshUnit.transform, turretConfig.TurretRef),
-                        null,
-                        turretConfig.ArcHorizontal,
-                        turretConfig.ArcUp,
-                        turretConfig.ArcDown,
-                        turretConfig.RotationRate,
-                        false);
-
-                for (int i = 0; i < targetingComponents.GetLength(0); i++)
-                {
-                    // Hack: The old tank prefab has a particle system for shooting that we want to remove,
-                    // so instead of adding it to the models or having it in the config 
-                    // we hardcode it in here.
-                    // TODO might have to use a different object for the old arty effect.
-                    if (!_shotEmitterResource)
-                    {
-                        _shotEmitterResource = Resources.Load<GameObject>("shot_emitter");
-                    }
-                    if (!_muzzleFlashResource)
-                    {
-                        _muzzleFlashResource = Resources.Load<GameObject>("muzzle_flash");
-                    }
-
-                    Transform turretArt = RecursiveFindChild(
-                            freshUnit.transform, turretConfig.Children[i].TurretRef);
-
-                    GameObject shotGO = GameObject.Instantiate(_shotEmitterResource, turretArt);
-                    GameObject muzzleFlashGO = GameObject.Instantiate(_muzzleFlashResource, turretArt);
-
-                    targetingComponents[i].Initialize(
-                            turretComponents[i],
-                            turretConfig.Children[i],
-                            shotGO.GetComponent<ParticleSystem>(),
-                            muzzleFlashGO.GetComponent<ParticleSystem>()
-                            );
-                    turretComponents[i].Initialize(
-                            RecursiveFindChild(freshUnit.transform, turretConfig.Children[i].MountRef),
-                            turretArt,
-                            toplevelTurret,
-                            turretConfig.Children[i].ArcHorizontal,
-                            turretConfig.Children[i].ArcUp,
-                            turretConfig.Children[i].ArcDown,
-                            turretConfig.Children[i].RotationRate,
-                            false);
-                }
-            }
+            TurretSystem turretSystem = freshUnit.GetComponent<TurretSystem>();
+            turretSystem.Initialize(freshUnit, armoryUnit);
         }
     }
 }

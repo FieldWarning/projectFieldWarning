@@ -5,7 +5,7 @@
 	"CategoryKey": "REC",
 	"Name": "U.S. Army Rangers",
 	"Price": 20,
-    "PrefabPath": "2Turret",
+    "PrefabPath": "LandUnit",
     "ArtPrefabPath": "SampleTankArt",
 
 	"Data": {

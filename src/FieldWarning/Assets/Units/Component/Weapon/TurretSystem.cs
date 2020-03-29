@@ -29,7 +29,8 @@ namespace PFW.Units.Component.Weapon
         private bool _movingTowardsTarget = false;
         private TargetTuple _explicitTarget;
         private TargetTuple __targetBackingField;
-        private TargetTuple _target { 
+        private TargetTuple _target 
+        { 
             get 
             {
                 return __targetBackingField;
@@ -39,8 +40,15 @@ namespace PFW.Units.Component.Weapon
                 __targetBackingField = value;
                 _fireRange = MaxRange(value);
             }
-        
         }
+        public bool HasTargetingOrder 
+        {
+            get 
+            {
+                return _explicitTarget != null;
+            }
+        }
+
         /// <summary>
         /// The max fire range to the current target.
         /// </summary>

@@ -37,7 +37,6 @@ namespace PFW.Units
         // private INavigationComponent _navigationComponent;
 
         // Contains weapon components which contain audio components etc:
-        private TargetingComponent[] _targetingComponents;
         private TurretSystem _turretSystem;
 
         private HealthComponent _healthComponent;
@@ -94,7 +93,6 @@ namespace PFW.Units
             _voiceComponent      = gameObject.transform.Find("VoiceComponent")
                                                .GetComponent<VoiceComponent>();
             _movementComponent   = gameObject.GetComponent<MovementComponent>();
-            _targetingComponents = gameObject.GetComponents<TargetingComponent>();
             _healthComponent     = gameObject.GetComponent<HealthComponent>();
             _armorComponent      = gameObject.GetComponent<ArmorComponent>();
             VisionComponent      = gameObject.GetComponent<VisionComponent>();
@@ -122,21 +120,15 @@ namespace PFW.Units
             _movementComponent.enabled = true;
             VisionComponent.ToggleUnitVisibility(true);
 
-            foreach (TargetingComponent targeter in _targetingComponents)
-                targeter.enabled = true;
-
             MatchSession.Current.RegisterUnitBirth(this);
         }
 
         public void SendFirePosOrder(Vector3 position)
         {
-            foreach (TargetingComponent targeter in _targetingComponents)
-                targeter.SetTarget(position);
-
             _turretSystem.TargetPosition(position);
         }
 
-        public bool HasTarget => _targetingComponents.All(tc => tc.HasTarget);
+        public bool HasTargetingOrder => _turretSystem.HasTargetingOrder;
 
         /// <summary>
         /// Called when a unit enters or leaves the player's selection.

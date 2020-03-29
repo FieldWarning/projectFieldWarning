@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -56,7 +56,7 @@ namespace PFW.Units.Component.OrderQueue
                 case OrderType.MOVE_ORDER:
                     return orderData.Platoon.Units.All(x => x.AreOrdersComplete());
                 case OrderType.FIRE_POSITION_ORDER:
-                    return orderData.Platoon.Units.All(u => !u.HasTarget);
+                    return orderData.Platoon.Units.All(u => !u.HasTargetingOrder);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

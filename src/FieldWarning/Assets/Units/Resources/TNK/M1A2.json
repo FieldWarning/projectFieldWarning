@@ -5,7 +5,7 @@
     "CategoryKey": "TNK",
     "Name": "M1A2 Abrams",
     "Price": 20,
-    "PrefabPath": "2Turret",
+    "PrefabPath": "LandUnit",
     "ArtPrefabPath": "SampleTankArt",
 
     "Data": {
