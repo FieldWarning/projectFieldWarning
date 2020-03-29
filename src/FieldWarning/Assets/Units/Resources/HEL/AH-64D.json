@@ -6,7 +6,7 @@
 	"Name": "AH64D Apache",
 	"Price": 20,
     "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "SampleTankArt",
+    "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
 
 	"Data": {
 			"MovementSpeed": 500,
@@ -37,8 +37,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "Main_Turret",
-        "MountRef": "Main_Body",
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -46,8 +46,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "Main_Barrel",
-                "MountRef": "Main_Turret",
+                "TurretRef": "MG",
+                "MountRef": "IFV",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -63,9 +63,9 @@
             },
             {
                 "Priority": 2,
-                "TurretRef": "Minigun",
-                "MountRef": "Main_Turret",
-                "ArcHorizontal": 90,
+                "TurretRef": "Autocannon",
+                "MountRef": "IFV",
+                "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,
                 "RotationRate": 40,
