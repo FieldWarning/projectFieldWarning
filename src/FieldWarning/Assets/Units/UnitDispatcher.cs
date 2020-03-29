@@ -38,6 +38,7 @@ namespace PFW.Units
 
         // Contains weapon components which contain audio components etc:
         private TargetingComponent[] _targetingComponents;
+        private TurretSystem _turretSystem;
 
         private HealthComponent _healthComponent;
 
@@ -97,6 +98,7 @@ namespace PFW.Units
             _healthComponent     = gameObject.GetComponent<HealthComponent>();
             _armorComponent      = gameObject.GetComponent<ArmorComponent>();
             VisionComponent      = gameObject.GetComponent<VisionComponent>();
+            _turretSystem        = gameObject.GetComponent<TurretSystem>();
 
             // Only used in this class, not really configurable,
             // and no way to get a reference to it here if it's
@@ -130,6 +132,8 @@ namespace PFW.Units
         {
             foreach (TargetingComponent targeter in _targetingComponents)
                 targeter.SetTarget(position);
+
+            _turretSystem.TargetPosition(position);
         }
 
         public bool HasTarget => _targetingComponents.All(tc => tc.HasTarget);

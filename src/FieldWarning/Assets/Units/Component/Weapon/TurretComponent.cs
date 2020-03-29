@@ -193,11 +193,5 @@ namespace PFW.Units.Component.Weapon
             
             _turret.localEulerAngles = new Vector3(verticalAngle, horizontalAngle, 0);
         }
-
-        public void WakeUp()
-        {
-            //_weaponComponents.ForEach(w => w.WakeUp(this));
-            enabled = true;
-        }
     }
 }

@@ -22,130 +22,30 @@ using static PFW.Util;
 
 namespace PFW.Units.Component.Weapon
 {
-    /// <summary>
-    /// Controls a specific part of a unit model and rotates it to face a target.
-    /// 
-    /// A turret is any rotatable part of a weapon. This includes things like
-    /// cannon barrels (vertical laying) and machine gun bodies.
-    /// 
-    /// A turret can either have a weapon, in which case it rotates based on what 
-    /// the weapon is aiming at, or it has child turrets, in which case it 
-    /// rotates based on what the child turrets need.
-    /// </summary>
-    public class Turret
-    {
-        // targetingStrategy
-        private IWeapon _weapon; // weapon turret
-        private int _fireRange; // weapon turret
-        private TargetTuple _target;  // weapon turret, sync
-        private int _priority;  // weapon turret, higher is better
-        public List<Turret> Children; // parent turret, sync
-        private const float SHOT_VOLUME = 1.0f;
-
-        [SerializeField]
-        private bool _isHowitzer = false; // purpose unclear, both
-
-        [SerializeField]
-        private Transform _mount = null;  // purpose unclear, both
-        [SerializeField]
-        private Transform _turret = null; // object being rotated, both
-
-        [SerializeField]
-        public float ArcHorizontal = 180, ArcUp = 40, ArcDown = 20, RotationRate = 40f;
-
-        private static GameObject _shotEmitterResource;
-        private static GameObject _muzzleFlashResource;
-        private static AudioClip _gunSoundResource;
-
-        public Turret(GameObject unit, TurretConfig turretConfig)
-        {
-            ArcHorizontal = turretConfig.ArcHorizontal;
-            ArcUp = turretConfig.ArcUp;
-            ArcDown = turretConfig.ArcDown;
-            RotationRate = turretConfig.RotationRate;
-            _priority = turretConfig.Priority;
-            _turret = RecursiveFindChild(unit.transform, turretConfig.MountRef);
-            _mount = RecursiveFindChild(unit.transform, turretConfig.TurretRef);
-
-            if (turretConfig.Children.Count > 0)
-            {
-                Children = new List<Turret>();
-                foreach (TurretConfig childTurretConfig in turretConfig.Children)
-                {
-                    Children.Add(new Turret(unit, childTurretConfig));
-                }
-            }
-            else
-            {
-                // Hack: The old tank prefab has a particle system for shooting 
-                // that we want to remove,
-                // so instead of adding it to the models or having it in the config 
-                // we hardcode it in here.
-                // TODO might have to use a different object for the old arty effect.
-                if (!_shotEmitterResource)
-                {
-                    _shotEmitterResource = Resources.Load<GameObject>("shot_emitter");
-                }
-                if (!_muzzleFlashResource)
-                {
-                    _muzzleFlashResource = Resources.Load<GameObject>("muzzle_flash");
-                }
-                if (!_gunSoundResource)
-                {
-                    _gunSoundResource = Resources.Load<AudioClip>("Tank_gun");
-                }
-
-                GameObject shotGO = GameObject.Instantiate(
-                        _shotEmitterResource, _turret);
-                AudioSource shotAudioSource = _turret.gameObject.AddComponent<AudioSource>();
-
-                if (turretConfig.Howitzer != null)
-                {
-                    _isHowitzer = true;
-                    _weapon = new Howitzer(
-                            turretConfig.Howitzer,
-                            shotAudioSource,
-                            shotGO.GetComponent<ParticleSystem>(),
-                            _gunSoundResource,
-                            _turret,
-                            SHOT_VOLUME);
-                    _fireRange = turretConfig.Howitzer.FireRange;
-                }
-                else if (turretConfig.Cannon != null)
-                {
-                    GameObject muzzleFlashGO = GameObject.Instantiate(
-                            _muzzleFlashResource, _turret);
-
-                    _weapon = new Cannon(
-                            turretConfig.Cannon,
-                            shotAudioSource,
-                            shotGO.GetComponent<ParticleSystem>(),
-                            _gunSoundResource,
-                            muzzleFlashGO.GetComponent<ParticleSystem>(),
-                            SHOT_VOLUME);
-                    _fireRange = turretConfig.Cannon.FireRange;
-                }
-                else
-                {
-                    Debug.LogError("Couldn't create a weapon in a turret without children. " +
-                            "No weapon specified in the config?");
-                }
-            }
-        }
-
-        public void Update()
-        { 
-
-        }
-    }
 
     public class TurretSystem : NetworkBehaviour
     {
-        private TargetTuple _primaryTarget;
+        public UnitDispatcher Unit { get; private set; } // TODO set
+        private bool _movingTowardsTarget = false;
+        private TargetTuple _explicitTarget;
+        private TargetTuple __targetBackingField;
+        private TargetTuple _target { 
+            get 
+            {
+                return __targetBackingField;
+            } 
+            set
+            {
+                __targetBackingField = value;
+                _fireRange = MaxRange(value);
+            }
+        
+        }
+        /// <summary>
+        /// The max fire range to the current target.
+        /// </summary>
+        private int _fireRange;  
         public List<Turret> Children; // sync
-
-      //  public UnitDispatcher Unit { get; private set; }
-      //  private bool _movingTowardsTarget = false;
 
         /// <summary>
         /// Constructor for MonoBehaviour
@@ -157,11 +57,177 @@ namespace PFW.Units.Component.Weapon
             {
                 Children.Add(new Turret(unit, turretConfig));
             }
+            Unit = GetComponent<UnitDispatcher>();
         }
 
         private void Update()
         {
-            
+            foreach (Turret turret in Children)
+            {
+                turret.HandleUpdate();
+            }
+
+            float distanceToTarget = 99999;
+            if (_target != null && _target.Exists)
+            {
+                // TODO move most of the Update logic to the respective turrets
+                // (likely to a new member class of them called 'TargetingStrategy')
+                distanceToTarget = Vector3.Distance(
+                        Unit.transform.position, _target.Position);
+                if (_fireRange > distanceToTarget && _movingTowardsTarget)
+                {
+                    StopMoving();
+                }
+                else if (distanceToTarget >= _fireRange && !_movingTowardsTarget)
+                { 
+                    // todo start chasing target again..
+                }
+
+                MaybeDropOutOfRangeTarget();
+
+                if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted)
+                {
+                    Logger.LogTargeting(
+                        "Dropping a target because it is no longer spotted.", gameObject);
+                    _target = null;
+                }
+            }
+
+            if (_target != null && _target.Exists)
+            {
+                bool targetInRange = !_movingTowardsTarget;
+                bool shotFired = false;
+
+                foreach (Turret turret in Children)
+                {
+                    shotFired |= turret.MaybeShoot(distanceToTarget, isServer);
+                }
+
+                // If shooting at the ground, stop after the first shot:
+                if (shotFired && _target.IsGround)
+                {
+                    _target = null;
+                    _explicitTarget = null;
+                    foreach (Turret turret in Children)
+                    {
+                        turret.SetExplicitTarget(_explicitTarget);
+                    }
+                }
+            }
+            else
+            {
+                FindAndTargetClosestEnemy();
+            }
+        }
+
+        private void StopMoving()
+        {
+            _movingTowardsTarget = false;
+            Unit.SetDestination(Unit.transform.position);
+
+            Logger.LogTargeting(
+                "Stopped moving because a targeted enemy unit is in range.", gameObject);
+        }
+
+        private void FindAndTargetClosestEnemy()
+        {
+            Logger.LogTargeting("Scanning for a target.", gameObject);
+
+            // TODO utilize precomputed distance lists from session
+            // Maybe add Sphere shaped collider with the radius of the range and then 
+            // use trigger enter and exit to keep a list of in range Units
+
+            foreach (UnitDispatcher enemy in MatchSession.Current.EnemiesByTeam[Unit.Platoon.Owner.Team])
+            {
+                if (!enemy.VisionComponent.IsSpotted)
+                    continue;
+
+                // See if they are in range of weapon:
+                float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
+                if (distance < _fireRange)
+                {
+                    Logger.LogTargeting("Target found and selected after scanning.", gameObject);
+                    SetTarget(enemy.TargetTuple, false);
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// If the target is an enemy unit and it is out of range,
+        /// forget about it.
+        /// </summary>
+        private void MaybeDropOutOfRangeTarget()
+        {
+            // We only drop unit targets, not positions:
+            if (_target.Enemy == null)
+                return;
+
+            float distance = Vector3.Distance(Unit.transform.position, _target.Position);
+            if (distance > _fireRange)
+            {
+                _target = null;
+                Logger.LogTargeting("Dropping a target because it is out of range.", gameObject);
+            }
+        }
+
+        /// <summary>
+        /// Set a ground position as the shooting target.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="autoApproach"></param>
+        public void TargetPosition(Vector3 position, bool autoApproach = true)
+        {
+            SetTarget(new TargetTuple(position), autoApproach);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="autoApproach"></param>
+        private void SetTarget(TargetTuple target, bool autoApproach)
+        {
+            Logger.LogTargeting("Received target from the outside.", gameObject);
+            float distance = Vector3.Distance(Unit.transform.position, target.Position);
+
+            _explicitTarget = target;
+            _target = target;
+
+            if (distance > _fireRange && autoApproach)
+            {
+                _movingTowardsTarget = true;
+                // TODO if the UnitDispatcher can detect that we're in range, we
+                // would be able to drop the handle to it
+                Unit.SetDestination(target.Position);
+            }
+
+            foreach (Turret turret in Children)
+            {
+                turret.SetExplicitTarget(_explicitTarget);
+            }
+        }
+
+        /// <summary>
+        /// Calculate the max range this turret can shoot at with at least one weapon.
+        /// </summary>
+        /// This is a method to avoid storing duplicate information, and
+        /// because we may want to ignore disabled turrets, or turrets 
+        /// that can't shoot at a specific target etc.
+        /// 
+        /// TODO: Code duplication can be reduced if we only implement this in 
+        /// the turret class and have a fake toplevel turret we call this method on,
+        /// but a fake turret like that also adds complexity, hard to decide.
+        /// <returns></returns>
+        private int MaxRange(TargetTuple target)
+        {
+            int maxRange = 0;
+            foreach (Turret turret in Children)
+            {
+                int turretMax = turret.MaxRange(target);
+                maxRange = maxRange > turretMax ? maxRange : turretMax;
+            }
+            return maxRange;
         }
     }
 }

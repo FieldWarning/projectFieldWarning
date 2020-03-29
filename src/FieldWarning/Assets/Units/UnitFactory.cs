@@ -53,8 +53,8 @@ namespace PFW.UI.Prototype
         {
             MakeUnitCommon(unit, armoryUnit);
 
-            UnitDispatcher unitDispatcher = unit.GetComponent<UnitDispatcher>();
-            Object.Destroy(unitDispatcher);
+            Object.Destroy(unit.GetComponent<UnitDispatcher>());
+            Object.Destroy(unit.GetComponent<TurretSystem>());
 
             unit.SetActive(true);
             unit.name = "Ghost" + unit.name;
