@@ -148,11 +148,13 @@ namespace PFW.Units.Component.Weapon
             foreach (UnitDispatcher enemy in MatchSession.Current.EnemiesByTeam[Unit.Platoon.Owner.Team])
             {
                 if (!enemy.VisionComponent.IsSpotted)
+                {
                     continue;
+                }
 
                 // See if they are in range of weapon:
                 float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
-                if (distance < _fireRange)
+                if (distance < MaxRange(enemy.TargetTuple))
                 {
                     Logger.LogTargeting("Target found and selected after scanning.", gameObject);
                     SetTarget(enemy.TargetTuple, false);
