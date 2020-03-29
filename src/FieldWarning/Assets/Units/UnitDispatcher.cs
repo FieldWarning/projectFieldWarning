@@ -179,7 +179,7 @@ namespace PFW.Units
         /// </summary>
         public void Destroy()
         {
-            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
         
         public override void OnNetworkDestroy()
