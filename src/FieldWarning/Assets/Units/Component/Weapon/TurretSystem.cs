@@ -66,6 +66,7 @@ namespace PFW.Units.Component.Weapon
                 Children.Add(new Turret(unit, turretConfig));
             }
             Unit = GetComponent<UnitDispatcher>();
+            enabled = true;
         }
 
         private void Update()
