@@ -17,7 +17,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using NColor = System.Nullable<UnityEngine.Color>;
-using NFloat = System.Nullable<System.Single>;
+using NFloat = System.Nullable<float>;
 
 namespace PFW.UI.Ingame
 {
@@ -34,6 +34,7 @@ namespace PFW.UI.Ingame
             Alpha = alpha;
         }
     }
+
     public class ColorTransition
     {
         public Graphic Component;

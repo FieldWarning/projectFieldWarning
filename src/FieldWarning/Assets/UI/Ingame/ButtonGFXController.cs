@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -11,7 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,14 +18,18 @@ using UnityEngine.EventSystems;
 
 namespace PFW.UI.Ingame
 {
+
+    /// <summary>
+    /// Graphics controller for buttons. 
+    /// Describes how a button should graphically change
+    /// in response to e.g. user interaction.
+    /// </summary>
     [ExecuteAlways]
     public class ButtonGFXController : UIGFXController, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("Components")]
-    #pragma warning disable 0649
         [SerializeField]
-        private Button _button;
-    #pragma warning restore 0649
+        private Button _button = null;
         public Image ColorSprite;
         public Image BorderSprite;
 
@@ -36,33 +39,33 @@ namespace PFW.UI.Ingame
         private float _colorAlphaHover = 1f;
         private float _borderAlphaHover = 1f;
 
-        private List<ComponentState> _defaultState;
-        private List<ComponentState> _hoverState;
+        private List<ColorState> _defaultState;
+        private List<ColorState> _hoverState;
 
         protected override void Start()
         {
             base.Start();
-            ColorSprite.color = GetColorWithAlpha(_baseColor, _colorAlpha);
-            BorderSprite.color = GetColorWithAlpha(_accentColor, _borderAlpha);
+            ColorSprite.color = UIColors.WithAlpha(_baseColor, _colorAlpha);
+            BorderSprite.color = UIColors.WithAlpha(_accentColor, _borderAlpha);
 
-            _defaultState = new List<ComponentState> {
-                new ComponentState(ColorSprite, GetColorWithAlpha(_baseColor, _colorAlpha)),
-                new ComponentState(BorderSprite, GetColorWithAlpha(_accentColor, _borderAlpha))
+            _defaultState = new List<ColorState> {
+                new ColorState(ColorSprite,_baseColor, _colorAlpha),
+                new ColorState(BorderSprite, _accentColor, _borderAlpha)
             };
-            _hoverState = new List<ComponentState> {
-                new ComponentState(ColorSprite, _baseColor),
-                new ComponentState(BorderSprite, _accentColor)
+            _hoverState = new List<ColorState> {
+                new ColorState(ColorSprite, _baseColor, _colorAlphaHover),
+                new ColorState(BorderSprite, _accentColor, _borderAlphaHover)
             };
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            TransitionToState(_hoverState);
+            TransitionToState(UIState.Merge(_hoverState));
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            TransitionToState(_defaultState);
+            TransitionToState(UIState.Merge(_defaultState));
         }
     }
 }

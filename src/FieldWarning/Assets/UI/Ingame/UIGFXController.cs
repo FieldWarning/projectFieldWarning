@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -22,10 +22,8 @@ namespace PFW.UI.Ingame
         [Header("Auto-Size")]
         [SerializeField]
         private bool _autoSizeEnabled = false;
-    #pragma warning disable 0649
         [SerializeField]
-        private GameObject _autoSizeTarget;
-    #pragma warning restore 0649
+        private GameObject _autoSizeTarget = null;
 
         [Header("Colors")]
         [SerializeField]
@@ -78,7 +76,7 @@ namespace PFW.UI.Ingame
         {
             _lerp = Mathf.Clamp(_lerp + Time.deltaTime * _animationSpeed, 0f, 1f);
 
-            foreach (var transition in _colorTransitions)
+            foreach (ColorTransition transition in _colorTransitions)
                 transition.Animate(_lerp);
 
             if (_lerp >= 1f)
