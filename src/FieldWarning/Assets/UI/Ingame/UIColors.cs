@@ -16,6 +16,10 @@ using UnityEngine;
 
 namespace PFW.UI.Ingame
 {
+    /// <summary>
+    /// Constants for commonly-used colors and utility methods
+    /// for UI color-related logic.
+    /// </summary>
     public static class UIColors
     {
         private static Color _blue = new Color(0.2f, 0.37f, 0.6f, 1f);
@@ -26,7 +30,8 @@ namespace PFW.UI.Ingame
 
         public static Color GetColor(UIColor color)
         {
-            switch (color) {
+            switch (color) 
+            {
             case UIColor.Blue:      return _blue;
             case UIColor.BlueLight: return _blueLight;
             case UIColor.Red:       return _red;
@@ -41,6 +46,9 @@ namespace PFW.UI.Ingame
             return new Vector3(color.r, color.g, color.b);
         }
 
+        /// <summary>
+        /// Get the provided color with the provided alpha channel.
+        /// </summary>
         public static Color WithAlpha(Color color, float alpha)
         {
             return new Color(color.r, color.g, color.b, alpha);

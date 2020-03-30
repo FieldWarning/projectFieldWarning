@@ -17,8 +17,6 @@ using Mirror;
 
 using PFW.Model.Game;
 using PFW.Model.Armory;
-using PFW.Units.Component.Weapon;
-using static PFW.Util;
 
 namespace PFW.Units.Component.Weapon
 {
