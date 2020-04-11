@@ -16,6 +16,13 @@ using UnityEngine;
 
 namespace PFW.UI.Ingame
 {
+    /// <summary>
+    /// Currently this is only used as a toplevle resize script 
+    /// for the unit labels (see child classes).
+    /// 
+    /// Warning: This script is incomplete and/or unused,
+    ///          so it may make sense to remove it.
+    /// </summary>
     [ExecuteAlways]
     public abstract class UIGFXController : MonoBehaviour
     {
@@ -34,7 +41,9 @@ namespace PFW.UI.Ingame
         protected Color _baseColor;
         protected Color _accentColor;
 
+        // A child rect holding most of the label
         private RectTransform _targetRect;
+        // A toplevel rect
         private RectTransform _rect;
 
         protected List<ColorTransition> _colorTransitions = new List<ColorTransition>();
@@ -50,7 +59,8 @@ namespace PFW.UI.Ingame
 
         protected virtual void Start()
         {
-            if (_autoSizeEnabled && _autoSizeTarget != null) {
+            if (_autoSizeEnabled && _autoSizeTarget != null) 
+            {
                 _rect = GetComponent<RectTransform>();
                 _targetRect = _autoSizeTarget.GetComponent<RectTransform>();
             }
@@ -61,15 +71,20 @@ namespace PFW.UI.Ingame
 
         protected virtual void Update()
         {
-            if (_rect != null && _targetRect != null) {
+            if (_rect != null && _targetRect != null) 
+            {
                 Vector2 targetSizeDelta = _targetRect.sizeDelta;
 
                 if (targetSizeDelta != _rect.sizeDelta)
+                { 
                     _rect.sizeDelta = targetSizeDelta;
+                }
             }
 
             if (_isAnimating)
+            {
                 RunAnimations();
+            }
         }
 
         private void RunAnimations()
@@ -77,10 +92,14 @@ namespace PFW.UI.Ingame
             _lerp = Mathf.Clamp(_lerp + Time.deltaTime * _animationSpeed, 0f, 1f);
 
             foreach (ColorTransition transition in _colorTransitions)
+            {
                 transition.Animate(_lerp);
+            }
 
             if (_lerp >= 1f)
+            {
                 _isAnimating = false;
+            }
         }
 
         protected void TransitionToState(UIState state)
@@ -91,21 +110,28 @@ namespace PFW.UI.Ingame
             _lerp = 0f;
 
             foreach (ColorState colorState in state.ColorStates)
+            { 
                 _colorTransitions.Add(new ColorTransition(
                         colorState.Component,
                         colorState.Component.color,
                         colorState.Color,
                         colorState.Alpha));
+            }
 
             if (!_isAnimating)
+            {
                 _isAnimating = true;
+            }
         }
 
         protected void SetInitialState(UIState state)
         {
             foreach (ColorState colorState in state.ColorStates)
-                colorState.Component.color =
-                        UIColors.WithAlpha((Color) colorState.Color, (float) colorState.Alpha);
+            {
+                colorState.Component.color = UIColors.WithAlpha(
+                        (Color)colorState.Color,
+                        (float)colorState.Alpha);
+            }
 
             _currentState = state;
         }

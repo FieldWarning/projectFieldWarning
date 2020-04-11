@@ -24,6 +24,9 @@ namespace PFW.UI.Ingame
     /// Describes how a button should graphically change
     /// in response to e.g. user interaction.
     /// </summary>
+    /// 
+    /// Warning: This script is incomplete and/or unused,
+    ///          so it may make sense to remove it.
     [ExecuteAlways]
     public class ButtonGFXController : UIGFXController, IPointerEnterHandler, IPointerExitHandler
     {

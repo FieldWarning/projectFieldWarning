@@ -74,11 +74,6 @@ namespace PFW.UI.Ingame
             }
         }
 
-        private void Start()
-        {
-            
-        }
-
         public void UpdateMouseMode(MouseMode mouseMode)
         {
             _mouseMode = mouseMode;
@@ -185,11 +180,11 @@ namespace PFW.UI.Ingame
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
-                var go = hit.transform.gameObject;
-                var selectable = go.GetComponent<SelectableBehavior>();
+                GameObject go = hit.transform.gameObject;
+                SelectableBehavior selectable = go.GetComponent<SelectableBehavior>();
 
                 if (selectable != null) {
-                    var selectedPlatoon = selectable.Platoon;
+                    PlatoonBehaviour selectedPlatoon = selectable.Platoon;
                     selectedPlatoon.PlaySelectionVoiceline();
                     _selection.Add(selectedPlatoon);
                 }
@@ -219,31 +214,44 @@ namespace PFW.UI.Ingame
             if (!platoon.IsInitialized)
                 return false;
 
-            bool inside = false;
-            inside |= platoon.Units.Any(x => IsInside(x.Transform.position));
+            Rect selectionBox;
+            // Guarantee that the rect has positive width and height:
+            float rectX = _mouseStart.x > _mouseEnd.x ? _mouseEnd.x : _mouseStart.x;
+            float rectY = _mouseStart.y > _mouseEnd.y ? _mouseEnd.y : _mouseStart.y;
+            selectionBox = new Rect(
+                    rectX, 
+                    rectY, 
+                    Mathf.Abs(_mouseEnd.x - _mouseStart.x), 
+                    Mathf.Abs(_mouseEnd.y - _mouseStart.y));
 
-            // TODO: This checks if the center of the icon is within the selection box. 
-            // It should instead check if any of the four corners of the icon are within the box:
-            inside |= IsInside(platoon.Icon.transform.GetChild(0).position);
+            bool inside = false;
+            inside |= platoon.Units.Any(
+                    x => selectionBox.Contains(
+                            Camera.main.WorldToScreenPoint(
+                                    x.Transform.position)));
+
+            // This checks if the icon overlaps with the selection box:
+            Rect platoonLabel = platoon.SelectableRect.rect;
+            // To screen coordinates:
+            platoonLabel.center = platoon.SelectableRect.TransformPoint(
+                    platoonLabel.center);
+            platoonLabel.size = platoon.SelectableRect.TransformVector(
+                    platoonLabel.size);
+            inside |= selectionBox.Overlaps(platoonLabel);
+
             return inside;
         }
 
-        private bool IsInside(Vector3 t)
-        {
-            Vector3 test = Camera.main.WorldToScreenPoint(t);
-            bool insideX = (test.x - _mouseStart.x) * (test.x - _mouseEnd.x) < 0;
-            bool insideY = (test.y - _mouseStart.y) * (test.y - _mouseEnd.y) < 0;
-            return insideX && insideY;
-        }
-
-        private void UnselectAll(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
+        private void UnselectAll(
+                List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
             selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
 
             selectedPlatoons.Clear();
         }
 
-        private void SetSelected(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
+        private void SetSelected(
+                List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
             selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
 
