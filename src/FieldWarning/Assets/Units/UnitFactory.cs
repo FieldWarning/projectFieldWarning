@@ -40,7 +40,7 @@ namespace PFW.UI.Prototype
             GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
             voiceGo.name = "VoiceComponent";
 
-            Color minimapColor = platoon.Owner.Team.Color;
+            Color minimapColor = platoon.Owner.Team.ColorScheme.BaseColor;
             AddMinimapIcon(unit, minimapColor);
 
             UnitDispatcher unitDispatcher =

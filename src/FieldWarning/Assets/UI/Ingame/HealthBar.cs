@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -15,16 +15,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Warning: This script is incomplete and/or unused,
+///          so it may make sense to remove it.
+/// </summary>
 public class HealthBar : MonoBehaviour
 {
     [Header("Components")]
-#pragma warning disable 0649
     [SerializeField]
-    private GameObject _mainBar;
+    private GameObject _mainBar = null;
 
     [SerializeField]
-    private GameObject _ghostBar;
-#pragma warning restore 0649
+    private GameObject _ghostBar = null;
 
     [Header("Configuration")]
     [SerializeField]

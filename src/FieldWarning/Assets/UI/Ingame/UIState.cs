@@ -21,6 +21,10 @@ using NFloat = System.Nullable<float>;
 
 namespace PFW.UI.Ingame
 {
+    /// <summary>
+    /// Warning: This script is incomplete and/or unused,
+    ///          so it may make sense to remove it.
+    /// </summary>
     public class ColorState
     {
         public Graphic Component;

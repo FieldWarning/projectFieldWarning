@@ -592,6 +592,41 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.r
+      value: 0.61960787
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.r
+      value: 0.78039217
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.r
+      value: 0.7803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.r
+      value: 0.9843137
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.a
+      value: 0.79607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.a
+      value: 0.49019608
+      objectReference: {fileID: 0}
     - target: {fileID: 5239163328516649139, guid: 8f6a103a600615249a5ec68f666dd40f,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -626,6 +661,76 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.g
+      value: 0.20392159
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.b
+      value: 0.6156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.g
+      value: 0.6156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.b
+      value: 0.9058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.g
+      value: 0.20392159
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.b
+      value: 0.9058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.g
+      value: 0.8941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.b
+      value: 0.9803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.a
+      value: 0.79607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.a
+      value: 0.49019608
       objectReference: {fileID: 0}
     - target: {fileID: 7807735905257481922, guid: 8f6a103a600615249a5ec68f666dd40f,
         type: 3}

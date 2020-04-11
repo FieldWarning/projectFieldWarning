@@ -131,26 +131,18 @@ namespace PFW.Units.Component.Vision
         private void MaybeTogglePlatoonVisibility()
         {
             PlatoonBehaviour platoon = _unit.Platoon;
-            bool enable = !platoon.Units.TrueForAll(
+            bool visible = !platoon.Units.TrueForAll(
                             u => !u.VisionComponent.IsVisible);
-            ToggleAllRenderers(platoon.gameObject, enable);
+            ToggleAllRenderers(platoon.gameObject, visible);
 
-            // TODO: the SelectionManager does not really respect these layers
-            if (enable)
-            {
-                platoon.Icon.SetLayer(LayerMask.NameToLayer("Selectable"));
-            }
-            else
-            {
-                platoon.Icon.SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
-            }
+            platoon.SetSelectable(visible);
         }
 
-        private void ToggleAllRenderers(GameObject o, bool enable)
+        private void ToggleAllRenderers(GameObject o, bool visible)
         {
             Renderer[] allRenderers = o.GetComponentsInChildren<Renderer>();
             foreach (Renderer childRenderer in allRenderers)
-                childRenderer.enabled = enable;
+                childRenderer.enabled = visible;
         }
     }
 }

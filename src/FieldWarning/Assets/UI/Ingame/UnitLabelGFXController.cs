@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -18,46 +18,47 @@ using TMPro;
 
 namespace PFW.UI.Ingame
 {
+    /// <summary>
+    ///     The UI overlay label/nameplate for a platoon.
+    /// </summary>
     [ExecuteAlways]
     public class UnitLabelGFXController : UIGFXController
     {
         [Header("Functional Components")]
-    #pragma warning disable 0649
         // [SerializeField]
         // private ButtonGFXController _buttonGFX;
 
         [SerializeField]
-        private Button _button;
+        private Button _button = null;
 
         [Header("Graphical Components")]
         [SerializeField]
-        private Image _colorSprite;
+        private Image _colorSprite = null;
 
         [SerializeField]
-        private Image _borderSprite;
+        private Image _borderSprite = null;
 
         [SerializeField]
-        private Image _dropShadow;
+        private Image _dropShadow = null;
 
         [SerializeField]
-        private Image _selectionGlow;
+        private Image _selectionGlow = null;
 
         [SerializeField]
-        private TextMeshProUGUI _unitName;
+        private TextMeshProUGUI _unitName = null;
 
         [Header("Icons")]
         [SerializeField]
-        private TextMeshProUGUI _unitIcon;
+        private TextMeshProUGUI _unitIcon = null;
 
         [SerializeField]
-        private TextMeshProUGUI _weaponStatusIcon;
+        private TextMeshProUGUI _weaponStatusIcon = null;
 
         [SerializeField]
-        private TextMeshProUGUI _loadedInfIcon;
+        private TextMeshProUGUI _loadedInfIcon = null;
 
         [SerializeField]
-        private TextMeshProUGUI _routingIcon;
-    #pragma warning restore 0649
+        private TextMeshProUGUI _routingIcon = null;
 
         private SelectedState _selectedState = SelectedState.Deselected;
         private WeaponState _weaponState = WeaponState.Idle;
