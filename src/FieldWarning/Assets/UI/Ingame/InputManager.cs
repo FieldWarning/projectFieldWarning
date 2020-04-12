@@ -185,7 +185,8 @@ namespace PFW.UI.Ingame
          */
         private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
-            if (Input.GetMouseButtonUp(0)) {
+            if (Input.GetMouseButtonUp(0)) 
+            {
                 bool noUIcontrolsInUse = EventSystem.current.currentSelectedGameObject == null;
 
                 if (!noUIcontrolsInUse)
@@ -196,10 +197,13 @@ namespace PFW.UI.Ingame
 
                 closestSpawn.BuyPlatoons(_currentBuyTransaction.PreviewPlatoons);
 
-                if (Input.GetKey(KeyCode.LeftShift)) {
+                if (Input.GetKey(KeyCode.LeftShift)) 
+                {
                     // We turned the current ghosts into real units, so:
                     _currentBuyTransaction = _currentBuyTransaction.Clone();
-                } else {
+                } 
+                else 
+                {
                     ExitPurchasingMode();
                 }
             }
@@ -207,13 +211,16 @@ namespace PFW.UI.Ingame
 
         private void MaybeExitPurchasingModeAndRefund()
         {
-            if (Input.GetMouseButton(1)) {
-                foreach (var g in _currentBuyTransaction.PreviewPlatoons) {
-                    g.DestroyPreview();
+            if (Input.GetMouseButton(1)) 
+            {
+                foreach (PlatoonBehaviour p in _currentBuyTransaction.PreviewPlatoons) 
+                {
+                    p.DestroyPreview();
                 }
 
                 int unitPrice = _currentBuyTransaction.Unit.Price;
-                Session.LocalPlayer.Refund(unitPrice * _currentBuyTransaction.UnitCount);
+                Session.LocalPlayer.Refund(
+                        unitPrice * _currentBuyTransaction.UnitCount);
 
                 ExitPurchasingMode();
             }
@@ -249,8 +256,9 @@ namespace PFW.UI.Ingame
             _selectionManager.DispatchMoveCommand(false, MoveCommandType.NORMAL);
         }
 
-        void OnOrderLongClick()
+        private void OnOrderLongClick()
         {
+            _selectionManager.HideMoveOrderPreview();
             _selectionManager.DispatchMoveCommand(true, MoveCommandType.NORMAL);
         }
 
@@ -323,25 +331,33 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
-            if (!_session.isChatFocused) {
-            if (Commands.Unload) {
-                _selectionManager.DispatchUnloadCommand();
-
-            } else if (Commands.Load) {
-                _selectionManager.DispatchLoadCommand();
-
-            } else if (Commands.FirePos && !_selectionManager.Empty) {
-                EnterFirePosMode();
-
-            } else if (Commands.ReverseMove && !_selectionManager.Empty) {
-                EnterReverseMoveMode();
-
-            } else if (Commands.FastMove && !_selectionManager.Empty) {
-                EnterFastMoveMode();
-            } else if (Commands.Split && !_selectionManager.Empty) {
-                EnterSplitMode();
+            if (!_session.isChatFocused) 
+            {
+                if (Commands.Unload) 
+                {
+                    _selectionManager.DispatchUnloadCommand();
+                } 
+                else if (Commands.Load) 
+                {
+                    _selectionManager.DispatchLoadCommand();
+                } 
+                else if (Commands.FirePos && !_selectionManager.Empty) 
+                {
+                    EnterFirePosMode();
+                } 
+                else if (Commands.ReverseMove && !_selectionManager.Empty) 
+                {
+                    EnterReverseMoveMode();
+                } 
+                else if (Commands.FastMove && !_selectionManager.Empty)
+                {
+                    EnterFastMoveMode();
+                } 
+                else if (Commands.Split && !_selectionManager.Empty)
+                {
+                    EnterSplitMode();
+                }
             }
-        }
         }
 
         private void EnterFirePosMode()
