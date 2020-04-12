@@ -40,12 +40,6 @@ namespace PFW.UI.Ingame
         private Image _borderSprite = null;
 
         [SerializeField]
-        private Image _dropShadow = null;
-
-        [SerializeField]
-        private Image _selectionGlow = null;
-
-        [SerializeField]
         private TextMeshProUGUI _unitName = null;
 
         private void SetColor(Color color)
