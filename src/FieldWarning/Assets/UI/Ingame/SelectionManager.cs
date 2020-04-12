@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-using PFW.Model.Game;
 using static PFW.UI.Ingame.InputManager;
 using PFW.Units;
 using PFW.Units.Component.Movement;
@@ -153,7 +152,8 @@ namespace PFW.UI.Ingame
 
             UnselectAll(_selection, false);
 
-            selectionCopy.ForEach(p => CommandConnection.Connection.CmdSplitPlatoon(p.netId));
+            selectionCopy.ForEach(
+                    p => CommandConnection.Connection.CmdSplitPlatoon(p.netId));
         }
 
         public void MaybeDropSelectionAfterOrder()
@@ -311,7 +311,10 @@ namespace PFW.UI.Ingame
             _previewPosition = position;
             PositionGhostUnits(2 * _previewPosition - centerMass, false);
 
-            //Prevent short clicks from displaying preview by only showing it on the first call to RotateMoveOrderPreview call. Should maybe move the logic to UIManager, since it should be responsible for recognizing hold clicks, not this code.
+            // Prevent short clicks from displaying preview by only 
+            // showing it on the first call to RotateMoveOrderPreview. 
+            // Should maybe move the logic to InputManager, since it should
+            // be responsible for recognizing hold clicks, not this code.
             _makePreviewVisible = true;
         }
 
@@ -321,6 +324,11 @@ namespace PFW.UI.Ingame
 
             if (_makePreviewVisible)
                 _makePreviewVisible = false;
+        }
+
+        public void HideMoveOrderPreview()
+        {
+            _selection.ForEach(x => x.GhostPlatoon.SetVisible(false));
         }
 
         private void PositionGhostUnits(Vector3 facingPoint, bool makeVisible)
