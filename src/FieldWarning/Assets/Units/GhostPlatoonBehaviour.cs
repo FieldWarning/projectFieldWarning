@@ -99,7 +99,7 @@ namespace PFW.Units
                 $"Spawned a ghost platoon of {_unit.Name} with netId {netId}", this);
             transform.position = 100 * Vector3.down;
 
-            InitializeIcon();
+            _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
         }
 
         /// <summary>
@@ -114,17 +114,7 @@ namespace PFW.Units
             _unit = unit;
             transform.position = 100 * Vector3.down;
 
-            InitializeIcon();
-        }
-
-        /// <summary>
-        ///     Each GhostPlatoon gameobject has an icon under it, 
-        ///     spawned in the prefab.
-        /// </summary>
-        private void InitializeIcon()
-        {
-            _platoonLabel.SetColorScheme(_owner.Team.ColorScheme);
-            _platoonLabel.SetGhost();
+            _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
         }
 
         public void AddSingleUnit()

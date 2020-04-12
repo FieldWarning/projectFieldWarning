@@ -219,9 +219,9 @@ namespace PFW.UI.Ingame
             float rectX = _mouseStart.x > _mouseEnd.x ? _mouseEnd.x : _mouseStart.x;
             float rectY = _mouseStart.y > _mouseEnd.y ? _mouseEnd.y : _mouseStart.y;
             selectionBox = new Rect(
-                    rectX, 
-                    rectY, 
-                    Mathf.Abs(_mouseEnd.x - _mouseStart.x), 
+                    rectX,
+                    rectY,
+                    Mathf.Abs(_mouseEnd.x - _mouseStart.x),
                     Mathf.Abs(_mouseEnd.y - _mouseStart.y));
 
             bool inside = false;
