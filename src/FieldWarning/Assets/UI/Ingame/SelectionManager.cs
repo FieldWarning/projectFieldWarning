@@ -42,6 +42,15 @@ namespace PFW.UI.Ingame
         private Color _selectionBoxColor = Color.red;
         private bool _active;
 
+        /// <summary>
+        /// A left click usually makes us drops the selection.
+        /// Selecting a platoon by clicking on its label
+        /// is also a left click that triggers the drop logic;
+        /// to avoid dropping a platoon we just selected, we
+        /// use this variable.
+        /// </summary>
+        private bool _justSelected = false;
+
         private ClickManager _clickManager;
 
         // State for managing move order previews:
@@ -181,30 +190,31 @@ namespace PFW.UI.Ingame
             UpdateSelection(true);
         }
 
-        private void OnSelectShortClick()
+        /// <summary>
+        ///     When a platoon's label is left clicked we need to 
+        ///     add it to the selection. These clicks are detected
+        ///     by a button callback handler, so the notification
+        ///     unfortunately has to come from the outside..
+        /// </summary>
+        public void PlatoonLabelClicked(PlatoonBehaviour selectedPlatoon)
         {
             UnselectAll(_selection, false);
-
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(
-                    ray, 
-                    out hit, 
-                    1000f, 
-                    LayerMask.GetMask("Selectable"), 
-                    QueryTriggerInteraction.Ignore))
-            {
-                GameObject go = hit.transform.gameObject;
-                SelectableBehavior selectable = go.GetComponent<SelectableBehavior>();
-
-                if (selectable != null) 
-                {
-                    PlatoonBehaviour selectedPlatoon = selectable.Platoon;
-                    selectedPlatoon.PlaySelectionVoiceline();
-                    _selection.Add(selectedPlatoon);
-                }
-            }
+            selectedPlatoon.PlaySelectionVoiceline();
+            _selection.Add(selectedPlatoon);
             SetSelected(_selection, false);
+            _justSelected = true;
+        }
+
+        private void OnSelectShortClick()
+        {
+            if (_justSelected)
+            {
+                _justSelected = false;
+            }
+            else
+            {
+                UnselectAll(_selection, false);
+            }
         }
 
         private void UpdateSelection(bool finalizeSelection)

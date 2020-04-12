@@ -29,6 +29,9 @@ namespace PFW.UI.Ingame
     {
         private TeamColorScheme _color;
 
+        [SerializeField]
+        private Button _button = null;
+
         [Header("Graphical Components")]
         [SerializeField]
         private Image _colorSprite = null;
@@ -77,15 +80,6 @@ namespace PFW.UI.Ingame
         public void SetVisible(bool vis)
         {
             gameObject.SetActive(vis);
-
-            if (vis)
-            {
-                SetLayer(LayerMask.NameToLayer("Selectable"));
-            }
-            else
-            {
-                SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
-            }
         }
 
         public void SetSelected(bool selected)
@@ -117,11 +111,16 @@ namespace PFW.UI.Ingame
         ///     before the platoon is fully spawned and activated,
         ///     so they have to be made visible in a separate, later call.
         /// </summary>
-        public void InitializeAsReal(Unit unit, TeamColorScheme colorScheme)
+        public void InitializeAsReal(
+                Unit unit, 
+                TeamColorScheme colorScheme, 
+                PlatoonBehaviour platoon)
         {
             _unitName.text = unit.Name;
             _color = colorScheme;
             SetColor(colorScheme.BaseColor);
+            _button.onClick.AddListener(
+                    () => MatchSession.Current.PlatoonLabelClicked(platoon));
         }
     }
 }

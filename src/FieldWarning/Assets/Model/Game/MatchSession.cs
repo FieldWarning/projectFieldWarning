@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -180,5 +180,15 @@ namespace PFW.Model.Game
             _unitRegistry.UpdateTeamBelonging(newTeam);
             _visibilityManager.UpdateTeamBelonging();
         }
+
+        /// <summary>
+        ///     Inform the selection manager that a platoon label was 
+        ///     clicked so that the selection can be updated.
+        /// </summary>
+        /// Passing this info this way is kind of ugly, but 
+        /// arguably better than exposing the selection manager just
+        /// for this call?
+        public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
+            _inputManager.PlatoonLabelClicked(platoon);
     }
 }
