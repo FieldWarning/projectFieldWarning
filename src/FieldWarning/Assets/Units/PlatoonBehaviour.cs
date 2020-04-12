@@ -362,19 +362,6 @@ namespace PFW.Units
             _waypointOverlay.gameObject.SetActive(selected);
         }
 
-        public void SetSelectable(bool selectable)
-        {
-            // TODO: the SelectionManager does not really respect these layers
-            if (selectable)
-            {
-                _platoonLabel.SetLayer(LayerMask.NameToLayer("Selectable"));
-            }
-            else
-            {
-                _platoonLabel.SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
-            }
-        }
-
         public void SetEnabled(bool enabled)
         {
             this.enabled = enabled;

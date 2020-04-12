@@ -54,11 +54,6 @@ namespace PFW.UI.Ingame
             _borderSprite.color = (2 * color + Color.white / 3);
         }
 
-        public void SetLayer(int l)
-        {
-            gameObject.layer = l;
-        }
-
         /// <summary>
         /// Mark as associated to a set of non-ghost units.
         /// </summary>
