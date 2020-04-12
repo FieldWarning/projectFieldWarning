@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4304671422449518379}
   - component: {fileID: 2544227899809079659}
+  - component: {fileID: 7478514304880836298}
   m_Layer: 0
   m_Name: PlatoonLabelCanvas
   m_TagString: Untagged
@@ -58,6 +59,23 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &7478514304880836298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5747041720908737757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &3209281279283464541
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -109,6 +127,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340009030950228490, guid: ade409bd2b8a2334080f40697dfb6cf9,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3040051995200857697}
+    - target: {fileID: 1340009030950228490, guid: ade409bd2b8a2334080f40697dfb6cf9,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnButtonClick
       objectReference: {fileID: 0}
     - target: {fileID: 1683246077222092947, guid: ade409bd2b8a2334080f40697dfb6cf9,
         type: 3}
@@ -363,3 +391,15 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 3209281279283464541}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3040051995200857697 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 484637783808978748, guid: ade409bd2b8a2334080f40697dfb6cf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 3209281279283464541}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5e3ef949e51dd4fa5a939d5f66949e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

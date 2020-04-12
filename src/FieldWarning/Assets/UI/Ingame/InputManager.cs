@@ -64,6 +64,8 @@ namespace PFW.UI.Ingame
         }
 
         private SelectionManager _selectionManager;
+        public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
+                _selectionManager.PlatoonLabelClicked(platoon);
 
         private PlayerData _localPlayer {
             get {

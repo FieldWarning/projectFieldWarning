@@ -198,7 +198,7 @@ namespace PFW.Units
         {
             Unit = unit;
             Owner = owner;
-            _platoonLabel.InitializeAsReal(unit, Owner.Team.ColorScheme);
+            _platoonLabel.InitializeAsReal(unit, Owner.Team.ColorScheme, this);
             _waypointOverlay = OverlayFactory.Instance.CreateWaypointOverlay(this);
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
         }
