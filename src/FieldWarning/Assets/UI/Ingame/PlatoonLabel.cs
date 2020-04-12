@@ -69,12 +69,6 @@ namespace PFW.UI.Ingame
         public void AssociateToRealUnits(List<UnitDispatcher> list)
         {
             //_billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().AssociateToRealUnits(list);
-
-            // Make selectable:
-            transform.gameObject.AddComponent<SelectableBehavior>().Platoon =
-                    transform
-                            .parent
-                            .GetComponent<PlatoonBehaviour>();
         }
 
         public void SetVisible(bool vis)
