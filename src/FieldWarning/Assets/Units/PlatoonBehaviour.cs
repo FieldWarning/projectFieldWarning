@@ -28,7 +28,7 @@ namespace PFW.Units
     {
         public Unit Unit;
         [SerializeField]
-        private PlatoonLabel _platoonLabel;
+        private PlatoonLabel _platoonLabel = null;
         public RectTransform SelectableRect;
         public GhostPlatoonBehaviour GhostPlatoon;
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
