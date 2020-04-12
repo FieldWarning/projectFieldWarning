@@ -20,8 +20,10 @@ namespace PFW.UI.Ingame
     /// Currently this is only used as a toplevle resize script 
     /// for the unit labels (see child classes).
     /// 
-    /// Warning: This script is incomplete and/or unused,
+    /// Warning: This script is incomplete and unused,
     ///          so it may make sense to remove it.
+    ///          Existing logic can be moved to the PlatoonLabel
+    ///          class if it is useful to do so.
     /// </summary>
     [ExecuteAlways]
     public abstract class UIGFXController : MonoBehaviour

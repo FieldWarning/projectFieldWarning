@@ -58,18 +58,26 @@ namespace PFW.UI.Ingame
         public void Awake()
         {
             _selection = new List<PlatoonBehaviour>();
-            _clickManager = new ClickManager(0, StartBoxSelection, OnSelectShortClick, EndDrag, UpdateBoxSelection);
+            _clickManager = new ClickManager(
+                    0, 
+                    StartBoxSelection, 
+                    OnSelectShortClick, 
+                    EndDrag, 
+                    UpdateBoxSelection);
 
-            if (_texture == null) {
-                var areaTransparency = .95f;
-                var borderTransparency = .75f;
+            if (_texture == null) 
+            {
+                float areaTransparency = .95f;
+                float borderTransparency = .75f;
                 _texture = new Texture2D(1, 1);
                 _texture.wrapMode = TextureWrapMode.Repeat;
-                _texture.SetPixel(0, 0, _selectionBoxColor - areaTransparency * Color.black);
+                _texture.SetPixel(
+                        0, 0, _selectionBoxColor - areaTransparency * Color.black);
                 _texture.Apply();
                 _borderTexture = new Texture2D(1, 1);
                 _borderTexture.wrapMode = TextureWrapMode.Repeat;
-                _borderTexture.SetPixel(0, 0, _selectionBoxColor - borderTransparency * Color.black);
+                _borderTexture.SetPixel(
+                        0, 0, _selectionBoxColor - borderTransparency * Color.black);
                 _borderTexture.Apply();
             }
         }
@@ -179,11 +187,18 @@ namespace PFW.UI.Ingame
 
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
+            if (Physics.Raycast(
+                    ray, 
+                    out hit, 
+                    1000f, 
+                    LayerMask.GetMask("Selectable"), 
+                    QueryTriggerInteraction.Ignore))
+            {
                 GameObject go = hit.transform.gameObject;
                 SelectableBehavior selectable = go.GetComponent<SelectableBehavior>();
 
-                if (selectable != null) {
+                if (selectable != null) 
+                {
                     PlatoonBehaviour selectedPlatoon = selectable.Platoon;
                     selectedPlatoon.PlaySelectionVoiceline();
                     _selection.Add(selectedPlatoon);
@@ -199,8 +214,12 @@ namespace PFW.UI.Ingame
                 || _mouseMode == MouseMode.REVERSE_MOVE)
                 return;
 
-            List<PlatoonBehaviour> newSelection = AllPlatoons.Where(x => IsInside(x)).ToList();
-            if (!Input.GetKey(KeyCode.LeftShift) && _selection != null && _selection.Count != 0) {
+            List<PlatoonBehaviour> newSelection = AllPlatoons.Where(
+                    x => IsInsideSelectionBox(x)).ToList();
+            if (!Input.GetKey(KeyCode.LeftShift) 
+                && _selection != null 
+                && _selection.Count != 0)
+            {
                 List<PlatoonBehaviour> old = _selection.Except(newSelection).ToList();
                 UnselectAll(old, !finalizeSelection);
             }
@@ -208,9 +227,9 @@ namespace PFW.UI.Ingame
             _selection = newSelection;
         }
 
-        private bool IsInside(PlatoonBehaviour obj)
+        private bool IsInsideSelectionBox(PlatoonBehaviour obj)
         {
-            var platoon = obj.GetComponent<PlatoonBehaviour>();
+            PlatoonBehaviour platoon = obj.GetComponent<PlatoonBehaviour>();
             if (!platoon.IsInitialized)
                 return false;
 
@@ -265,7 +284,8 @@ namespace PFW.UI.Ingame
         // Responsible for drawing the selection rectangle
         public void OnGUI()
         {
-            if (_active) {
+            if (_active) 
+            {
                 float lineWidth = 3;
                 float startX = _mouseStart.x;
                 float endX = _mouseEnd.x;
@@ -314,13 +334,17 @@ namespace PFW.UI.Ingame
             var right = Vector3.Cross(forward, Vector3.up);
             var pos = _previewPosition + platoonDistance * (formationWidth - 1) * right / 2f;*/
 
-            var positions = Formations.GetLineFormation(_previewPosition, heading + Mathf.PI / 2, _selection.Count);
-            List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(x => x.GhostPlatoon);
-            for (var i = 0; i < _selection.Count; i++) {
+            List<Vector3> positions = Formations.GetLineFormation(
+                    _previewPosition, heading + Mathf.PI / 2, _selection.Count);
+            List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(
+                    x => x.GhostPlatoon);
+            for (int i = 0; i < _selection.Count; i++) 
+            {
                 ghosts[i].SetPositionAndOrientation(positions[i], heading);
             }
 
-            if (makeVisible) {
+            if (makeVisible) 
+            {
                 ghosts.ForEach(x => x.SetVisible(true));
             }
         }

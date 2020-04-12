@@ -219,28 +219,30 @@ namespace PFW.UI.Ingame
             }
         }
 
-        /**
-         * The ghost units are used to briefly hold the destination
-         * for a move order, so they need to be moved to the cursor
-         * if a move order click is issued.
-         */
-        void MoveGhostsToMouse()
+        
+        /// <summary>
+        ///     The ghost units are used to briefly hold the destination
+        ///     for a move order, so they need to be moved to the cursor
+        ///     if a move order click is issued.
+        /// </summary>
+        private void MoveGhostsToMouse()
         {
             RaycastHit hit;
             if (Util.GetTerrainClickLocation(out hit))
                 _selectionManager.PrepareMoveOrderPreview(hit.point);
         }
 
-        void OnOrderHold()
+        private void OnOrderHold()
         {
             RaycastHit hit;
             if (Util.GetTerrainClickLocation(out hit))
                 _selectionManager.RotateMoveOrderPreview(hit.point);
         }
 
-        void OnOrderShortClick()
+        private void OnOrderShortClick()
         {
-            if (!_selectionManager.Empty) {
+            if (!_selectionManager.Empty) 
+            {
                 DisplayOrderFeedback();
             }
 
@@ -252,7 +254,9 @@ namespace PFW.UI.Ingame
             _selectionManager.DispatchMoveCommand(true, MoveCommandType.NORMAL);
         }
 
-        // Show a Symbol at the position where a move order was issued:
+        /// <summary>
+        ///     Show a symbol at the position where a move order was issued:
+        /// </summary>
         private void DisplayOrderFeedback()
         {
             RaycastHit hit;
@@ -266,9 +270,10 @@ namespace PFW.UI.Ingame
                 );
         }
 
-        /**
-         * Called when a unit card from the buy menu is pressed.
-         */
+        /// <summary>
+        ///     Called when a unit card from the buy menu is pressed.
+        /// </summary>
+        /// <param name="unit"></param>
         public void BuyCallback(Unit unit)
         {
             bool paid = Session.LocalPlayer.TryPay(unit.Price);

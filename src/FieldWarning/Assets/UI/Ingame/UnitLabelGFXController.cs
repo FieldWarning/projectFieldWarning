@@ -20,6 +20,11 @@ namespace PFW.UI.Ingame
 {
     /// <summary>
     ///     The UI overlay label/nameplate for a platoon.
+    ///     
+    ///     Warning: This script is incomplete and unused,
+    ///          so it may make sense to remove it.
+    ///          Existing logic can be moved to the PlatoonLabel
+    ///          class if it is useful to do so.
     /// </summary>
     [ExecuteAlways]
     public class UnitLabelGFXController : UIGFXController
