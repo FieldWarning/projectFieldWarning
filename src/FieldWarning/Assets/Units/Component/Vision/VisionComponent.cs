@@ -118,12 +118,6 @@ namespace PFW.Units.Component.Vision
             IsVisible = revealUnit;
             ToggleAllRenderers(gameObject, revealUnit);
 
-            // TODO: the SelectionManager does not really respect these layers
-            if (IsVisible)
-                gameObject.layer = LayerMask.NameToLayer("Selectable");
-            else
-                gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-
             MaybeTogglePlatoonVisibility();
         }
 
@@ -134,8 +128,6 @@ namespace PFW.Units.Component.Vision
             bool visible = !platoon.Units.TrueForAll(
                             u => !u.VisionComponent.IsVisible);
             ToggleAllRenderers(platoon.gameObject, visible);
-
-            platoon.SetSelectable(visible);
         }
 
         private void ToggleAllRenderers(GameObject o, bool visible)
