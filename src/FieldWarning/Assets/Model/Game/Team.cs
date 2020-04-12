@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -22,13 +22,31 @@ namespace PFW.Model.Game
     public class Team : MonoBehaviour
     {
         public string Name;
-        public Color Color;
+        public TeamColorScheme ColorScheme;
 
         public List<PlayerData> Players { get; } = new List<PlayerData>();
 
         public bool IsEnemy(Team t)
         {
-            return Color != t.Color;
+            return Name != t.Name;
         }
+    }
+
+    /// <summary>
+    ///     Ideally this would include all colors used
+    ///     by the game so that we can easily tweak
+    ///     the color scheme by changing one place.
+    /// </summary>
+    [System.Serializable]
+    public class TeamColorScheme
+    {
+        [Tooltip("Color for the team's platoon labels and most other things.")]
+        public Color BaseColor;
+        [Tooltip("Color for the team's selected platoons.")]
+        public Color SelectedColor;
+        [Tooltip("Color for the team's captured zones.")]
+        public Color CapturedColor;
+        [Tooltip("Color for the team's ghost platoons.")]
+        public Color GhostColor;
     }
 }
