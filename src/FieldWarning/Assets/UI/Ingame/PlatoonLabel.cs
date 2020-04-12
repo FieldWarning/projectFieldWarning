@@ -18,6 +18,7 @@ using TMPro;
 
 using PFW.Units;
 using PFW.Model.Game;
+using PFW.Model.Armory;
 
 namespace PFW.UI.Ingame
 {
@@ -43,12 +44,6 @@ namespace PFW.UI.Ingame
 
         [SerializeField]
         private TextMeshProUGUI _unitName = null;
-
-        public void SetColorScheme(TeamColorScheme colorScheme)
-        {
-            _color = colorScheme;
-            SetColor(colorScheme.BaseColor);
-        }
 
         private void SetColor(Color color)
         {
@@ -106,12 +101,27 @@ namespace PFW.UI.Ingame
         }
 
         /// <summary>
-        ///     Ghost platoons have paler icons which hint that they're not real.
+        ///     Ghost platoons have paler icons which hint that they're not real,
+        ///     and are always visible to their owner.
         /// </summary>
-        public void SetGhost()
+        public void InitializeAsGhost(Unit unit, TeamColorScheme colorScheme)
         {
+            _unitName.text = unit.Name;
+            _color = colorScheme;
             SetColor(_color.GhostColor);
             SetVisible(true);
+        }
+
+        /// <summary>
+        ///     Platoon labels for real units are initialized
+        ///     before the platoon is fully spawned and activated,
+        ///     so they have to be made visible in a separate, later call.
+        /// </summary>
+        public void InitializeAsReal(Unit unit, TeamColorScheme colorScheme)
+        {
+            _unitName.text = unit.Name;
+            _color = colorScheme;
+            SetColor(colorScheme.BaseColor);
         }
     }
 }
