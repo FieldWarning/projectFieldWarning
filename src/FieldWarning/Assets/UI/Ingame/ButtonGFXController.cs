@@ -20,13 +20,15 @@ namespace PFW.UI.Ingame
 {
 
     /// <summary>
-    /// Graphics controller for buttons. 
-    /// Describes how a button should graphically change
-    /// in response to e.g. user interaction.
+    ///     Graphics controller for buttons. 
+    ///     Describes how a button should graphically change
+    ///     in response to e.g. user interaction.
     /// </summary>
     /// 
-    /// Warning: This script is incomplete and/or unused,
+    ///     Warning: This script is incomplete and unused,
     ///          so it may make sense to remove it.
+    ///          Existing logic can be moved to the PlatoonLabel
+    ///          class if it is useful to do so.
     [ExecuteAlways]
     public class ButtonGFXController : UIGFXController, IPointerEnterHandler, IPointerExitHandler
     {
