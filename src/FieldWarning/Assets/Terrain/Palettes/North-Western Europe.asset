@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c509dbaa7b6f416409e3195321a2187e, type: 3}
+  m_Name: North-Western Europe
+  m_EditorClassIdentifier: 
+  PaletteLayers:
+  - {fileID: 8574412962073106934, guid: 97985330eeac27941b0ec50d6580858a, type: 2}
+  - {fileID: 8574412962073106934, guid: f9defa3ffa5d4ac4699dd00ac73ba558, type: 2}
+  - {fileID: 8574412962073106934, guid: 86c00dcb7dda255419e6d28916e735d3, type: 2}
+  - {fileID: 8574412962073106934, guid: 7eeb2480be384a54fbcc1b50c3f4750a, type: 2}
+  - {fileID: 8574412962073106934, guid: 82740c5833f02a847b6732a8d897bf3d, type: 2}
+  - {fileID: 8574412962073106934, guid: f21a6c96fb0cf524aaaf4a58fbccb85a, type: 2}
+  - {fileID: 8574412962073106934, guid: 2b246ff0b3a44a945aa7bcd2c2ba70ad, type: 2}
+  - {fileID: 8574412962073106934, guid: d3b55d9c1c8f2dc46bab2fd824eb1f02, type: 2}
