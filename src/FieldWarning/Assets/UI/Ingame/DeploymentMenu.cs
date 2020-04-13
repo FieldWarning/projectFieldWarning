@@ -89,7 +89,8 @@ namespace PFW.UI.Ingame
                                 _inputManager.BuyCallback(unit);
                         });
 
-                // TODO Set picture too
+                card.transform.Find("Image").GetComponent<Image>().sprite =
+                        unit.ArmoryImage;
                 // TODO Transports?
             }
         }
