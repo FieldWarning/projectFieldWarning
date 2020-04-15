@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -106,57 +106,8 @@ public class SlidingCameraBehaviour : MonoBehaviour
 
     private Camera _cam;
 
-    [Serializable]
-    private struct TerrainMaterial
-    {
-#pragma warning disable 0649 // Field is never assigned to, and will always have its default value
-        public Material Material;
-        public MicroSplatPropData PerTextureData;
-        public MicroSplatKeywords Keywords;
-        public float MaxAltitude;
-#pragma warning restore 0649 // Field is never assigned to, and will always have its default value
-    }
-
-    [Header("Microsplat Terrain Materials")]
-    [SerializeField]
-    [Tooltip("Must be sorted in ascending order. The first material whose max altitude "
-        + "is higher than the current camera altitude will be applied to the terrain.")]
-    List<TerrainMaterial> _terrainMaterials = null;
-    [SerializeField]
-    //Array as we now have multiple MicroSplats
-    private MicroSplatTerrain[] _microSplatTerrains = null;
-
-
-    private void Awake()
-    {
-        // NOTE: becareful when accessing terrain data here as there is a duplicate from when the scene loads.
-        // This duplicate terrain eventually deletes itself when it realizes its a duplicate.. but it maybe too late from
-        // this AWAKE. Therefore; I moved the accessing of Terrain to Start.
-    }
-
     private void Start()
     {
-        List<MicroSplatTerrain> splatList = new List<MicroSplatTerrain>();
-
-        foreach (Terrain terrain in GameObject.FindObjectsOfType<Terrain>())
-        {
-            splatList.AddRange(terrain.GetComponents<MicroSplatTerrain>());
-        }
-
-        if (splatList.Count > 0)
-        {
-            _microSplatTerrains = splatList.ToArray();
-        }
-        else
-        {
-            throw new Exception("Camera not set up correctly, microsplat reference missing!");
-        }
-
-        if (_terrainMaterials == null || _terrainMaterials.Count == 0)
-        {
-            throw new Exception("Camera not set up correctly, terrain materials missing!");
-        }
-
         _cam = GetComponent<Camera>();
 
         _rotateX = transform.eulerAngles.x;
@@ -306,8 +257,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
                         transform.rotation,
                         Quaternion.Euler(_rotateX, _rotateY, 0f),
                         Time.deltaTime * _rotLerpSpeed);
-
-        MaybeChangeTerrainMaterial();
     }
 
     /// <summary>
@@ -587,46 +536,6 @@ public class SlidingCameraBehaviour : MonoBehaviour
         _sideArrowRight.enabled = false;
         _sideArrowTop.enabled = false;
         _sideArrowBottom.enabled = false;
-    }
-
-    /// <summary>
-    /// Based on camera distance, change terrain settings to improve appearance.
-    ///
-    /// TODO: we need to write our own shader instead of employing this hack
-    /// </summary>
-    private void MaybeChangeTerrainMaterial()
-    {
-
-        if (_session.TerrainMap == null)
-        {
-            // Hack: When loading a map, the camera is moved to the loading scene,
-            // where the terrain map is not yet loaded. Don't throw errors in that case.
-            return;
-        }
-        float camAltitude = transform.position.y - _session.TerrainMap.GetTerrainHeight(transform.position);
-
-        foreach (TerrainMaterial mat in _terrainMaterials) 
-        {
-            if (camAltitude < mat.MaxAltitude) 
-            {
-                foreach (MicroSplatTerrain microSplate in _microSplatTerrains)
-                {
-                    if (microSplate.templateMaterial != mat.Material)
-                    {
-                        microSplate.templateMaterial = mat.Material;
-
-                        // In the inspector this is the "Debug/Keywords" field.
-                        microSplate.keywordSO = mat.Keywords;
-                        // In the inspector this is the "Debug/Per Texture Data" field.
-                        microSplate.propData = mat.PerTextureData;
-
-                        microSplate.Sync();
-                    }
-                }
-                
-                break;
-            }
-        }
     }
 
     enum ScreenCorner
