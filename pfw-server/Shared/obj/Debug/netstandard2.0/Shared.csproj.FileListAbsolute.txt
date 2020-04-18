@@ -1,0 +1,5 @@
+C:\Users\admin\source\repos\PFW_OfficialHub\Shared\bin\Debug\netstandard2.0\Shared.deps.json
+C:\Users\admin\source\repos\PFW_OfficialHub\Shared\bin\Debug\netstandard2.0\Shared.dll
+C:\Users\admin\source\repos\PFW_OfficialHub\Shared\obj\Debug\netstandard2.0\Shared.csprojAssemblyReference.cache
+C:\Users\admin\source\repos\PFW_OfficialHub\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfoInputs.cache
+C:\Users\admin\source\repos\PFW_OfficialHub\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfo.cs
