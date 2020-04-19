@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -101,5 +101,13 @@ namespace Shared
         public string Email { get; set; }
         public string Username { get; set; }
         public string Token { get; set; }
+    }
+
+    /// <summary>
+    /// Pass this serialized object on every request if doing custom requests
+    /// </summary>
+    public class Jwt
+    {
+
     }
 }

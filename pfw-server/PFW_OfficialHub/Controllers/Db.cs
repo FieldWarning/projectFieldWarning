@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +11,12 @@ namespace PFW_OfficialHub.Controllers
     {
         static Db()
         {
-
+            Task.Run(delegate {
+                while (true) {
+                    Task.Delay(10000);
+                    OnlinePlayers.DeleteManyAsync(x => x.LastOnline < DateTime.UtcNow - TimeSpan.FromSeconds(15));
+                }
+            });
         }
 
         public static IMongoClient Client = new MongoClient();

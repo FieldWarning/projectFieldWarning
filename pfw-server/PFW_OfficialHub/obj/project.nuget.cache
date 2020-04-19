@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JJ77Ges1RkYaTX1g+7TecVFcmZktT9oQfK8Utm5a2KeVZXHRMdxfu7n37NsCYxOb8kpaaHaIyyVrZ4RBhzS3yg==",
+  "dgSpecHash": "9eoBNWcEEjPhQMMGdSFudPTU4hrsyNJ9zGMqw3O+mt1WP4rMNo5KyDzjoUSRWO8Yo1hArDI8a0hjxquned8+Hg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\source\\repos\\PFW_OfficialHub\\PFW_OfficialHub\\PFW_OfficialHub.csproj",
+  "projectFilePath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\PFW_OfficialHub\\PFW_OfficialHub.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\admin\\.nuget\\packages\\dnsclient\\1.3.1\\dnsclient.1.3.1.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\microsoft.netcore.platforms\\2.1.2\\microsoft.netcore.platforms.2.1.2.nupkg.sha512",

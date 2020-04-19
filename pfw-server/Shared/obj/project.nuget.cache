@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "wujqQPo677tgc+KiKkUwBV2/qzYpTPwAo9i/THMYj3gR61mP/JhfvE9CfGSfviZD61H1jCN0TaIzlrFmtzmNkw==",
+  "dgSpecHash": "U2T5A2BTwkGdy1ZI+MW8qAAh5kBFPwpKT4GLKghVuhpSi0QrNvyD4S5ehb1HQ4iA5EKeo7K4hz9wr4VXKxUY9g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\source\\repos\\PFW_OfficialHub\\Shared\\Shared.csproj",
+  "projectFilePath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Shared\\Shared.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\admin\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
