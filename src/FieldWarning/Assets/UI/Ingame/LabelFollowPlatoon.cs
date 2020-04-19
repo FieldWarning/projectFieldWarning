@@ -24,7 +24,7 @@ public sealed class LabelFollowPlatoon : MonoBehaviour
     private Camera _mainCamera;
     private RectTransform _labelRect;
     [SerializeField]
-    private Transform _transformToFollow;
+    private Transform _transformToFollow = null;
     private float _vertOffset;
     private const float VERT_OFFSET_FACTOR = 0.1f;
 

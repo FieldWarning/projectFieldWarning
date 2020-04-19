@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -64,7 +64,6 @@ namespace PFW.Units.Component.Movement
             if (!ReadGraph(_graphFile))
             {
                 GenerateGraphRunner();
-                
             }
         }
 
@@ -159,9 +158,6 @@ namespace PFW.Units.Component.Movement
                 SetPercentComplete(((double)currIdx / (double)roads.Length) * 100.0);
                 yield return null;
             }
-
-            
-            
         }
 
 
@@ -232,8 +228,8 @@ namespace PFW.Units.Component.Movement
                             continue;
 
                         float time = FindPath(path,
-                            Position(_graph[i]), Position(_graph[j]),
-                            mobility, 0f, MoveCommandType.FAST);
+                                Position(_graph[i]), Position(_graph[j]),
+                                mobility, 0f, MoveCommandType.FAST);
 
                         if (arc.Time[mobility.Index] < 1.5 * time)
                         {
@@ -276,8 +272,11 @@ namespace PFW.Units.Component.Movement
             // Compute the arc's traversal time for each MobilityType
             foreach (MobilityType mobility in MobilityType.MobilityTypes)
             {
-                arc.Time[mobility.Index] = Pathfinder.FindLocalPath(
-                    this, Position(node1), Position(node2), mobility, 0f);
+                arc.Time[mobility.Index] = Pathfinder.FindLocalPath(this, 
+                                                                    Position(node1), 
+                                                                    Position(node2), 
+                                                                    mobility, 
+                                                                    0f);
             }
         }
 
@@ -292,18 +291,22 @@ namespace PFW.Units.Component.Movement
         // If no path was found, return 'forever' and put only the destination in path
         // Returns the total path time
         public float FindPath(
-            List<PathNode> path,
-            Vector3 start,
-            Vector3 destination,
-            MobilityType mobility,
-            float unitRadius,
-            MoveCommandType command)
+                List<PathNode> path,
+                Vector3 start,
+                Vector3 destination,
+                MobilityType mobility,
+                float unitRadius,
+                MoveCommandType command)
         {
             path.Clear();
             path.Add(new PathNode(destination, false));
 
             PathNode cameFromDest = null;
-            float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, unitRadius);
+            float gScoreDest = Pathfinder.FindLocalPath(this, 
+                                                        start, 
+                                                        destination, 
+                                                        mobility, 
+                                                        unitRadius);
 
             if (gScoreDest < Pathfinder.FOREVER)
             {
@@ -323,7 +326,11 @@ namespace PFW.Units.Component.Movement
 
                 if ((start - neighborPos).magnitude < ARC_MAX_DIST)
                 {
-                    float gScoreNew = Pathfinder.FindLocalPath(this, start, neighborPos, mobility, unitRadius);
+                    float gScoreNew = Pathfinder.FindLocalPath(this, 
+                                                               start, 
+                                                               neighborPos, 
+                                                               mobility, 
+                                                               unitRadius);
                     if (gScoreNew < Pathfinder.FOREVER)
                     {
                         neighbor.GScore = gScoreNew;
@@ -335,7 +342,6 @@ namespace PFW.Units.Component.Movement
 
             while (_openSet.Count > 0)
             {
-
                 PathNode current = _openSet.Dequeue();
                 current.IsClosed = true;
 
@@ -357,7 +363,9 @@ namespace PFW.Units.Component.Movement
                     if (gScoreNew >= neighbor.GScore)
                         continue;
 
-                    float fScoreNew = gScoreNew + TimeHeuristic(Position(neighbor), destination, mobility);
+                    float fScoreNew = gScoreNew + TimeHeuristic(Position(neighbor), 
+                                                                destination, 
+                                                                mobility);
 
                     if (!_openSet.Contains(neighbor))
                     {
