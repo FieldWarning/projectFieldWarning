@@ -49,7 +49,8 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         _targetedScreenSize =
             transform.parent.parent.GetComponent<RectTransform>().rect.width;
 
-        TerrainMap map = MatchSession.Current.TerrainMap;
+        _matchSession = MatchSession.Current;
+        TerrainMap map = _matchSession.TerrainMap;
         if (map == null)
         {
             // Hack: When loading a map, the camera is moved to the loading scene,
@@ -70,8 +71,6 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         image.Apply();
         _miniMapImage.texture = image;
         _miniMapCamera.enabled = false;
-
-        _matchSession = MatchSession.Current;
     }
 
     //TODO different signs for different unit Types
