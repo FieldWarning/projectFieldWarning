@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\Ez.csproj": {}
+    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj": {}
   },
   "projects": {
-    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\Ez.csproj": {
+    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\Ez.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj",
         "projectName": "Ez",
-        "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\Ez.csproj",
+        "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj",
         "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\obj\\",
+        "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -60,7 +60,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300-preview-015095\\RuntimeIdentifierGraph.json"
         }
       }
     }

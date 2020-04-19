@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BWQpFKXwrnkGqCMeO0rs2rBeCfPZ586gBd1DlzN07RBn9eNYm+4+96USmf8acfL7jtDY/iA2ur3sbNHmyYEeCQ==",
+  "dgSpecHash": "ucJGQv/s72DVm8s95x6qyfKB8Pibz8/CapWOpVxYsUYvSAGNIQKOeOG6nL5yStIABVUayGyGYByihibZ6AO4KQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\Ez.csproj",
+  "projectFilePath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\admin\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
