@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,29 +14,33 @@ namespace PFW_OfficialHub.Controllers
         [HttpPost("getall")]
         public ActionResult<string> GetAll()
         {
-
+            return "";
         }
 
         [HttpPost("getinfo/{serverId}")]
         public ActionResult<string> GetAll(string serverId)
         {
 
+            return "";
         }
         [HttpPost("connect/{serverId}")]
         public ActionResult<string> Connect(string serverId)
         {
 
+            return "";
         }
         [HttpPost("leave/{serverId}")]
         public ActionResult<string> Leave(string serverId)
         {
 
+            return "";
         }
 
         [HttpPost("votekick/{playerId}/{serverId}/{time}")]
         public ActionResult<string> VoteKick(string playerId, string serverId, int time)
         {
 
+            return "";
         }
     }
 
@@ -48,12 +52,14 @@ namespace PFW_OfficialHub.Controllers
         public ActionResult<string> GetServerStatus()
         {
 
+            return "";
         }
 
         [HttpPost("heartbeat")]
         public ActionResult<string> SendHeartBeat()
         {
 
+            return "";
         }
     }
 }
