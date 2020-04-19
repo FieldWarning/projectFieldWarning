@@ -1,18 +1,19 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj": {}
+    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Telepathy\\Telepathy.csproj": {}
   },
   "projects": {
-    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj": {
+    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Telepathy\\Telepathy.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj",
-        "projectName": "Ez",
-        "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\Ez.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Telepathy\\Telepathy.csproj",
+        "projectName": "Telepathy",
+        "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Telepathy\\Telepathy.csproj",
         "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Ez\\obj\\",
+        "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Telepathy\\obj\\",
         "projectStyle": "PackageReference",
+        "crossTargeting": true,
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -23,6 +24,7 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
+          "net48",
           "netstandard2.0"
         ],
         "sources": {
@@ -30,6 +32,9 @@
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          },
           "netstandard2.0": {
             "projectReferences": {}
           }
@@ -41,6 +46,9 @@
         }
       },
       "frameworks": {
+        "net48": {
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        },
         "netstandard2.0": {
           "dependencies": {
             "NETStandard.Library": {
