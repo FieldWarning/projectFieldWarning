@@ -32,10 +32,10 @@ namespace PFW.Units.Component.Movement
         private const string GRAPH_FILE_SUFFIX = "_pathfinder_graph.dat";
 
         private static PathArc INVALID_ARC = new PathArc(null, null);
-        private const float SPARSE_GRID_SPACING = 1000f * TerrainConstants.MAP_SCALE;
-        private const float ROAD_GRID_SPACING = 200f * TerrainConstants.MAP_SCALE;
-        private const float NODE_PRUNE_DIST_THRESH = 10f * TerrainConstants.MAP_SCALE;
-        private const float ARC_MAX_DIST = 2500f * TerrainConstants.MAP_SCALE;
+        private const float SPARSE_GRID_SPACING = 1000f * Constants.MAP_SCALE;
+        private const float ROAD_GRID_SPACING = 200f * Constants.MAP_SCALE;
+        private const float NODE_PRUNE_DIST_THRESH = 10f * Constants.MAP_SCALE;
+        private const float ARC_MAX_DIST = 2500f * Constants.MAP_SCALE;
 
         public TerrainMap _map;
         public List<PathNode> _graph;

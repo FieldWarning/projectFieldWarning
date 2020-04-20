@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -26,7 +26,7 @@ namespace PFW.Units.Component.Movement
         /// Any object that the pathfinder is able to
         /// navigate around shall have at least this radius.
         /// </summary>
-        public const float STEP_SIZE = 12f * TerrainConstants.MAP_SCALE;
+        public const float STEP_SIZE = 12f * Constants.MAP_SCALE;
 
         /// <summary>
         /// Angular search increment for local path finding.
@@ -42,7 +42,7 @@ namespace PFW.Units.Component.Movement
         /// <summary>
         /// We want to get within this distance of any intermediate waypoints.
         /// </summary>
-        private const float COMPLETION_DIST = 30f * TerrainConstants.MAP_SCALE;
+        private const float COMPLETION_DIST = 30f * Constants.MAP_SCALE;
 
         /// <summary>
         /// Throttle the frequency of waypoint recalculation, for performance.
@@ -70,7 +70,7 @@ namespace PFW.Units.Component.Movement
             Data = data;
             _path = new List<PathNode>();
             FinalCompletionDist =
-                    2f * TerrainConstants.MAP_SCALE + unit.Data.MinTurnRadius;
+                    2f * Constants.MAP_SCALE + unit.Data.MinTurnRadius;
             _nextUpdateTime = 0f;
         }
 
