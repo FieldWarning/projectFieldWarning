@@ -40,6 +40,19 @@ public class OrbitCameraBehaviour : MonoBehaviour
     float maxZoom = 250f;
     float minZoom = 10f;
 
+
+    [SerializeField]
+    private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
+    [SerializeField]
+    private float _rotLerpSpeed = 10f;
+
+    [SerializeField]
+    private float _zoomSpeed = 10000f * TerrainConstants.MAP_SCALE;
+
+
+
     static public GameObject FollowObject = null;
     private Vector3 FollowDistance;
 
@@ -106,12 +119,18 @@ public class OrbitCameraBehaviour : MonoBehaviour
         orbitPoint.position += Time.deltaTime * BASE_MOVEMENT_SPEED * movement * camOffset.magnitude;
         if (FollowObject)
         {
+            // maybe add a lerp here for smoothness
             orbitPoint.position = FollowObject.transform.position;
 
         }
+        transform.localPosition = Vector3.Lerp(transform.localPosition, camOffset, Time.deltaTime * _zoomSpeed);
 
-        transform.localPosition = camOffset;
-        transform.LookAt(orbitPoint, Vector3.up);
+        // smooth the lookat/rotation
+        Quaternion lookOnLook = Quaternion.LookRotation(orbitPoint.transform.position - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookOnLook, Time.deltaTime* _rotLerpSpeed);
+        
+        // old code just in case
+        //transform.LookAt(orbitPoint, Vector3.up);
     }
 
     // this is needed to reset our zoom level after we are enabled again. We dont want to suddenly jump
