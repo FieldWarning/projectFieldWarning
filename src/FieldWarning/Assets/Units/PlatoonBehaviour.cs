@@ -21,6 +21,7 @@ using PFW.Model.Armory;
 using PFW.UI.Ingame.UnitLabel;
 using PFW.Units.Component.OrderQueue;
 using PFW.Networking;
+using UnityEngine.EventSystems;
 
 namespace PFW.Units
 {
@@ -41,6 +42,8 @@ namespace PFW.Units
         private WaypointOverlayBehavior _waypointOverlay;
 
         public OrderQueue OrderQueue { get; } = new OrderQueue();
+
+        private bool _PointerOnLabel = false;
 
         public override bool OnSerialize(NetworkWriter writer, bool initialState)
         {
@@ -102,6 +105,22 @@ namespace PFW.Units
             transform.position = pos / Units.Count;
 
             OrderQueue.HandleUpdate();
+
+            if (_PointerOnLabel)
+            {
+                var scroll = Input.GetAxis("Mouse ScrollWheel");
+
+                if (scroll != 0)
+                {
+                    var mainCamObj = GameObject.FindWithTag("MainCamera").gameObject;
+                    mainCamObj.GetComponent<OrbitCameraBehaviour>().enabled = true;
+
+                    mainCamObj.GetComponent<SlidingCameraBehaviour>().enabled = false;
+                    OrbitCameraBehaviour.FollowObject = this.gameObject;
+                }
+            }
+
+
         }
 
         #region Lifetime logic + platoon splitting
@@ -372,6 +391,16 @@ namespace PFW.Units
         public void SendFirePosOrder(Vector3 position, bool enqueue = false)
         {
             OrderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
+        }
+
+        public void PointerEnterEvent(BaseEventData baseEvent)
+        {
+            _PointerOnLabel = true;
+        }
+
+        public void PointerExitEvent(BaseEventData baseEvent)
+        {
+            _PointerOnLabel = false;
         }
 
         #region Movement
