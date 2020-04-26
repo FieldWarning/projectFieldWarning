@@ -272,7 +272,10 @@ namespace PFW.Units
                 Units[i].Teleport(
                     positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
-            OrderMovement(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
+            OrderMovement(
+                    GhostPlatoon.transform.position, 
+                    GhostPlatoon.FinalHeading, 
+                    MoveCommandType.FAST);
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);
