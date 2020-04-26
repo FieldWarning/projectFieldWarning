@@ -48,7 +48,14 @@ namespace PFW.Units.Component.Movement
         /// </summary>
         private FastPriorityQueue<PathNode> _openSet;
 
-
+        /// <summary>
+        ///     Create a pathfinder graph by either
+        ///     reading it from a file or generating it from scratch.
+        /// </summary>
+        /// <param name="map">
+        ///     A sampling of the terrain topology, 
+        ///     used if generating from scratch.
+        /// </param>
         public PathfinderData(TerrainMap map)
         {
             _map = map;
@@ -123,13 +130,17 @@ namespace PFW.Units.Component.Movement
 
         private IEnumerator BuildRoadNodes()
         {
+            Logger.LogPathfinding($"PathfinderData::BuildRoadNodes()", LogLevel.DEBUG);
             _graph.Clear();
             // Add nodes for roads
             ERModularRoad[] roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
 
-            int currIdx = 0;
+            int roadsEvaluated = 0;
             foreach (ERModularRoad road in roads)
             {
+                Logger.LogPathfinding(
+                        $"Building nodes for road {road.roadName}", 
+                        LogLevel.DEBUG);
                 for (int i = 0; i < road.middleIndentVecs.Count; i++)
                 {
                     Vector3 roadVert = road.middleIndentVecs[i];
@@ -154,8 +165,9 @@ namespace PFW.Units.Component.Movement
                 }
 
 
-                currIdx++;
-                SetPercentComplete(((double)currIdx / (double)roads.Length) * 100.0);
+                roadsEvaluated++;
+                SetPercentComplete(
+                        ((double)roadsEvaluated / (double)roads.Length) * 100.0);
                 yield return null;
             }
         }
@@ -164,9 +176,10 @@ namespace PFW.Units.Component.Movement
         //TODO: maybe need to generate a height map file as well just for this, because it takes a long time
         private IEnumerator BuildGraph()
         {
-
+            Logger.LogPathfinding(
+                    $"PathfinderData.BuildGraph()",
+                    LogLevel.DEBUG);
             // TODO: Add nodes for terrain features
-
 
 
             /*// Fill in any big open spaces with a sparse grid in case the above missed anything important
@@ -192,7 +205,6 @@ namespace PFW.Units.Component.Movement
                     if ((Position(_graph[i]) - Position(_graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
                         _graph.RemoveAt(j);
                 }
-
             }
 
             _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
@@ -216,7 +228,6 @@ namespace PFW.Units.Component.Movement
             {
                 for (int j = i + 1; j < _graph.Count; j++)
                 {
-
                     PathArc arc = GetArc(_graph[i], _graph[j]);
                     if (arc.Equals(INVALID_ARC))
                         continue;
@@ -248,7 +259,6 @@ namespace PFW.Units.Component.Movement
                 { 
                     yield return null;
                 }
-                
             }
         }
 
@@ -287,9 +297,18 @@ namespace PFW.Units.Component.Movement
             node2.Arcs.Remove(arc);
         }
 
-        // Run the A* algorithm and put the result in path
-        // If no path was found, return 'forever' and put only the destination in path
-        // Returns the total path time
+        /// <summary>
+        /// Run the A* algorithm and put the result in path.
+        /// If no path was found, return 'forever' and put only the destination in path.
+        /// Returns the total path time.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="start"></param>
+        /// <param name="destination"></param>
+        /// <param name="mobility"></param>
+        /// <param name="unitRadius"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
         public float FindPath(
                 List<PathNode> path,
                 Vector3 start,
@@ -440,6 +459,9 @@ namespace PFW.Units.Component.Movement
 
         public PathNode(Vector3 position, bool isRoad)
         {
+            Logger.LogPathfinding(
+                    $"new PathNode(pos = {position}, isRoad = {isRoad})",
+                    LogLevel.DUMP);
             //this.position = position;
             x = position.x;
             y = position.y;

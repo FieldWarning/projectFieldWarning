@@ -26,6 +26,12 @@ using PFW.Units.Component.Movement;
 
 namespace PFW
 {
+    /// <summary>
+    ///     Holds information of the terrain obtained
+    ///     by sampling, including a heightmap and 
+    ///     terrain type tracking. Generated from
+    ///     scratch or read by a file.
+    /// </summary>
     public class TerrainMap : Loader
     {
         public const int PLAIN = 0;

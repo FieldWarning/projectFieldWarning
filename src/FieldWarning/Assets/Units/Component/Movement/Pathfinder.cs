@@ -74,16 +74,30 @@ namespace PFW.Units.Component.Movement
             _nextUpdateTime = 0f;
         }
 
-        // Generate and store the sequence of nodes leading to the destination using the global graph
-        // Returns the total normalized path time
-        // If no path was found, return 'forever' and set no destination
+        /// <summary>
+        /// Generate and store the sequence of nodes leading to the
+        /// destination using the global graph.
+        /// Returns the total normalized path time.
+        /// If no path was found, returns 'forever' and sets no destination.
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
         public float SetPath(Vector3 destination, MoveCommandType command)
         {
+            Logger.LogPathfinding(
+                    $"Pathfinder::SetPath() called, destination = {destination}, command = {command}",
+                    LogLevel.DEBUG);
+
             _previousNode = null;
             _nextUpdateTime = 0f;
 
             if (destination == NO_POSITION)
             {
+                Logger.LogPathfinding(
+                        $"Pathfinder::SetPath() for destination {destination} " +
+                        $"got no viable path.",
+                        LogLevel.DEBUG);
                 _path.Clear();
                 return FOREVER;
             }
@@ -94,12 +108,22 @@ namespace PFW.Units.Component.Movement
                     _path, _unit.transform.position, destination, _unit.Mobility, 0f, command);
             if (pathTime >= FOREVER)
                 _path.Clear();
+
+            Logger.LogPathfinding(
+                    $"Pathfinder::SetPath() for destination {destination}, " +
+                    $"command = {command} chose path with {_path.Count} " +
+                    $"waypoints and {pathTime} travel time.",
+                    LogLevel.DEBUG);
             return pathTime;
         }
 
-        // Gives the next step along the previously computed path
-        // For speed, this will only update the waypoint on some frames
-        // Returns 'NoPosition' if there is no destination or a step cannot be found
+        /// <summary>
+        /// Gives the next step along the previously computed path.
+        /// For speed, this will only update the waypoint on some frames.
+        /// Returns 'NoPosition' if there is no destination 
+        /// or a step cannot be found.
+        /// </summary>
+        /// <returns></returns>
         public Vector3 GetWaypoint()
         {
             if (!HasDestination())
