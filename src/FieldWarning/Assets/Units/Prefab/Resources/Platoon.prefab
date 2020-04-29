@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6354385539193996493}
   m_Layer: 0
   m_Name: Platoon
-  m_TagString: Platoon
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,49 +67,6 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
---- !u!114 &8660869053011542717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4114440807409796426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 0
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1889930283590301293}
-          m_MethodName: PointerEnterEvent
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - eventID: 1
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1889930283590301293}
-          m_MethodName: PointerExitEvent
-          m_Mode: 0
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!1001 &2720266722134053706
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -258,9 +215,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72ec032d398e3ee4bb629eda95a181ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &4114440807409796426 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2078756709363717632, guid: 24c5c753e87815f468494a89a0d6995a,
-    type: 3}
-  m_PrefabInstance: {fileID: 2720266722134053706}
-  m_PrefabAsset: {fileID: 0}
