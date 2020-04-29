@@ -186,9 +186,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\Ez.csproj",
-      "projectName": "Ez",
-      "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\Ez.csproj",
+      "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\EzNetPfw.csproj",
+      "projectName": "EzNetPfw",
+      "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\EzNetPfw.csproj",
       "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\EzNetPfw\\obj\\",
       "projectStyle": "PackageReference",
