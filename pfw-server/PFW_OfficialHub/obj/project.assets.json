@@ -6163,11 +6163,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\PFW_OfficialHub\\PFW_OfficialHub.csproj",
+      "projectUniqueName": "C:\\Users\\admin\\source\\repos\\PFW_OfficialHub\\PFW_OfficialHub\\PFW_OfficialHub.csproj",
       "projectName": "PFW_OfficialHub",
-      "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\PFW_OfficialHub\\PFW_OfficialHub.csproj",
+      "projectPath": "C:\\Users\\admin\\source\\repos\\PFW_OfficialHub\\PFW_OfficialHub\\PFW_OfficialHub.csproj",
       "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\PFW_OfficialHub\\obj\\",
+      "outputPath": "C:\\Users\\admin\\source\\repos\\PFW_OfficialHub\\PFW_OfficialHub\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -6188,8 +6188,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Shared\\Shared.csproj": {
-              "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Shared\\Shared.csproj"
+            "C:\\Users\\admin\\source\\repos\\PFW_OfficialHub\\Shared\\Shared.csproj": {
+              "projectPath": "C:\\Users\\admin\\source\\repos\\PFW_OfficialHub\\Shared\\Shared.csproj"
             }
           }
         }
@@ -6226,7 +6226,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300-preview-015095\\RuntimeIdentifierGraph.json"
       }
     }
   }
