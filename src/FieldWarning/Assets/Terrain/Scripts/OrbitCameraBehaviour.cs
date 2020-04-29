@@ -54,6 +54,7 @@ public class OrbitCameraBehaviour : MonoBehaviour
 
 
     static public GameObject FollowObject = null;
+    private Vector3 FollowDistance;
 
 
     // Use this for initialization
@@ -119,7 +120,7 @@ public class OrbitCameraBehaviour : MonoBehaviour
         if (FollowObject)
         {
             // maybe add a lerp here for smoothness
-            orbitPoint.position = Vector3.Lerp(orbitPoint.position, FollowObject.transform.position, Time.deltaTime * _rotLerpSpeed);
+            orbitPoint.position = FollowObject.transform.position;
 
         }
         transform.localPosition = Vector3.Lerp(transform.localPosition, camOffset, Time.deltaTime * _zoomSpeed);
