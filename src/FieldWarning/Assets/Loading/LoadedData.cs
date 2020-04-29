@@ -31,12 +31,6 @@ namespace PFW.Loading
 
             Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
 
-            foreach (Terrain terrain in terrains)
-            {
-                MicroSplatTerrain msTerrain = terrain.GetComponent<MicroSplatTerrain>();
-                msTerrain.Sync();
-            }
-
             terrainData = new TerrainMap(terrains, scene);
 
             pathFinderData = new PathfinderData(terrainData);

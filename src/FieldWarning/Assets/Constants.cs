@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -27,5 +27,10 @@ namespace PFW
 
         public const int MAX_PLATOON_SIZE = 4;
         public const int MIN_PLATOON_SIZE = 1;
+
+        /// <summary>
+        /// X meters * MAP_SCALE = Y unity units
+        /// </summary>
+        public const float MAP_SCALE = 1f / 50f;
     }
 }

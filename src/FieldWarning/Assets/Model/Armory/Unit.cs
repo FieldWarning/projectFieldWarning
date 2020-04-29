@@ -44,12 +44,15 @@ namespace PFW.Model.Armory
         public GameObject Prefab { get; }
         public GameObject ArtPrefab { get; }
 
+        public Sprite ArmoryImage { get; }
+
         public Unit(UnitConfig config)
         {
             Name = config.Name;
             Price = config.Price;
             Prefab = Resources.Load<GameObject>(config.PrefabPath);
             ArtPrefab = Resources.Load<GameObject>(config.ArtPrefabPath);
+            ArmoryImage = Resources.Load<Sprite>(config.ArmoryImage);
             Config = config;
         }
     }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -42,6 +42,8 @@ namespace PFW.Model.Game
         private InputManager _inputManager;
         private VisibilityManager _visibilityManager;
         private UnitRegistry _unitRegistry;
+        [SerializeField]
+        private DeploymentMenu _deploymentMenu = null;
 
         public List<UnitDispatcher> Units =>
                 _unitRegistry.Units;
@@ -109,11 +111,9 @@ namespace PFW.Model.Game
 
             _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
 
-            GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
-
             _inputManager = FindObjectOfType<InputManager>();
 
-            if (!_visibilityManager)
+            if (!_inputManager)
                 _inputManager = gameObject.AddComponent<InputManager>();
             _inputManager.Session = _inputManager.Session ?? this;
 
@@ -121,6 +121,8 @@ namespace PFW.Model.Game
             if (!_visibilityManager)
                 _visibilityManager = gameObject.AddComponent<VisibilityManager>();
             _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
+
+            _deploymentMenu.Initialize(_inputManager, LocalPlayer);
 
             // LoadedData ideally comes from the loading scene
             _loadedData = FindObjectOfType<LoadedData>();
@@ -180,5 +182,15 @@ namespace PFW.Model.Game
             _unitRegistry.UpdateTeamBelonging(newTeam);
             _visibilityManager.UpdateTeamBelonging();
         }
+
+        /// <summary>
+        ///     Inform the selection manager that a platoon label was 
+        ///     clicked so that the selection can be updated.
+        /// </summary>
+        /// Passing this info this way is kind of ugly, but 
+        /// arguably better than exposing the selection manager just
+        /// for this call?
+        public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
+            _inputManager.PlatoonLabelClicked(platoon);
     }
 }

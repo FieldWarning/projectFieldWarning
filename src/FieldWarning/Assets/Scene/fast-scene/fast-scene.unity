@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.40912065, g: 0.48636216, b: 0.5748958, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -397,7 +397,6 @@ GameObject:
   - component: {fileID: 529880873}
   - component: {fileID: 529880872}
   - component: {fileID: 529880871}
-  - component: {fileID: 529880874}
   m_Layer: 8
   m_Name: Terrain
   m_TagString: Untagged
@@ -440,7 +439,7 @@ Terrain:
   m_DrawInstanced: 0
   m_DrawTreesAndFoliage: 1
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 0}
+  m_MaterialTemplate: {fileID: 2100000, guid: 3a7bdcd5e5b2ce04da3a5358d9b31c21, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -463,48 +462,6 @@ Transform:
   m_Father: {fileID: 280873993}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &529880874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 529880870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6525fd4a9fb974b7f878dee70144de99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  templateMaterial: {fileID: 2100000, guid: ec4ddefa9fcdc1b498c28fd96f632a6f, type: 2}
-  terrainDesc: {fileID: 0}
-  blendMat: {fileID: 0}
-  blendMatInstance: {fileID: 0}
-  keywordSO: {fileID: 11400000, guid: 6312e579e66130a4d840b203be427144, type: 2}
-  perPixelNormal: {fileID: 0}
-  tintMapOverride: {fileID: 0}
-  globalNormalOverride: {fileID: 0}
-  geoTextureOverride: {fileID: 0}
-  streamTexture: {fileID: 0}
-  vsGrassMap: {fileID: 0}
-  vsShadowMap: {fileID: 0}
-  advDetailControl: {fileID: 0}
-  clipMap: {fileID: 0}
-  customControl0: {fileID: 0}
-  customControl1: {fileID: 0}
-  customControl2: {fileID: 0}
-  customControl3: {fileID: 0}
-  customControl4: {fileID: 0}
-  customControl5: {fileID: 0}
-  customControl6: {fileID: 0}
-  customControl7: {fileID: 0}
-  propData: {fileID: 11400000, guid: cbe5b74770484a1478eb95533e138a0e, type: 2}
-  addPass: {fileID: 0}
-  terrain: {fileID: 529880872}
-  oldBaseMapSize: 16
-  oldBaseMapDistance: 0
-  reenabled: 1
-  sTerrainDirty: 1
-  importSplatMaps: []
 --- !u!1001 &933168076
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -525,6 +482,16 @@ PrefabInstance:
     - target: {fileID: 825240322216611460, guid: 8f6a103a600615249a5ec68f666dd40f,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2166467905690589469, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: m_HDR
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2166467905690589469, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: m_AllowMSAA
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2174829599041448478, guid: 8f6a103a600615249a5ec68f666dd40f,
@@ -592,6 +559,41 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.r
+      value: 0.61960787
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.r
+      value: 0.78039217
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.r
+      value: 0.7803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.r
+      value: 0.9843137
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.a
+      value: 0.79607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5158422125270357051, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.a
+      value: 0.49019608
+      objectReference: {fileID: 0}
     - target: {fileID: 5239163328516649139, guid: 8f6a103a600615249a5ec68f666dd40f,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -626,6 +628,76 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.g
+      value: 0.20392159
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.BaseColor.b
+      value: 0.6156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.g
+      value: 0.6156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.SelectedColor.b
+      value: 0.9058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.g
+      value: 0.20392159
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.b
+      value: 0.9058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.r
+      value: 0.011764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.g
+      value: 0.8941177
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.b
+      value: 0.9803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.GhostColor.a
+      value: 0.79607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 7463341150873979064, guid: 8f6a103a600615249a5ec68f666dd40f,
+        type: 3}
+      propertyPath: ColorScheme.CapturedColor.a
+      value: 0.49019608
       objectReference: {fileID: 0}
     - target: {fileID: 7807735905257481922, guid: 8f6a103a600615249a5ec68f666dd40f,
         type: 3}
@@ -794,3 +866,113 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 933168076}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1121041047 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2184699880212913665, guid: 8f6a103a600615249a5ec68f666dd40f,
+    type: 3}
+  m_PrefabInstance: {fileID: 933168076}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1121041048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121041047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23c1ce4fb46143f46bc5cb5224c934f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 7
+  m_ObsoleteRenderingPath: 0
+  m_ObsoleteFrameSettings:
+    overrides: 0
+    enableShadow: 0
+    enableContactShadows: 0
+    enableShadowMask: 0
+    enableSSR: 0
+    enableSSAO: 0
+    enableSubsurfaceScattering: 0
+    enableTransmission: 0
+    enableAtmosphericScattering: 0
+    enableVolumetrics: 0
+    enableReprojectionForVolumetrics: 0
+    enableLightLayers: 0
+    enableExposureControl: 1
+    diffuseGlobalDimmer: 0
+    specularGlobalDimmer: 0
+    shaderLitMode: 0
+    enableDepthPrepassWithDeferredRendering: 0
+    enableTransparentPrepass: 0
+    enableMotionVectors: 0
+    enableObjectMotionVectors: 0
+    enableDecals: 0
+    enableRoughRefraction: 0
+    enableTransparentPostpass: 0
+    enableDistortion: 0
+    enablePostprocess: 0
+    enableOpaqueObjects: 0
+    enableTransparentObjects: 0
+    enableRealtimePlanarReflection: 0
+    enableMSAA: 0
+    enableAsyncCompute: 0
+    runLightListAsync: 0
+    runSSRAsync: 0
+    runSSAOAsync: 0
+    runContactShadowsAsync: 0
+    runVolumeVoxelizationAsync: 0
+    lightLoopSettings:
+      overrides: 0
+      enableDeferredTileAndCluster: 0
+      enableComputeLightEvaluation: 0
+      enableComputeLightVariants: 0
+      enableComputeMaterialVariants: 0
+      enableFptlForForwardOpaque: 0
+      enableBigTilePrepass: 0
+      isFptlEnabled: 0
+  clearColorMode: 0
+  backgroundColorHDR: {r: 0.025, g: 0.07, b: 0.19, a: 0}
+  clearDepth: 1
+  volumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  volumeAnchorOverride: {fileID: 0}
+  antialiasing: 0
+  SMAAQuality: 2
+  dithering: 0
+  stopNaNs: 0
+  taaSharpenStrength: 0.6
+  physicalParameters:
+    m_Iso: 200
+    m_ShutterSpeed: 0.005
+    m_Aperture: 16
+    m_BladeCount: 5
+    m_Curvature: {x: 2, y: 11}
+    m_BarrelClipping: 0.25
+    m_Anamorphism: 0
+  flipYMode: 0
+  fullscreenPassthrough: 0
+  allowDynamicResolution: 0
+  customRenderingSettings: 0
+  invertFaceCulling: 0
+  probeLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  hasPersistentHistory: 0
+  m_RenderingPathCustomFrameSettings:
+    bitDatas:
+      data1: 70280697347917
+      data2: 4539628424926265344
+    lodBias: 1
+    lodBiasMode: 0
+    lodBiasQualityLevel: 0
+    maximumLODLevel: 0
+    maximumLODLevelMode: 0
+    maximumLODLevelQualityLevel: 0
+    materialQuality: 0
+  renderingPathCustomFrameSettingsOverrideMask:
+    mask:
+      data1: 0
+      data2: 0
+  defaultFrameSettings: 0

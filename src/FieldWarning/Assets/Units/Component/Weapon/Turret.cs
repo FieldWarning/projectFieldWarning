@@ -43,7 +43,7 @@ namespace PFW.Units.Component.Weapon
         /// The explicit target is one set by player input,
         /// while the real target can either be that or something
         /// picked automatically (for example, something that is in range
-        /// while the explicit target is not).
+        /// while the explicit target is not).surely y
         /// </summary>
         private TargetTuple _explicitTarget;  // weapon turret, sync
         private TargetTuple _target;  // weapon turret, sync
