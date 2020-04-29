@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PFW_OfficialHub.Controllers;
 
 namespace PFW_OfficialHub
 {
@@ -14,7 +13,6 @@ namespace PFW_OfficialHub
     {
         public static void Main(string[] args)
         {
-            Db.Init();
             CreateHostBuilder(args).Build().Run();
         }
 

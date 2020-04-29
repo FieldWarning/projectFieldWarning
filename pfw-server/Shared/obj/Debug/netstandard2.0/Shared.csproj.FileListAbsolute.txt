@@ -3,12 +3,3 @@ C:\Users\admin\source\repos\PFW_OfficialHub\Shared\bin\Debug\netstandard2.0\Shar
 C:\Users\admin\source\repos\PFW_OfficialHub\Shared\obj\Debug\netstandard2.0\Shared.csprojAssemblyReference.cache
 C:\Users\admin\source\repos\PFW_OfficialHub\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfoInputs.cache
 C:\Users\admin\source\repos\PFW_OfficialHub\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfo.cs
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\bin\Debug\netstandard2.0\Shared.deps.json
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\bin\Debug\netstandard2.0\Shared.dll
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\bin\Debug\netstandard2.0\Shared.pdb
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.csprojAssemblyReference.cache
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.csproj.CoreCompileInputs.cache
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfoInputs.cache
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfo.cs
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.dll
-C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.pdb
