@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using PFW.Model.Game;
 using static PFW.UI.Ingame.InputManager;
 using PFW.Units;
 using PFW.Units.Component.Movement;
@@ -42,15 +43,6 @@ namespace PFW.UI.Ingame
         private Color _selectionBoxColor = Color.red;
         private bool _active;
 
-        /// <summary>
-        /// A left click usually makes us drops the selection.
-        /// Selecting a platoon by clicking on its label
-        /// is also a left click that triggers the drop logic;
-        /// to avoid dropping a platoon we just selected, we
-        /// use this variable.
-        /// </summary>
-        private bool _justSelected = false;
-
         private ClickManager _clickManager;
 
         // State for managing move order previews:
@@ -66,28 +58,25 @@ namespace PFW.UI.Ingame
         public void Awake()
         {
             _selection = new List<PlatoonBehaviour>();
-            _clickManager = new ClickManager(
-                    0, 
-                    StartBoxSelection, 
-                    OnSelectShortClick, 
-                    EndDrag, 
-                    UpdateBoxSelection);
+            _clickManager = new ClickManager(0, StartBoxSelection, OnSelectShortClick, EndDrag, UpdateBoxSelection);
 
-            if (_texture == null) 
-            {
-                float areaTransparency = .95f;
-                float borderTransparency = .75f;
+            if (_texture == null) {
+                var areaTransparency = .95f;
+                var borderTransparency = .75f;
                 _texture = new Texture2D(1, 1);
                 _texture.wrapMode = TextureWrapMode.Repeat;
-                _texture.SetPixel(
-                        0, 0, _selectionBoxColor - areaTransparency * Color.black);
+                _texture.SetPixel(0, 0, _selectionBoxColor - areaTransparency * Color.black);
                 _texture.Apply();
                 _borderTexture = new Texture2D(1, 1);
                 _borderTexture.wrapMode = TextureWrapMode.Repeat;
-                _borderTexture.SetPixel(
-                        0, 0, _selectionBoxColor - borderTransparency * Color.black);
+                _borderTexture.SetPixel(0, 0, _selectionBoxColor - borderTransparency * Color.black);
                 _borderTexture.Apply();
             }
+        }
+
+        private void Start()
+        {
+            
         }
 
         public void UpdateMouseMode(MouseMode mouseMode)
@@ -161,8 +150,7 @@ namespace PFW.UI.Ingame
 
             UnselectAll(_selection, false);
 
-            selectionCopy.ForEach(
-                    p => CommandConnection.Connection.CmdSplitPlatoon(p.netId));
+            selectionCopy.ForEach(p => CommandConnection.Connection.CmdSplitPlatoon(p.netId));
         }
 
         public void MaybeDropSelectionAfterOrder()
@@ -190,31 +178,23 @@ namespace PFW.UI.Ingame
             UpdateSelection(true);
         }
 
-        /// <summary>
-        ///     When a platoon's label is left clicked we need to 
-        ///     add it to the selection. These clicks are detected
-        ///     by a button callback handler, so the notification
-        ///     unfortunately has to come from the outside..
-        /// </summary>
-        public void PlatoonLabelClicked(PlatoonBehaviour selectedPlatoon)
-        {
-            UnselectAll(_selection, false);
-            selectedPlatoon.PlaySelectionVoiceline();
-            _selection.Add(selectedPlatoon);
-            SetSelected(_selection, false);
-            _justSelected = true;
-        }
-
         private void OnSelectShortClick()
         {
-            if (_justSelected)
-            {
-                _justSelected = false;
+            UnselectAll(_selection, false);
+
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, 1000f, LayerMask.GetMask("Selectable"), QueryTriggerInteraction.Ignore)) {
+                var go = hit.transform.gameObject;
+                var selectable = go.GetComponent<SelectableBehavior>();
+
+                if (selectable != null) {
+                    var selectedPlatoon = selectable.Platoon;
+                    selectedPlatoon.PlaySelectionVoiceline();
+                    _selection.Add(selectedPlatoon);
+                }
             }
-            else
-            {
-                UnselectAll(_selection, false);
-            }
+            SetSelected(_selection, false);
         }
 
         private void UpdateSelection(bool finalizeSelection)
@@ -224,12 +204,8 @@ namespace PFW.UI.Ingame
                 || _mouseMode == MouseMode.REVERSE_MOVE)
                 return;
 
-            List<PlatoonBehaviour> newSelection = AllPlatoons.Where(
-                    x => IsInsideSelectionBox(x)).ToList();
-            if (!Input.GetKey(KeyCode.LeftShift) 
-                && _selection != null 
-                && _selection.Count != 0)
-            {
+            List<PlatoonBehaviour> newSelection = AllPlatoons.Where(x => IsInside(x)).ToList();
+            if (!Input.GetKey(KeyCode.LeftShift) && _selection != null && _selection.Count != 0) {
                 List<PlatoonBehaviour> old = _selection.Except(newSelection).ToList();
                 UnselectAll(old, !finalizeSelection);
             }
@@ -237,50 +213,37 @@ namespace PFW.UI.Ingame
             _selection = newSelection;
         }
 
-        private bool IsInsideSelectionBox(PlatoonBehaviour obj)
+        private bool IsInside(PlatoonBehaviour obj)
         {
-            PlatoonBehaviour platoon = obj.GetComponent<PlatoonBehaviour>();
+            var platoon = obj.GetComponent<PlatoonBehaviour>();
             if (!platoon.IsInitialized)
                 return false;
 
-            Rect selectionBox;
-            // Guarantee that the rect has positive width and height:
-            float rectX = _mouseStart.x > _mouseEnd.x ? _mouseEnd.x : _mouseStart.x;
-            float rectY = _mouseStart.y > _mouseEnd.y ? _mouseEnd.y : _mouseStart.y;
-            selectionBox = new Rect(
-                    rectX,
-                    rectY,
-                    Mathf.Abs(_mouseEnd.x - _mouseStart.x),
-                    Mathf.Abs(_mouseEnd.y - _mouseStart.y));
-
             bool inside = false;
-            inside |= platoon.Units.Any(
-                    x => selectionBox.Contains(
-                            Camera.main.WorldToScreenPoint(
-                                    x.Transform.position)));
+            inside |= platoon.Units.Any(x => IsInside(x.Transform.position));
 
-            // This checks if the icon overlaps with the selection box:
-            Rect platoonLabel = platoon.SelectableRect.rect;
-            // To screen coordinates:
-            platoonLabel.center = platoon.SelectableRect.TransformPoint(
-                    platoonLabel.center);
-            platoonLabel.size = platoon.SelectableRect.TransformVector(
-                    platoonLabel.size);
-            inside |= selectionBox.Overlaps(platoonLabel);
-
+            // TODO: This checks if the center of the icon is within the selection box. 
+            // It should instead check if any of the four corners of the icon are within the box:
+            inside |= IsInside(platoon.Icon.transform.GetChild(0).position);
             return inside;
         }
 
-        private void UnselectAll(
-                List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
+        private bool IsInside(Vector3 t)
+        {
+            Vector3 test = Camera.main.WorldToScreenPoint(t);
+            bool insideX = (test.x - _mouseStart.x) * (test.x - _mouseEnd.x) < 0;
+            bool insideY = (test.y - _mouseStart.y) * (test.y - _mouseEnd.y) < 0;
+            return insideX && insideY;
+        }
+
+        private void UnselectAll(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
             selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
 
             selectedPlatoons.Clear();
         }
 
-        private void SetSelected(
-                List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
+        private void SetSelected(List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
             selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
 
@@ -294,8 +257,7 @@ namespace PFW.UI.Ingame
         // Responsible for drawing the selection rectangle
         public void OnGUI()
         {
-            if (_active) 
-            {
+            if (_active) {
                 float lineWidth = 3;
                 float startX = _mouseStart.x;
                 float endX = _mouseEnd.x;
@@ -321,10 +283,7 @@ namespace PFW.UI.Ingame
             _previewPosition = position;
             PositionGhostUnits(2 * _previewPosition - centerMass, false);
 
-            // Prevent short clicks from displaying preview by only 
-            // showing it on the first call to RotateMoveOrderPreview. 
-            // Should maybe move the logic to InputManager, since it should
-            // be responsible for recognizing hold clicks, not this code.
+            //Prevent short clicks from displaying preview by only showing it on the first call to RotateMoveOrderPreview call. Should maybe move the logic to UIManager, since it should be responsible for recognizing hold clicks, not this code.
             _makePreviewVisible = true;
         }
 
@@ -334,11 +293,6 @@ namespace PFW.UI.Ingame
 
             if (_makePreviewVisible)
                 _makePreviewVisible = false;
-        }
-
-        public void HideMoveOrderPreview()
-        {
-            _selection.ForEach(x => x.GhostPlatoon.SetVisible(false));
         }
 
         private void PositionGhostUnits(Vector3 facingPoint, bool makeVisible)
@@ -352,17 +306,13 @@ namespace PFW.UI.Ingame
             var right = Vector3.Cross(forward, Vector3.up);
             var pos = _previewPosition + platoonDistance * (formationWidth - 1) * right / 2f;*/
 
-            List<Vector3> positions = Formations.GetLineFormation(
-                    _previewPosition, heading + Mathf.PI / 2, _selection.Count);
-            List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(
-                    x => x.GhostPlatoon);
-            for (int i = 0; i < _selection.Count; i++) 
-            {
+            var positions = Formations.GetLineFormation(_previewPosition, heading + Mathf.PI / 2, _selection.Count);
+            List<GhostPlatoonBehaviour> ghosts = _selection.ConvertAll(x => x.GhostPlatoon);
+            for (var i = 0; i < _selection.Count; i++) {
                 ghosts[i].SetPositionAndOrientation(positions[i], heading);
             }
 
-            if (makeVisible) 
-            {
+            if (makeVisible) {
                 ghosts.ForEach(x => x.SetVisible(true));
             }
         }

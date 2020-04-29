@@ -11,24 +11,40 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-
-using System.Collections.Generic;
 using UnityEngine;
 
-using PFW.Model.Armory;
-
-namespace PFW.Model.Game
+/**
+ * Responsible for the NATO symbol on the platoon icons.
+ */
+public class SymbolBehaviour : MonoBehaviour
 {
-    public class Team : MonoBehaviour
+    [SerializeField]
+    private Material[] _materials = null;
+
+    public void SetIcon(UnitType t)
     {
-        public string Name;
-        public Color Color;
-
-        public List<PlayerData> Players { get; } = new List<PlayerData>();
-
-        public bool IsEnemy(Team t)
-        {
-            return Color != t.Color;
+        int i = 0;
+        switch (t) {
+        case UnitType.Infantry:
+            i = 0;
+            break;
+        case UnitType.Tank:
+            i = 1;
+            break;
+        case UnitType.AFV:
+            i = 2;
+            break;
         }
+
+        Material mat = _materials[i];
+        GetComponent<Renderer>().material = mat;
+    }
+
+    public enum UnitType
+    {
+        Tank,
+        Infantry,
+        AFV,
+        Arty
     }
 }

@@ -33,7 +33,7 @@ namespace PFW.Units
         public float FinalHeading;
 
         [SerializeField]
-        private PlatoonLabel _platoonLabel = null;
+        private IconBehaviour _icon = null;
         private Unit _unit;
         private PlayerData _owner;
         private List<GameObject> _units = new List<GameObject>();
@@ -99,7 +99,7 @@ namespace PFW.Units
                 $"Spawned a ghost platoon of {_unit.Name} with netId {netId}", this);
             transform.position = 100 * Vector3.down;
 
-            _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
+            InitializeIcon(_icon);
         }
 
         /// <summary>
@@ -114,7 +114,18 @@ namespace PFW.Units
             _unit = unit;
             transform.position = 100 * Vector3.down;
 
-            _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
+            InitializeIcon(_icon);
+        }
+
+        /// <summary>
+        ///     Each GhostPlatoon gameobject has an icon under it, 
+        ///     spawned in the prefab.
+        /// </summary>
+        /// <param name="icon"></param>
+        private void InitializeIcon(IconBehaviour icon)
+        {
+            _icon.BaseColor = _owner.Team.Color;
+            _icon.SetGhost();
         }
 
         public void AddSingleUnit()
@@ -150,7 +161,7 @@ namespace PFW.Units
 
         public void SetVisible(bool vis)
         {
-            _platoonLabel.SetVisible(vis);
+            _icon.SetVisible(vis);
             _units.ForEach(unit =>
             {
                 foreach (Renderer renderer in unit.GetComponentsInChildren<Renderer>())

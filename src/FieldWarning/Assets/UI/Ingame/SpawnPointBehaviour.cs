@@ -30,8 +30,7 @@ public class SpawnPointBehaviour : MonoBehaviour
 
     private void Start()
     {
-        GetComponentInChildren<Renderer>().material.color = 
-                Team.ColorScheme.BaseColor;
+        GetComponentInChildren<Renderer>().material.color = Team.Color;
 
         MatchSession.Current.RegisterSpawnPoint(this);
     }

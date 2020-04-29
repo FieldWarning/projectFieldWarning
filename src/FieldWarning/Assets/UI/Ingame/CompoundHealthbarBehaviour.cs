@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -17,15 +17,10 @@ using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
-    /// <summary>
-    /// This is the health bar implementation from our old
-    /// platoon label implementation (pre-04.2020).
-    /// 
-    /// It may serve as a reference if we want to have healthbars
-    /// on the platoon labels again. Otherwise, we can delete it.
-    /// </summary>
     public class CompoundHealthbarBehaviour : MonoBehaviour
     {
+        List<GameObject> objects;
+
         // Use this for initialization
         private void Start()
         {

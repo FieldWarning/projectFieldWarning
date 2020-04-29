@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -83,7 +83,7 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
         foreach (UnitDispatcher unit in allies) {
             Vector3 pos = unit.Transform.position;
             Vector2 realPos = GetMapPos(pos);
-            GUI.color = _matchSession.LocalPlayer.Data.Team.ColorScheme.BaseColor;
+            GUI.color = _matchSession.LocalPlayer.Data.Team.Color;
             GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), _tankTexture);
             GUI.color = Color.white;
         }
@@ -95,9 +95,9 @@ public class MiniMap : MonoBehaviour, IPointerClickHandler
                 Vector3 pos = unit.Transform.position;
                 Vector2 realPos = GetMapPos(pos);
                 if (_matchSession.LocalPlayer.Data.Team == _matchSession.Teams[0]) {
-                    GUI.color = _matchSession.Teams[1].ColorScheme.BaseColor;
+                    GUI.color = _matchSession.Teams[1].Color;
                 } else {
-                    GUI.color = _matchSession.Teams[0].ColorScheme.BaseColor;
+                    GUI.color = _matchSession.Teams[0].Color;
                 }
 
                 GUI.DrawTexture(new Rect(realPos.x, realPos.y, 10, 10), _tankTexture);

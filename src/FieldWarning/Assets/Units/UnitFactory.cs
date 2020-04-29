@@ -40,7 +40,7 @@ namespace PFW.UI.Prototype
             GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
             voiceGo.name = "VoiceComponent";
 
-            Color minimapColor = platoon.Owner.Team.ColorScheme.BaseColor;
+            Color minimapColor = platoon.Owner.Team.Color;
             AddMinimapIcon(unit, minimapColor);
 
             UnitDispatcher unitDispatcher =
@@ -92,6 +92,7 @@ namespace PFW.UI.Prototype
 
             // freshUnit.AddComponent<UnitDispatcher>().enabled = false;
             // freshUnit.AddComponent<MovementComponent>().enabled = false;
+            freshUnit.AddComponent<SelectableBehavior>();
             // prototype.AddComponent<NetworkIdentity>();
 
             TurretSystem turretSystem = freshUnit.GetComponent<TurretSystem>();

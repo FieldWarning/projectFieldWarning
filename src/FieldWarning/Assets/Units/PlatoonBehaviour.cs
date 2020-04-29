@@ -27,9 +27,7 @@ namespace PFW.Units
     public partial class PlatoonBehaviour : NetworkBehaviour
     {
         public Unit Unit;
-        [SerializeField]
-        private PlatoonLabel _platoonLabel = null;
-        public RectTransform SelectableRect;
+        public IconBehaviour Icon;
         public GhostPlatoonBehaviour GhostPlatoon;
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
         public bool IsInitialized = false;
@@ -198,7 +196,7 @@ namespace PFW.Units
         {
             Unit = unit;
             Owner = owner;
-            _platoonLabel.InitializeAsReal(unit, Owner.Team.ColorScheme, this);
+            Icon.BaseColor = Owner.Team.Color;
             _waypointOverlay = OverlayFactory.Instance.CreateWaypointOverlay(this);
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
         }
@@ -259,7 +257,7 @@ namespace PFW.Units
                 //Networking.CommandConnection.Connection.CmdSpawnObject(x.GameObject);
             });
 
-            _platoonLabel.AssociateToRealUnits(Units);
+            Icon.AssociateToRealUnits(Units);
 
             IsInitialized = true;
 
@@ -356,7 +354,7 @@ namespace PFW.Units
         /// </param>
         public void SetSelected(bool selected, bool justPreviewing)
         {
-            _platoonLabel.SetSelected(selected);
+            Icon?.SetSelected(selected);
             Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
 
             _waypointOverlay.gameObject.SetActive(selected);
@@ -365,7 +363,7 @@ namespace PFW.Units
         public void SetEnabled(bool enabled)
         {
             this.enabled = enabled;
-            _platoonLabel.SetVisible(enabled);
+            Icon?.SetVisible(enabled);
             _waypointOverlay.gameObject.SetActive(enabled);
         }
 

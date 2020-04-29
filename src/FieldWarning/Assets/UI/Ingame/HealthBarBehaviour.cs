@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -17,10 +17,6 @@ using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
-    /// <summary>
-    ///     Unused leftover from the old UI system, can be recycled
-    ///     or removed.
-    /// </summary>
     public class HealthBarBehaviour : MonoBehaviour
     {
         private UnitDispatcher _unit;
@@ -29,6 +25,7 @@ namespace PFW.UI.Ingame
         private void Awake()
         {
             _bar = transform.GetChild(0).gameObject;
+            _bar.AddComponent<SelectableBehavior>();
         }
 
         private void Update()

@@ -118,6 +118,12 @@ namespace PFW.Units.Component.Vision
             IsVisible = revealUnit;
             ToggleAllRenderers(gameObject, revealUnit);
 
+            // TODO: the SelectionManager does not really respect these layers
+            if (IsVisible)
+                gameObject.layer = LayerMask.NameToLayer("Selectable");
+            else
+                gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
             MaybeTogglePlatoonVisibility();
         }
 
@@ -125,16 +131,26 @@ namespace PFW.Units.Component.Vision
         private void MaybeTogglePlatoonVisibility()
         {
             PlatoonBehaviour platoon = _unit.Platoon;
-            bool visible = !platoon.Units.TrueForAll(
+            bool enable = !platoon.Units.TrueForAll(
                             u => !u.VisionComponent.IsVisible);
-            ToggleAllRenderers(platoon.gameObject, visible);
+            ToggleAllRenderers(platoon.gameObject, enable);
+
+            // TODO: the SelectionManager does not really respect these layers
+            if (enable)
+            {
+                platoon.Icon.SetLayer(LayerMask.NameToLayer("Selectable"));
+            }
+            else
+            {
+                platoon.Icon.SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
+            }
         }
 
-        private void ToggleAllRenderers(GameObject o, bool visible)
+        private void ToggleAllRenderers(GameObject o, bool enable)
         {
             Renderer[] allRenderers = o.GetComponentsInChildren<Renderer>();
             foreach (Renderer childRenderer in allRenderers)
-                childRenderer.enabled = visible;
+                childRenderer.enabled = enable;
         }
     }
 }

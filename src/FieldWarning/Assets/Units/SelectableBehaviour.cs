@@ -11,24 +11,12 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-
-using System.Collections.Generic;
 using UnityEngine;
 
-using PFW.Model.Armory;
-
-namespace PFW.Model.Game
+namespace PFW.Units
 {
-    public class Team : MonoBehaviour
+    public sealed class SelectableBehavior : MonoBehaviour
     {
-        public string Name;
-        public Color Color;
-
-        public List<PlayerData> Players { get; } = new List<PlayerData>();
-
-        public bool IsEnemy(Team t)
-        {
-            return Color != t.Color;
-        }
+        public PlatoonBehaviour Platoon { get; set; }
     }
 }

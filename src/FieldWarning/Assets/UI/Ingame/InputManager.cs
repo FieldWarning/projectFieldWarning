@@ -64,8 +64,6 @@ namespace PFW.UI.Ingame
         }
 
         private SelectionManager _selectionManager;
-        public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
-                _selectionManager.PlatoonLabelClicked(platoon);
 
         private PlayerData _localPlayer {
             get {
@@ -187,8 +185,7 @@ namespace PFW.UI.Ingame
          */
         private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
-            if (Input.GetMouseButtonUp(0)) 
-            {
+            if (Input.GetMouseButtonUp(0)) {
                 bool noUIcontrolsInUse = EventSystem.current.currentSelectedGameObject == null;
 
                 if (!noUIcontrolsInUse)
@@ -199,13 +196,10 @@ namespace PFW.UI.Ingame
 
                 closestSpawn.BuyPlatoons(_currentBuyTransaction.PreviewPlatoons);
 
-                if (Input.GetKey(KeyCode.LeftShift)) 
-                {
+                if (Input.GetKey(KeyCode.LeftShift)) {
                     // We turned the current ghosts into real units, so:
                     _currentBuyTransaction = _currentBuyTransaction.Clone();
-                } 
-                else 
-                {
+                } else {
                     ExitPurchasingMode();
                 }
             }
@@ -213,60 +207,52 @@ namespace PFW.UI.Ingame
 
         private void MaybeExitPurchasingModeAndRefund()
         {
-            if (Input.GetMouseButton(1)) 
-            {
-                foreach (PlatoonBehaviour p in _currentBuyTransaction.PreviewPlatoons) 
-                {
-                    p.DestroyPreview();
+            if (Input.GetMouseButton(1)) {
+                foreach (var g in _currentBuyTransaction.PreviewPlatoons) {
+                    g.DestroyPreview();
                 }
 
                 int unitPrice = _currentBuyTransaction.Unit.Price;
-                Session.LocalPlayer.Refund(
-                        unitPrice * _currentBuyTransaction.UnitCount);
+                Session.LocalPlayer.Refund(unitPrice * _currentBuyTransaction.UnitCount);
 
                 ExitPurchasingMode();
             }
         }
 
-        
-        /// <summary>
-        ///     The ghost units are used to briefly hold the destination
-        ///     for a move order, so they need to be moved to the cursor
-        ///     if a move order click is issued.
-        /// </summary>
-        private void MoveGhostsToMouse()
+        /**
+         * The ghost units are used to briefly hold the destination
+         * for a move order, so they need to be moved to the cursor
+         * if a move order click is issued.
+         */
+        void MoveGhostsToMouse()
         {
             RaycastHit hit;
             if (Util.GetTerrainClickLocation(out hit))
                 _selectionManager.PrepareMoveOrderPreview(hit.point);
         }
 
-        private void OnOrderHold()
+        void OnOrderHold()
         {
             RaycastHit hit;
             if (Util.GetTerrainClickLocation(out hit))
                 _selectionManager.RotateMoveOrderPreview(hit.point);
         }
 
-        private void OnOrderShortClick()
+        void OnOrderShortClick()
         {
-            if (!_selectionManager.Empty) 
-            {
+            if (!_selectionManager.Empty) {
                 DisplayOrderFeedback();
             }
 
             _selectionManager.DispatchMoveCommand(false, MoveCommandType.NORMAL);
         }
 
-        private void OnOrderLongClick()
+        void OnOrderLongClick()
         {
-            _selectionManager.HideMoveOrderPreview();
             _selectionManager.DispatchMoveCommand(true, MoveCommandType.NORMAL);
         }
 
-        /// <summary>
-        ///     Show a symbol at the position where a move order was issued:
-        /// </summary>
+        // Show a Symbol at the position where a move order was issued:
         private void DisplayOrderFeedback()
         {
             RaycastHit hit;
@@ -280,10 +266,9 @@ namespace PFW.UI.Ingame
                 );
         }
 
-        /// <summary>
-        ///     Called when a unit card from the buy menu is pressed.
-        /// </summary>
-        /// <param name="unit"></param>
+        /**
+         * Called when a unit card from the buy menu is pressed.
+         */
         public void BuyCallback(Unit unit)
         {
             bool paid = Session.LocalPlayer.TryPay(unit.Price);
@@ -333,33 +318,25 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
-            if (!_session.isChatFocused) 
-            {
-                if (Commands.Unload) 
-                {
-                    _selectionManager.DispatchUnloadCommand();
-                } 
-                else if (Commands.Load) 
-                {
-                    _selectionManager.DispatchLoadCommand();
-                } 
-                else if (Commands.FirePos && !_selectionManager.Empty) 
-                {
-                    EnterFirePosMode();
-                } 
-                else if (Commands.ReverseMove && !_selectionManager.Empty) 
-                {
-                    EnterReverseMoveMode();
-                } 
-                else if (Commands.FastMove && !_selectionManager.Empty)
-                {
-                    EnterFastMoveMode();
-                } 
-                else if (Commands.Split && !_selectionManager.Empty)
-                {
-                    EnterSplitMode();
-                }
+            if (!_session.isChatFocused) {
+            if (Commands.Unload) {
+                _selectionManager.DispatchUnloadCommand();
+
+            } else if (Commands.Load) {
+                _selectionManager.DispatchLoadCommand();
+
+            } else if (Commands.FirePos && !_selectionManager.Empty) {
+                EnterFirePosMode();
+
+            } else if (Commands.ReverseMove && !_selectionManager.Empty) {
+                EnterReverseMoveMode();
+
+            } else if (Commands.FastMove && !_selectionManager.Empty) {
+                EnterFastMoveMode();
+            } else if (Commands.Split && !_selectionManager.Empty) {
+                EnterSplitMode();
             }
+        }
         }
 
         private void EnterFirePosMode()

@@ -82,6 +82,10 @@ namespace PFW.Units
         public void Initialize(PlatoonBehaviour platoon)
         {
             TargetTuple = new TargetTuple(this);
+
+            SelectableBehavior selectableBehaviour = 
+                    gameObject.GetComponent<SelectableBehavior>();
+            selectableBehaviour.Platoon = platoon;
             Platoon = platoon;
 
             _unitData = gameObject.GetComponent<DataComponent>();
