@@ -35,7 +35,7 @@ namespace PFW.Units
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
         public bool IsInitialized = false;
 
-        public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
+        public static readonly float UNIT_DISTANCE = 40 * Constants.MAP_SCALE;
 
         public PlayerData Owner { get; private set; }
 
@@ -291,7 +291,10 @@ namespace PFW.Units
                 Units[i].Teleport(
                     positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
-            OrderMovement(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
+            OrderMovement(
+                    GhostPlatoon.transform.position, 
+                    GhostPlatoon.FinalHeading, 
+                    MoveCommandType.FAST);
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);

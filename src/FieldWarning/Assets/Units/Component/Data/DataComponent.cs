@@ -54,16 +54,16 @@ namespace PFW.Units.Component.Data
             parent.AddComponent<DataComponent>();
             DataComponent c = parent.GetComponent<DataComponent>();
 
-            c.MovementSpeed =    unitConfig.MovementSpeed      * TerrainConstants.MAP_SCALE;
-            c.ReverseSpeed =     unitConfig.ReverseSpeed       * TerrainConstants.MAP_SCALE;
-            c.AccelRate =        unitConfig.AccelRate          * TerrainConstants.MAP_SCALE;
+            c.MovementSpeed =    unitConfig.MovementSpeed      * Constants.MAP_SCALE;
+            c.ReverseSpeed =     unitConfig.ReverseSpeed       * Constants.MAP_SCALE;
+            c.AccelRate =        unitConfig.AccelRate          * Constants.MAP_SCALE;
             c.MaxRotationSpeed = unitConfig.MaxRotationSpeed;
-            c.MinTurnRadius =    unitConfig.MinTurnRadius      * TerrainConstants.MAP_SCALE;
-            c.MaxLateralAccel =  unitConfig.MaxLateralAccel    * TerrainConstants.MAP_SCALE;
-            c.Suspension =       unitConfig.Suspension         / TerrainConstants.MAP_SCALE;
+            c.MinTurnRadius =    unitConfig.MinTurnRadius      * Constants.MAP_SCALE;
+            c.MaxLateralAccel =  unitConfig.MaxLateralAccel    * Constants.MAP_SCALE;
+            c.Suspension =       unitConfig.Suspension         / Constants.MAP_SCALE;
             c.MaxHealth =        unitConfig.MaxHealth;
-            c.Length =           unitConfig.Length             * TerrainConstants.MAP_SCALE;
-            c.Width =            unitConfig.Width              * TerrainConstants.MAP_SCALE;
+            c.Length =           unitConfig.Length             * Constants.MAP_SCALE;
+            c.Width =            unitConfig.Width              * Constants.MAP_SCALE;
 
             c.MobilityTypeIndex = MobilityType.GetIndexForConfig(mobilityConfig);
 

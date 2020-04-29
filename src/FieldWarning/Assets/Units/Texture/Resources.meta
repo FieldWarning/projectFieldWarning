@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<< HEAD:src/FieldWarning/Assets/Units/Texture/Resources.meta
 guid: 30842eaca45e5a5448a353419980b73d
+=======
+guid: d18c03dad0a3e644fb6ff913054c08cb
+>>>>>>> HDRP:src/FieldWarning/Assets/ParticleFX/Prefab.meta
+=======
+guid: 30842eaca45e5a5448a353419980b73d
+>>>>>>> HDRP
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

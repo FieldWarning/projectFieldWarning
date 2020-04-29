@@ -13,129 +13,133 @@
  
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static SlidingCameraBehaviour;
-
-/// <summary>
-/// A camera moved around a pivot. 
-/// 
-/// Currently not used, but it may find use in the armory in the future.
-/// </summary>
-public class OrbitCameraBehaviour : MonoBehaviour
-{
-    Camera cam;
-    Vector3 camOffset;
-    Transform orbitPoint;
-
-    [SerializeField]
-    private float _borderPanningOffset = 2; // Pixels
-    [SerializeField]
-    private float _borderPanningCornerSize = 200; // Pixels
-
-    const float BASE_MOVEMENT_SPEED = 1.5f;
-    float zoomFactor = 1.6f;
-    float horizontalROtationSpeed = 5f;
-    float verticalROtationSpeed = .1f;
-    float upperAngleLimit = 20f;
-    float lowerAngleLimit = 80f;
-    float maxZoom = 250f;
-    float minZoom = 10f;
+using static PFW.SlidingCameraBehaviour;
 
 
-    [SerializeField]
-    private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
-    [SerializeField]
-    private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
-    [SerializeField]
-    private float _rotLerpSpeed = 10f;
-
-    [SerializeField]
-    private float _zoomSpeed = 10000f * TerrainConstants.MAP_SCALE;
-
-
-
-    static public GameObject FollowObject = null;
-
-
-    // Use this for initialization
-    void Start()
+namespace PFW 
+{ 
+    /// <summary>
+    /// A camera moved around a pivot. 
+    /// 
+    /// Currently not used, but it may find use in the armory in the future.
+    /// </summary>
+    public class OrbitCameraBehaviour : MonoBehaviour
     {
-        cam = GetComponent<Camera>();
-        orbitPoint = transform.parent;
-        camOffset = transform.localPosition;
-    }
+        Camera cam;
+        Vector3 camOffset;
+        Transform orbitPoint;
 
-    // Update is called once per frame
-    void Update()
-    {
-        Vector3 movement = Vector3.zero;
+        [SerializeField]
+        private float _borderPanningOffset = 2; // Pixels
+        [SerializeField]
+        private float _borderPanningCornerSize = 200; // Pixels
 
-        var xin = Input.GetAxis("Horizontal");
-        var zin = Input.GetAxis("Vertical");
+        const float BASE_MOVEMENT_SPEED = 1.5f;
+        float zoomFactor = 1.6f;
+        float horizontalROtationSpeed = 5f;
+        float verticalROtationSpeed = .1f;
+        float upperAngleLimit = 20f;
+        float lowerAngleLimit = 80f;
+        float maxZoom = 250f;
+        float minZoom = 10f;
 
-        //TODO: Will need to clean this up.. maybe make some basic camera input util class or something
-        /**
-        if (Input.GetKey(KeyCode.W)) {
-            movement += Vector3.forward;
-        }
-        if (Input.GetKey(KeyCode.S)) {
-            movement += Vector3.back;
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            movement += Vector3.left;
-        }
-        if (Input.GetKey(KeyCode.D)) {
-            movement += Vector3.right;
-        }
-        **/
-        
 
-        var corner = SlidingCameraBehaviour.GetScreenCornerForMousePosition(_borderPanningOffset, _borderPanningCornerSize);
+//        [SerializeField]
+//        private float _panSpeed = 50f * Constants.MAP_SCALE;
+//        [SerializeField]
+//        private float _panLerpSpeed = 100f * Constants.MAP_SCALE;
+        [SerializeField]
+        private float _rotLerpSpeed = 10f;
 
-        if (corner != ScreenCorner.None || xin != 0 || zin != 0)
+        [SerializeField]
+        private float _zoomSpeed = 10000f * Constants.MAP_SCALE;
+
+
+
+        static public GameObject FollowObject = null;
+
+
+        // Use this for initialization
+        void Start()
         {
-            gameObject.GetComponentInParent<SlidingCameraBehaviour>().enabled = true;
-            enabled = false;
+            cam = GetComponent<Camera>();
+            orbitPoint = transform.parent;
+            camOffset = transform.localPosition;
         }
 
-        var scroll = Input.GetAxis("Mouse ScrollWheel");
-        camOffset *= Mathf.Pow(zoomFactor, -scroll);
+        // Update is called once per frame
+        void Update()
+        {
+            Vector3 movement = Vector3.zero;
 
-        if (camOffset.magnitude > maxZoom) camOffset *= (maxZoom / camOffset.magnitude);
-        if (camOffset.magnitude < minZoom) camOffset *= (minZoom / camOffset.magnitude);
+            var xin = Input.GetAxis("Horizontal");
+            var zin = Input.GetAxis("Vertical");
 
-        if (Input.GetMouseButton(2)) {
-            var dy = -Input.GetAxis("Mouse Y");
-            if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit || dy < 0) && (Vector3.Angle(camOffset, Vector3.up) < lowerAngleLimit || dy > 0)) {
-                camOffset = Vector3.RotateTowards(camOffset, Vector3.up, dy * verticalROtationSpeed, 0f);
+            //TODO: Will need to clean this up.. maybe make some basic camera input util class or something
+            /**
+            if (Input.GetKey(KeyCode.W)) {
+                movement += Vector3.forward;
             }
-            var dx = Input.GetAxis("Mouse X");
-            camOffset = Quaternion.AngleAxis(dx * horizontalROtationSpeed, Vector3.up) * camOffset;
-        }
-
-        var off = camOffset;
-        off.y = 0;
-        movement = Quaternion.FromToRotation(Vector3.forward, off) * -movement;
-        orbitPoint.position += Time.deltaTime * BASE_MOVEMENT_SPEED * movement * camOffset.magnitude;
-        if (FollowObject)
-        {
-            // maybe add a lerp here for smoothness
-            orbitPoint.position = Vector3.Lerp(orbitPoint.position, FollowObject.transform.position, Time.deltaTime * _rotLerpSpeed);
-
-        }
-        transform.localPosition = Vector3.Lerp(transform.localPosition, camOffset, Time.deltaTime * _zoomSpeed);
-
-        // smooth the lookat/rotation
-        Quaternion lookOnLook = Quaternion.LookRotation(orbitPoint.transform.position - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookOnLook, Time.deltaTime* _rotLerpSpeed);
+            if (Input.GetKey(KeyCode.S)) {
+                movement += Vector3.back;
+            }
+            if (Input.GetKey(KeyCode.A)) {
+                movement += Vector3.left;
+            }
+            if (Input.GetKey(KeyCode.D)) {
+                movement += Vector3.right;
+            }
+            **/
         
-        // old code just in case
-        //transform.LookAt(orbitPoint, Vector3.up);
-    }
 
-    // this is needed to reset our zoom level after we are enabled again. We dont want to suddenly jump
-    // back to the zoom before we were disabled.
-    void OnEnable()
-    {
-        camOffset = transform.localPosition;
+            var corner = SlidingCameraBehaviour.GetScreenCornerForMousePosition(_borderPanningOffset, _borderPanningCornerSize);
+
+            if (corner != ScreenCorner.None || xin != 0 || zin != 0)
+            {
+                gameObject.GetComponentInParent<SlidingCameraBehaviour>().enabled = true;
+                enabled = false;
+            }
+
+            var scroll = Input.GetAxis("Mouse ScrollWheel");
+            camOffset *= Mathf.Pow(zoomFactor, -scroll);
+
+            if (camOffset.magnitude > maxZoom) camOffset *= (maxZoom / camOffset.magnitude);
+            if (camOffset.magnitude < minZoom) camOffset *= (minZoom / camOffset.magnitude);
+
+            if (Input.GetMouseButton(2)) {
+                var dy = -Input.GetAxis("Mouse Y");
+                if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit || dy < 0) && (Vector3.Angle(camOffset, Vector3.up) < lowerAngleLimit || dy > 0)) {
+                    camOffset = Vector3.RotateTowards(camOffset, Vector3.up, dy * verticalROtationSpeed, 0f);
+                }
+                var dx = Input.GetAxis("Mouse X");
+                camOffset = Quaternion.AngleAxis(dx * horizontalROtationSpeed, Vector3.up) * camOffset;
+            }
+
+            var off = camOffset;
+            off.y = 0;
+            movement = Quaternion.FromToRotation(Vector3.forward, off) * -movement;
+            orbitPoint.position += Time.deltaTime * BASE_MOVEMENT_SPEED * movement * camOffset.magnitude;
+            if (FollowObject)
+            {
+                // maybe add a lerp here for smoothness
+                orbitPoint.position = Vector3.Lerp(orbitPoint.position, FollowObject.transform.position, Time.deltaTime * _rotLerpSpeed);
+
+            }
+            transform.localPosition = Vector3.Lerp(transform.localPosition, camOffset, Time.deltaTime * _zoomSpeed);
+
+            // smooth the lookat/rotation
+            Quaternion lookOnLook = Quaternion.LookRotation(orbitPoint.transform.position - transform.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookOnLook, Time.deltaTime* _rotLerpSpeed);
+        
+            // old code just in case
+            //transform.LookAt(orbitPoint, Vector3.up);
+        }
+
+        // this is needed to reset our zoom level after we are enabled again. We dont want to suddenly jump
+        // back to the zoom before we were disabled.
+        void OnEnable()
+        {
+            camOffset = transform.localPosition;
+        }
     }
 }

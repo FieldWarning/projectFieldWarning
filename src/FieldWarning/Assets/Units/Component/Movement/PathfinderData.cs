@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -32,10 +32,10 @@ namespace PFW.Units.Component.Movement
         private const string GRAPH_FILE_SUFFIX = "_pathfinder_graph.dat";
 
         private static PathArc INVALID_ARC = new PathArc(null, null);
-        private const float SPARSE_GRID_SPACING = 1000f * TerrainConstants.MAP_SCALE;
-        private const float ROAD_GRID_SPACING = 200f * TerrainConstants.MAP_SCALE;
-        private const float NODE_PRUNE_DIST_THRESH = 10f * TerrainConstants.MAP_SCALE;
-        private const float ARC_MAX_DIST = 2500f * TerrainConstants.MAP_SCALE;
+        private const float SPARSE_GRID_SPACING = 1000f * Constants.MAP_SCALE;
+        private const float ROAD_GRID_SPACING = 200f * Constants.MAP_SCALE;
+        private const float NODE_PRUNE_DIST_THRESH = 10f * Constants.MAP_SCALE;
+        private const float ARC_MAX_DIST = 2500f * Constants.MAP_SCALE;
 
         public TerrainMap _map;
         public List<PathNode> _graph;
@@ -48,7 +48,14 @@ namespace PFW.Units.Component.Movement
         /// </summary>
         private FastPriorityQueue<PathNode> _openSet;
 
-
+        /// <summary>
+        ///     Create a pathfinder graph by either
+        ///     reading it from a file or generating it from scratch.
+        /// </summary>
+        /// <param name="map">
+        ///     A sampling of the terrain topology, 
+        ///     used if generating from scratch.
+        /// </param>
         public PathfinderData(TerrainMap map)
         {
             _map = map;
@@ -64,7 +71,6 @@ namespace PFW.Units.Component.Movement
             if (!ReadGraph(_graphFile))
             {
                 GenerateGraphRunner();
-                
             }
         }
 
@@ -124,13 +130,17 @@ namespace PFW.Units.Component.Movement
 
         private IEnumerator BuildRoadNodes()
         {
+            Logger.LogPathfinding($"PathfinderData::BuildRoadNodes()", LogLevel.DEBUG);
             _graph.Clear();
             // Add nodes for roads
             ERModularRoad[] roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
 
-            int currIdx = 0;
+            int roadsEvaluated = 0;
             foreach (ERModularRoad road in roads)
             {
+                Logger.LogPathfinding(
+                        $"Building nodes for road {road.roadName}", 
+                        LogLevel.DEBUG);
                 for (int i = 0; i < road.middleIndentVecs.Count; i++)
                 {
                     Vector3 roadVert = road.middleIndentVecs[i];
@@ -155,22 +165,21 @@ namespace PFW.Units.Component.Movement
                 }
 
 
-                currIdx++;
-                SetPercentComplete(((double)currIdx / (double)roads.Length) * 100.0);
+                roadsEvaluated++;
+                SetPercentComplete(
+                        ((double)roadsEvaluated / (double)roads.Length) * 100.0);
                 yield return null;
             }
-
-            
-            
         }
 
 
         //TODO: maybe need to generate a height map file as well just for this, because it takes a long time
         private IEnumerator BuildGraph()
         {
-
+            Logger.LogPathfinding(
+                    $"PathfinderData.BuildGraph()",
+                    LogLevel.DEBUG);
             // TODO: Add nodes for terrain features
-
 
 
             /*// Fill in any big open spaces with a sparse grid in case the above missed anything important
@@ -196,7 +205,6 @@ namespace PFW.Units.Component.Movement
                     if ((Position(_graph[i]) - Position(_graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
                         _graph.RemoveAt(j);
                 }
-
             }
 
             _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
@@ -220,7 +228,6 @@ namespace PFW.Units.Component.Movement
             {
                 for (int j = i + 1; j < _graph.Count; j++)
                 {
-
                     PathArc arc = GetArc(_graph[i], _graph[j]);
                     if (arc.Equals(INVALID_ARC))
                         continue;
@@ -232,8 +239,8 @@ namespace PFW.Units.Component.Movement
                             continue;
 
                         float time = FindPath(path,
-                            Position(_graph[i]), Position(_graph[j]),
-                            mobility, 0f, MoveCommandType.FAST);
+                                Position(_graph[i]), Position(_graph[j]),
+                                mobility, 0f, MoveCommandType.FAST);
 
                         if (arc.Time[mobility.Index] < 1.5 * time)
                         {
@@ -252,7 +259,6 @@ namespace PFW.Units.Component.Movement
                 { 
                     yield return null;
                 }
-                
             }
         }
 
@@ -276,8 +282,11 @@ namespace PFW.Units.Component.Movement
             // Compute the arc's traversal time for each MobilityType
             foreach (MobilityType mobility in MobilityType.MobilityTypes)
             {
-                arc.Time[mobility.Index] = Pathfinder.FindLocalPath(
-                    this, Position(node1), Position(node2), mobility, 0f);
+                arc.Time[mobility.Index] = Pathfinder.FindLocalPath(this, 
+                                                                    Position(node1), 
+                                                                    Position(node2), 
+                                                                    mobility, 
+                                                                    0f);
             }
         }
 
@@ -288,22 +297,35 @@ namespace PFW.Units.Component.Movement
             node2.Arcs.Remove(arc);
         }
 
-        // Run the A* algorithm and put the result in path
-        // If no path was found, return 'forever' and put only the destination in path
-        // Returns the total path time
+        /// <summary>
+        /// Run the A* algorithm and put the result in path.
+        /// If no path was found, return 'forever' and put only the destination in path.
+        /// Returns the total path time.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="start"></param>
+        /// <param name="destination"></param>
+        /// <param name="mobility"></param>
+        /// <param name="unitRadius"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
         public float FindPath(
-            List<PathNode> path,
-            Vector3 start,
-            Vector3 destination,
-            MobilityType mobility,
-            float unitRadius,
-            MoveCommandType command)
+                List<PathNode> path,
+                Vector3 start,
+                Vector3 destination,
+                MobilityType mobility,
+                float unitRadius,
+                MoveCommandType command)
         {
             path.Clear();
             path.Add(new PathNode(destination, false));
 
             PathNode cameFromDest = null;
-            float gScoreDest = Pathfinder.FindLocalPath(this, start, destination, mobility, unitRadius);
+            float gScoreDest = Pathfinder.FindLocalPath(this, 
+                                                        start, 
+                                                        destination, 
+                                                        mobility, 
+                                                        unitRadius);
 
             if (gScoreDest < Pathfinder.FOREVER)
             {
@@ -323,7 +345,11 @@ namespace PFW.Units.Component.Movement
 
                 if ((start - neighborPos).magnitude < ARC_MAX_DIST)
                 {
-                    float gScoreNew = Pathfinder.FindLocalPath(this, start, neighborPos, mobility, unitRadius);
+                    float gScoreNew = Pathfinder.FindLocalPath(this, 
+                                                               start, 
+                                                               neighborPos, 
+                                                               mobility, 
+                                                               unitRadius);
                     if (gScoreNew < Pathfinder.FOREVER)
                     {
                         neighbor.GScore = gScoreNew;
@@ -335,7 +361,6 @@ namespace PFW.Units.Component.Movement
 
             while (_openSet.Count > 0)
             {
-
                 PathNode current = _openSet.Dequeue();
                 current.IsClosed = true;
 
@@ -357,7 +382,9 @@ namespace PFW.Units.Component.Movement
                     if (gScoreNew >= neighbor.GScore)
                         continue;
 
-                    float fScoreNew = gScoreNew + TimeHeuristic(Position(neighbor), destination, mobility);
+                    float fScoreNew = gScoreNew + TimeHeuristic(Position(neighbor), 
+                                                                destination, 
+                                                                mobility);
 
                     if (!_openSet.Contains(neighbor))
                     {
@@ -432,6 +459,9 @@ namespace PFW.Units.Component.Movement
 
         public PathNode(Vector3 position, bool isRoad)
         {
+            Logger.LogPathfinding(
+                    $"new PathNode(pos = {position}, isRoad = {isRoad})",
+                    LogLevel.DUMP);
             //this.position = position;
             x = position.x;
             y = position.y;
