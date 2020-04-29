@@ -93,7 +93,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf5d0309829959446bcebe75b463256a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deploymentMenu: {fileID: 6970436139226477054}
   isChatFocused: 0
 --- !u!114 &434939184249596436
 MonoBehaviour:
@@ -458,7 +457,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6384096975684576538}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d01adc5a30e4d4146b311b4820384388, type: 3}
   m_Name: 
@@ -467,6 +466,7 @@ MonoBehaviour:
     type: 3}
   UnitCardDeploymentPrefab: {fileID: 1253144275198338, guid: 24674bac66938f241800ee2619d98a6a,
     type: 3}
+  LocalPlayer: {fileID: 0}
 --- !u!1 &6560261516563358962
 GameObject:
   m_ObjectHideFlags: 0

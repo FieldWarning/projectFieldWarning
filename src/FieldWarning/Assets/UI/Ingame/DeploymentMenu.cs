@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -11,7 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,7 +28,7 @@ namespace PFW.UI.Ingame
         public GameObject MenuButtonPrefab;
         public GameObject UnitCardDeploymentPrefab;
 
-        private PlayerBehaviour _localPlayer;
+        public PlayerBehaviour LocalPlayer;
 
         private bool _isOpen = false;
 
@@ -38,20 +38,10 @@ namespace PFW.UI.Ingame
 
         private InputManager _inputManager;
 
-        /// <summary>
-        /// Pretend that this is a constructor.
-        /// </summary>
-        public void Initialize(
-                InputManager inputManager, 
-                PlayerBehaviour localPlayer)
-        {
-            _inputManager = inputManager;
-            _localPlayer = localPlayer;
-            enabled = true;
-        }
-
         private void Start()
         {
+            var service = GameObject.Find("Service");
+
             _menuButton = GameObject.Find("OpenMenuButton").GetComponentInChildren<Text>();
 
             _categoryButtonsPanel = GameObject.Find("UnitButtons").GetComponent<CanvasGroup>();
@@ -59,8 +49,7 @@ namespace PFW.UI.Ingame
 
             CloseMenu();
 
-            for (UnitCategory cat = 0; cat < UnitCategory._SIZE; cat++) 
-            {
+            for (UnitCategory cat = 0; cat < UnitCategory._SIZE; cat++) {
                 UnitCategory categoryForDelegate = cat;  // C# is bad
                 GameObject btn = Instantiate(
                         MenuButtonPrefab, _categoryButtonsPanel.transform);
@@ -68,20 +57,23 @@ namespace PFW.UI.Ingame
                 btn.GetComponentInChildren<Button>().onClick.AddListener(
                         delegate { CategorySelected(categoryForDelegate); });
             }
+
+            // TODO Hacky way to set it, FIX!:
+            _inputManager = GameObject.Find(
+                    "GameSession").GetComponent<InputManager>();
         }
 
         private void CategorySelected(UnitCategory cat)
         {
-            Button[] allUnitCards = _unitCardsPanel.GetComponentsInChildren<Button>();
+            var allUnitCards = _unitCardsPanel.GetComponentsInChildren<Button>();
 
             foreach (var c in allUnitCards)
                 Destroy(c.gameObject);
 
-            List<Unit> allUnitsOfCat = _localPlayer.Data.Deck.ByCategory(cat);
+            var allUnitsOfCat = LocalPlayer.Data.Deck.ByCategory(cat);
 
-            foreach (Unit unit in allUnitsOfCat) 
-            {
-                GameObject card = Instantiate(
+            foreach (Unit unit in allUnitsOfCat) {
+                var card = Instantiate(
                         UnitCardDeploymentPrefab, _unitCardsPanel.transform);
                 card.GetComponentInChildren<Text>().text = unit.Name;
                 card.GetComponentInChildren<Button>().onClick.AddListener(
@@ -89,8 +81,7 @@ namespace PFW.UI.Ingame
                                 _inputManager.BuyCallback(unit);
                         });
 
-                card.transform.Find("Image").GetComponent<Image>().sprite =
-                        unit.ArmoryImage;
+                // TODO Set picture too
                 // TODO Transports?
             }
         }
@@ -138,7 +129,7 @@ namespace PFW.UI.Ingame
 
         private void UpdateDeploymentPoints()
         {
-            _menuButton.text = _localPlayer.Money.ToString();
+            _menuButton.text = LocalPlayer.Money.ToString();
         }
     }
 }

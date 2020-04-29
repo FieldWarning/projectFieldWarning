@@ -7,7 +7,6 @@
     "Price": 15,
     "PrefabPath": "GroundUnit",
     "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Bloodhound",
 
     "Data": {
         "MovementSpeed": 40,

@@ -102,8 +102,6 @@ namespace PFW.UI.Ingame
             _unitName.text = unit.Name;
             _color = colorScheme;
             SetColor(colorScheme.BaseColor);
-
-            // When the label is clicked, notify the selection manager:
             _button.onClick.AddListener(
                     () => MatchSession.Current.PlatoonLabelClicked(platoon));
         }

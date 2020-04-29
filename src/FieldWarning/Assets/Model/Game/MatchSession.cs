@@ -42,8 +42,6 @@ namespace PFW.Model.Game
         private InputManager _inputManager;
         private VisibilityManager _visibilityManager;
         private UnitRegistry _unitRegistry;
-        [SerializeField]
-        private DeploymentMenu _deploymentMenu = null;
 
         public List<UnitDispatcher> Units =>
                 _unitRegistry.Units;
@@ -111,9 +109,11 @@ namespace PFW.Model.Game
 
             _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
 
+            GameObject.Find("Managers").GetComponent<DeploymentMenu>().LocalPlayer = LocalPlayer;
+
             _inputManager = FindObjectOfType<InputManager>();
 
-            if (!_inputManager)
+            if (!_visibilityManager)
                 _inputManager = gameObject.AddComponent<InputManager>();
             _inputManager.Session = _inputManager.Session ?? this;
 
@@ -121,8 +121,6 @@ namespace PFW.Model.Game
             if (!_visibilityManager)
                 _visibilityManager = gameObject.AddComponent<VisibilityManager>();
             _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
-
-            _deploymentMenu.Initialize(_inputManager, LocalPlayer);
 
             // LoadedData ideally comes from the loading scene
             _loadedData = FindObjectOfType<LoadedData>();

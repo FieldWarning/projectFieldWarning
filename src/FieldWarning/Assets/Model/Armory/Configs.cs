@@ -45,7 +45,6 @@ namespace PFW.Model.Armory
         public int Price;
         public string PrefabPath;
         public string ArtPrefabPath;
-        public string ArmoryImage;
         public UnitDataConfig Data;
         public ArmorConfig Armor;
         public MobilityConfig Mobility;
