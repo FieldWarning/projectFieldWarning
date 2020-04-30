@@ -337,7 +337,7 @@ namespace PFW
 
         private void PanFromScreenBorder()
         {
-            ScreenCorner mouseScreenCorner = GetScreenCornerForMousePosition(Input.mousePosition);
+            ScreenCorner mouseScreenCorner = GetScreenCornerForMousePosition(_borderPanningOffset, _borderPanningCornerSize);
 
             SetPanningCursor(mouseScreenCorner);
 
@@ -385,70 +385,73 @@ namespace PFW
             }
         }
 
-        private ScreenCorner GetScreenCornerForMousePosition(Vector2 mousePosition)
+        static public ScreenCorner GetScreenCornerForMousePosition(float borderPanningOffset, float borderPanningCornerSize)
         {
-            if ((mousePosition.x <= _borderPanningOffset && mousePosition.x >= 0
-                    && mousePosition.y <= _borderPanningCornerSize
+
+            Vector2 mousePosition = Input.mousePosition;
+
+            if ((mousePosition.x <= borderPanningOffset && mousePosition.x >= 0
+                    && mousePosition.y <= borderPanningCornerSize
                     && mousePosition.y >= 0)
-                    || (mousePosition.x <= _borderPanningCornerSize
+                    || (mousePosition.x <= borderPanningCornerSize
                     && mousePosition.x >= 0
-                    && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0))
+                    && mousePosition.y <= borderPanningOffset && mousePosition.y >= 0))
             {
                 return ScreenCorner.BottomLeft;
 
             }
-            else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+            else if ((mousePosition.x >= Screen.width - borderPanningOffset
                     && mousePosition.x <= Screen.width
-                    && mousePosition.y <= _borderPanningCornerSize && mousePosition.y >= 0)
-                    || (mousePosition.x >= Screen.width - _borderPanningCornerSize
+                    && mousePosition.y <= borderPanningCornerSize && mousePosition.y >= 0)
+                    || (mousePosition.x >= Screen.width - borderPanningCornerSize
                     && mousePosition.x <= Screen.width
-                    && mousePosition.y <= _borderPanningOffset && mousePosition.y >= 0))
+                    && mousePosition.y <= borderPanningOffset && mousePosition.y >= 0))
             {
                 return ScreenCorner.BottomRight;
             }
-            else if ((mousePosition.x <= _borderPanningOffset
+            else if ((mousePosition.x <= borderPanningOffset
                     && mousePosition.x >= 0
-                    && mousePosition.y >= Screen.height - _borderPanningCornerSize
+                    && mousePosition.y >= Screen.height - borderPanningCornerSize
                     && mousePosition.y <= Screen.height)
-                    || (mousePosition.x <= _borderPanningCornerSize
+                    || (mousePosition.x <= borderPanningCornerSize
                     && mousePosition.x >= 0
-                    && mousePosition.y >= Screen.height - _borderPanningOffset
+                    && mousePosition.y >= Screen.height - borderPanningOffset
                     && mousePosition.y <= Screen.height))
             {
                 return ScreenCorner.TopLeft;
             }
-            else if ((mousePosition.x >= Screen.width - _borderPanningOffset
+            else if ((mousePosition.x >= Screen.width - borderPanningOffset
                     && mousePosition.x <= Screen.width
-                    && mousePosition.y >= Screen.height - _borderPanningCornerSize
+                    && mousePosition.y >= Screen.height - borderPanningCornerSize
                     && mousePosition.y <= Screen.height)
-                    || (mousePosition.x >= Screen.width - _borderPanningCornerSize
+                    || (mousePosition.x >= Screen.width - borderPanningCornerSize
                     && mousePosition.x <= Screen.width
-                    && mousePosition.y >= Screen.height - _borderPanningOffset
+                    && mousePosition.y >= Screen.height - borderPanningOffset
                     && mousePosition.y <= Screen.height))
             {
                 return ScreenCorner.TopRight;
             }
-            else if (mousePosition.x <= _borderPanningOffset
+            else if (mousePosition.x <= borderPanningOffset
                     && mousePosition.x >= 0
                     && mousePosition.y >= 0
                     && mousePosition.y <= Screen.height)
             {
                 return ScreenCorner.Left;
             }
-            else if (mousePosition.x >= Screen.width - _borderPanningOffset
+            else if (mousePosition.x >= Screen.width - borderPanningOffset
                     && mousePosition.x <= Screen.width
                     && mousePosition.y >= 0 && mousePosition.y <= Screen.height)
             {
                 return ScreenCorner.Right;
             }
-            else if (mousePosition.y <= _borderPanningOffset
+            else if (mousePosition.y <= borderPanningOffset
                     && mousePosition.y >= 0
                     && mousePosition.x >= 0
                     && mousePosition.x <= Screen.width)
             {
                 return ScreenCorner.Bottom;
             }
-            else if (mousePosition.y >= Screen.height - _borderPanningOffset
+            else if (mousePosition.y >= Screen.height - borderPanningOffset
                     && mousePosition.y <= Screen.height
                     && mousePosition.x >= 0
                     && mousePosition.x <= Screen.width)
@@ -540,7 +543,16 @@ namespace PFW
             _sideArrowBottom.enabled = false;
         }
 
-        enum ScreenCorner
+        // This is needed because if we were ever disabled we need to smoothly start
+        // where the target is currently and not jump back to a previously saved state
+        void OnEnable()
+        {
+            _targetPosition = transform.position;
+            _rotateX = transform.eulerAngles.x;
+            _rotateY = transform.eulerAngles.y;
+        }
+
+        public enum ScreenCorner
         {
             TopLeft,
             TopRight,
