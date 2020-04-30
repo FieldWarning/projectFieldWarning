@@ -10,10 +10,11 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
  */
- 
+
+using PFW;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static SlidingCameraBehaviour;
+using static PFW.SlidingCameraBehaviour;
 
 /// <summary>
 /// A camera moved around a pivot. 
@@ -42,14 +43,14 @@ public class OrbitCameraBehaviour : MonoBehaviour
 
 
     [SerializeField]
-    private float _panSpeed = 50f * TerrainConstants.MAP_SCALE;
+    private float _panSpeed = 50f * Constants.MAP_SCALE;
     [SerializeField]
-    private float _panLerpSpeed = 100f * TerrainConstants.MAP_SCALE;
+    private float _panLerpSpeed = 100f * Constants.MAP_SCALE;
     [SerializeField]
     private float _rotLerpSpeed = 10f;
 
     [SerializeField]
-    private float _zoomSpeed = 10000f * TerrainConstants.MAP_SCALE;
+    private float _zoomSpeed = 10000f * Constants.MAP_SCALE;
 
 
 
@@ -87,7 +88,7 @@ public class OrbitCameraBehaviour : MonoBehaviour
             movement += Vector3.right;
         }
         **/
-        
+
 
         var corner = SlidingCameraBehaviour.GetScreenCornerForMousePosition(_borderPanningOffset, _borderPanningCornerSize);
 
@@ -103,9 +104,11 @@ public class OrbitCameraBehaviour : MonoBehaviour
         if (camOffset.magnitude > maxZoom) camOffset *= (maxZoom / camOffset.magnitude);
         if (camOffset.magnitude < minZoom) camOffset *= (minZoom / camOffset.magnitude);
 
-        if (Input.GetMouseButton(2)) {
+        if (Input.GetMouseButton(2))
+        {
             var dy = -Input.GetAxis("Mouse Y");
-            if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit || dy < 0) && (Vector3.Angle(camOffset, Vector3.up) < lowerAngleLimit || dy > 0)) {
+            if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit || dy < 0) && (Vector3.Angle(camOffset, Vector3.up) < lowerAngleLimit || dy > 0))
+            {
                 camOffset = Vector3.RotateTowards(camOffset, Vector3.up, dy * verticalROtationSpeed, 0f);
             }
             var dx = Input.GetAxis("Mouse X");
@@ -126,8 +129,8 @@ public class OrbitCameraBehaviour : MonoBehaviour
 
         // smooth the lookat/rotation
         Quaternion lookOnLook = Quaternion.LookRotation(orbitPoint.transform.position - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookOnLook, Time.deltaTime* _rotLerpSpeed);
-        
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookOnLook, Time.deltaTime * _rotLerpSpeed);
+
         // old code just in case
         //transform.LookAt(orbitPoint, Vector3.up);
     }

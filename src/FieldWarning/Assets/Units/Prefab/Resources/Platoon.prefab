@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6354385539193996493}
   m_Layer: 0
   m_Name: Platoon
-  m_TagString: Platoon
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,7 +67,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
---- !u!114 &8660869053011542717
+--- !u!114 &466579764461520557
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

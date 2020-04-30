@@ -35,7 +35,7 @@ namespace PFW.Units
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
         public bool IsInitialized = false;
 
-        public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
+        public static readonly float UNIT_DISTANCE = 40 * Constants.MAP_SCALE;
 
         public PlayerData Owner { get; private set; }
 
@@ -119,8 +119,6 @@ namespace PFW.Units
                     OrbitCameraBehaviour.FollowObject = this.gameObject;
                 }
             }
-
-
         }
 
         #region Lifetime logic + platoon splitting
@@ -291,7 +289,10 @@ namespace PFW.Units
                 Units[i].Teleport(
                     positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
-            OrderMovement(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
+            OrderMovement(
+                    GhostPlatoon.transform.position, 
+                    GhostPlatoon.FinalHeading, 
+                    MoveCommandType.FAST);
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);
@@ -381,6 +382,16 @@ namespace PFW.Units
             _waypointOverlay.gameObject.SetActive(selected);
         }
 
+        public void PointerEnterEvent(BaseEventData baseEvent)
+        {
+            _PointerOnLabel = true;
+        }
+
+        public void PointerExitEvent(BaseEventData baseEvent)
+        {
+            _PointerOnLabel = false;
+        }
+
         public void SetEnabled(bool enabled)
         {
             this.enabled = enabled;
@@ -391,16 +402,6 @@ namespace PFW.Units
         public void SendFirePosOrder(Vector3 position, bool enqueue = false)
         {
             OrderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
-        }
-
-        public void PointerEnterEvent(BaseEventData baseEvent)
-        {
-            _PointerOnLabel = true;
-        }
-
-        public void PointerExitEvent(BaseEventData baseEvent)
-        {
-            _PointerOnLabel = false;
         }
 
         #region Movement

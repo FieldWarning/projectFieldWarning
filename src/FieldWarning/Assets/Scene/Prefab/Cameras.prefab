@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 124129038840136354}
   - component: {fileID: 81342782129759222}
   - component: {fileID: 114831128604138914}
-  - component: {fileID: 5907448105073146794}
+  - component: {fileID: 3970003901048794347}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -125,18 +125,7 @@ MonoBehaviour:
   _heightSpeedScaling: 0.75
   _zoomOutAngle: 45
   _session: {fileID: 0}
-  _terrainMaterials: []
-  _microSplatTerrains:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!114 &5907448105073146794
+--- !u!114 &3970003901048794347
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,8 +137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee903088796d7f4b98907c51451c36a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _borderPanningOffset: 2
-  _borderPanningCornerSize: 200
 --- !u!1 &1153266605156084
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -21,7 +21,7 @@ namespace PFW.UI.Ingame
     public class BillboardBehavior : MonoBehaviour
     {
         [SerializeField]
-        private float ALTITUDE = 10f * TerrainConstants.MAP_SCALE;
+        private float ALTITUDE = 10f * Constants.MAP_SCALE;
         [SerializeField]
         private float SIZE = 0.1f;
 
