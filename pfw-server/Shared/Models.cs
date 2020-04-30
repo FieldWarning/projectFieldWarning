@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+//using PFW_OfficialHub.Controllers
 
 namespace Shared
 {
@@ -108,6 +109,18 @@ namespace Shared
     /// </summary>
     public class Jwt
     {
+        [BsonId][BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
+        public string Username { get; set; }
+        public string Token { get; set; }
+        public DateTime Issued { get; set; }
+    
+        public bool Verify()
+        {
+            return true;
+        }
     }
+
+
 }

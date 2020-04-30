@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Shared;
 
-namespace PFW_OfficialHub.Controllers
+namespace Database
 {
     /// <summary>
     /// !!!Do not include connection string in repository!!!
