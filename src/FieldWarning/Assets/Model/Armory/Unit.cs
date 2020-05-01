@@ -13,8 +13,6 @@
 
 using UnityEngine;
 
-using PFW.Units;
-
 namespace PFW.Model.Armory
 {
     /**

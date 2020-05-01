@@ -16,6 +16,27 @@ using System.Collections.Generic;
 
 namespace PFW.Model.Armory
 {
+    // TODO make this not be a copy of deck..
+    [Serializable]
+    public class ArmoryConfig
+    {
+        public List<string> LOG;
+        public List<string> SUP;
+        public List<string> INF;
+        public List<string> TNK;
+        public List<string> REC;
+        public List<string> VHC;
+        public List<string> HEL;
+
+        public object this[string fieldName] {
+            get {
+                return typeof(ArmoryConfig)
+                        .GetField(fieldName)
+                        .GetValue(this);
+            }
+        }
+    }
+
     [Serializable]
     public class DeckConfig
     {

@@ -14,40 +14,40 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
 using UnityEngine;
 
 namespace PFW.Model.Armory
 {
-    public class Deck
+    /// <summary>
+    ///     The parsed and dereferenced model containing all of our
+    ///     unit data.
+    /// </summary>
+    public class Armory
     {
         public List<Unit>[] Categories;
+        public Dictionary<string, Unit> Units;
+        // TODO use the map above to look up shit for the decks 
 
-        public Deck(DeckConfig deckConfig, Armory armory)
+        public Armory(ArmoryConfig armoryConfig)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
+            Units = new Dictionary<string, Unit>();
 
-            foreach (string categoryKey in Enum.GetNames(typeof(UnitCategory))) {
+            foreach (string categoryKey in Enum.GetNames(typeof(UnitCategory)))
+            {
                 if (Regex.IsMatch(categoryKey, @"^_"))
                     break;
 
-                int i = (int) Enum.Parse(typeof(UnitCategory), categoryKey);
+                int i = (int)Enum.Parse(typeof(UnitCategory), categoryKey);
                 if (Categories[i] == null) Categories[i] = new List<Unit>();
 
-                foreach (string unitId in (List<string>) deckConfig[categoryKey]) {
-                    Unit unit;
-                    bool exists = armory.Units.TryGetValue(unitId, out unit);
-                    if (!exists)
-                    {
-                        Debug.LogError($"deck refers to non-existent unit {unitId}");
-                    }
-                    
-                    // TODO we must make sure these Ids do not encode 
-                    // deck-specific info, as the unit objects are now unique
-                    // and shared between decks..
-                    // unit.CategoryId = (byte) i;
-                    // unit.Id = Categories[i].Count;
+                foreach (string unitId in (List<string>)armoryConfig[categoryKey])
+                {
+                    Unit unit = ConfigReader.ParseUnit(unitId);
+                    unit.CategoryId = (byte)i;
+                    unit.Id = Categories[i].Count;
                     Categories[i].Add(unit);
+                    Units.Add(unitId, unit);
                 }
             }
         }

@@ -1,0 +1,24 @@
+{
+    "LOG": [
+        "Unit__LOG--HEMTT"
+    ],
+    "SUP": [
+        "Unit__SUP--PLZ-5"
+    ],
+    "INF": [
+        "Unit__INF--Riflemen",
+        "Unit__INF--Marines"
+    ],
+    "TNK": [
+        "Unit__TNK--FastTank",
+        "Unit__TNK--Bloodhound",
+        "Unit__TNK--M1A2"
+    ],
+    "REC": [
+        "Unit__REC--ArmyRangers"
+    ],
+    "VHC": [],
+    "HEL": [
+        "Unit__HEL--AH-64D"
+    ]
+}

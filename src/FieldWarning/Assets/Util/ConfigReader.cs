@@ -20,7 +20,7 @@ namespace PFW
 {
 	public static class ConfigReader
     {
-        public static Unit FindUnit(string unitId)
+        public static Unit ParseUnit(string unitId)
         {
             MatchCollection matches =
                     Regex.Matches(unitId, @"^(Unit__)([A-Z]+)(?:--)([-_a-zA-Z0-9]+)");
@@ -33,12 +33,20 @@ namespace PFW
             return new Unit(config);
         }
 
-        public static Deck FindDeck(string deckName)
+        public static Deck ParseDeck(string deckName, Armory armory)
         {
             TextAsset configFile = Resources.Load<TextAsset>($"Decks/{deckName}");
             DeckConfig config = JsonUtility.FromJson<DeckConfig>(configFile.text);
 
-            return new Deck(config);
+            return new Deck(config, armory);
+        }
+
+        public static Armory ParseArmory()
+        {
+            TextAsset configFile = Resources.Load<TextAsset>("Armory");
+            ArmoryConfig config = JsonUtility.FromJson<ArmoryConfig>(configFile.text);
+
+            return new Armory(config);
         }
     }
 }
