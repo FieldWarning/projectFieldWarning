@@ -42,10 +42,10 @@ public class OrbitCameraBehaviour : MonoBehaviour
     float minZoom = 10f;
 
 
-    [SerializeField]
-    private float _panSpeed = 50f * Constants.MAP_SCALE;
-    [SerializeField]
-    private float _panLerpSpeed = 100f * Constants.MAP_SCALE;
+    //[SerializeField]
+    //private float _panSpeed = 50f * Constants.MAP_SCALE;
+    //[SerializeField]
+    //private float _panLerpSpeed = 100f * Constants.MAP_SCALE;
     [SerializeField]
     private float _rotLerpSpeed = 10f;
 
@@ -56,22 +56,19 @@ public class OrbitCameraBehaviour : MonoBehaviour
 
     static public GameObject FollowObject = null;
 
-
-    // Use this for initialization
-    void Start()
+    private void Start()
     {
         cam = GetComponent<Camera>();
         orbitPoint = transform.parent;
         camOffset = transform.localPosition;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Vector3 movement = Vector3.zero;
 
-        var xin = Input.GetAxis("Horizontal");
-        var zin = Input.GetAxis("Vertical");
+        float xin = Input.GetAxis("Horizontal");
+        float zin = Input.GetAxis("Vertical");
 
         //TODO: Will need to clean this up.. maybe make some basic camera input util class or something
         /**
@@ -90,7 +87,8 @@ public class OrbitCameraBehaviour : MonoBehaviour
         **/
 
 
-        var corner = SlidingCameraBehaviour.GetScreenCornerForMousePosition(_borderPanningOffset, _borderPanningCornerSize);
+        ScreenCorner corner = SlidingCameraBehaviour.GetScreenCornerForMousePosition(
+                _borderPanningOffset, _borderPanningCornerSize);
 
         if (corner != ScreenCorner.None || xin != 0 || zin != 0)
         {
@@ -98,7 +96,7 @@ public class OrbitCameraBehaviour : MonoBehaviour
             enabled = false;
         }
 
-        var scroll = Input.GetAxis("Mouse ScrollWheel");
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
         camOffset *= Mathf.Pow(zoomFactor, -scroll);
 
         if (camOffset.magnitude > maxZoom) camOffset *= (maxZoom / camOffset.magnitude);
@@ -106,16 +104,17 @@ public class OrbitCameraBehaviour : MonoBehaviour
 
         if (Input.GetMouseButton(2))
         {
-            var dy = -Input.GetAxis("Mouse Y");
-            if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit || dy < 0) && (Vector3.Angle(camOffset, Vector3.up) < lowerAngleLimit || dy > 0))
+            float dy = -Input.GetAxis("Mouse Y");
+            if ((Vector3.Angle(camOffset, Vector3.up) > upperAngleLimit || dy < 0) 
+                && (Vector3.Angle(camOffset, Vector3.up) < lowerAngleLimit || dy > 0))
             {
                 camOffset = Vector3.RotateTowards(camOffset, Vector3.up, dy * verticalROtationSpeed, 0f);
             }
-            var dx = Input.GetAxis("Mouse X");
+            float dx = Input.GetAxis("Mouse X");
             camOffset = Quaternion.AngleAxis(dx * horizontalROtationSpeed, Vector3.up) * camOffset;
         }
 
-        var off = camOffset;
+        Vector3 off = camOffset;
         off.y = 0;
         movement = Quaternion.FromToRotation(Vector3.forward, off) * -movement;
         orbitPoint.position += Time.deltaTime * BASE_MOVEMENT_SPEED * movement * camOffset.magnitude;
@@ -128,8 +127,10 @@ public class OrbitCameraBehaviour : MonoBehaviour
         transform.localPosition = Vector3.Lerp(transform.localPosition, camOffset, Time.deltaTime * _zoomSpeed);
 
         // smooth the lookat/rotation
-        Quaternion lookOnLook = Quaternion.LookRotation(orbitPoint.transform.position - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookOnLook, Time.deltaTime * _rotLerpSpeed);
+        Quaternion lookOnLook = Quaternion.LookRotation(
+                orbitPoint.transform.position - transform.position);
+        transform.rotation = Quaternion.Slerp(
+                transform.rotation, lookOnLook, Time.deltaTime * _rotLerpSpeed);
 
         // old code just in case
         //transform.LookAt(orbitPoint, Vector3.up);
