@@ -21,9 +21,11 @@ using PFW.Units.Component.Movement;
 
 namespace PFW
 {
-    // The purpose of having MobilityType as a separate class from UnitData is
-    //     so that only a few pathfinding graphs are needed, instead of having a separate
-    //     one for each type of unit.
+    /// <summary>
+    /// The purpose of having MobilityType as a separate class from UnitData is
+    /// so that only a few pathfinding graphs are needed, instead of having a separate
+    /// one for each type of unit.
+    /// </summary>
     public sealed class MobilityType
     {
         // This list needs to be instantiated before the PathfinderData
@@ -52,11 +54,17 @@ namespace PFW
             MobilityTypes.Insert(Index, this);
         }
 
-        // Gives the relative speed of a unit with the given MobilityType at the given location
-        // Relative speed is 0 if the terrain is impassible and 1 for road, otherwise between 0 and 1
-        // If radius > 0, check for units in the way, otherwise just look at terrain
+        /// <summary>
+        /// Gives the relative speed of a unit with the given MobilityType 
+        /// at the given location. Relative speed is 0 if the terrain is 
+        /// impassible and 1 for road, otherwise between 0 and 1.
+        /// If radius > 0, check for units in the way, otherwise just look at terrain.
+        /// </summary>
         public float GetUnitSpeedMultiplier(
-                TerrainMap map, Vector3 location, float unitRadius, Vector3 direction)
+                TerrainMap map, 
+                Vector3 location, 
+                float unitRadius, 
+                Vector3 direction)
         {
             Terrain terrain = map.GetTerrainAtPos(location);
             if (terrain == null)
@@ -113,7 +121,8 @@ namespace PFW
             return speed * GetSlopeFactor(terrain, location, direction);
         }
 
-        private float GetSlopeFactor(Terrain terrain, Vector3 location, Vector3 direction)
+        private float GetSlopeFactor(
+                Terrain terrain, Vector3 location, Vector3 direction)
         {
             direction.y = 0f;
             direction.Normalize();

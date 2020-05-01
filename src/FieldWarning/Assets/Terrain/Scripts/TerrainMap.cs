@@ -73,7 +73,7 @@ namespace PFW
         private GameObject[] _bridges;
         private ERModularRoad[] _roads;
 
-        public int TerrainId;
+        public int SceneBuildId;
 
         List<Vector3> _treePositions = new List<Vector3>();
         List<Vector3> _bridgePositions = new List<Vector3>();
@@ -81,9 +81,9 @@ namespace PFW
         // this is only needed for map testing
         // private byte[,] originalTestMap = null;
 
-        public TerrainMap(Terrain[] terrains1D, int terrainId)
+        public TerrainMap(Terrain[] terrains1D, int sceneBuildId)
         {
-            this.TerrainId = terrainId;
+            this.SceneBuildId = sceneBuildId;
             WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
             if (water != null)
             {
@@ -197,7 +197,7 @@ namespace PFW
             string sceneName = SceneManager.GetActiveScene().name;
             string scenePathWithFilename = SceneManager.GetActiveScene().path;
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            return Path.Combine(sceneDirectory, sceneName + TerrainId + HEIGHT_MAP_SUFFIX);
+            return Path.Combine(sceneDirectory, sceneName + SceneBuildId + HEIGHT_MAP_SUFFIX);
         }
 
         private void ExportFinishedMapRunner()

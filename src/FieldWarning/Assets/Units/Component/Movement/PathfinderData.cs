@@ -64,7 +64,7 @@ namespace PFW.Units.Component.Movement
             string sceneName = SceneManager.GetActiveScene().name;
             string scenePathWithFilename = SceneManager.GetActiveScene().path;
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            _graphFile = Path.Combine(sceneDirectory, sceneName + map.TerrainId + GRAPH_FILE_SUFFIX);
+            _graphFile = Path.Combine(sceneDirectory, sceneName + map.SceneBuildId + GRAPH_FILE_SUFFIX);
 
 
             // maybe turn this into a multithreaded worker later

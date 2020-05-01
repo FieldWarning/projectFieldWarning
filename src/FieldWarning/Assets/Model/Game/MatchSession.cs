@@ -129,8 +129,8 @@ namespace PFW.Model.Game
 
             if (_loadedData != null)
             {
-                TerrainMap = _loadedData.terrainData;
-                PathData = _loadedData.pathFinderData;
+                TerrainMap = _loadedData.TerrainData;
+                PathData = _loadedData.PathFinderData;
                 Factory = new UnitFactory();
                 Settings = new Settings();
             }
@@ -140,7 +140,7 @@ namespace PFW.Model.Game
         {
             if (_loadedData == null)
             {
-                LoadingScreen.DestinationScene = SceneManager.GetActiveScene().buildIndex;
+                LoadingScreen.SceneBuildId = SceneManager.GetActiveScene().buildIndex;
                 SceneManager.LoadScene("loading-scene", LoadSceneMode.Single);
             } 
             else

@@ -18,9 +18,9 @@ namespace PFW.Loading
 {
     public class LoadedData : MonoBehaviour
     {
-        public TerrainMap terrainData;
-        public PathfinderData pathFinderData;
-        public static int scene;
+        public TerrainMap TerrainData;
+        public PathfinderData PathFinderData;
+        public static int SceneBuildId;
 
         //private Loading _loader;
 
@@ -31,9 +31,9 @@ namespace PFW.Loading
 
             Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
 
-            terrainData = new TerrainMap(terrains, scene);
+            TerrainData = new TerrainMap(terrains, SceneBuildId);
 
-            pathFinderData = new PathfinderData(terrainData);
+            PathFinderData = new PathfinderData(TerrainData);
         }
     }
 }

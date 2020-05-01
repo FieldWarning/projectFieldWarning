@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -27,7 +27,7 @@ namespace PFW.Loading
     public class LoadingScreen : MonoBehaviour
     {
         static public Queue<Loader> SWorkers = new Queue<Loader>();
-        static public int DestinationScene;
+        static public int SceneBuildId;
 
         private Slider _slider;
         private TextMeshProUGUI _descLbl;
@@ -50,7 +50,7 @@ namespace PFW.Loading
             _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
 
             Instantiate(_loadedData);
-            LoadedData.scene = DestinationScene;
+            LoadedData.SceneBuildId = SceneBuildId;
         }
 
 
@@ -81,7 +81,7 @@ namespace PFW.Loading
                 // dispose of the screen when no more workers in queue
                 gameObject.SetActive(false);
 
-                SceneManager.LoadSceneAsync(DestinationScene, LoadSceneMode.Single);
+                SceneManager.LoadSceneAsync(SceneBuildId, LoadSceneMode.Single);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -45,7 +45,8 @@ namespace PFW.Units.Component.Movement
         {
             Data = gameObject.GetComponent<DataComponent>();
             Mobility = MobilityType.MobilityTypes[Data.MobilityTypeIndex];
-            _moveStrategy = new VehicleMovementStrategy(Data, map, transform, Mobility);
+            _moveStrategy = new VehicleMovementStrategy(
+                    Data, map, transform, Mobility);
         }
 
         public void Initialize()
