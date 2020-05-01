@@ -87,44 +87,6 @@ namespace PFW.Model.Game
             Current = this;
             _networkManager = FindObjectOfType<NetworkManager>();
 
-            Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
-            Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
-
-            Armory.Armory armory = ConfigReader.ParseArmory();
-            Deck bluePlayerDeck = ConfigReader.ParseDeck("player-blue", armory);
-            Deck redPlayerDeck = ConfigReader.ParseDeck("player-red", armory);
-
-            PlayerData bluePlayer = new PlayerData(
-                    bluePlayerDeck, blueTeam, (byte)Players.Count);
-            Players.Add(bluePlayer);
-            blueTeam.Players.Add(bluePlayer);
-
-            PlayerData redPlayer = new PlayerData(
-                    redPlayerDeck, redTeam, (byte)Players.Count);
-            Players.Add(redPlayer);
-            redTeam.Players.Add(redPlayer);
-
-            Teams.Add(blueTeam);
-            Teams.Add(redTeam);
-
-            LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
-            LocalPlayer.Data = redTeam.Players[0];
-
-            _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
-
-            _inputManager = FindObjectOfType<InputManager>();
-
-            if (!_inputManager)
-                _inputManager = gameObject.AddComponent<InputManager>();
-            _inputManager.Session = _inputManager.Session ?? this;
-
-            _visibilityManager = FindObjectOfType<VisibilityManager>();
-            if (!_visibilityManager)
-                _visibilityManager = gameObject.AddComponent<VisibilityManager>();
-            _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
-
-            _deploymentMenu.Initialize(_inputManager, LocalPlayer);
-
             // LoadedData ideally comes from the loading scene
             _loadedData = FindObjectOfType<LoadedData>();
 
@@ -134,6 +96,46 @@ namespace PFW.Model.Game
                 PathData = _loadedData.PathFinderData;
                 Factory = new UnitFactory();
                 Settings = new Settings();
+
+
+                Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
+                Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
+
+                Deck bluePlayerDeck = ConfigReader.ParseDeck(
+                        "player-blue", _loadedData.Armory);
+                Deck redPlayerDeck = ConfigReader.ParseDeck(
+                        "player-red", _loadedData.Armory);
+
+                PlayerData bluePlayer = new PlayerData(
+                        bluePlayerDeck, blueTeam, (byte)Players.Count);
+                Players.Add(bluePlayer);
+                blueTeam.Players.Add(bluePlayer);
+
+                PlayerData redPlayer = new PlayerData(
+                        redPlayerDeck, redTeam, (byte)Players.Count);
+                Players.Add(redPlayer);
+                redTeam.Players.Add(redPlayer);
+
+                Teams.Add(blueTeam);
+                Teams.Add(redTeam);
+
+                LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
+                LocalPlayer.Data = redTeam.Players[0];
+
+                _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
+
+                _inputManager = FindObjectOfType<InputManager>();
+
+                if (!_inputManager)
+                    _inputManager = gameObject.AddComponent<InputManager>();
+                _inputManager.Session = _inputManager.Session ?? this;
+
+                _visibilityManager = FindObjectOfType<VisibilityManager>();
+                if (!_visibilityManager)
+                    _visibilityManager = gameObject.AddComponent<VisibilityManager>();
+                _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
+
+                _deploymentMenu.Initialize(_inputManager, LocalPlayer);
             }
         }
 

@@ -39,6 +39,7 @@ namespace PFW.Units.Component.Movement
 
         public TerrainMap _map;
         public List<PathNode> _graph;
+        private List<MobilityType> _mobilityTypes;
 
         private string _graphFile;
 
@@ -56,10 +57,11 @@ namespace PFW.Units.Component.Movement
         ///     A sampling of the terrain topology, 
         ///     used if generating from scratch.
         /// </param>
-        public PathfinderData(TerrainMap map)
+        public PathfinderData(TerrainMap map, List<MobilityType> mobilityTypes)
         {
             _map = map;
             _graph = new List<PathNode>();
+            _mobilityTypes = mobilityTypes;
 
             string sceneName = SceneManager.GetActiveScene().name;
             string scenePathWithFilename = SceneManager.GetActiveScene().path;
@@ -233,7 +235,7 @@ namespace PFW.Units.Component.Movement
                         continue;
 
                     bool necessary = false;
-                    foreach (MobilityType mobility in MobilityType.MobilityTypes)
+                    foreach (MobilityType mobility in _mobilityTypes)
                     {
                         if (arc.Time[mobility.Index] == Pathfinder.FOREVER)
                             continue;

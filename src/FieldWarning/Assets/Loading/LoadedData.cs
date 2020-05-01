@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using PFW.Model.Armory;
 using PFW.Units.Component.Movement;
 using UnityEngine;
 
@@ -20,6 +21,7 @@ namespace PFW.Loading
     {
         public TerrainMap TerrainData;
         public PathfinderData PathFinderData;
+        public Armory Armory;
         public static int SceneBuildId;
 
         //private Loading _loader;
@@ -29,11 +31,14 @@ namespace PFW.Loading
         {
             DontDestroyOnLoad(this.gameObject);
 
+            Armory = ConfigReader.ParseArmory();
+
             Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
 
             TerrainData = new TerrainMap(terrains, SceneBuildId);
 
-            PathFinderData = new PathfinderData(TerrainData);
+            PathFinderData = new PathfinderData(
+                    TerrainData, Armory.CalculateUniqueMobilityTypes());
         }
     }
 }

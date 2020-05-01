@@ -17,6 +17,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using PFW.Model.Armory;
 
 namespace PFW.Loading
 {

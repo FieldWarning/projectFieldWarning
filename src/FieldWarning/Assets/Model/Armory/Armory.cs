@@ -24,9 +24,8 @@ namespace PFW.Model.Armory
     /// </summary>
     public class Armory
     {
-        public List<Unit>[] Categories;
-        public Dictionary<string, Unit> Units;
-        // TODO use the map above to look up shit for the decks 
+        public readonly List<Unit>[] Categories;
+        public readonly Dictionary<string, Unit> Units;
 
         public Armory(ArmoryConfig armoryConfig)
         {
@@ -50,6 +49,20 @@ namespace PFW.Model.Armory
                     Units.Add(unitId, unit);
                 }
             }
+        }
+
+        public List<MobilityType> CalculateUniqueMobilityTypes() 
+        {
+            // List<MobilityType> result = new List<MobilityType>();
+
+            foreach(Unit unit in Units.Values)
+            {
+                // TODO remove this static, figure out how to store the index,
+                // and manage this here
+                MobilityType.GetIndexForConfig(unit.Config.Mobility);
+            }
+
+            return MobilityType.MobilityTypes;
         }
 
         public List<Unit> ByCategory(UnitCategory cat) => Categories[(int)cat];
