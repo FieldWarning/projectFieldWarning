@@ -14,7 +14,7 @@ namespace PFW_OfficialHub
     {
         public static void Main(string[] args)
         {
-            Db.Init();
+            Database.Db.Init();
             CreateHostBuilder(args).Build().Run();
         }
 
