@@ -23,21 +23,7 @@ namespace PFW.Model.Armory.JsonContents
     [Serializable]
     public class DeckConfig
     {
-        public List<string> LOG;
-        public List<string> SUP;
-        public List<string> INF;
-        public List<string> TNK;
-        public List<string> REC;
-        public List<string> VHC;
-        public List<string> HEL;
-
-        public object this[string fieldName] {
-            get {
-                return typeof(DeckConfig)
-                        .GetField(fieldName)
-                        .GetValue(this);
-            }
-        }
+        public List<string> UnitIds;
     }
 
     [Serializable]
