@@ -90,6 +90,10 @@ namespace PFW.Model.Game
             // LoadedData ideally comes from the loading scene
             _loadedData = FindObjectOfType<LoadedData>();
 
+            // If there is no loaded data, this scene is just
+            // a false start and we will instantly move to
+            // the loading scene (see Start() ) and then reset this
+            // scene with a loaded data.
             if (_loadedData != null)
             {
                 TerrainMap = _loadedData.TerrainData;
@@ -136,6 +140,14 @@ namespace PFW.Model.Game
                 _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
 
                 _deploymentMenu.Initialize(_inputManager, LocalPlayer);
+
+                SpawnPointBehaviour[] spawns = 
+                        FindObjectsOfType<SpawnPointBehaviour>();
+                foreach (SpawnPointBehaviour spawn in spawns)
+                {
+                    _inputManager.RegisterSpawnPoint(spawn);
+                }
+
             }
         }
 
@@ -173,12 +185,6 @@ namespace PFW.Model.Game
 
         public void RegisterUnitDeath(UnitDispatcher unit) =>
                 _unitRegistry.RegisterUnitDeath(unit);
-
-        // TODO If we can refactor MatchSession to create the spawn points, we will be able to get rid of this:
-        public void RegisterSpawnPoint(SpawnPointBehaviour spawn)
-        {
-            _inputManager.RegisterSpawnPoint(spawn);
-        }
 
         public void UpdateTeamBelonging(Team newTeam)
         {
