@@ -95,13 +95,44 @@ namespace PFW.Units.Component.Movement
                 stream.Close();
 
                 _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
-                return true;
+
+                if (SanityCheckGraph())
+                {
+                    return true;
+                }
+                else 
+                {
+                    _graph = null;
+                    _openSet = null;
+                    return false;
+                }
             }
             catch (Exception exception)
             {
                 Debug.Log("Error reading graph file: " + exception.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Check that the read pathfinding data is plausible
+        /// and does not need to be generated.
+        /// 
+        /// This is just a sanity check and can return true even with
+        /// bad graph data.
+        /// </summary>
+        /// <returns></returns>
+        private bool SanityCheckGraph()
+        {
+            // The arcs in the graph need to have values for as many mobility 
+            // types as there are in the unit roster, otherwise 
+            // they were generated from different data.
+            if (_graph[0].Arcs[0].Time.Length != _mobilityTypes.Count)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void WriteGraph()
