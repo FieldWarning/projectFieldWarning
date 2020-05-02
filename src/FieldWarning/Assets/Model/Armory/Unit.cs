@@ -46,9 +46,9 @@ namespace PFW.Model.Armory
         /// TODO only stored here so we can create the DataComponent later,
         /// maybe just create the DataComponent earlier and cache it here..
         /// </summary>
-        public MobilityType MobilityData { get; }
+        public MobilityData MobilityData { get; }
 
-        public Unit(UnitConfig config, MobilityType mobility)
+        public Unit(UnitConfig config, MobilityData mobility)
         {
             MobilityData = mobility;
             Name = config.Name;

@@ -26,7 +26,7 @@ namespace PFW
     /// so that only a few pathfinding graphs are needed, instead of having a separate
     /// one for each type of unit.
     /// </summary>
-    public sealed class MobilityType
+    public sealed class MobilityData
     {
         // More all-terrain units like infantry should have reduced slope sensitivity
         public readonly float SlopeSensitivity;
@@ -42,7 +42,7 @@ namespace PFW
         /// </summary>
         public readonly int Index;
 
-        public MobilityType(MobilityConfig config, int index)
+        public MobilityData(MobilityConfig config, int index)
         {
             SlopeSensitivity = config.SlopeSensitivity; // 2.0f;
             DirectionalSlopeSensitivity = config.DirectionalSlopeSensitivity; // 0.6f;

@@ -30,13 +30,13 @@ namespace PFW.Model.Armory
         public readonly Dictionary<string, Unit> Units;
 
         // Separate pathfinding data is generated for each of these
-        public readonly List<MobilityType> UniqueMobilityTypes;
+        public readonly List<MobilityData> UniqueMobilityTypes;
 
         public Armory(List<UnitConfig> configs)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
             Units = new Dictionary<string, Unit>();
-            UniqueMobilityTypes = new List<MobilityType>();
+            UniqueMobilityTypes = new List<MobilityData>();
 
             for (int i = 0; i < (int)UnitCategory._SIZE; i++)
             {
@@ -45,8 +45,8 @@ namespace PFW.Model.Armory
 
             foreach (UnitConfig unitConfig in configs)
             {
-                MobilityType mobility = null;
-                foreach (MobilityType m in UniqueMobilityTypes)
+                MobilityData mobility = null;
+                foreach (MobilityData m in UniqueMobilityTypes)
                 {
                     if (m.Equals(unitConfig.Mobility))
                     {
@@ -57,7 +57,7 @@ namespace PFW.Model.Armory
 
                 if (mobility == null)
                 {
-                    mobility = new MobilityType(
+                    mobility = new MobilityData(
                             unitConfig.Mobility, UniqueMobilityTypes.Count);
                     UniqueMobilityTypes.Add(mobility);
                 }

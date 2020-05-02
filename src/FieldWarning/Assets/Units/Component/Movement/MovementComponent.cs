@@ -27,7 +27,7 @@ namespace PFW.Units.Component.Movement
         public DataComponent Data { get; private set; }
         public Pathfinder Pathfinder { get; private set; }
 
-        public MobilityType Mobility;
+        public MobilityData Mobility;
 
         // Forward and right directions on the horizontal plane
         public Vector3 Forward { get; private set; }

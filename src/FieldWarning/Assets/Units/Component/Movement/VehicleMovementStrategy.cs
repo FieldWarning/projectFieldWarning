@@ -34,7 +34,7 @@ namespace PFW.Units.Component.Movement
         private readonly TerrainMap _terrainMap;
         public Pathfinder Pathfinder;
         private readonly Transform _transform;
-        private readonly MobilityType _mobility;
+        private readonly MobilityData _mobility;
 
 
         public Vector3 NextPosition;
@@ -42,7 +42,7 @@ namespace PFW.Units.Component.Movement
         public float FinalHeading;
 
         public VehicleMovementStrategy(
-                DataComponent data, TerrainMap map, Transform transform, MobilityType mobility)
+                DataComponent data, TerrainMap map, Transform transform, MobilityData mobility)
         {
             _data = data;
             _terrainMap = map;

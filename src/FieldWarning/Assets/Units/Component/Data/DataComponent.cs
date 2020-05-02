@@ -30,7 +30,7 @@ namespace PFW.Units.Component.Data
         public float MaxHealth;
         public float Length;
         public float Width;
-        public MobilityType MobilityData;
+        public MobilityData MobilityData;
 
         public int FrontArmor;
         public int SideArmor;
@@ -46,7 +46,7 @@ namespace PFW.Units.Component.Data
         public static DataComponent CreateDataComponent(
                 GameObject parent,
                 UnitConfig config,
-                MobilityType mobilityData)
+                MobilityData mobilityData)
         {
             UnitDataConfig unitConfig = config.Data;
             MobilityConfig mobilityConfig = config.Mobility;

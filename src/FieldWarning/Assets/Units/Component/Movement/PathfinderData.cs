@@ -39,7 +39,7 @@ namespace PFW.Units.Component.Movement
 
         public TerrainMap _map;
         public List<PathNode> _graph;
-        private List<MobilityType> _mobilityTypes;
+        private List<MobilityData> _mobilityTypes;
 
         private string _graphFile;
 
@@ -57,7 +57,7 @@ namespace PFW.Units.Component.Movement
         ///     A sampling of the terrain topology, 
         ///     used if generating from scratch.
         /// </param>
-        public PathfinderData(TerrainMap map, List<MobilityType> mobilityTypes)
+        public PathfinderData(TerrainMap map, List<MobilityData> mobilityTypes)
         {
             _map = map;
             _graph = new List<PathNode>();
@@ -235,7 +235,7 @@ namespace PFW.Units.Component.Movement
                         continue;
 
                     bool necessary = false;
-                    foreach (MobilityType mobility in _mobilityTypes)
+                    foreach (MobilityData mobility in _mobilityTypes)
                     {
                         if (arc.Time[mobility.Index] == Pathfinder.FOREVER)
                             continue;
@@ -282,7 +282,7 @@ namespace PFW.Units.Component.Movement
             node2.Arcs.Add(arc);
 
             // Compute the arc's traversal time for each MobilityType
-            foreach (MobilityType mobility in _mobilityTypes)
+            foreach (MobilityData mobility in _mobilityTypes)
             {
                 arc.Time[mobility.Index] = Pathfinder.FindLocalPath(this, 
                                                                     Position(node1), 
@@ -308,7 +308,7 @@ namespace PFW.Units.Component.Movement
                 List<PathNode> path,
                 Vector3 start,
                 Vector3 destination,
-                MobilityType mobility,
+                MobilityData mobility,
                 float unitRadius,
                 MoveCommandType command)
         {
@@ -421,7 +421,7 @@ namespace PFW.Units.Component.Movement
             return gScoreDest;
         }
 
-        private float TimeHeuristic(Vector3 pos1, Vector3 pos2, MobilityType mobility)
+        private float TimeHeuristic(Vector3 pos1, Vector3 pos2, MobilityData mobility)
         {
             return Vector3.Distance(pos1, pos2) * 3 / 4;
         }
