@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson.Serialization.Attributes;
 using Shared;
+using System.Collections.Specialized;
 
+using System.Collections;
 namespace PFW_OfficialHub.Controllers
 {
     [Route("warchat")]
@@ -26,7 +28,6 @@ namespace PFW_OfficialHub.Controllers
             });
         }
 
-        public static ConcurrentDictionary<string, WarchatMsg> Messages = new System.Collections.Concurrent.ConcurrentDictionary<string, WarchatMsg>();
 
         [HttpPost("send")]
         public ActionResult Send(WarchatMsg msg, Jwt jwt)
