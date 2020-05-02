@@ -81,6 +81,7 @@ namespace PFW.Model.Game
         private NetworkManager _networkManager;
 
         private LoadedData _loadedData;
+        public Armory.Armory Armory => _loadedData.Armory;
 
         private void Awake()
         {
