@@ -14,8 +14,19 @@
 using System;
 using System.Collections.Generic;
 
-namespace PFW.Model.Armory
+/// <summary>
+/// The classes here represent purely what we write
+/// in our json config for the units/armory.
+/// </summary>
+namespace PFW.Model.Armory.JsonContents
 {
+    [Serializable]
+    public class ArmoryEntry
+    {
+        string path;
+        string category;
+    }
+
     // TODO make this not be a copy of deck..
     [Serializable]
     public class ArmoryConfig

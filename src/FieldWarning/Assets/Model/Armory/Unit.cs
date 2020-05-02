@@ -12,6 +12,7 @@
  */
 
 using UnityEngine;
+using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Model.Armory
 {

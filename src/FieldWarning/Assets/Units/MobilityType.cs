@@ -14,7 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using PFW.Model.Armory;
+using PFW.Model.Armory.JsonContents;
 using PFW.Model.Game;
 using PFW.Units;
 using PFW.Units.Component.Movement;

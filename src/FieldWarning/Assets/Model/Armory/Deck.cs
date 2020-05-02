@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using UnityEngine;
+using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Model.Armory
 {

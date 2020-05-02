@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 
 using PFW.Model.Armory;
+using PFW.Model.Armory.JsonContents;
 
 namespace PFW
 {
