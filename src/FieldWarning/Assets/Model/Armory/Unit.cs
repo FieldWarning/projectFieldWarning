@@ -16,21 +16,15 @@ using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Model.Armory
 {
-    /**
-     * Each deck creates its own unit objects.
-     * 
-     * Warning: Currently, units don't have a deck ID. We only look up a unit
-     * by id when it is created, and at that point in time we have access to the 
-     * player who created it (and thus the deck). If we need to create a unit after
-     * the creator has been removed (e.g. disconnect), we will need a more refined solution
-     * that preserves the link to the deck (or a global unit id).
-     */ 
+    /// <summary>
+    /// Decks share unit objects.
+    /// </summary>
     //[Serializable]
     public class Unit
     {
         // Identifies which category the unit is in.
         public byte CategoryId;
-        // Unique for a deck+category pair, 
+        // Unique for an category, 
         // should match the index in the unit list.
         public int Id;
 
@@ -45,8 +39,18 @@ namespace PFW.Model.Armory
 
         public Sprite ArmoryImage { get; }
 
-        public Unit(UnitConfig config)
+        /// <summary>
+        /// If multiple units have the same mobility stats, they share
+        /// references to the same mobility data.
+        /// 
+        /// TODO only stored here so we can create the DataComponent later,
+        /// maybe just create the DataComponent earlier and cache it here..
+        /// </summary>
+        public MobilityType MobilityData { get; }
+
+        public Unit(UnitConfig config, MobilityType mobility)
         {
+            MobilityData = mobility;
             Name = config.Name;
             Price = config.Price;
             Prefab = Resources.Load<GameObject>(config.PrefabPath);

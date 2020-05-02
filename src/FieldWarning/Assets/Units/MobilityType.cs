@@ -28,11 +28,6 @@ namespace PFW
     /// </summary>
     public sealed class MobilityType
     {
-        // This list needs to be instantiated before the PathfinderData
-        public static readonly List<MobilityType> MobilityTypes = new List<MobilityType>();
-
-        public readonly int Index;
-
         // More all-terrain units like infantry should have reduced slope sensitivity
         public readonly float SlopeSensitivity;
 
@@ -41,7 +36,13 @@ namespace PFW
 
         public readonly float PlainSpeed, ForestSpeed, WaterSpeed;
 
-        public MobilityType(MobilityConfig config)
+        /// <summary>
+        ///     There is a list of unique mobility types,
+        ///     this is the index under which this object can be found.
+        /// </summary>
+        public readonly int Index;
+
+        public MobilityType(MobilityConfig config, int index)
         {
             SlopeSensitivity = config.SlopeSensitivity; // 2.0f;
             DirectionalSlopeSensitivity = config.DirectionalSlopeSensitivity; // 0.6f;
@@ -50,8 +51,7 @@ namespace PFW
             ForestSpeed = config.ForestSpeed; // 0.2f;
             WaterSpeed = config.WaterSpeed; // 0.0f;
 
-            Index = MobilityTypes.Count;
-            MobilityTypes.Insert(Index, this);
+            Index = index;
         }
 
         /// <summary>
@@ -143,18 +143,17 @@ namespace PFW
             return Mathf.Max(speed - 0.1f, 0f);
         }
 
-        public static int GetIndexForConfig(MobilityConfig config)
+        /// <summary>
+        /// Check if this mobility type already represents 
+        /// some mobility config.
+        /// </summary>
+        public bool Equals(MobilityConfig config)
         {
-            foreach (MobilityType m in MobilityTypes)
-                if (m.SlopeSensitivity == config.SlopeSensitivity
-                        && m.DirectionalSlopeSensitivity == config.DirectionalSlopeSensitivity
-                        && m.PlainSpeed == config.PlainSpeed
-                        && m.ForestSpeed == config.ForestSpeed
-                        && m.WaterSpeed == config.WaterSpeed)
-                    return m.Index;
-
-            var newMobilityType = new MobilityType(config);
-            return newMobilityType.Index;
+            return (SlopeSensitivity == config.SlopeSensitivity
+                    && DirectionalSlopeSensitivity == config.DirectionalSlopeSensitivity
+                    && PlainSpeed == config.PlainSpeed
+                    && ForestSpeed == config.ForestSpeed
+                    && WaterSpeed == config.WaterSpeed);
         }
     }
 }

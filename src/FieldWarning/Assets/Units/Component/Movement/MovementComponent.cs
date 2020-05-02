@@ -44,7 +44,7 @@ namespace PFW.Units.Component.Movement
         public void InitializeGhost(TerrainMap map)
         {
             Data = gameObject.GetComponent<DataComponent>();
-            Mobility = MobilityType.MobilityTypes[Data.MobilityTypeIndex];
+            Mobility = Data.MobilityData;
             _moveStrategy = new VehicleMovementStrategy(
                     Data, map, transform, Mobility);
         }

@@ -31,7 +31,7 @@ namespace PFW.Units.Component.Movement
     {
         private const string GRAPH_FILE_SUFFIX = "_pathfinder_graph.dat";
 
-        private static PathArc INVALID_ARC = new PathArc(null, null);
+        private static PathArc INVALID_ARC = new PathArc(null, null, 0);
         private const float SPARSE_GRID_SPACING = 1000f * Constants.MAP_SCALE;
         private const float ROAD_GRID_SPACING = 200f * Constants.MAP_SCALE;
         private const float NODE_PRUNE_DIST_THRESH = 10f * Constants.MAP_SCALE;
@@ -277,16 +277,16 @@ namespace PFW.Units.Component.Movement
 
         public void AddArc(PathNode node1, PathNode node2)
         {
-            PathArc arc = new PathArc(node1, node2);
+            PathArc arc = new PathArc(node1, node2, _mobilityTypes.Count);
             node1.Arcs.Add(arc);
             node2.Arcs.Add(arc);
 
             // Compute the arc's traversal time for each MobilityType
-            foreach (MobilityType mobility in MobilityType.MobilityTypes)
+            foreach (MobilityType mobility in _mobilityTypes)
             {
                 arc.Time[mobility.Index] = Pathfinder.FindLocalPath(this, 
                                                                     Position(node1), 
-                                                                    Position(node2), 
+                                                                    Position(node2),
                                                                     mobility, 
                                                                     0f);
             }
@@ -304,13 +304,6 @@ namespace PFW.Units.Component.Movement
         /// If no path was found, return 'forever' and put only the destination in path.
         /// Returns the total path time.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="start"></param>
-        /// <param name="destination"></param>
-        /// <param name="mobility"></param>
-        /// <param name="unitRadius"></param>
-        /// <param name="command"></param>
-        /// <returns></returns>
         public float FindPath(
                 List<PathNode> path,
                 Vector3 start,
@@ -477,11 +470,17 @@ namespace PFW.Units.Component.Movement
     public struct PathArc
     {
         public PathNode Node1, Node2;
+
+        /// <summary>
+        /// All mobility data shared one path arc.
+        /// This array of times has one entry for each known
+        /// unique mobility data.
+        /// </summary>
         public float[] Time;
 
-        public PathArc(PathNode node1, PathNode node2)
+        public PathArc(PathNode node1, PathNode node2, int MobilityTypesCount)
         {
-            Time = new float[MobilityType.MobilityTypes.Count];
+            Time = new float[MobilityTypesCount];
             this.Node1 = node1;
             this.Node2 = node2;
         }

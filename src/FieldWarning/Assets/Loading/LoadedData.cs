@@ -38,7 +38,7 @@ namespace PFW.Loading
             TerrainData = new TerrainMap(terrains, SceneBuildId);
 
             PathFinderData = new PathfinderData(
-                    TerrainData, Armory.CalculateUniqueMobilityTypes());
+                    TerrainData, Armory.UniqueMobilityTypes);
         }
     }
 }

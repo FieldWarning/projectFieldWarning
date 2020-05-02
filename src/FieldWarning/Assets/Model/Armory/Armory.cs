@@ -29,10 +29,14 @@ namespace PFW.Model.Armory
         public readonly List<Unit>[] Categories;
         public readonly Dictionary<string, Unit> Units;
 
+        // Separate pathfinding data is generated for each of these
+        public readonly List<MobilityType> UniqueMobilityTypes;
+
         public Armory(List<UnitConfig> configs)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
             Units = new Dictionary<string, Unit>();
+            UniqueMobilityTypes = new List<MobilityType>();
 
             for (int i = 0; i < (int)UnitCategory._SIZE; i++)
             {
@@ -41,29 +45,34 @@ namespace PFW.Model.Armory
 
             foreach (UnitConfig unitConfig in configs)
             {
+                MobilityType mobility = null;
+                foreach (MobilityType m in UniqueMobilityTypes)
+                {
+                    if (m.Equals(unitConfig.Mobility))
+                    {
+                        mobility = m;
+                        break;
+                    }
+                }
+
+                if (mobility == null)
+                {
+                    mobility = new MobilityType(
+                            unitConfig.Mobility, UniqueMobilityTypes.Count);
+                    UniqueMobilityTypes.Add(mobility);
+                }
+
+
                 int i = (int)Enum.Parse(
                         typeof(UnitCategory), unitConfig.CategoryKey);
 
-                Unit unit = new Unit(unitConfig);
+                Unit unit = new Unit(unitConfig, mobility);
                 unit.CategoryId = (byte)i;
                 unit.Id = Categories[i].Count;
                 Categories[i].Add(unit);
+
                 Units.Add(unitConfig.ID, unit);
             }
-        }
-
-        public List<MobilityType> CalculateUniqueMobilityTypes() 
-        {
-            // List<MobilityType> result = new List<MobilityType>();
-
-            foreach(Unit unit in Units.Values)
-            {
-                // TODO remove this static, figure out how to store the index,
-                // and manage this here
-                MobilityType.GetIndexForConfig(unit.Config.Mobility);
-            }
-
-            return MobilityType.MobilityTypes;
         }
 
         public List<Unit> ByCategory(UnitCategory cat) => Categories[(int)cat];
