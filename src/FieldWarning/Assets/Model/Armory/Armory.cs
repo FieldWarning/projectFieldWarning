@@ -29,27 +29,26 @@ namespace PFW.Model.Armory
         public readonly List<Unit>[] Categories;
         public readonly Dictionary<string, Unit> Units;
 
-        public Armory(ArmoryConfig armoryConfig)
+        public Armory(List<UnitConfig> configs)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
             Units = new Dictionary<string, Unit>();
 
-            foreach (string categoryKey in Enum.GetNames(typeof(UnitCategory)))
+            for (int i = 0; i < (int)UnitCategory._SIZE; i++)
             {
-                if (Regex.IsMatch(categoryKey, @"^_"))
-                    break;
+                Categories[i] = new List<Unit>();
+            }
 
-                int i = (int)Enum.Parse(typeof(UnitCategory), categoryKey);
-                if (Categories[i] == null) Categories[i] = new List<Unit>();
+            foreach (UnitConfig unitConfig in configs)
+            {
+                int i = (int)Enum.Parse(
+                        typeof(UnitCategory), unitConfig.CategoryKey);
 
-                foreach (string unitId in (List<string>)armoryConfig[categoryKey])
-                {
-                    Unit unit = ConfigReader.ParseUnit(unitId);
-                    unit.CategoryId = (byte)i;
-                    unit.Id = Categories[i].Count;
-                    Categories[i].Add(unit);
-                    Units.Add(unitId, unit);
-                }
+                Unit unit = new Unit(unitConfig);
+                unit.CategoryId = (byte)i;
+                unit.Id = Categories[i].Count;
+                Categories[i].Add(unit);
+                Units.Add(unitConfig.ID, unit);
             }
         }
 

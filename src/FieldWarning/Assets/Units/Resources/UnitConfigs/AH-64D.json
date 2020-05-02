@@ -1,7 +1,7 @@
 {
 	"$schema": "../UnitConfigSchema.json",
 
-	"ID": "Unit__HEL--AH64D",
+	"ID": "Unit__HEL--AH-64D",
 	"CategoryKey": "HEL",
 	"Name": "AH64D Apache",
 	"Price": 20,
