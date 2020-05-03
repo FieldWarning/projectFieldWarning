@@ -190,10 +190,12 @@ namespace PFW
 
         private string GetTerrainMapCachePath()
         {
-            string sceneName = SceneManager.GetActiveScene().name;
-            string scenePathWithFilename = SceneManager.GetActiveScene().path;
+            string scenePathWithFilename = SceneUtility.GetScenePathByBuildIndex(
+                    _sceneBuildId);
+            string sceneName = Path.GetFileNameWithoutExtension(
+                    scenePathWithFilename);
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            return Path.Combine(sceneDirectory, sceneName + _sceneBuildId + _HEIGHT_MAP_SUFFIX);
+            return Path.Combine(sceneDirectory, sceneName + _HEIGHT_MAP_SUFFIX);
         }
 
         private void ExportFinishedMapRunner()

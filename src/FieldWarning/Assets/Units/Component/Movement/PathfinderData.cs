@@ -66,10 +66,12 @@ namespace PFW.Units.Component.Movement
             _graph = new List<PathNode>();
             _mobilityTypes = mobilityTypes;
 
-            string sceneName = SceneManager.GetActiveScene().name;
-            string scenePathWithFilename = SceneManager.GetActiveScene().path;
+            string scenePathWithFilename = SceneUtility.GetScenePathByBuildIndex(
+                    sceneBuildId);
+            string sceneName = Path.GetFileNameWithoutExtension(
+                    scenePathWithFilename);
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            _graphFile = Path.Combine(sceneDirectory, sceneName + sceneBuildId + GRAPH_FILE_SUFFIX);
+            _graphFile = Path.Combine(sceneDirectory, sceneName + GRAPH_FILE_SUFFIX);
 
 
             // maybe turn this into a multithreaded worker later
