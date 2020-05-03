@@ -220,7 +220,7 @@ namespace PFW
         private IEnumerator LoadWater()
         {
             //833,16891= WATER
-            Debug.Log("Creating original test map.");
+            Debug.Log("Creating terrain cache.");
 
             int len = _map.GetLength(0);
             for (var x = 0; x < _map.GetLength(0); x++)
@@ -247,7 +247,7 @@ namespace PFW
                     yield return null;
             }
 
-            Debug.Log("Done creating original test map.");
+            Debug.Log("Done creating terrain cache.");
         }
 
 
