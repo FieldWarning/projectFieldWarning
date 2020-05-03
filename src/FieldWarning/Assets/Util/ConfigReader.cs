@@ -11,34 +11,37 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
 using PFW.Model.Armory;
+using PFW.Model.Armory.JsonContents;
 
 namespace PFW
 {
 	public static class ConfigReader
     {
-        public static Unit FindUnit(string unitId)
-        {
-            MatchCollection matches =
-                    Regex.Matches(unitId, @"^(Unit__)([A-Z]+)(?:--)([-_a-zA-Z0-9]+)");
-            string categoryKey = matches[0].Groups[2].Value;
-            string modelDesignation = matches[0].Groups[3].Value;
-
-            TextAsset configFile = Resources.Load<TextAsset>($"{categoryKey}/{modelDesignation}");
-            UnitConfig config = JsonUtility.FromJson<UnitConfig>(configFile.text);
-
-            return new Unit(config);
-        }
-
-        public static Deck FindDeck(string deckName)
+        public static Deck ParseDeck(string deckName, Armory armory)
         {
             TextAsset configFile = Resources.Load<TextAsset>($"Decks/{deckName}");
             DeckConfig config = JsonUtility.FromJson<DeckConfig>(configFile.text);
 
-            return new Deck(config);
+            return new Deck(config, armory);
+        }
+
+        public static Armory ParseArmory()
+        {
+            // We take all jsons in the UnitConfigs folder and subfolders
+            TextAsset[] configFiles = Resources.LoadAll<TextAsset>("UnitConfigs");
+            List<UnitConfig> configs = new List<UnitConfig>();
+
+            foreach (TextAsset configFile in configFiles)
+            {
+                configs.Add(JsonUtility.FromJson<UnitConfig>(configFile.text));
+            }
+
+            return new Armory(configs);
         }
     }
 }

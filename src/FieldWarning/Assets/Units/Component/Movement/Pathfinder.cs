@@ -244,7 +244,7 @@ namespace PFW.Units.Component.Movement
         public static float FindLocalPath(
             PathfinderData data,
             Vector3 start, Vector3 destination,
-            MobilityType mobility,
+            MobilityData mobility,
             float radius)
         {
             float distance = (destination - start).magnitude;
@@ -270,7 +270,7 @@ namespace PFW.Units.Component.Movement
         private static Vector3 TakeStep(
             PathfinderData data,
             Vector3 start, Vector3 destination,
-            MobilityType mobility,
+            MobilityData mobility,
             float radius)
         {
             Vector3 straight = (destination - start).normalized;

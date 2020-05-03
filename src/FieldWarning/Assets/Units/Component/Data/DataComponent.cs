@@ -13,7 +13,7 @@
 
 using UnityEngine;
 
-using PFW.Model.Armory;
+using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Units.Component.Data
 {
@@ -30,7 +30,7 @@ namespace PFW.Units.Component.Data
         public float MaxHealth;
         public float Length;
         public float Width;
-        public int MobilityTypeIndex;
+        public MobilityData MobilityData;
 
         public int FrontArmor;
         public int SideArmor;
@@ -45,7 +45,8 @@ namespace PFW.Units.Component.Data
 
         public static DataComponent CreateDataComponent(
                 GameObject parent,
-                UnitConfig config)
+                UnitConfig config,
+                MobilityData mobilityData)
         {
             UnitDataConfig unitConfig = config.Data;
             MobilityConfig mobilityConfig = config.Mobility;
@@ -65,7 +66,7 @@ namespace PFW.Units.Component.Data
             c.Length =           unitConfig.Length             * Constants.MAP_SCALE;
             c.Width =            unitConfig.Width              * Constants.MAP_SCALE;
 
-            c.MobilityTypeIndex = MobilityType.GetIndexForConfig(mobilityConfig);
+            c.MobilityData = mobilityData;
 
             c.Radius = Mathf.Sqrt(c.Length * c.Width) / 2;
             c.OptimumTurnSpeed = Mathf.Sqrt(c.MaxLateralAccel * c.MinTurnRadius);

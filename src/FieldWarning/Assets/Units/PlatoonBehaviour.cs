@@ -43,7 +43,8 @@ namespace PFW.Units
 
         public OrderQueue OrderQueue { get; } = new OrderQueue();
 
-        private bool _PointerOnLabel = false;
+        private bool _pointerOnLabel = false;
+        private GameObject _mainCamera;
 
         public override bool OnSerialize(NetworkWriter writer, bool initialState)
         {
@@ -106,16 +107,14 @@ namespace PFW.Units
 
             OrderQueue.HandleUpdate();
 
-            if (_PointerOnLabel)
+            if (_pointerOnLabel)
             {
-                var scroll = Input.GetAxis("Mouse ScrollWheel");
+                float scroll = Input.GetAxis("Mouse ScrollWheel");
 
                 if (scroll != 0)
                 {
-                    var mainCamObj = GameObject.FindWithTag("MainCamera").gameObject;
-                    mainCamObj.GetComponent<OrbitCameraBehaviour>().enabled = true;
-
-                    mainCamObj.GetComponent<SlidingCameraBehaviour>().enabled = false;
+                    _mainCamera.GetComponent<OrbitCameraBehaviour>().enabled = true;
+                    _mainCamera.GetComponent<SlidingCameraBehaviour>().enabled = false;
                     OrbitCameraBehaviour.FollowObject = this.gameObject;
                 }
             }
@@ -218,6 +217,7 @@ namespace PFW.Units
             _platoonLabel.InitializeAsReal(unit, Owner.Team.ColorScheme, this);
             _waypointOverlay = OverlayFactory.Instance.CreateWaypointOverlay(this);
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
+            _mainCamera = Camera.main.gameObject;
         }
 
         /// <summary>
@@ -384,12 +384,12 @@ namespace PFW.Units
 
         public void PointerEnterEvent(BaseEventData baseEvent)
         {
-            _PointerOnLabel = true;
+            _pointerOnLabel = true;
         }
 
         public void PointerExitEvent(BaseEventData baseEvent)
         {
-            _PointerOnLabel = false;
+            _pointerOnLabel = false;
         }
 
         public void SetEnabled(bool enabled)

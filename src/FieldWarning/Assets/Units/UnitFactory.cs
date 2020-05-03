@@ -88,7 +88,7 @@ namespace PFW.UI.Prototype
             art.transform.parent = freshUnit.transform;
 
             DataComponent.CreateDataComponent(
-                    freshUnit, armoryUnit.Config);
+                    freshUnit, armoryUnit.Config, armoryUnit.MobilityData);
 
             // freshUnit.AddComponent<UnitDispatcher>().enabled = false;
             // freshUnit.AddComponent<MovementComponent>().enabled = false;

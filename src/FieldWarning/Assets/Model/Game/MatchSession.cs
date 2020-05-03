@@ -81,58 +81,74 @@ namespace PFW.Model.Game
         private NetworkManager _networkManager;
 
         private LoadedData _loadedData;
+        public Armory.Armory Armory => _loadedData.Armory;
 
         private void Awake()
         {
             Current = this;
             _networkManager = FindObjectOfType<NetworkManager>();
 
-            Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
-            Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
-
-            Deck bluePlayerDeck = ConfigReader.FindDeck("player-blue");
-            Deck redPlayerDeck = ConfigReader.FindDeck("player-red");
-
-            PlayerData bluePlayer = new PlayerData(
-                    bluePlayerDeck, blueTeam, (byte)Players.Count);
-            Players.Add(bluePlayer);
-            blueTeam.Players.Add(bluePlayer);
-
-            PlayerData redPlayer = new PlayerData(
-                    redPlayerDeck, redTeam, (byte)Players.Count);
-            Players.Add(redPlayer);
-            redTeam.Players.Add(redPlayer);
-
-            Teams.Add(blueTeam);
-            Teams.Add(redTeam);
-
-            LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
-            LocalPlayer.Data = redTeam.Players[0];
-
-            _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
-
-            _inputManager = FindObjectOfType<InputManager>();
-
-            if (!_inputManager)
-                _inputManager = gameObject.AddComponent<InputManager>();
-            _inputManager.Session = _inputManager.Session ?? this;
-
-            _visibilityManager = FindObjectOfType<VisibilityManager>();
-            if (!_visibilityManager)
-                _visibilityManager = gameObject.AddComponent<VisibilityManager>();
-            _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
-
-            _deploymentMenu.Initialize(_inputManager, LocalPlayer);
-
             // LoadedData ideally comes from the loading scene
             _loadedData = FindObjectOfType<LoadedData>();
 
+            // If there is no loaded data, this scene is just
+            // a false start and we will instantly move to
+            // the loading scene (see Start() ) and then reset this
+            // scene with a loaded data.
             if (_loadedData != null)
             {
-                TerrainMap = _loadedData.terrainData;
-                PathData = _loadedData.pathFinderData;
+                TerrainMap = _loadedData.TerrainData;
+                PathData = _loadedData.PathFinderData;
                 Factory = new UnitFactory();
                 Settings = new Settings();
+
+
+                Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
+                Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
+
+                Deck bluePlayerDeck = ConfigReader.ParseDeck(
+                        "player-blue", _loadedData.Armory);
+                Deck redPlayerDeck = ConfigReader.ParseDeck(
+                        "player-red", _loadedData.Armory);
+
+                PlayerData bluePlayer = new PlayerData(
+                        bluePlayerDeck, blueTeam, (byte)Players.Count);
+                Players.Add(bluePlayer);
+                blueTeam.Players.Add(bluePlayer);
+
+                PlayerData redPlayer = new PlayerData(
+                        redPlayerDeck, redTeam, (byte)Players.Count);
+                Players.Add(redPlayer);
+                redTeam.Players.Add(redPlayer);
+
+                Teams.Add(blueTeam);
+                Teams.Add(redTeam);
+
+                LocalPlayer = gameObject.AddComponent<PlayerBehaviour>();
+                LocalPlayer.Data = redTeam.Players[0];
+
+                _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
+
+                _inputManager = FindObjectOfType<InputManager>();
+
+                if (!_inputManager)
+                    _inputManager = gameObject.AddComponent<InputManager>();
+                _inputManager.Session = _inputManager.Session ?? this;
+
+                _visibilityManager = FindObjectOfType<VisibilityManager>();
+                if (!_visibilityManager)
+                    _visibilityManager = gameObject.AddComponent<VisibilityManager>();
+                _visibilityManager.UnitRegistry = _visibilityManager.UnitRegistry ?? _unitRegistry;
+
+                _deploymentMenu.Initialize(_inputManager, LocalPlayer);
+
+                SpawnPointBehaviour[] spawns = 
+                        FindObjectsOfType<SpawnPointBehaviour>();
+                foreach (SpawnPointBehaviour spawn in spawns)
+                {
+                    _inputManager.RegisterSpawnPoint(spawn);
+                }
+
             }
         }
 
@@ -140,7 +156,7 @@ namespace PFW.Model.Game
         {
             if (_loadedData == null)
             {
-                LoadingScreen.DestinationScene = SceneManager.GetActiveScene().buildIndex;
+                LoadingScreen.SceneBuildId = SceneManager.GetActiveScene().buildIndex;
                 SceneManager.LoadScene("loading-scene", LoadSceneMode.Single);
             } 
             else
@@ -170,12 +186,6 @@ namespace PFW.Model.Game
 
         public void RegisterUnitDeath(UnitDispatcher unit) =>
                 _unitRegistry.RegisterUnitDeath(unit);
-
-        // TODO If we can refactor MatchSession to create the spawn points, we will be able to get rid of this:
-        public void RegisterSpawnPoint(SpawnPointBehaviour spawn)
-        {
-            _inputManager.RegisterSpawnPoint(spawn);
-        }
 
         public void UpdateTeamBelonging(Team newTeam)
         {
