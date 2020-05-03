@@ -69,7 +69,7 @@ namespace PFW.Units.Component.Weapon
                     float roll = _random.NextFloat(0.0, 100.0);
                     // HIT
                     if (roll <= _data.Accuracy)
-                    {
+                    {   
                         Debug.LogWarning("Cannon shell dispersion is not implemented yet");
                         target.Enemy.HandleHit(_data.Damage, displacement, null);
                     }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -25,37 +25,38 @@ public class VisibilityManager : MonoBehaviour
     private static readonly float MAP_SIZE = 1000;
     private static readonly float MAX_VIEW_DISTANCE = 50;
     // private static readonly int REGIONS_COUNT = Mathf.CeilToInt(MAP_SIZE / MAX_VIEW_DISTANCE);
-    public static readonly float MIN_VIEW_DISTANCE = 10;
+   public static readonly float MIN_VIEW_DISTANCE = 10;
 
     private void Update()
     {
         foreach (var unit in UnitRegistry.AllyVisionComponents)
             unit.ScanForEnemies();
 
-        foreach (var unit in UnitRegistry.EnemyVisionComponents) {
+        foreach (var unit in UnitRegistry.EnemyVisionComponents)
+        {
             unit.ScanForEnemies();
             unit.MaybeHideFromEnemies();
+            
+
+            // Potential optimizations:
+            // - Keep a table of distances and only update on moving units
+            // - Keep a table of regions and only update when units enter/leave regions
+
+            // TODO get this legacy code to work:
+            //foreach (var unit in AllyUnits) {
+            //    foreach (var enemy in EnemyUnits) {
+
+            //        if (TerrainData.visionScore(unit.transform, enemy.transform, MAX_VIEW_DISTANCE)) {
+            //            unit.SetSpotting(enemy, true);
+            //            enemy.SetSpottedBy(unit, true);
+            //        } else {
+            //            unit.SetSpotting(enemy, false);
+            //            enemy.SetSpottedBy(unit, false);
+            //        }
+            //    }
+            //}
         }
-
-        // Potential optimizations:
-        // - Keep a table of distances and only update on moving units
-        // - Keep a table of regions and only update when units enter/leave regions
-
-        // TODO get this legacy code to work:
-        //foreach (var unit in AllyUnits) {
-        //    foreach (var enemy in EnemyUnits) {
-
-        //        if (TerrainData.visionScore(unit.transform, enemy.transform, MAX_VIEW_DISTANCE)) {
-        //            unit.SetSpotting(enemy, true);
-        //            enemy.SetSpottedBy(unit, true);
-        //        } else {
-        //            unit.SetSpotting(enemy, false);
-        //            enemy.SetSpottedBy(unit, false);
-        //        }
-        //    }
-        //}
     }
-
     public static void UpdateUnitRegion(VisionComponent unit, Point newRegion)
     {
         //var currentPoint = unit.GetRegion();
@@ -67,7 +68,7 @@ public class VisibilityManager : MonoBehaviour
         var y = Mathf.FloorToInt((MAP_SIZE / 2 + transform.position.z) / MAX_VIEW_DISTANCE);
         return new Point(x, y);
     }
-
+    
     /// <summary>
     /// Call after UnitRegistry.UpdateTeamBelonging().
     /// </summary>
@@ -76,6 +77,8 @@ public class VisibilityManager : MonoBehaviour
         UnitRegistry.AllyVisionComponents.ForEach(u => u.ToggleUnitVisibility(true));
     }
 }
+
+
 
 public struct Point
 {
@@ -109,6 +112,11 @@ public struct Point
         return x == point.x &&
                y == point.y;
     }
+   
+
+
+
+
 
     public override int GetHashCode()
     {
@@ -117,4 +125,6 @@ public struct Point
         hashCode = hashCode * -1521134295 + y.GetHashCode();
         return hashCode;
     }
+    
 }
+ 

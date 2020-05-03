@@ -82,10 +82,11 @@ namespace PFW.Units.Component.Vision
         // and make it invisible if not.
         public void MaybeHideFromEnemies()
         {
+            
             if (!IsVisible)
                 return;
-
-            _spotters.RemoveWhere(s => s == null || !s.CanDetect(this));
+            
+            _spotters.RemoveWhere(s => s == null || !s.CanDetect(this) || ObstacleInLineOfSight(s, this));
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
         }
@@ -94,7 +95,9 @@ namespace PFW.Units.Component.Vision
         // reveal themselves if necessary. This is done here.
         private void MaybeReveal(VisionComponent spotter)
         {
-            if (spotter.CanDetect(this)) {
+           
+
+            if (spotter.CanDetect(this) && !ObstacleInLineOfSight(spotter, this)) {
                 if (_spotters.Count == 0) {
                     ToggleUnitVisibility(true);
                 }
@@ -111,8 +114,38 @@ namespace PFW.Units.Component.Vision
             return
                 distance < max_spot_range
                 && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
+                
         }
+        private bool ObstacleInLineOfSight(VisionComponent spotter, VisionComponent target)
+        {
 
+            int layerMask = 1 << 13;
+            Vector3 SpotterPosition = spotter.gameObject.transform.position;
+            Vector3 temp = SpotterPosition;
+            temp.y += 0.05f;
+            SpotterPosition = temp;
+            Vector3 TargetPosition = target.gameObject.transform.position;
+            temp = TargetPosition;
+            temp.y += 0.05f;
+            TargetPosition = temp;
+            Vector3 TargetDirection = TargetPosition - SpotterPosition;
+            Vector3 NormalizedDirection = TargetDirection.normalized;
+            float DistanceToTarget = Vector3.Distance(SpotterPosition, TargetPosition);
+
+            if (Physics.Raycast(SpotterPosition, TargetDirection, DistanceToTarget, layerMask))
+            {
+                Debug.DrawRay(SpotterPosition, NormalizedDirection * DistanceToTarget, Color.red);
+               
+                return true;
+            }
+            else
+            {
+                Debug.DrawRay(SpotterPosition, NormalizedDirection * DistanceToTarget, Color.yellow);
+                         
+                return false;
+            }
+        }
+        //should work well
         public void ToggleUnitVisibility(bool revealUnit)
         {
             IsVisible = revealUnit;
@@ -125,16 +158,22 @@ namespace PFW.Units.Component.Vision
         private void MaybeTogglePlatoonVisibility()
         {
             PlatoonBehaviour platoon = _unit.Platoon;
+
             bool visible = !platoon.Units.TrueForAll(
-                            u => !u.VisionComponent.IsVisible);
-            ToggleAllRenderers(platoon.gameObject, visible);
+                          u => !u.VisionComponent.IsVisible);
+
+            platoon.ToggleLabelVisibility(visible);
+
+            //ToggleAllRenderers(platoon.gameObject, visible);
         }
 
+       
         private void ToggleAllRenderers(GameObject o, bool visible)
         {
             Renderer[] allRenderers = o.GetComponentsInChildren<Renderer>();
             foreach (Renderer childRenderer in allRenderers)
                 childRenderer.enabled = visible;
         }
+
     }
 }

@@ -22,7 +22,7 @@ TagManager:
   - MiniMap
   - PostProcessing
   - OnTop
-  - 
+  - LineOfSightHardBlock
   - 
   - 
   - 

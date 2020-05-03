@@ -373,6 +373,10 @@ namespace PFW.Units
         {
             OrderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
         }
+        public void ToggleLabelVisibility(bool visible)
+        {
+            _platoonLabel.gameObject.SetActive(visible);
+        }
 
         #region Movement
 
