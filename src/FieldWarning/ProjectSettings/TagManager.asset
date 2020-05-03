@@ -8,6 +8,7 @@ TagManager:
   - HUD
   - Fire
   - GameSession
+  - Water
   layers:
   - Default
   - TransparentFX

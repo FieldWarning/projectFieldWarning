@@ -84,9 +84,9 @@ namespace PFW
         public TerrainMap(Terrain[] terrains1D, int sceneBuildId)
         {
             _sceneBuildId = sceneBuildId;
-            // Hack to find the height of water, TODO do this in a more stable
-            // way
-            var water = GameObject.Find("Water Mesh");
+
+            // The water tag is only used for this
+            var water = GameObject.FindGameObjectWithTag("Water");
             if (water != null)
             {
                 WATER_HEIGHT = water.transform.position.y;
