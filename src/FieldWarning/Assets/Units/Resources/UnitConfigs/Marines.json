@@ -10,8 +10,8 @@
 	"ArmoryImage": "Anime",
 
 	"Data": {
-			"MovementSpeed": 500,
-			"ReverseSpeed": 15,
+			"MovementSpeed": 20,
+			"ReverseSpeed": 20,
 			"AccelRate": 13,
 			"MaxRotationSpeed": 50,
 			"MinTurnRadius": 0,
@@ -49,17 +49,17 @@
                 "Priority": 1,
                 "TurretRef": "MG",
                 "MountRef": "IFV",
-                "ArcHorizontal": 3,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
+                "ArcHorizontal": 1,
+                "ArcUp": 90,
+                "ArcDown": 90,
+                "RotationRate": 180,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 20,
+                    "Damage": .2,
+                    "FireRange" : 500,
                     "Accuracy": 40,
-                    "ShotReload": 0.5,
+                    "ShotReload": 0.1,
                     "SalvoLength": 10,
-                    "SalvoReload": 8
+                    "SalvoReload": 3
                 }
             },
             {
@@ -67,16 +67,16 @@
                 "TurretRef": "Autocannon",
                 "MountRef": "IFV",
                 "ArcHorizontal": 0,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
+                "ArcUp": 90,
+                "ArcDown": 90,
+                "RotationRate": 180,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 200,
-                    "Accuracy": 30,
-                    "ShotReload": 8,
+                    "Damage": 16,
+                    "FireRange" : 800,
+                    "Accuracy": 60,
+                    "ShotReload": 13,
                     "SalvoLength": 1,
-                    "SalvoReload": 8
+                    "SalvoReload": 13
                 }
             }
         ]
