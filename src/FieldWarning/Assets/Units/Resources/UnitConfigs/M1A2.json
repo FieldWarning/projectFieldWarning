@@ -11,7 +11,7 @@
 
     "Data": {
         "MovementSpeed": 50,
-        "ReverseSpeed": 15,
+        "ReverseSpeed": 40,
         "AccelRate": 13,
         "MaxRotationSpeed": 50,
         "MinTurnRadius": 0,
@@ -23,10 +23,10 @@
     },
     
     "Armor": {
-        "FrontArmor": 0,
-        "SideArmor": 0,
-        "RearArmor": 0,
-        "TopArmor": 0
+        "FrontArmor": 22,
+        "SideArmor": 8,
+        "RearArmor": 8,
+        "TopArmor": 4
     },
 
     "Mobility": {
@@ -67,16 +67,16 @@
                 "TurretRef": "Autocannon",
                 "MountRef": "IFV",
                 "ArcHorizontal": 0,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
+                "ArcUp": 35,
+                "ArcDown": 10,
+                "RotationRate": 90,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 200,
-                    "Accuracy": 30,
-                    "ShotReload": 8,
+                    "Damage": 18,
+                    "FireRange" : 2000,
+                    "Accuracy": 70,
+                    "ShotReload": 5,
                     "SalvoLength": 1,
-                    "SalvoReload": 8
+                    "SalvoReload": 5
                 }
             }
         ]
