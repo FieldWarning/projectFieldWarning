@@ -51,10 +51,10 @@ namespace PFW
         private const float ROAD_WIDTH_MULT = 0.5f;
         private const float TREE_RADIUS = 18f * Constants.MAP_SCALE;
 
-        public const float BRIDGE_WIDTH = 3f * Constants.MAP_SCALE;
+        private const float _BRIDGE_WIDTH = 3f * Constants.MAP_SCALE;
         public const float BRIDGE_HEIGHT = 1.0f; // temporary
 
-        public const string HEIGHT_MAP_SUFFIX = "_map_terrain_cache.dat";
+        private const string _HEIGHT_MAP_SUFFIX = "_map_terrain_cache.dat";
         private readonly string _HEIGHT_MAP_PATH;
 
         public readonly Vector3 MapMin, MapMax, MapCenter;
@@ -73,7 +73,7 @@ namespace PFW
         private GameObject[] _bridges;
         private ERModularRoad[] _roads;
 
-        public int SceneBuildId;
+        private int _sceneBuildId;
 
         List<Vector3> _treePositions = new List<Vector3>();
         List<Vector3> _bridgePositions = new List<Vector3>();
@@ -83,7 +83,7 @@ namespace PFW
 
         public TerrainMap(Terrain[] terrains1D, int sceneBuildId)
         {
-            this.SceneBuildId = sceneBuildId;
+            _sceneBuildId = sceneBuildId;
             WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
             if (water != null)
             {
@@ -177,8 +177,6 @@ namespace PFW
                 AddMultithreadedRoutine(LoadRoadsRunner, "Loading roads.");
                 AddMultithreadedRoutine(LoadBridgesRunner, "Loading bridges.");
                 AddMultithreadedRoutine(ExportFinishedMapRunner, "Creating Compressed Map File");
-
-
             }
             else
             {
@@ -186,10 +184,8 @@ namespace PFW
                 AddMultithreadedRoutine(LoadCompressedMapRunner, "Reading Compressed Map Data");
             }
 
-
             // leave this commented out until we make a change and need to retest the map
             //_loader.AddWorker(MapTester);
-
         }
 
         private string GetTerrainMapCachePath()
@@ -197,7 +193,7 @@ namespace PFW
             string sceneName = SceneManager.GetActiveScene().name;
             string scenePathWithFilename = SceneManager.GetActiveScene().path;
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            return Path.Combine(sceneDirectory, sceneName + SceneBuildId + HEIGHT_MAP_SUFFIX);
+            return Path.Combine(sceneDirectory, sceneName + _sceneBuildId + _HEIGHT_MAP_SUFFIX);
         }
 
         private void ExportFinishedMapRunner()
@@ -465,10 +461,10 @@ namespace PFW
                     }
                 }
 
-                float boundaryWidth = BRIDGE_WIDTH + Pathfinder.STEP_SIZE;
+                float boundaryWidth = _BRIDGE_WIDTH + Pathfinder.STEP_SIZE;
                 Vector3 inset = (boundaryWidth + MAP_SPACING) * (end - start).normalized;
                 AssignRectanglarPatch(start + inset, end - inset, boundaryWidth, BUILDING);
-                AssignRectanglarPatch(start, end, BRIDGE_WIDTH, BRIDGE);
+                AssignRectanglarPatch(start, end, _BRIDGE_WIDTH, BRIDGE);
             }
         }
 

@@ -57,7 +57,10 @@ namespace PFW.Units.Component.Movement
         ///     A sampling of the terrain topology, 
         ///     used if generating from scratch.
         /// </param>
-        public PathfinderData(TerrainMap map, List<MobilityData> mobilityTypes)
+        public PathfinderData(
+                TerrainMap map, 
+                List<MobilityData> mobilityTypes, 
+                int sceneBuildId)
         {
             _map = map;
             _graph = new List<PathNode>();
@@ -66,7 +69,7 @@ namespace PFW.Units.Component.Movement
             string sceneName = SceneManager.GetActiveScene().name;
             string scenePathWithFilename = SceneManager.GetActiveScene().path;
             string sceneDirectory = Path.GetDirectoryName(scenePathWithFilename);
-            _graphFile = Path.Combine(sceneDirectory, sceneName + map.SceneBuildId + GRAPH_FILE_SUFFIX);
+            _graphFile = Path.Combine(sceneDirectory, sceneName + sceneBuildId + GRAPH_FILE_SUFFIX);
 
 
             // maybe turn this into a multithreaded worker later
