@@ -85,10 +85,10 @@ namespace PFW
             _sceneBuildId = sceneBuildId;
 
             // The water tag is only used for this
-            var water = GameObject.FindGameObjectWithTag("Water");
+            WaterMarker water = GameObject.FindObjectOfType<WaterMarker>();
             if (water != null)
             {
-                WATER_HEIGHT = water.transform.position.y;
+                WATER_HEIGHT = water.GetMaxChildHeight();
             }
             else
             {
