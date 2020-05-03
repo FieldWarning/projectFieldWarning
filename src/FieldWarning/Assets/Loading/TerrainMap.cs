@@ -17,7 +17,6 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityStandardAssets.Water;
 
 using EasyRoads3Dv3;
 
