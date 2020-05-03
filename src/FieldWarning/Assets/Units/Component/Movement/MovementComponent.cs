@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -27,7 +27,7 @@ namespace PFW.Units.Component.Movement
         public DataComponent Data { get; private set; }
         public Pathfinder Pathfinder { get; private set; }
 
-        public MobilityType Mobility;
+        public MobilityData Mobility;
 
         // Forward and right directions on the horizontal plane
         public Vector3 Forward { get; private set; }
@@ -44,8 +44,9 @@ namespace PFW.Units.Component.Movement
         public void InitializeGhost(TerrainMap map)
         {
             Data = gameObject.GetComponent<DataComponent>();
-            Mobility = MobilityType.MobilityTypes[Data.MobilityTypeIndex];
-            _moveStrategy = new VehicleMovementStrategy(Data, map, transform, Mobility);
+            Mobility = Data.MobilityData;
+            _moveStrategy = new VehicleMovementStrategy(
+                    Data, map, transform, Mobility);
         }
 
         public void Initialize()

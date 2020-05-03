@@ -21,6 +21,7 @@ using PFW.Model.Armory;
 using PFW.UI.Ingame.UnitLabel;
 using PFW.Units.Component.OrderQueue;
 using PFW.Networking;
+using UnityEngine.EventSystems;
 
 namespace PFW.Units
 {
@@ -34,13 +35,16 @@ namespace PFW.Units
         public List<UnitDispatcher> Units = new List<UnitDispatcher>();
         public bool IsInitialized = false;
 
-        public static readonly float UNIT_DISTANCE = 40 * TerrainConstants.MAP_SCALE;
+        public static readonly float UNIT_DISTANCE = 40 * Constants.MAP_SCALE;
 
         public PlayerData Owner { get; private set; }
 
         private WaypointOverlayBehavior _waypointOverlay;
 
         public OrderQueue OrderQueue { get; } = new OrderQueue();
+
+        private bool _pointerOnLabel = false;
+        private GameObject _mainCamera;
 
         public override bool OnSerialize(NetworkWriter writer, bool initialState)
         {
@@ -102,6 +106,18 @@ namespace PFW.Units
             transform.position = pos / Units.Count;
 
             OrderQueue.HandleUpdate();
+
+            if (_pointerOnLabel)
+            {
+                float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+                if (scroll != 0)
+                {
+                    _mainCamera.GetComponent<OrbitCameraBehaviour>().enabled = true;
+                    _mainCamera.GetComponent<SlidingCameraBehaviour>().enabled = false;
+                    OrbitCameraBehaviour.FollowObject = this.gameObject;
+                }
+            }
         }
 
         #region Lifetime logic + platoon splitting
@@ -201,6 +217,7 @@ namespace PFW.Units
             _platoonLabel.InitializeAsReal(unit, Owner.Team.ColorScheme, this);
             _waypointOverlay = OverlayFactory.Instance.CreateWaypointOverlay(this);
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
+            _mainCamera = Camera.main.gameObject;
         }
 
         /// <summary>
@@ -272,7 +289,10 @@ namespace PFW.Units
                 Units[i].Teleport(
                     positions[i], GhostPlatoon.FinalHeading - Mathf.PI / 2);
 
-            OrderMovement(GhostPlatoon.transform.position, GhostPlatoon.FinalHeading);
+            OrderMovement(
+                    GhostPlatoon.transform.position, 
+                    GhostPlatoon.FinalHeading, 
+                    MoveCommandType.FAST);
             GhostPlatoon.SetVisible(false);
 
             MatchSession.Current.RegisterPlatoonBirth(this);
@@ -360,6 +380,16 @@ namespace PFW.Units
             Units.ForEach(unit => unit.SetSelected(selected, justPreviewing));
 
             _waypointOverlay.gameObject.SetActive(selected);
+        }
+
+        public void PointerEnterEvent(BaseEventData baseEvent)
+        {
+            _pointerOnLabel = true;
+        }
+
+        public void PointerExitEvent(BaseEventData baseEvent)
+        {
+            _pointerOnLabel = false;
         }
 
         public void SetEnabled(bool enabled)

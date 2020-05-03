@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -26,7 +26,7 @@ namespace PFW.Units.Component.Movement
         /// Any object that the pathfinder is able to
         /// navigate around shall have at least this radius.
         /// </summary>
-        public const float STEP_SIZE = 12f * TerrainConstants.MAP_SCALE;
+        public const float STEP_SIZE = 12f * Constants.MAP_SCALE;
 
         /// <summary>
         /// Angular search increment for local path finding.
@@ -42,7 +42,7 @@ namespace PFW.Units.Component.Movement
         /// <summary>
         /// We want to get within this distance of any intermediate waypoints.
         /// </summary>
-        private const float COMPLETION_DIST = 30f * TerrainConstants.MAP_SCALE;
+        private const float COMPLETION_DIST = 30f * Constants.MAP_SCALE;
 
         /// <summary>
         /// Throttle the frequency of waypoint recalculation, for performance.
@@ -70,20 +70,34 @@ namespace PFW.Units.Component.Movement
             Data = data;
             _path = new List<PathNode>();
             FinalCompletionDist =
-                    2f * TerrainConstants.MAP_SCALE + unit.Data.MinTurnRadius;
+                    2f * Constants.MAP_SCALE + unit.Data.MinTurnRadius;
             _nextUpdateTime = 0f;
         }
 
-        // Generate and store the sequence of nodes leading to the destination using the global graph
-        // Returns the total normalized path time
-        // If no path was found, return 'forever' and set no destination
+        /// <summary>
+        /// Generate and store the sequence of nodes leading to the
+        /// destination using the global graph.
+        /// Returns the total normalized path time.
+        /// If no path was found, returns 'forever' and sets no destination.
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
         public float SetPath(Vector3 destination, MoveCommandType command)
         {
+            Logger.LogPathfinding(
+                    $"Pathfinder::SetPath() called, destination = {destination}, command = {command}",
+                    LogLevel.DEBUG);
+
             _previousNode = null;
             _nextUpdateTime = 0f;
 
             if (destination == NO_POSITION)
             {
+                Logger.LogPathfinding(
+                        $"Pathfinder::SetPath() for destination {destination} " +
+                        $"got no viable path.",
+                        LogLevel.DEBUG);
                 _path.Clear();
                 return FOREVER;
             }
@@ -94,12 +108,22 @@ namespace PFW.Units.Component.Movement
                     _path, _unit.transform.position, destination, _unit.Mobility, 0f, command);
             if (pathTime >= FOREVER)
                 _path.Clear();
+
+            Logger.LogPathfinding(
+                    $"Pathfinder::SetPath() for destination {destination}, " +
+                    $"command = {command} chose path with {_path.Count} " +
+                    $"waypoints and {pathTime} travel time.",
+                    LogLevel.DEBUG);
             return pathTime;
         }
 
-        // Gives the next step along the previously computed path
-        // For speed, this will only update the waypoint on some frames
-        // Returns 'NoPosition' if there is no destination or a step cannot be found
+        /// <summary>
+        /// Gives the next step along the previously computed path.
+        /// For speed, this will only update the waypoint on some frames.
+        /// Returns 'NoPosition' if there is no destination 
+        /// or a step cannot be found.
+        /// </summary>
+        /// <returns></returns>
         public Vector3 GetWaypoint()
         {
             if (!HasDestination())
@@ -220,7 +244,7 @@ namespace PFW.Units.Component.Movement
         public static float FindLocalPath(
             PathfinderData data,
             Vector3 start, Vector3 destination,
-            MobilityType mobility,
+            MobilityData mobility,
             float radius)
         {
             float distance = (destination - start).magnitude;
@@ -246,7 +270,7 @@ namespace PFW.Units.Component.Movement
         private static Vector3 TakeStep(
             PathfinderData data,
             Vector3 start, Vector3 destination,
-            MobilityType mobility,
+            MobilityData mobility,
             float radius)
         {
             Vector3 straight = (destination - start).normalized;

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using UnityEngine;
+using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Model.Armory
 {
@@ -23,23 +24,25 @@ namespace PFW.Model.Armory
     {
         public List<Unit>[] Categories;
 
-        public Deck(DeckConfig deckConfig)
+        public Deck(DeckConfig deckConfig, Armory armory)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
 
-            foreach (string categoryKey in Enum.GetNames(typeof(UnitCategory))) {
-                if (Regex.IsMatch(categoryKey, @"^_"))
-                    break;
+            for (int i = 0; i < (int)UnitCategory._SIZE; i++)
+            {
+                Categories[i] = new List<Unit>();
+            }
 
-                int i = (int) Enum.Parse(typeof(UnitCategory), categoryKey);
-                if (Categories[i] == null) Categories[i] = new List<Unit>();
-
-                foreach (string unitId in (List<string>) deckConfig[categoryKey]) {
-                    Unit unit = ConfigReader.FindUnit(unitId);
-                    unit.CategoryId = (byte) i;
-                    unit.Id = Categories[i].Count;
-                    Categories[i].Add(unit);
+            foreach (string unitId in deckConfig.UnitIds)
+            {
+                Unit unit;
+                bool exists = armory.Units.TryGetValue(unitId, out unit);
+                if (!exists)
+                {
+                    Debug.LogError($"deck refers to non-existent unit {unitId}");
                 }
+
+                Categories[unit.CategoryId].Add(unit);
             }
         }
 

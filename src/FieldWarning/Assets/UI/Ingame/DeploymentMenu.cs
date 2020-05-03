@@ -74,7 +74,7 @@ namespace PFW.UI.Ingame
         {
             Button[] allUnitCards = _unitCardsPanel.GetComponentsInChildren<Button>();
 
-            foreach (var c in allUnitCards)
+            foreach (Button c in allUnitCards)
                 Destroy(c.gameObject);
 
             List<Unit> allUnitsOfCat = _localPlayer.Data.Deck.ByCategory(cat);

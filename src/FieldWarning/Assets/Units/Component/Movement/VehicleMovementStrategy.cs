@@ -34,7 +34,7 @@ namespace PFW.Units.Component.Movement
         private readonly TerrainMap _terrainMap;
         public Pathfinder Pathfinder;
         private readonly Transform _transform;
-        private readonly MobilityType _mobility;
+        private readonly MobilityData _mobility;
 
 
         public Vector3 NextPosition;
@@ -42,7 +42,7 @@ namespace PFW.Units.Component.Movement
         public float FinalHeading;
 
         public VehicleMovementStrategy(
-                DataComponent data, TerrainMap map, Transform transform, MobilityType mobility)
+                DataComponent data, TerrainMap map, Transform transform, MobilityData mobility)
         {
             _data = data;
             _terrainMap = map;
@@ -52,6 +52,9 @@ namespace PFW.Units.Component.Movement
 
         public void PlanMovement()
         {
+            Logger.LogPathfinding(
+                    $"PlanMovement(): waypoint = {Pathfinder.GetWaypoint()}",
+                    LogLevel.DUMP);
             float distanceToWaypoint = 
                     Pathfinder.HasDestination() ? 
                             (Pathfinder.GetWaypoint() - NextPosition).magnitude : 0f;
@@ -284,7 +287,7 @@ namespace PFW.Units.Component.Movement
         }
 
         // Bounce off impassable terrain, hopefully back to somewhere the unit belongs
-        private const float BOUNCE_RADIUS = 4f * TerrainConstants.MAP_SCALE;
+        private const float BOUNCE_RADIUS = 4f * Constants.MAP_SCALE;
         private void Bounce()
         {
             Vector3 bounceDirection = Vector3.zero;

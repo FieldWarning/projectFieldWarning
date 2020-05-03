@@ -107,9 +107,9 @@ namespace PFW.Networking
             {
                 PlayerData owner = MatchSession.Current.Players[playerId];
                 if (categoryId < owner.Deck.Categories.Length
-                    && unitId < owner.Deck.Categories[categoryId].Count)
+                    && unitId < MatchSession.Current.Armory.Categories[categoryId].Count)
                 {
-                    Unit unit = owner.Deck.Categories[categoryId][unitId];
+                    Unit unit = MatchSession.Current.Armory.Categories[categoryId][unitId];
 
                     PlatoonBehaviour newPlatoon = PlatoonBehaviour.CreateGhostMode(unit, owner);
                     GhostPlatoonBehaviour ghostPlatoon = newPlatoon.GhostPlatoon;
