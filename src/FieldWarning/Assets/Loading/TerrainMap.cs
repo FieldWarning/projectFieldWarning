@@ -84,7 +84,9 @@ namespace PFW
         public TerrainMap(Terrain[] terrains1D, int sceneBuildId)
         {
             _sceneBuildId = sceneBuildId;
-            WaterBasic water = (WaterBasic)GameObject.FindObjectOfType(typeof(WaterBasic));
+            // Hack to find the height of water, TODO do this in a more stable
+            // way
+            var water = GameObject.Find("Water Mesh");
             if (water != null)
             {
                 WATER_HEIGHT = water.transform.position.y;
@@ -92,6 +94,8 @@ namespace PFW
             else
             {
                 WATER_HEIGHT = -1000;
+                Debug.LogWarning(
+                        "Could not find any water, is this really a fully dry map?");
             }
 
             // Find limits of the map
@@ -242,9 +246,7 @@ namespace PFW
                 SetPercentComplete(((double)x / (double)_map.GetLength(0)) * 100.0);
                 if ((int)GetPercentComplete() % 2 == 0)
                     yield return null;
-
             }
-
 
             Debug.Log("Done creating original test map.");
         }
@@ -472,7 +474,6 @@ namespace PFW
 
         public void ReloadTerrainData()
         {
-
             var waterFunc = LoadWater();
             while (waterFunc.MoveNext()) { }
 
