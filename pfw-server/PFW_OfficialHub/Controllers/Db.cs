@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using PFW_OfficialHub.Controllers;
 using Shared;
 
 namespace Database
@@ -45,6 +46,8 @@ namespace Database
         
         public static IMongoCollection<User> Users = Database.GetCollection<User>("Users");
         public static IMongoCollection<Player> OnlinePlayers = Database.GetCollection<Player>("Players");
+        public static IMongoCollection<WarchatMsg> Warchat = Database.GetCollection<WarchatMsg>("WarchatMessages");
+        public static IMongoCollection<PrivateMessage> Messages = Database.GetCollection<PrivateMessage>("PrivateMessages");
         public static void Init() => Console.WriteLine("Db Init");
     }
 }
