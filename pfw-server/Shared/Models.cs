@@ -1,3 +1,5 @@
+//#define 
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -18,7 +20,7 @@ namespace Shared
         public int Points { get; set; }
 
         /// <summary>
-        /// Per 10 second per player
+        /// Per 30 second per player
         /// </summary>
         public int Income { get; set; }
         
@@ -108,7 +110,7 @@ namespace Shared
 
         public DateTime LastOnline { get; set; }
         public string CurrentLobbyId { get; set; }
-        public string DisplayName { get; set; }
+        public string Username { get; set; }
         public string UserId { get; set; }
         public string CurrentEndpoint { get; set; }
     }

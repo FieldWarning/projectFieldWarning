@@ -12,3 +12,5 @@ C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\bin\Deb
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\bin\Debug\net48\System.Runtime.CompilerServices.Unsafe.dll
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\obj\Debug\net48\Telepathy.csproj.CopyComplete
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\bin\Debug\net48\System.ServiceModel.Primitives.dll
+C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\bin\Debug\net48\Newtonsoft.Json.dll
+C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\obj\Debug\net48\Telepathy.csproj.CoreCompileInputs.cache

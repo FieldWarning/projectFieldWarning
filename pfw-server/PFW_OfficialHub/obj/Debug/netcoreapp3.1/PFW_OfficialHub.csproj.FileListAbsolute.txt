@@ -52,3 +52,4 @@ C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\PFW_OfficialHub\b
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\PFW_OfficialHub\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\PFW_OfficialHub\bin\Debug\netcoreapp3.1\System.ServiceModel.Primitives.dll
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\PFW_OfficialHub\bin\Debug\netcoreapp3.1\System.ServiceModel.dll
+C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\PFW_OfficialHub\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
