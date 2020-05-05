@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PFW_OfficialHub.Controllers;
-
 namespace PFW_OfficialHub
 {
     public class Program
@@ -25,4 +24,12 @@ namespace PFW_OfficialHub
                     webBuilder.UseStartup<Startup>();
                 });
     }
+
+    public static class Configuration
+    {
+        static List<WarchatMsg> Messages = new List<WarchatMsg>();
+        
+        //SynchronizedCollection<PrivateMessage> Pms = new SynchronizedCollection<PrivateMessage>();
+    }
+
 }

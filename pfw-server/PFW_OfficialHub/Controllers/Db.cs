@@ -21,11 +21,20 @@ namespace Database
 
             while (!File.Exists(path))
             {
-                Console.WriteLine("Db connection string file not found, add path to file (will crash if no file): ");
+                Console.Write("Db connection string file not found, add path to file (will crash if no file): ");
                 path = Console.ReadLine();
             }
-            Console.WriteLine("Found db file in => "+path);
-            string conStr = File.ReadAllText(path);
+
+            try
+            {
+                string conStr = File.ReadAllText(path);
+                Console.WriteLine("Found db file in => " + path);
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
             Task.Run(delegate {
                 while (true) {
@@ -33,6 +42,7 @@ namespace Database
                     OnlinePlayers.DeleteManyAsync(x => x.LastOnline < DateTime.UtcNow - TimeSpan.FromSeconds(15));
                 }
             });
+
         }
 
 

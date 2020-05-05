@@ -43,11 +43,30 @@
       "frameworks": {
         "netstandard2.0": {
           "dependencies": {
+<<<<<<< HEAD:pfw-server/Ez/obj/Ez.csproj.nuget.dgspec.json
+=======
+            "Microsoft.Extensions.Primitives": {
+              "target": "Package",
+              "version": "[3.1.3, )"
+            },
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.10.3, )"
+            },
+>>>>>>> working on Ez funcs:pfw-server/Shared/obj/Shared.csproj.nuget.dgspec.json
             "NETStandard.Library": {
               "suppressParent": "All",
               "target": "Package",
               "version": "[2.0.3, )",
               "autoReferenced": true
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            },
+            "System.ServiceModel.Primitives": {
+              "target": "Package",
+              "version": "[4.7.0, )"
             }
           },
           "imports": [

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using Newtonsoft.Json;
+using Shared;
 
 namespace Ez
 {
@@ -17,10 +20,49 @@ namespace Ez
         };
         //meta
 
-        /// <summary>
-        /// Gets disposed on app exit
-        /// </summary>
-        public static HttpClient Client = new HttpClient();
+
+        public static class Session
+        {
+            static Session()
+            {
+
+            }
+
+            public static Player Self = new Player();
+            public static User User = new User();
+            public static Jwt Token = new Jwt();
+
+            public static void Login(string username, string password)
+            {
+
+            }
+
+            public static void Logout()
+            {
+
+            }
+        }
+        public static class Lobbies
+        {
+            static Lobbies()
+            {
+                Task.Run(() => GetLobbies());
+
+            }
+
+            public static GameLobby CurrentLobby = new GameLobby();
+            public static LobbySearchFilter Filter = new LobbySearchFilter();
+            public static LockList<GameLobby> FindResult = new LockList<GameLobby>();
+
+            public static void GetLobbies()
+            {
+                var lobbies = Post(new Dictionary<string, string>{
+                    {"jwt", JsonConvert.SerializeObject(Session.Token) },
+                    {"filter", JsonConvert.SerializeObject(Filter) }
+                }, "servers/getall");
+            }
+
+        }
         public static class Auth
         {
             public static bool Authed = false;
@@ -44,6 +86,10 @@ namespace Ez
 
 
 
+        /// <summary>
+        /// Gets disposed on app exit
+        /// </summary>
+        public static HttpClient Client = new HttpClient();
         public static string Post(Dictionary<string, string> form, string url)
         {
             string ret;
