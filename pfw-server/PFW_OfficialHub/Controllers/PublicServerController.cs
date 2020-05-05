@@ -17,7 +17,7 @@ namespace PFW_OfficialHub.Controllers
     public class PublicServerController : ControllerBase
     {
         [HttpPost("getall")]
-        public ActionResult<string> GetAll(Jwt jwt, LobbySearchFilter filter)
+        public ActionResult<string> GetAll([FromForm]Jwt jwt, [FromForm]LobbySearchFilter filter)
         {
             //discover servers async
             var servers = Db.GameLobbies.Find(x =>
@@ -35,28 +35,28 @@ namespace PFW_OfficialHub.Controllers
         }
 
         [HttpPost("getinfo/{serverId}")]
-        public ActionResult<string> GetAll(Jwt jwt, string serverId)
+        public ActionResult<string> Single([FromForm]Jwt jwt, string serverId)
         {
             //verify token sync
             if (!jwt.Verify()) return BadRequest(412);
             var srv = Db.GameLobbies.Find(x => x.Id == serverId).FirstOrDefault();
             return JsonConvert.SerializeObject(srv);
         }
-        [HttpPost("connect/{serverId}")]
-        public ActionResult<string> Connect(string serverId)
+        [HttpPost("join/{serverId}")]
+        public ActionResult<string> Connect([FromForm]Jwt jwt, string serverId)
         {
 
-            return "";
+            return "200";
         }
         [HttpPost("leave/{serverId}")]
-        public ActionResult<string> Leave(string serverId)
+        public ActionResult<string> Leave([FromForm]Jwt jwt, string serverId)
         {
 
             return "";
         }
 
-        [HttpPost("votekick/{playerId}/{serverId}/{time}")]
-        public ActionResult<string> VoteKick(string playerId, string serverId, int time)
+        [HttpPost("votekick/{playerId}/{serverId}")]
+        public ActionResult<string> VoteKick([FromForm]Jwt jwt, string playerId, string serverId)
         {
 
             return "";

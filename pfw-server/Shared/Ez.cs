@@ -52,16 +52,33 @@ namespace Ez
 
             public static GameLobby CurrentLobby = new GameLobby();
             public static LobbySearchFilter Filter = new LobbySearchFilter();
-            public static LockList<GameLobby> FindResult = new LockList<GameLobby>();
+            public static List<GameLobby> FindResult = new List<GameLobby>();
 
             public static void GetLobbies()
             {
-                var lobbies = Post(new Dictionary<string, string>{
+                var pres = Post(new Dictionary<string, string>{
                     {"jwt", JsonConvert.SerializeObject(Session.Token) },
                     {"filter", JsonConvert.SerializeObject(Filter) }
                 }, "servers/getall");
+                FindResult = JsonConvert.DeserializeObject<List<GameLobby>>(pres);
             }
+            //public static bool JoinLobby(string id)
+            //{
+            //    var pres = Post(new Dictionary<string, string>(), $"server/join/{id}");
+            //    if (pres == "200") CurrentLobby = GetLobbyById(id);
+            //}
 
+
+
+            static GameLobby GetLobbyById(string id)
+            {
+                //var pres = Post(new Dictionary<string, string>
+                //{
+                //    {"jwt", JsonConvert.SerializeObject(Session.Token) }
+                //}, )
+
+                    return new GameLobby();
+            }
         }
         public static class Auth
         {
