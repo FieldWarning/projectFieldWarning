@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -52,6 +53,23 @@ namespace Shared
 
         }
     }
+
+    /// <summary>
+    /// Filter for searching in lobbies
+    /// </summary>
+    public class LobbySearchFilter
+    {
+        /// <summary>
+        /// Add all game modes by default
+        /// </summary>
+        public LobbySearchFilter() { foreach (var value in Enum.GetNames(typeof(GameMode))) GameModes.Add((GameMode)Enum.Parse(typeof(GameMode), value)); }
+
+        public string NameContains = string.Empty;
+        public List<GameMode> GameModes = new List<GameMode>();
+        public bool HasPassword = false;
+        public bool RunningGames = false;
+    }
+
 
     /// <summary>
     /// This is not to be used unless work on game modes have started 
