@@ -23,5 +23,19 @@ namespace PFW_OfficialHub.Lib
         {
             return Db.Users.Find(x=> x.Username == jwt.Username).FirstOrDefault();
         }
+
+    }
+
+    public static class ClientIterop
+    {
+        static void PushLobbyCommand(LobbyCommand command, string endpoint)
+        {
+
+        }
+
+        static void PushSocialCommand(SocialCommands command, string endpoint)
+        {
+
+        }
     }
 }

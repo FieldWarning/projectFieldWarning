@@ -63,6 +63,18 @@ namespace PFW_OfficialHub.Controllers
         }
     }
 
+    [Route("player")]
+    [ApiController]
+    public class PlayerController : ControllerBase
+    {
+        [HttpPost("friend")]
+        public ActionResult<string> AddFriend()
+        {
+            return "";
+        }
+    }
+
+
     [Route("status")]
     [ApiController]
     public class StatusController : ControllerBase
