@@ -15,7 +15,7 @@ namespace Shared
 
     }
 
-    public enum SocialCommands
+    public enum SocialCommand
     {
         FriendRequest,
         BlockNotify,
