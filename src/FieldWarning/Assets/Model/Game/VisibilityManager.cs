@@ -25,7 +25,7 @@ public class VisibilityManager : MonoBehaviour
     private static readonly float MAP_SIZE = 1000;
     private static readonly float MAX_VIEW_DISTANCE = 50;
     // private static readonly int REGIONS_COUNT = Mathf.CeilToInt(MAP_SIZE / MAX_VIEW_DISTANCE);
-   public static readonly float MIN_VIEW_DISTANCE = 10;
+    public static readonly float MIN_VIEW_DISTANCE = 10;
 
     private void Update()
     {
@@ -79,7 +79,6 @@ public class VisibilityManager : MonoBehaviour
 }
 
 
-
 public struct Point
 {
     public int x;
@@ -112,11 +111,6 @@ public struct Point
         return x == point.x &&
                y == point.y;
     }
-   
-
-
-
-
 
     public override int GetHashCode()
     {
@@ -125,6 +119,5 @@ public struct Point
         hashCode = hashCode * -1521134295 + y.GetHashCode();
         return hashCode;
     }
-    
 }
  
