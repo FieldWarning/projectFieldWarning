@@ -33,7 +33,7 @@ namespace PFW_OfficialHub.Lib
 
         }
 
-        static void PushSocialCommand(SocialCommands command, string endpoint)
+        static void PushSocialCommand(SocialCommand command, string endpoint)
         {
 
         }
