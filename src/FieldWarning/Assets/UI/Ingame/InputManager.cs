@@ -53,13 +53,11 @@ namespace PFW.UI.Ingame
 
         private MatchSession _session;
         public MatchSession Session {
-            get {
-                return _session;
-            }
-
             set {
                 if (_session == null)
+                {
                     _session = value;
+                }
             }
         }
 
@@ -67,9 +65,11 @@ namespace PFW.UI.Ingame
         public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
                 _selectionManager.PlatoonLabelClicked(platoon);
 
-        private PlayerData _localPlayer {
-            get {
-                return Session.LocalPlayer.Data;
+        private PlayerData _localPlayer;
+        public PlayerData LocalPlayer {
+            set {
+                _localPlayer = value;
+                _selectionManager.LocalPlayer = value;
             }
         }
 
@@ -186,7 +186,6 @@ namespace PFW.UI.Ingame
         ///     Purchase units if there is a buy selection.
         /// </summary>
         /// <param name="closestSpawn"></param>
-
         private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
             if (Input.GetMouseButtonUp(0)) 
@@ -223,7 +222,7 @@ namespace PFW.UI.Ingame
                 }
 
                 int unitPrice = _currentBuyTransaction.Unit.Price;
-                Session.LocalPlayer.Refund(
+                _session.LocalPlayer.Refund(
                         unitPrice * _currentBuyTransaction.UnitCount);
 
                 ExitPurchasingMode();
@@ -288,7 +287,7 @@ namespace PFW.UI.Ingame
         /// <param name="unit"></param>
         public void BuyCallback(Unit unit)
         {
-            bool paid = Session.LocalPlayer.TryPay(unit.Price);
+            bool paid = _session.LocalPlayer.TryPay(unit.Price);
             if (!paid)
                 return;
 
@@ -335,7 +334,7 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
-            if (!_session.isChatFocused) 
+            if (!_session.IsChatFocused) 
             {
                 if (Commands.Unload) 
                 {

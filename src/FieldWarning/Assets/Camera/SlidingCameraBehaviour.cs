@@ -154,7 +154,7 @@ namespace PFW
         private void Update()
         {
             // Camera panning:
-            if (!_session.isChatFocused)
+            if (!_session.IsChatFocused)
             {
                 _translateX += Input.GetAxis("Horizontal") * GetScaledPanSpeed();
                 _translateZ += Input.GetAxis("Vertical") * GetScaledPanSpeed();

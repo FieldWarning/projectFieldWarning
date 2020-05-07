@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -81,10 +81,13 @@ namespace PFW.UI.Ingame
 
         private void Update()
         {
-            if (_messagesVisibleRemaining <= 0) {
+            if (_messagesVisibleRemaining <= 0) 
+            {
                 _messagesText.gameObject.SetActive(false);
                 _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
-            } else if (!_session.isChatFocused) {
+            } 
+            else if (!_session.IsChatFocused) 
+            {
                 _messagesVisibleRemaining -= Time.deltaTime;
             }
 
@@ -99,10 +102,10 @@ namespace PFW.UI.Ingame
                         string newMessage = user + _inputField.text + "\n";
                         _connection.CmdUpdateChat(newMessage);
                     }
-                    _session.isChatFocused = false;
+                    _session.IsChatFocused = false;
                 } else {
                     // activated chat
-                    _session.isChatFocused = true;
+                    _session.IsChatFocused = true;
                     _messagesText.gameObject.SetActive(true);
                     _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
                 }
