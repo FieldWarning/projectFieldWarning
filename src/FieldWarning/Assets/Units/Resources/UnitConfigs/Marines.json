@@ -30,11 +30,11 @@
     },
 
     "Mobility": {
-        "SlopeSensitivity": 2,
-        "DirectionalSlopeSensitivity": 0.6,
-        "PlainSpeed": 0.4,
-        "ForestSpeed": 0.2,
-        "WaterSpeed": 0
+        "SlopeSensitivity": 1,
+        "DirectionalSlopeSensitivity": 1,
+        "PlainSpeed": 1,
+        "ForestSpeed": 0.6,
+        "WaterSpeed": 0.2
     },
     
     "Turrets": [{
@@ -54,7 +54,7 @@
                 "ArcDown": 90,
                 "RotationRate": 180,
                 "Cannon": {
-                    "Damage": .2,
+                    "Damage": 1,
                     "FireRange" : 500,
                     "Accuracy": 40,
                     "ShotReload": 0.1,
@@ -71,12 +71,12 @@
                 "ArcDown": 90,
                 "RotationRate": 180,
                 "Cannon": {
-                    "Damage": 16,
-                    "FireRange" : 800,
+                    "Damage": 1,
+                    "FireRange" : 600,
                     "Accuracy": 60,
-                    "ShotReload": 13,
-                    "SalvoLength": 1,
-                    "SalvoReload": 13
+                    "ShotReload": 1,
+                    "SalvoLength": 15,
+                    "SalvoReload": 1
                 }
             }
         ]
