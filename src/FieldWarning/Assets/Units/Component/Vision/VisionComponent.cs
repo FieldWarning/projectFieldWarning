@@ -15,12 +15,24 @@ using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
-using PFW.Units.Component.Movement;
 
 namespace PFW.Units.Component.Vision
 {
     public class VisionComponent : MonoBehaviour
     {
+        /// <summary>
+        /// Itold has advised us to put building colliders
+        /// slightly above ground. Benefits unclear.
+        /// 
+        /// This means that a raycast between two units can miss
+        /// a building by going under the collider.
+        /// 
+        /// Until we understand the consequences of lowering the colliders,
+        /// or until we do our raycasts from a vision port higher on the
+        /// unit, we will need to artificially elevate our raycasts.
+        /// </summary>
+        const float RAYCAST_WORKAROUND = 0.05f;
+
         // TODO: Add these values to YAML / UnitConfig schema
         [SerializeField]
         private float max_spot_range = 800f;
@@ -53,8 +65,10 @@ namespace PFW.Units.Component.Vision
             _unit = dispatcher;
         }
 
-        // Alert all nearby enemy units that they may have to show themselves.
-        // Only works if they have colliders!
+        /// <summary>
+        /// Notify all nearby enemy units that they may have to show themselves.
+        /// Only works if they have colliders!
+        /// </summary>
         public void ScanForEnemies()
         {
             Collider[] hits = Physics.OverlapSphere(
@@ -78,23 +92,32 @@ namespace PFW.Units.Component.Vision
             }
         }
 
-        // Check if there are any enemies that can detect this unit
-        // and make it invisible if not.
+        /// <summary>
+        /// Check if there are any enemies that can detect this unit
+        /// and make it invisible if not.
+        /// </summary>
         public void MaybeHideFromEnemies()
         {
             if (!IsVisible)
                 return;
+            
+            _spotters.RemoveWhere(
+                s => s == null 
+                || !s.CanDetect(this) 
+                || ObstacleInLineOfSight(s, this));
 
-            _spotters.RemoveWhere(s => s == null || !s.CanDetect(this));
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
         }
 
-        // It is the responsibility of the defender to
-        // reveal themselves if necessary. This is done here.
+        /// <summary>
+        /// It is the responsibility of the defender to
+        /// reveal themselves if necessary. This is done here.
+        /// </summary>
+        /// <param name="spotter"></param>
         private void MaybeReveal(VisionComponent spotter)
         {
-            if (spotter.CanDetect(this)) {
+            if (spotter.CanDetect(this) && !ObstacleInLineOfSight(spotter, this)) {
                 if (_spotters.Count == 0) {
                     ToggleUnitVisibility(true);
                 }
@@ -111,8 +134,32 @@ namespace PFW.Units.Component.Vision
             return
                 distance < max_spot_range
                 && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
+                
         }
+        private bool ObstacleInLineOfSight(VisionComponent spotter, VisionComponent target)
+        {
+            int layerMask = 1 << LayerMask.NameToLayer("HardLosBlock");
+            Vector3 SpotterPosition = spotter.gameObject.transform.position;
+            SpotterPosition.y += RAYCAST_WORKAROUND;
+            Vector3 TargetPosition = target.gameObject.transform.position;
+            TargetPosition.y += RAYCAST_WORKAROUND;
+            Vector3 TargetDirection = TargetPosition - SpotterPosition;
+            Vector3 NormalizedDirection = TargetDirection.normalized;
+            float DistanceToTarget = Vector3.Distance(SpotterPosition, TargetPosition);
 
+            if (Physics.Raycast(SpotterPosition, TargetDirection, DistanceToTarget, layerMask))
+            {
+                Debug.DrawRay(SpotterPosition, NormalizedDirection * DistanceToTarget, Color.red);
+               
+                return true;
+            }
+            else
+            {
+                Debug.DrawRay(SpotterPosition, NormalizedDirection * DistanceToTarget, Color.yellow);
+                         
+                return false;
+            }
+        }
         public void ToggleUnitVisibility(bool revealUnit)
         {
             IsVisible = revealUnit;
@@ -121,20 +168,26 @@ namespace PFW.Units.Component.Vision
             MaybeTogglePlatoonVisibility();
         }
 
-        // If all units are invisible, make the platoon invisible. 
+        /// <summary>
+        /// If all units are invisible, make the platoon invisible. 
+        /// </summary>
         private void MaybeTogglePlatoonVisibility()
         {
             PlatoonBehaviour platoon = _unit.Platoon;
+
             bool visible = !platoon.Units.TrueForAll(
-                            u => !u.VisionComponent.IsVisible);
-            ToggleAllRenderers(platoon.gameObject, visible);
+                          u => !u.VisionComponent.IsVisible);
+
+            platoon.ToggleLabelVisibility(visible);
         }
 
+       
         private void ToggleAllRenderers(GameObject o, bool visible)
         {
             Renderer[] allRenderers = o.GetComponentsInChildren<Renderer>();
             foreach (Renderer childRenderer in allRenderers)
                 childRenderer.enabled = visible;
         }
+
     }
 }

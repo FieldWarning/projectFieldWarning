@@ -14,11 +14,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
 using PFW.Model.Armory.JsonContents;
-using PFW.Model.Game;
-using PFW.Units.Component.Weapon;
 using static PFW.Util;
 
 namespace PFW.Units.Component.Weapon
