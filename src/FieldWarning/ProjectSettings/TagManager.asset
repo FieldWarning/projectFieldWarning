@@ -22,8 +22,8 @@ TagManager:
   - MiniMap
   - PostProcessing
   - OnTop
-  - 
-  - 
+  - HardLosBlock
+  - SoftLosBlock
   - 
   - 
   - 

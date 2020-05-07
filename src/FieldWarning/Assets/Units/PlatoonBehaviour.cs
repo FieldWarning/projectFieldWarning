@@ -404,6 +404,16 @@ namespace PFW.Units
             OrderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
         }
 
+        /// <summary>
+        /// Make the platoon (in)visible (assuming the
+        /// units are also (in)visible).
+        /// </summary>
+        /// <param name="visible"></param>
+        public void ToggleLabelVisibility(bool visible)
+        {
+            _platoonLabel.gameObject.SetActive(visible);
+        }
+
         #region Movement
 
         [ClientRpc]
