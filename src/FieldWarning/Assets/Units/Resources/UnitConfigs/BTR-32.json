@@ -1,0 +1,67 @@
+{
+    "$schema": "../UnitConfigSchema.json",
+
+    "ID": "Unit__TNK--BTR-32",
+    "CategoryKey": "TNK",
+    "Name": "BTR-32",
+    "Price": 15,
+    "PrefabPath": "GroundUnit",
+    "ArtPrefabPath": "BTR-32/BTR-32 APC",
+	"ArmoryImage": "Armory Images/BTR-32 APC",
+
+    "Data": {
+        "MovementSpeed": 40,
+        "ReverseSpeed": 12.5,
+        "AccelRate": 11.5,
+        "MaxRotationSpeed": 40,
+        "MinTurnRadius": 0,
+        "MaxLateralAccel": 15,
+        "Suspension": 0.01,
+        "MaxHealth": 7.5,
+        "Length": 12,
+        "Width": 7
+    },
+    
+    "Armor": {
+        "FrontArmor": 0,
+        "SideArmor": 0,
+        "RearArmor": 0,
+        "TopArmor": 0
+    },
+
+    "Mobility": {
+        "SlopeSensitivity": 2,
+        "DirectionalSlopeSensitivity": 0.6,
+        "PlainSpeed": 0.4,
+        "ForestSpeed": 0.2,
+        "WaterSpeed": 0
+    },
+    
+    "Turrets": [{
+        "TurretRef": "APC",
+        "MountRef": "hull",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "HMG",
+                "MountRef": "APC",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "Damage": 4,
+                    "FireRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8
+                }
+            }
+        ]
+    }]
+}
