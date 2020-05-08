@@ -7,7 +7,7 @@
     "Price": 15,
     "PrefabPath": "GroundUnit",
     "ArtPrefabPath": "BTR-32/BTR-32 APC",
-	"ArmoryImage": "Bloodhound",
+	"ArmoryImage": "Armory Images/BTR-32 APC",
 
     "Data": {
         "MovementSpeed": 40,
