@@ -6,7 +6,7 @@
     "Name": "BTR-32",
     "Price": 15,
     "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "BTR-32/BTR-32",
+    "ArtPrefabPath": "BTR-32/BTR-32 APC",
 	"ArmoryImage": "Bloodhound",
 
     "Data": {
@@ -38,7 +38,7 @@
     },
     
     "Turrets": [{
-        "TurretRef": "mg",
+        "TurretRef": "APC",
         "MountRef": "BTR-32",
         "ArcHorizontal": 180,
         "ArcUp": 0,
@@ -47,8 +47,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "mg",
-                "MountRef": "mg",
+                "TurretRef": "HMG",
+                "MountRef": "APC",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
