@@ -39,7 +39,7 @@
     
     "Turrets": [{
         "TurretRef": "APC",
-        "MountRef": "BTR-32",
+        "MountRef": "hull",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
