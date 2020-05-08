@@ -3,19 +3,19 @@
 
 	"ID": "Unit__HEL--AH-64D",
 	"CategoryKey": "HEL",
-	"Name": "AH64D Apache",
+	"Name": "MH-66 DAP",
 	"Price": 20,
     "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
+    "ArtPrefabPath": "MH-66 DAP/MH-66",
 	"ArmoryImage": "Bloodhound",
 
 	"Data": {
-			"MovementSpeed": 500,
-			"ReverseSpeed": 15,
-			"AccelRate": 13,
+			"MovementSpeed": 250,
+			"ReverseSpeed": 180,
+			"AccelRate": 60,
 			"MaxRotationSpeed": 50,
-			"MinTurnRadius": 0,
-			"MaxLateralAccel": 15,
+			"MinTurnRadius": 10,
+			"MaxLateralAccel": 100,
 			"Suspension": 0.01,
 			"MaxHealth": 10,
 			"Length": 12,
@@ -23,23 +23,23 @@
 	},
     
     "Armor": {
-        "FrontArmor": 0,
-        "SideArmor": 0,
-        "RearArmor": 0,
+        "FrontArmor": 1,
+        "SideArmor": 1,
+        "RearArmor": 1,
         "TopArmor": 0
     },
 
     "Mobility": {
-        "SlopeSensitivity": 2,
-        "DirectionalSlopeSensitivity": 0.6,
-        "PlainSpeed": 0.4,
-        "ForestSpeed": 0.2,
-        "WaterSpeed": 0
+        "SlopeSensitivity": 0,
+        "DirectionalSlopeSensitivity": 0,
+        "PlainSpeed": 1,
+        "ForestSpeed": 1,
+        "WaterSpeed": 1
     },
     
     "Turrets": [{
-        "TurretRef": "IFV",
-        "MountRef": "Bloodhound",
+        "TurretRef": "Body",
+        "MountRef": "Body",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -47,35 +47,35 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "MG",
-                "MountRef": "IFV",
-                "ArcHorizontal": 3,
-                "ArcUp": 40,
-                "ArcDown": 20,
+                "TurretRef": "Pylons",
+                "MountRef": "Body",
+                "ArcHorizontal": 10,
+                "ArcUp": 10,
+                "ArcDown": 90,
                 "RotationRate": 40,
                 "Cannon": {
                     "Damage": 4,
-                    "FireRange" : 20,
-                    "Accuracy": 40,
-                    "ShotReload": 0.5,
-                    "SalvoLength": 10,
-                    "SalvoReload": 8
+                    "FireRange" : 800,
+                    "Accuracy": 3,
+                    "ShotReload": 0.1,
+                    "SalvoLength": 40,
+                    "SalvoReload": 6
                 }
             },
             {
                 "Priority": 2,
-                "TurretRef": "Autocannon",
-                "MountRef": "IFV",
-                "ArcHorizontal": 0,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
+                "TurretRef": "Minigun",
+                "MountRef": "Body",
+                "ArcHorizontal": 280,
+                "ArcUp": 90,
+                "ArcDown": 90,
+                "RotationRate": 360,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 200,
-                    "Accuracy": 30,
-                    "ShotReload": 8,
-                    "SalvoLength": 1,
+                    "Damage": 1,
+                    "FireRange" : 800,
+                    "Accuracy": 20,
+                    "ShotReload": 0.03,
+                    "SalvoLength": 200,
                     "SalvoReload": 8
                 }
             }

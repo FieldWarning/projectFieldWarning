@@ -7,7 +7,7 @@
 	"Price": 20,
     "PrefabPath": "GroundUnit",
     "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Anime",
+	"ArmoryImage": "Marines",
 
 	"Data": {
 			"MovementSpeed": 20,
@@ -74,9 +74,9 @@
                     "Damage": 1,
                     "FireRange" : 600,
                     "Accuracy": 60,
-                    "ShotReload": 1,
+                    "ShotReload": 0.2,
                     "SalvoLength": 15,
-                    "SalvoReload": 1
+                    "SalvoReload": 6
                 }
             }
         ]
