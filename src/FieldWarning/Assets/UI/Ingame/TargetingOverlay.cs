@@ -36,7 +36,7 @@ namespace PFW.UI.Ingame.UnitLabel
             bool losOk = _unit.VisionComponent.IsInLineOfSight(
                     targetPosition, out Vector3 farthestVisiblePoint);
 
-            int fireRange = _unit.MaxRange();
+            float fireRange = _unit.MaxRange();
             float visionBlockerDistance = Vector3.Distance(
                 _unit.transform.position, farthestVisiblePoint);
             if (fireRange > visionBlockerDistance)

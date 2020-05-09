@@ -34,7 +34,7 @@ namespace PFW.Units.Component.Weapon
     {
         // targetingStrategy
         private IWeapon _weapon; // weapon turret
-        private int _fireRange; // weapon turret, in unity units
+        private float _fireRange; // weapon turret, in unity units
 
         /// <summary>
         /// The explicit target is one set by player input,
@@ -115,8 +115,8 @@ namespace PFW.Units.Component.Weapon
                             _gunSoundResource,
                             _turret,
                             SHOT_VOLUME);
-                    _fireRange = (int)(
-                            turretConfig.Howitzer.FireRange * Constants.MAP_SCALE);
+                    _fireRange =
+                            turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
                 }
                 else if (turretConfig.Cannon.FireRange != 0)
                 {
@@ -130,8 +130,8 @@ namespace PFW.Units.Component.Weapon
                             _gunSoundResource,
                             muzzleFlashGO.GetComponent<ParticleSystem>(),
                             SHOT_VOLUME);
-                    _fireRange = (int)(
-                            turretConfig.Cannon.FireRange * Constants.MAP_SCALE);
+                    _fireRange =
+                            turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
                 }
                 else
                 {
@@ -315,12 +315,12 @@ namespace PFW.Units.Component.Weapon
         /// 
         /// <param name="target"></param>
         /// <returns></returns>
-        public int MaxRange(TargetTuple target)
+        public float MaxRange(TargetTuple target)
         { 
-            int maxRange = _fireRange;
+            float maxRange = _fireRange;
             foreach (Turret turret in Children)
             {
-                int turretMax = turret.MaxRange(target);
+                float turretMax = turret.MaxRange(target);
                 maxRange = maxRange > turretMax ? maxRange : turretMax;
             }
             return maxRange;

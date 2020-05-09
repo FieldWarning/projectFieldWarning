@@ -200,6 +200,6 @@ namespace PFW.Units
             _targetingOverlay.gameObject.SetActive(enabled);
         }
 
-        public int MaxRange() => _turretSystem.MaxRange();
+        public float MaxRange() => _turretSystem.MaxRange();
     }
 }
