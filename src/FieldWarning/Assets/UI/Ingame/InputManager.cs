@@ -73,6 +73,9 @@ namespace PFW.UI.Ingame
             }
         }
 
+        GameObject _rangeTooltip;
+        TMPro.TextMeshProUGUI _rangeTooltipText;
+
         private void Awake()
         {
             _selectionManager = new SelectionManager();
@@ -90,6 +93,16 @@ namespace PFW.UI.Ingame
                 throw new Exception("No primed reticle specified!");
 
             _rightClickManager = new ClickManager(1, MoveGhostsToMouse, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
+
+            _rangeTooltip = GameObject.Find("RangeTooltip");
+            _rangeTooltipText = 
+                    _rangeTooltip.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            if (_rangeTooltipText == null)
+            {
+                throw new Exception(
+                    "There should be a range tooltip in the HUD hierarchy!");
+            }
+            _rangeTooltip.SetActive(false);
         }
 
         private void Update()
@@ -99,23 +112,43 @@ namespace PFW.UI.Ingame
             switch (CurMouseMode) {
 
             case MouseMode.PURCHASING:
-
+            {
                 RaycastHit hit;
-                if (Util.GetTerrainClickLocation(out hit)) {
+                if (Util.GetTerrainClickLocation(out hit))
+                {
                     ShowGhostUnitsAndMaybePurchase(hit);
                 }
 
                 MaybeExitPurchasingModeAndRefund();
                 break;
-
+            }
             case MouseMode.NORMAL:
                 ApplyHotkeys();
                 _rightClickManager.Update();
                 break;
 
             case MouseMode.FIRE_POS:
+            {
                 ApplyHotkeys();
 
+                // Show range and line of sight indicators
+                RaycastHit hit;
+                if (Util.GetTerrainClickLocation(out hit))
+                {
+                    _selectionManager.ToggleTargetingPreview(true);
+                    int minDistance = _selectionManager.PlaceTargetingPreview(
+                            hit.point);
+                    _rangeTooltipText.text = minDistance.ToString() + "m";
+                    _rangeTooltip.SetActive(true);
+                    _rangeTooltip.transform.position = Input.mousePosition;
+                }
+                else 
+                {
+                    _selectionManager.ToggleTargetingPreview(false);
+                    _rangeTooltip.SetActive(false);
+                }
+
+                // React to clicks
                 if (Input.GetMouseButtonDown(0))
                     _selectionManager.DispatchFirePosCommand();
 
@@ -124,7 +157,7 @@ namespace PFW.UI.Ingame
                     EnterNormalMode();
 
                 break;
-
+            }
             case MouseMode.REVERSE_MOVE:
                 ApplyHotkeys();
                 if (Input.GetMouseButtonDown(0)) {
@@ -374,24 +407,32 @@ namespace PFW.UI.Ingame
         {
             CurMouseMode = MouseMode.NORMAL;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
         }
 
         private void EnterFastMoveMode()
         {
             CurMouseMode = MouseMode.FAST_MOVE;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
         }
 
         private void EnterReverseMoveMode()
         {
             CurMouseMode = MouseMode.REVERSE_MOVE;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
         }
 
         private void EnterSplitMode()
         {
             CurMouseMode = MouseMode.SPLIT;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)

@@ -86,7 +86,7 @@ namespace PFW.Units.Component.OrderQueue
             }
         }
 
-        public void Clear()
+        private void Clear()
         {
             _orders.Clear();
             ActiveOrder = null;

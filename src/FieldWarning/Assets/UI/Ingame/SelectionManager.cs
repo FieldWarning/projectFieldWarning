@@ -388,5 +388,32 @@ namespace PFW.UI.Ingame
             _selection.Remove(platoon);
             AllPlatoons.Remove(platoon);
         }
+
+        /// <summary>
+        /// Place the targeting preview and get the distance
+        /// from the closest unit to the target, in meters.
+        /// </summary>
+        public int PlaceTargetingPreview(Vector3 targetPosition)
+        {
+            int minRange = 99999;
+            foreach (PlatoonBehaviour platoon in _selection)
+            {
+                int range = platoon.PlaceTargetingPreview(targetPosition);
+                if (range < minRange)
+                {
+                    minRange = range;
+                }
+            }
+            return minRange;
+        }
+
+        /// <summary>
+        /// The targeting preview is a line drawn from a unit
+        /// to the cursor location with range and line of sight hints.
+        /// </summary>
+        public void ToggleTargetingPreview(bool enabled)
+        {
+            _selection.ForEach(x => x.ToggleTargetingPreview(enabled));
+        }
     }
 }

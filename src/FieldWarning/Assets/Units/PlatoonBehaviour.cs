@@ -40,6 +40,7 @@ namespace PFW.Units
         public PlayerData Owner { get; private set; }
 
         private WaypointOverlayBehavior _waypointOverlay;
+        private TargetingOverlay _targetingOverlay;
 
         public OrderQueue OrderQueue { get; } = new OrderQueue();
 
@@ -217,6 +218,8 @@ namespace PFW.Units
             _platoonLabel.InitializeAsReal(unit, Owner.Team.ColorScheme, this);
             _waypointOverlay = OverlayFactory.Instance.CreateWaypointOverlay(this);
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
+            _targetingOverlay = OverlayFactory.Instance.CreateTargetingOverlay(this);
+            _targetingOverlay.gameObject.transform.parent = gameObject.transform;
             _mainCamera = Camera.main.gameObject;
         }
 
@@ -310,6 +313,7 @@ namespace PFW.Units
         private void OnDestroy()
         {
             Destroy(_waypointOverlay.gameObject);
+            Destroy(_targetingOverlay.gameObject);
         }
 
         /// <summary>
@@ -397,6 +401,15 @@ namespace PFW.Units
             this.enabled = enabled;
             _platoonLabel.SetVisible(enabled);
             _waypointOverlay.gameObject.SetActive(enabled);
+        }
+        public int PlaceTargetingPreview(Vector3 targetPosition)
+        {
+            return _targetingOverlay.PlaceTargetingPreview(targetPosition);
+        }
+
+        public void ToggleTargetingPreview(bool enabled)
+        {
+            _targetingOverlay.gameObject.SetActive(enabled);
         }
 
         public void SendFirePosOrder(Vector3 position, bool enqueue = false)
