@@ -34,7 +34,7 @@ namespace PFW.Units.Component.Weapon
     {
         // targetingStrategy
         private IWeapon _weapon; // weapon turret
-        private int _fireRange; // weapon turret
+        private int _fireRange; // weapon turret, in unity units
 
         /// <summary>
         /// The explicit target is one set by player input,
@@ -115,7 +115,8 @@ namespace PFW.Units.Component.Weapon
                             _gunSoundResource,
                             _turret,
                             SHOT_VOLUME);
-                    _fireRange = turretConfig.Howitzer.FireRange;
+                    _fireRange = (int)(
+                            turretConfig.Howitzer.FireRange * Constants.MAP_SCALE);
                 }
                 else if (turretConfig.Cannon.FireRange != 0)
                 {
@@ -129,7 +130,8 @@ namespace PFW.Units.Component.Weapon
                             _gunSoundResource,
                             muzzleFlashGO.GetComponent<ParticleSystem>(),
                             SHOT_VOLUME);
-                    _fireRange = turretConfig.Cannon.FireRange;
+                    _fireRange = (int)(
+                            turretConfig.Cannon.FireRange * Constants.MAP_SCALE);
                 }
                 else
                 {

@@ -104,7 +104,7 @@ namespace PFW.Units.Component.Vision
             _spotters.RemoveWhere(
                 s => s == null 
                 || !s.CanDetect(this) 
-                || ObstacleInLineOfSight(s, this));
+                || !ClearLineOfSight(s, this));
 
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
@@ -117,8 +117,10 @@ namespace PFW.Units.Component.Vision
         /// <param name="spotter"></param>
         private void MaybeReveal(VisionComponent spotter)
         {
-            if (spotter.CanDetect(this) && !ObstacleInLineOfSight(spotter, this)) {
-                if (_spotters.Count == 0) {
+            if (spotter.CanDetect(this) && ClearLineOfSight(spotter, this)) 
+            {
+                if (_spotters.Count == 0) 
+                {
                     ToggleUnitVisibility(true);
                 }
 
@@ -136,30 +138,45 @@ namespace PFW.Units.Component.Vision
                 && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
                 
         }
-        private bool ObstacleInLineOfSight(VisionComponent spotter, VisionComponent target)
+
+        private bool ClearLineOfSight(VisionComponent spotter, VisionComponent target)
+        {
+            bool result = IsInLineOfSight(target.gameObject.transform.position, out _);
+            return result;
+        }
+
+        /// <summary>
+        /// For a given point, check if there is a clear line
+        /// of sight. This does not use optics values, it only
+        /// checks that there are no buildings/dense forests in the way.
+        /// 
+        /// The out parameter is set to the farthest visible point.
+        /// </summary>
+        public bool IsInLineOfSight(Vector3 point, out Vector3 visionBlocker)
         {
             int layerMask = 1 << LayerMask.NameToLayer("HardLosBlock");
-            Vector3 SpotterPosition = spotter.gameObject.transform.position;
+            Vector3 SpotterPosition = gameObject.transform.position;
             SpotterPosition.y += RAYCAST_WORKAROUND;
-            Vector3 TargetPosition = target.gameObject.transform.position;
+            Vector3 TargetPosition = point;
             TargetPosition.y += RAYCAST_WORKAROUND;
             Vector3 TargetDirection = TargetPosition - SpotterPosition;
-            Vector3 NormalizedDirection = TargetDirection.normalized;
             float DistanceToTarget = Vector3.Distance(SpotterPosition, TargetPosition);
 
-            if (Physics.Raycast(SpotterPosition, TargetDirection, DistanceToTarget, layerMask))
+            RaycastHit hit;
+            if (!Physics.Raycast(SpotterPosition, TargetDirection, out hit, DistanceToTarget, layerMask))
             {
-                Debug.DrawRay(SpotterPosition, NormalizedDirection * DistanceToTarget, Color.red);
-               
+                visionBlocker = point;
+
                 return true;
             }
             else
             {
-                Debug.DrawRay(SpotterPosition, NormalizedDirection * DistanceToTarget, Color.yellow);
-                         
+                visionBlocker = hit.point;
+
                 return false;
             }
         }
+
         public void ToggleUnitVisibility(bool revealUnit)
         {
             IsVisible = revealUnit;

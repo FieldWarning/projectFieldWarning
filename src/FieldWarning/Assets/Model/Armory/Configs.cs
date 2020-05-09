@@ -101,6 +101,7 @@ namespace PFW.Model.Armory.JsonContents
     public class CannonConfig
     {
         public int Damage;
+        // Beware: This is in meters, NOT unity units!
         public int FireRange;
         public int Accuracy;
         public float ShotReload;
@@ -112,6 +113,7 @@ namespace PFW.Model.Armory.JsonContents
     public class HowitzerConfig
     {
         public int Damage;
+        // Beware: This is in meters, NOT unity units!
         public int FireRange;
         public int Accuracy;
         public float ShotReload;

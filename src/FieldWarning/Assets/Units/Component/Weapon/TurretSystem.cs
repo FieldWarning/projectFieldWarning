@@ -219,7 +219,8 @@ namespace PFW.Units.Component.Weapon
         }
 
         /// <summary>
-        /// Calculate the max range this turret can shoot at with at least one weapon.
+        /// Calculate the max range this turret can shoot at with at least one weapon,
+        /// IN UNITY UNITS.
         /// </summary>
         /// This is a method to avoid storing duplicate information, and
         /// because we may want to ignore disabled turrets, or turrets 
@@ -228,7 +229,6 @@ namespace PFW.Units.Component.Weapon
         /// TODO: Code duplication can be reduced if we only implement this in 
         /// the turret class and have a fake toplevel turret we call this method on,
         /// but a fake turret like that also adds complexity, hard to decide.
-        /// <returns></returns>
         private int MaxRange(TargetTuple target)
         {
             int maxRange = 0;
@@ -238,6 +238,17 @@ namespace PFW.Units.Component.Weapon
                 maxRange = maxRange > turretMax ? maxRange : turretMax;
             }
             return maxRange;
+        }
+
+        /// <summary>
+        /// The max range of this turret system for fire position purposes,
+        /// IN UNITY UNITS.
+        /// Note that this can change as weapons are disabled, and so
+        /// return values from this method should not be cached.
+        /// </summary>
+        public int MaxRange()
+        {
+            return MaxRange(new TargetTuple(Vector3.zero));
         }
     }
 }
