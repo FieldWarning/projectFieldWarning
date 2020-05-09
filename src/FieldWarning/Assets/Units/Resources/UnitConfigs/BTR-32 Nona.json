@@ -1,13 +1,13 @@
 {
     "$schema": "../UnitConfigSchema.json",
 
-    "ID": "Unit__INF--K16",
-    "CategoryKey": "INF",
-    "Name": "Bumerang K-16",
+    "ID": "Unit__SUP--Nona",
+    "CategoryKey": "SUP",
+    "Name": "Nona",
     "Price": 15,
     "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Bumerang/Bumerang_K16",
-	"ArmoryImage": "Armory Images/K16",
+    "ArtPrefabPath": "BTR-32/BTR-32 Nona",
+	"ArmoryImage": "Armory Images/Nona",
 
     "Data": {
         "MovementSpeed": 40,
@@ -38,8 +38,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "APC",
-        "MountRef": "Bumerang_K16",
+        "TurretRef": "mortar",
+        "MountRef": "hull",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -47,8 +47,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "KPVT",
-                "MountRef": "APC",
+                "TurretRef": "cannon",
+                "MountRef": "mortar",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,

@@ -7,7 +7,7 @@
 	"Price": 20,
     "PrefabPath": "GroundUnit",
     "ArtPrefabPath": "Kamaz-Pantsir-Koalitsiya/Kamaz Koalitsiya Prefab",
-	"ArmoryImage": "Bloodhound",
+	"ArmoryImage": "Armory Images/Koalitsiya",
 
 	"Data": {
 			"MovementSpeed": 500,
