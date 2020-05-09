@@ -393,12 +393,13 @@ namespace PFW.UI.Ingame
         /// Place the targeting preview and get the distance
         /// from the closest unit to the target, in meters.
         /// </summary>
-        public int PlaceTargetingPreview(Vector3 targetPosition)
+        public int PlaceTargetingPreview(Vector3 targetPosition, bool respectMaxRange)
         {
             int minRange = 99999;
             foreach (PlatoonBehaviour platoon in _selection)
             {
-                int range = platoon.PlaceTargetingPreview(targetPosition);
+                int range = platoon.PlaceTargetingPreview(
+                        targetPosition, respectMaxRange);
                 if (range < minRange)
                 {
                     minRange = range;

@@ -190,9 +190,11 @@ namespace PFW.Units
             Platoon.RemoveUnit(this);
         }
 
-        public int PlaceTargetingPreview(Vector3 targetPosition)
+        public int PlaceTargetingPreview(Vector3 targetPosition, bool respectMaxRange)
         {
-            return _targetingOverlay.PlaceTargetingPreview(targetPosition);
+            return respectMaxRange ? 
+                    _targetingOverlay.PlaceTargetingPreview(targetPosition) : 
+                    _targetingOverlay.PlaceVisionPreview(targetPosition);
         }
 
         public void ToggleTargetingPreview(bool enabled)

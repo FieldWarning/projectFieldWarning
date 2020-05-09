@@ -27,9 +27,9 @@ namespace PFW.UI.Ingame.UnitLabel
     {
         private UnitDispatcher _unit;
         [SerializeField]
-        private LineRenderer _successLine;
+        private LineRenderer _successLine = null;
         [SerializeField]
-        private LineRenderer _errorLine;
+        private LineRenderer _errorLine = null;
 
         public int PlaceTargetingPreview(Vector3 targetPosition)
         {
@@ -69,7 +69,6 @@ namespace PFW.UI.Ingame.UnitLabel
         /// Same as PlaceTargetingPreview, except does not draw a red line
         /// when the max weapon range is reached.
         /// </summary>
-        /// TODO implement vision-only tool or remove.
         public int PlaceVisionPreview(Vector3 targetPosition)
         {
             _unit.VisionComponent.IsInLineOfSight(

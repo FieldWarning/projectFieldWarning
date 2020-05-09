@@ -34,6 +34,7 @@ namespace PFW.UI.Ingame
     {
         private Texture2D _firePosReticle;
         private Texture2D _primedReticle;
+        private Texture2D _visionRulerReticle;
 
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
@@ -44,7 +45,8 @@ namespace PFW.UI.Ingame
             FIRE_POS,     //< Left click orders fire position, right click cancels.
             REVERSE_MOVE, //< Left click reverse moves to cursor, right click cancels.
             FAST_MOVE,    //< Left click fast moves to cursor, right click cancels.
-            SPLIT         //< Left click splits the platoon, right click cancels.
+            SPLIT,        //< Left click splits the platoon, right click cancels.
+            VISION_RULER  //< Left click selects and cancels, right click cancels.
         };
 
         public MouseMode CurMouseMode { get; private set; } = MouseMode.NORMAL;
@@ -88,6 +90,10 @@ namespace PFW.UI.Ingame
             if (_firePosReticle == null)
                 throw new Exception("No fire pos reticle specified!");
 
+            _visionRulerReticle = (Texture2D)Resources.Load("VisionRulerTexture");
+            if (_visionRulerReticle == null)
+                throw new Exception("No vision ruler reticle specified!");
+
             _primedReticle = (Texture2D)Resources.Load("PrimedCursor");
             if (_primedReticle == null)
                 throw new Exception("No primed reticle specified!");
@@ -127,6 +133,32 @@ namespace PFW.UI.Ingame
                 _rightClickManager.Update();
                 break;
 
+            case MouseMode.VISION_RULER:
+            {
+                ApplyHotkeys();
+
+                // Show range and line of sight indicators
+                RaycastHit hit;
+                if (Util.GetTerrainClickLocation(out hit))
+                {
+                    _selectionManager.ToggleTargetingPreview(true);
+                    int minDistance = _selectionManager.PlaceTargetingPreview(
+                            hit.point, false);
+                    _rangeTooltipText.text = minDistance.ToString() + "m";
+                    _rangeTooltip.SetActive(true);
+                    _rangeTooltip.transform.position = Input.mousePosition;
+                }
+                else 
+                {
+                    _selectionManager.ToggleTargetingPreview(false);
+                    _rangeTooltip.SetActive(false);
+                }
+                
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                    EnterNormalMode();
+                break;
+            }
             case MouseMode.FIRE_POS:
             {
                 ApplyHotkeys();
@@ -137,7 +169,7 @@ namespace PFW.UI.Ingame
                 {
                     _selectionManager.ToggleTargetingPreview(true);
                     int minDistance = _selectionManager.PlaceTargetingPreview(
-                            hit.point);
+                            hit.point, true);
                     _rangeTooltipText.text = minDistance.ToString() + "m";
                     _rangeTooltip.SetActive(true);
                     _rangeTooltip.transform.position = Input.mousePosition;
@@ -393,6 +425,10 @@ namespace PFW.UI.Ingame
                 {
                     EnterSplitMode();
                 }
+                else if (Commands.VisionRuler && !_selectionManager.Empty)
+                {
+                    EnterVisionRulerMode();
+                }
             }
         }
 
@@ -433,6 +469,12 @@ namespace PFW.UI.Ingame
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
             _selectionManager.ToggleTargetingPreview(false);
             _rangeTooltip.SetActive(false);
+        }
+        private void EnterVisionRulerMode()
+        {
+            CurMouseMode = MouseMode.VISION_RULER;
+            Vector2 hotspot = new Vector2(_visionRulerReticle.width / 2, _visionRulerReticle.height / 2);
+            Cursor.SetCursor(_visionRulerReticle, hotspot, CursorMode.Auto);
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
@@ -481,6 +523,12 @@ namespace PFW.UI.Ingame
         public static bool Split {
             get {
                 return Input.GetKeyDown(Hotkeys.Split);
+            }
+        }
+
+        public static bool VisionRuler {
+            get {
+                return Input.GetKeyDown(Hotkeys.VisionRuler);
             }
         }
     }

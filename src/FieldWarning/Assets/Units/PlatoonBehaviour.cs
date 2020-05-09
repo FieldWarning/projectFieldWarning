@@ -399,12 +399,12 @@ namespace PFW.Units
             _waypointOverlay.gameObject.SetActive(enabled);
         }
 
-        public int PlaceTargetingPreview(Vector3 targetPosition)
+        public int PlaceTargetingPreview(Vector3 targetPosition, bool respectMaxRange)
         {
             int minRange = 99999;
             foreach (UnitDispatcher unit in Units)
             {
-                int range = unit.PlaceTargetingPreview(targetPosition);
+                int range = unit.PlaceTargetingPreview(targetPosition, respectMaxRange);
                 if (range < minRange)
                 {
                     minRange = range;
