@@ -36,7 +36,8 @@ namespace PFW.UI.Ingame.UnitLabel
 
             return waypointOverlayBehavior;
         }
-        public TargetingOverlay CreateTargetingOverlay(PlatoonBehaviour pb)
+
+        public TargetingOverlay CreateTargetingOverlay(UnitDispatcher unit)
         {
             var overlayPrefab = Resources.Load<GameObject>("TargetingOverlay");
 
@@ -44,7 +45,7 @@ namespace PFW.UI.Ingame.UnitLabel
                     overlayPrefab, Vector3.zero, Quaternion.identity)
                     .GetComponent<TargetingOverlay>();
 
-            targetingOverlay.Initialize(pb);
+            targetingOverlay.Initialize(unit);
 
             return targetingOverlay;
         }

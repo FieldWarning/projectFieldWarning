@@ -11,9 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System.Collections.Generic;
-using System.Linq;
-
 using UnityEngine;
 using Mirror;
 
@@ -24,6 +21,7 @@ using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
 using PFW.Units.Component.Armor;
 using PFW.Model.Game;
+using PFW.UI.Ingame.UnitLabel;
 
 namespace PFW.Units
 {
@@ -79,6 +77,8 @@ namespace PFW.Units
 
         public PlatoonBehaviour Platoon { get; set; }
 
+        private TargetingOverlay _targetingOverlay;
+
         public void Initialize(PlatoonBehaviour platoon)
         {
             TargetTuple = new TargetTuple(this);
@@ -105,6 +105,9 @@ namespace PFW.Units
             _healthComponent.Initialize(this, _unitData);
             VisionComponent.Initialize(this);
             _armorComponent.Initialize(_healthComponent, _unitData, _movementComponent);
+
+            _targetingOverlay = OverlayFactory.Instance.CreateTargetingOverlay(this);
+            _targetingOverlay.gameObject.transform.parent = gameObject.transform;
         }
 
         /// <summary>
@@ -185,6 +188,16 @@ namespace PFW.Units
             MatchSession.Current.RegisterUnitDeath(this);
                 
             Platoon.RemoveUnit(this);
+        }
+
+        public int PlaceTargetingPreview(Vector3 targetPosition)
+        {
+            return _targetingOverlay.PlaceTargetingPreview(targetPosition);
+        }
+
+        public void ToggleTargetingPreview(bool enabled)
+        {
+            _targetingOverlay.gameObject.SetActive(enabled);
         }
     }
 }

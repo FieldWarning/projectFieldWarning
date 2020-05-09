@@ -25,21 +25,21 @@ namespace PFW.UI.Ingame.UnitLabel
     /// </summary>
     public class TargetingOverlay : MonoBehaviour
     {
-        private PlatoonBehaviour _platoon;
+        private UnitDispatcher _unit;
         private LineRenderer _lineR;
         
         public int PlaceTargetingPreview(Vector3 targetPosition)
         {
-            _lineR.SetPosition(0, _platoon.Units[0].transform.position);
+            _lineR.SetPosition(0, _unit.transform.position);
             _lineR.SetPosition(1, targetPosition);
             float distance = Vector3.Distance(
-                _platoon.Units[0].transform.position, targetPosition);
+                _unit.transform.position, targetPosition);
             return (int)(distance / Constants.MAP_SCALE);
         }
 
-        public void Initialize(PlatoonBehaviour platoon)
+        public void Initialize(UnitDispatcher unit)
         {
-            _platoon = platoon;
+            _unit = unit;
 
             _lineR = transform.Find("Line").GetComponent<LineRenderer>();
             _lineR.startColor = Color.cyan;
