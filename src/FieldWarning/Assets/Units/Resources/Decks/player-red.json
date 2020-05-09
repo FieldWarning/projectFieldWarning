@@ -1,9 +1,10 @@
 {
     "UnitIds": [
-        "Unit__LOG--HEMTT",
+        "Unit__LOG--KAMAZ",
         "Unit__SUP--PLZ-5",
         "Unit__INF--Riflemen",
         "Unit__INF--Marines",
+	"Unit__INF--K16",
         "Unit__TNK--FastTank",
         "Unit__TNK--BTR-32",
         "Unit__TNK--M1A2",
