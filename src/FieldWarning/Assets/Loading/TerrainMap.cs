@@ -243,8 +243,6 @@ namespace PFW
                     yield return null;
             }
 
-            Debug.Log($"val at 6152, 16700 = {_map[6152, 16700]}");
-
             Debug.Log("Done creating terrain cache.");
         }
 
