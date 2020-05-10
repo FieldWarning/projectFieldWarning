@@ -10,12 +10,12 @@
 	"ArmoryImage": "Bloodhound",
 
     "Data": {
-        "MovementSpeed": 500,
-        "ReverseSpeed": 15,
-        "AccelRate": 13,
+        "MovementSpeed": 250,
+        "ReverseSpeed": 50,
+        "AccelRate": 40,
         "MaxRotationSpeed": 50,
         "MinTurnRadius": 0,
-        "MaxLateralAccel": 15,
+        "MaxLateralAccel": 50,
         "Suspension": 0.01,
         "MaxHealth": 10,
         "Length": 12,
