@@ -222,9 +222,9 @@ namespace PFW
             Debug.Log("Creating terrain cache.");
 
             int len = _map.GetLength(0);
-            for (var x = 0; x < _map.GetLength(0); x++)
+            for (int x = 0; x < _map.GetLength(0); x++)
             {
-                for (var z = 0; z < _map.GetLength(0); z += GRANULARITY)
+                for (int z = 0; z < _map.GetLength(0); z += GRANULARITY)
                 {
                     _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
@@ -243,6 +243,8 @@ namespace PFW
                 if ((int)GetPercentComplete() % 2 == 0)
                     yield return null;
             }
+
+            Debug.Log($"val at 6152, 16700 = {_map[6152, 16700]}");
 
             Debug.Log("Done creating terrain cache.");
         }
