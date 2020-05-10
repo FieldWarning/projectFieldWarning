@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -22,7 +22,6 @@ public class TeamButton : MonoBehaviour
 
     public void onClick()
     {
-        MatchSession.Current.LocalPlayer.Data = _team.Players[0];
-        MatchSession.Current.UpdateTeamBelonging(_team);
+        MatchSession.Current.RegisterPlayerChange(_team.Players[0]);
     }
 }

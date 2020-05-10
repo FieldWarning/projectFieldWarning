@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -28,12 +28,26 @@ namespace PFW.UI.Ingame.UnitLabel
         {
             var overlayPrefab = Resources.Load<GameObject>("WaypointOverlay");
 
-            var waypointOverlayBehavior = Object.Instantiate(overlayPrefab, Vector3.zero, Quaternion.identity)
-                .GetComponent<WaypointOverlayBehavior>();
+            var waypointOverlayBehavior = Object.Instantiate(
+                    overlayPrefab, Vector3.zero, Quaternion.identity)
+                    .GetComponent<WaypointOverlayBehavior>();
 
             waypointOverlayBehavior.Initialize(pb);
 
             return waypointOverlayBehavior;
+        }
+
+        public TargetingOverlay CreateTargetingOverlay(UnitDispatcher unit)
+        {
+            var overlayPrefab = Resources.Load<GameObject>("TargetingOverlay");
+
+            var targetingOverlay = Object.Instantiate(
+                    overlayPrefab, Vector3.zero, Quaternion.identity)
+                    .GetComponent<TargetingOverlay>();
+
+            targetingOverlay.Initialize(unit);
+
+            return targetingOverlay;
         }
     }
 }

@@ -60,7 +60,7 @@ namespace PFW
 
         private byte[,] _map;
         private int _mapSize;
-        private float _terrainSpacingX, _terrainSpacingZ;
+        private readonly float _terrainSpacingX, _terrainSpacingZ;
 
         // 2D array of terrain pieces for quickly finding which piece is at a given location
         private Terrain[,] _terrains;
@@ -84,11 +84,11 @@ namespace PFW
         {
             _sceneBuildId = sceneBuildId;
 
-            // The water tag is only used for this
             WaterMarker water = GameObject.FindObjectOfType<WaterMarker>();
             if (water != null)
             {
                 WATER_HEIGHT = water.GetMaxChildHeight();
+                Debug.Log($"Water found with height {WATER_HEIGHT}.");
             }
             else
             {
@@ -121,8 +121,8 @@ namespace PFW
                     Vector3 corner = MapMin + new Vector3(_terrainSpacingX * i, 0f, _terrainSpacingZ * j);
                     foreach (Terrain terrain in terrains1D)
                     {
-                        if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2 &&
-                                Mathf.Abs(terrain.transform.position.z - corner.z) < _terrainSpacingZ / 2)
+                        if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2 
+                            && Mathf.Abs(terrain.transform.position.z - corner.z) < _terrainSpacingZ / 2)
                         {
                             _terrains[i, j] = terrain;
                         }
@@ -134,7 +134,7 @@ namespace PFW
 
             _HEIGHT_MAP_PATH = GetTerrainMapCachePath();
 
-            var mapLen = 2 * _mapSize + 2 * EXTENSION;
+            int mapLen = 2 * _mapSize + 2 * EXTENSION;
             _map = new byte[mapLen, mapLen];
 
             _roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
@@ -151,7 +151,7 @@ namespace PFW
             }
 
 
-            // get our bridge positions so we dont have to be in the main thread to access bridge into
+            // get our bridge positions so we dont have to be in the main thread to access bridge info
             for (int i = 0; i < _bridges.Length; i++)
             {
                 GameObject bridge = _bridges[i];
@@ -203,14 +203,12 @@ namespace PFW
 
         private void ExportFinishedMapRunner()
         {
-
             ExportCompressedMap(_map, _HEIGHT_MAP_PATH);
         }
 
 
         private IEnumerator LoadWaterRunner()
         {
-
             yield return LoadWater();
         }
 
@@ -223,9 +221,9 @@ namespace PFW
             Debug.Log("Creating terrain cache.");
 
             int len = _map.GetLength(0);
-            for (var x = 0; x < _map.GetLength(0); x++)
+            for (int x = 0; x < _map.GetLength(0); x++)
             {
-                for (var z = 0; z < _map.GetLength(0); z += GRANULARITY)
+                for (int z = 0; z < _map.GetLength(0); z += GRANULARITY)
                 {
                     _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
@@ -238,9 +236,7 @@ namespace PFW
                             _map[x, z + i] = savedVal;
                         }
                     }
-
                 }
-
 
                 SetPercentComplete(((double)x / (double)_map.GetLength(0)) * 100.0);
                 if ((int)GetPercentComplete() % 2 == 0)
@@ -264,7 +260,6 @@ namespace PFW
         /// <param name="path"></param>
         public void ExportCompressedMap(byte[,] map, string path)
         {
-
             BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
             for (int x = 0; x < map.GetLength(0); x++)
             {
@@ -290,16 +285,14 @@ namespace PFW
                     }
 
                     last = temp;
-
-
                 }
 
                 writer.Write(temp);
                 writer.Write(lastcnt);
 
 
-                writer.Write((char)'\n');
-                SetPercentComplete(((double)x / (double)map.GetLength(0)) * 100.0);
+                writer.Write('\n');
+                SetPercentComplete((x / map.GetLength(0)) * 100.0);
             }
 
             writer.Close();
@@ -324,7 +317,7 @@ namespace PFW
             //TODO : not much error checking is done in thsi function
 
             // read the entire file into memory
-            var file = File.ReadAllBytes(path);
+            byte[] file = File.ReadAllBytes(path);
 
             //var last_notify_msec = 0;
             int xCoord = 0;
@@ -346,7 +339,6 @@ namespace PFW
                 }
                 else
                 {
-
                     // since we already read a byte but we need 4 more bytes for an int 
                     // that represents the count
                     int numOfValues = reader.ReadInt32();
@@ -355,7 +347,7 @@ namespace PFW
                     byte bType = waterOrNL[0];
 
                     // this tells us how far to unpack the compression
-                    var zEnd = zCoord + numOfValues;
+                    int zEnd = zCoord + numOfValues;
 
                     // populate the rest of the same type
                     while (zCoord < zEnd)
@@ -365,9 +357,8 @@ namespace PFW
                     }
                 }
 
-
                 // this is our loading screen status
-                SetPercentComplete(((double)reader.BaseStream.Position / (double)reader.BaseStream.Length) * 100.0);
+                SetPercentComplete((reader.BaseStream.Position / reader.BaseStream.Length) * 100.0);
             }
 
             reader.Close();
@@ -378,13 +369,13 @@ namespace PFW
         {
             LoadTrees();
         }
+
         private void LoadTrees()
         {
-
             // assign tree positions
-            var currIdx = 0;
+            int currIdx = 0;
 
-            foreach (var tree in _treePositions)
+            foreach (Vector3 tree in _treePositions)
             {
                 AssignCircularPatch(tree, TREE_RADIUS, FOREST);
                 currIdx++;
@@ -401,10 +392,10 @@ namespace PFW
 
         private void LoadRoads()
         {
-            var currRoadIdx = 0;
+            int currRoadIdx = 0;
             foreach (ERModularRoad road in _roads)
             {
-                var currRoadVertIdx = 1;
+                int currRoadVertIdx = 1;
                 // Loop over linear road stretches
                 Vector3 previousVert = Vector3.zero;
                 foreach (Vector3 roadVert in road.middleIndentVecs)

@@ -16,13 +16,13 @@ using System.Linq;
 using UnityEngine;
 
 using static PFW.UI.Ingame.InputManager;
+using PFW.Model.Game;
+using PFW.Networking;
 using PFW.Units;
 using PFW.Units.Component.Movement;
-using PFW.Networking;
 
 namespace PFW.UI.Ingame
 {
-
     /**
      * Responsible for the set of selected units.
      *
@@ -31,6 +31,13 @@ namespace PFW.UI.Ingame
      */
     public class SelectionManager
     {
+        private PlayerData _localPlayer;
+        public PlayerData LocalPlayer {
+            set {
+                _localPlayer = value;
+            }
+        }
+
         private List<PlatoonBehaviour> _selection;
 
         public bool Empty => _selection.Count == 0;
@@ -104,7 +111,7 @@ namespace PFW.UI.Ingame
                 return;
 
             bool shouldQueue = Input.GetKey(KeyCode.LeftShift);
-            foreach (var platoon in _selection)
+            foreach (PlatoonBehaviour platoon in _selection)
             {
                 platoon.SendFirePosOrder(hit.point, shouldQueue);
             }
@@ -198,6 +205,9 @@ namespace PFW.UI.Ingame
         /// </summary>
         public void PlatoonLabelClicked(PlatoonBehaviour selectedPlatoon)
         {
+            if (selectedPlatoon.Owner != _localPlayer)
+                return;
+
             UnselectAll(_selection, false);
             selectedPlatoon.PlaySelectionVoiceline();
             _selection.Add(selectedPlatoon);
@@ -225,7 +235,8 @@ namespace PFW.UI.Ingame
                 return;
 
             List<PlatoonBehaviour> newSelection = AllPlatoons.Where(
-                    x => IsInsideSelectionBox(x)).ToList();
+                    x => x.Owner == _localPlayer
+                         && IsInsideSelectionBox(x)).ToList();
             if (!Input.GetKey(KeyCode.LeftShift) 
                 && _selection != null 
                 && _selection.Count != 0)
@@ -376,6 +387,34 @@ namespace PFW.UI.Ingame
         {
             _selection.Remove(platoon);
             AllPlatoons.Remove(platoon);
+        }
+
+        /// <summary>
+        /// Place the targeting preview and get the distance
+        /// from the closest unit to the target, in meters.
+        /// </summary>
+        public int PlaceTargetingPreview(Vector3 targetPosition, bool respectMaxRange)
+        {
+            int minRange = 99999;
+            foreach (PlatoonBehaviour platoon in _selection)
+            {
+                int range = platoon.PlaceTargetingPreview(
+                        targetPosition, respectMaxRange);
+                if (range < minRange)
+                {
+                    minRange = range;
+                }
+            }
+            return minRange;
+        }
+
+        /// <summary>
+        /// The targeting preview is a line drawn from a unit
+        /// to the cursor location with range and line of sight hints.
+        /// </summary>
+        public void ToggleTargetingPreview(bool enabled)
+        {
+            _selection.ForEach(x => x.ToggleTargetingPreview(enabled));
         }
     }
 }

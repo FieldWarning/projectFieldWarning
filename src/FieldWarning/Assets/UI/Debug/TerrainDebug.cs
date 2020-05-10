@@ -1,42 +1,53 @@
-﻿using PFW;
+/**
+ * Copyright (c) 2017-present, PFW Contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+ * the License for the specific language governing permissions and limitations under the License.
+ */
+ 
+using PFW;
 using PFW.Model.Game;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class TerrainDebug : MonoBehaviour
 {
     private MatchSession _matchSession = null;
+    [SerializeField]
+    private TextMeshProUGUI _positionField = null;
+    [SerializeField]
+    private TextMeshProUGUI _typeField = null;
+    [SerializeField]
+    private TextMeshProUGUI _heightField = null;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        var gameSession = GameObject.FindWithTag("GameSession");
-        _matchSession = gameSession.GetComponent<MatchSession>();
+        _matchSession = MatchSession.Current;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         RaycastHit hit;
         Util.GetTerrainClickLocation(out hit);
 
-        var positionField = transform.Find("PositionField").GetComponent<TextMeshProUGUI>();
-        positionField.text = hit.point.ToString();
+        _positionField.text = hit.point.ToString();
 
-        var terrainType = _matchSession.TerrainMap.GetTerrainType(hit.point);
+        int terrainType = _matchSession.TerrainMap.GetTerrainType(hit.point);
 
         // TODO should add this to debug at some point.
-        var terrainAtPos = _matchSession.TerrainMap.GetTerrainAtPos(hit.point);
+        Terrain terrainAtPos = _matchSession.TerrainMap.GetTerrainAtPos(hit.point);
 
-        
-        var heightField = transform.Find("HeightField").GetComponent<TextMeshProUGUI>();
-        heightField.text = _matchSession.TerrainMap.GetTerrainHeight(hit.point).ToString();
+        _heightField.text = _matchSession.TerrainMap.GetTerrainHeight(hit.point).ToString();
 
-        var typeField = transform.Find("TypeField").GetComponent<TextMeshProUGUI>();
-        typeField.text = terrainType.ToString();
+        _typeField.text = terrainType.ToString();
     }
 
     public void ReloadTerrainData()

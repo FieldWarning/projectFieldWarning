@@ -15,8 +15,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using PFW.Model.Armory;
-
 namespace PFW.Model.Game
 {
     public class Team : MonoBehaviour

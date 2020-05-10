@@ -137,8 +137,11 @@ namespace PFW.Units.Component.Movement
             return !Pathfinder.HasDestination();
         }
 
-        // Target heading currently only depends on the waypoint and final heading, 
-        // but units will also need to face armor and weapons
+        /// <summary>
+        /// Target heading currently only depends on the waypoint 
+        /// and final heading, but units will also need to 
+        /// face armor and weapons
+        /// </summary>
         private float GetTargetHeading()
         {
             float destinationHeading = FinalHeading;
@@ -152,8 +155,11 @@ namespace PFW.Units.Component.Movement
             return destinationHeading;
         }
 
-        // Calculate the unit's maximum rotational speed in rads/sec at the given linear speed.
-        // All angles need to have units of radians
+        /// <summary>
+        /// Calculate the unit's maximum rotational speed in 
+        /// rads/sec at the given linear speed.
+        /// All angles need to have units of radians.
+        /// </summary>
         private float CalculateRotationSpeed(float linSpeed)
         {
             float turnRadius = Mathf.Max(
@@ -167,7 +173,9 @@ namespace PFW.Units.Component.Movement
             return rotSpeed;
         }
 
-        // Returns true if the unit should be moving in reverse
+        /// <summary>
+        /// Returns true if the unit should be moving in reverse.
+        /// </summary>
         private bool ShouldReverse(
                 float linVelocity, 
                 float linDist, 
@@ -197,8 +205,11 @@ namespace PFW.Units.Component.Movement
             return timeReverse + FORWARD_BIAS < timeForward;
         }
 
-        // Finds the linear speed that gets the unit to the desired distance/angle the fastest.
-        // All angles in units of radians
+        /// <summary>
+        /// Finds the linear speed that gets the unit to the 
+        /// desired distance/angle the fastest. 
+        /// All angles in units of radians.
+        /// </summary>
         private float CalculateTargetSpeed(
                 float linDist, float remainingTurn, float linSpeed, float rotSpeed)
         {

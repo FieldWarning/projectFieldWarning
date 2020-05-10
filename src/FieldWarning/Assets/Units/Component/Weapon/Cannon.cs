@@ -34,12 +34,12 @@ namespace PFW.Units.Component.Weapon
         private static System.Random _random;
 
         public Cannon(
-            CannonConfig data,
-            AudioSource source,
-            ParticleSystem shotEffect,
-            AudioClip shotSound,
-            ParticleSystem muzzleFlashEffect,
-            float shotVolume = 1.0f)
+                CannonConfig data,
+                AudioSource source,
+                ParticleSystem shotEffect,
+                AudioClip shotSound,
+                ParticleSystem muzzleFlashEffect,
+                float shotVolume = 1.0f)
         {
             _data = data;
             _source = source;

@@ -53,7 +53,7 @@ namespace PFW.Model.Game
         public Dictionary<Team, List<UnitDispatcher>> EnemiesByTeam =>
                 _unitRegistry.EnemiesByTeam;
 
-        public bool isChatFocused = false;
+        public bool IsChatFocused = false;
 
         public List<UnitDispatcher> AllyUnits =>
                 _unitRegistry.AllyUnits;
@@ -133,7 +133,8 @@ namespace PFW.Model.Game
 
                 if (!_inputManager)
                     _inputManager = gameObject.AddComponent<InputManager>();
-                _inputManager.Session = _inputManager.Session ?? this;
+                _inputManager.Session = this;
+                _inputManager.LocalPlayer = LocalPlayer.Data;
 
                 _visibilityManager = FindObjectOfType<VisibilityManager>();
                 if (!_visibilityManager)
@@ -148,7 +149,6 @@ namespace PFW.Model.Game
                 {
                     _inputManager.RegisterSpawnPoint(spawn);
                 }
-
             }
         }
 
@@ -187,8 +187,16 @@ namespace PFW.Model.Game
         public void RegisterUnitDeath(UnitDispatcher unit) =>
                 _unitRegistry.RegisterUnitDeath(unit);
 
-        public void UpdateTeamBelonging(Team newTeam)
+        /// <summary>
+        /// Change player + team when the team button is pressed.
+        /// This should not happen in real games, it's just a
+        /// development aid.
+        /// </summary>
+        public void RegisterPlayerChange(PlayerData newPlayer)
         {
+            LocalPlayer.Data = newPlayer;
+            _inputManager.LocalPlayer = newPlayer;
+            Team newTeam = LocalPlayer.Data.Team;
             _unitRegistry.UpdateTeamBelonging(newTeam);
             _visibilityManager.UpdateTeamBelonging();
         }
