@@ -1,0 +1,84 @@
+{
+	"$schema": "../UnitConfigSchema.json",
+
+	"ID": "Unit__SUP--Pantsir",
+	"CategoryKey": "SUP",
+	"Name": "Pantsir",
+	"Price": 20,
+    "PrefabPath": "GroundUnit",
+    "ArtPrefabPath": "Kamaz-Pantsir-Koalitsiya/Pantsir Prefab",
+	"ArmoryImage": "Armory Images/Pantsir",
+
+	"Data": {
+			"MovementSpeed": 500,
+			"ReverseSpeed": 15,
+			"AccelRate": 13,
+			"MaxRotationSpeed": 50,
+			"MinTurnRadius": 0,
+			"MaxLateralAccel": 15,
+			"Suspension": 0.01,
+			"MaxHealth": 10,
+			"Length": 12,
+			"Width": 7
+	},
+    
+    "Armor": {
+        "FrontArmor": 0,
+        "SideArmor": 0,
+        "RearArmor": 0,
+        "TopArmor": 0
+    },
+
+    "Mobility": {
+        "SlopeSensitivity": 2,
+        "DirectionalSlopeSensitivity": 0.6,
+        "PlainSpeed": 0.4,
+        "ForestSpeed": 0.2,
+        "WaterSpeed": 0
+    },
+    
+    "Turrets": [{
+        "TurretRef": "Turret",
+        "MountRef": "Pantsir",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "Gun",
+                "MountRef": "Turret",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "Damage": 4,
+                    "FireRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Missile",
+                "MountRef": "Turret",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "Damage": 4,
+                    "FireRange" : 200,
+                    "Accuracy": 30,
+                    "ShotReload": 8,
+                    "SalvoLength": 1,
+                    "SalvoReload": 8
+                }
+            }
+        ]
+    }]
+}
