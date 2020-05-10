@@ -84,7 +84,6 @@ namespace PFW
         {
             _sceneBuildId = sceneBuildId;
 
-            // The water tag is only used for this
             WaterMarker water = GameObject.FindObjectOfType<WaterMarker>();
             if (water != null)
             {
