@@ -32,34 +32,26 @@ namespace PFW.Loading
         /// <returns></returns>
         public float GetMaxChildHeight()
         {
+            return GetMaxChildHeightRecursive(transform);
+        }
+
+        private static float GetMaxChildHeightRecursive(Transform transform)
+        {
+            if (transform.childCount == 0)
+                return transform.position.y;
+
             float result = -10000;
+
             for (int i = 0; i < transform.childCount; i++)
             {
                 Transform childTransform = transform.GetChild(i);
-                float childHeight = childTransform.position.y;
+                float childHeight = GetMaxChildHeightRecursive(childTransform);
                 if (childHeight > result)
                 {
                     result = childHeight;
                 }
-
-                // Sanity check loop: We infer the height of the water
-                // from the height of the mesh, and this will go wrong
-                // if the lods under the mesh have a nonzero height
-                // of their own. We could rewrite this to account for these
-                // heights too, but this even happening hints at an issue
-                // and it's safer to just manually ensure the children
-                // of the mesh are properly configured with no garbage mixed in.
-                for (int j = 0; j < childTransform.childCount; j++)
-                {
-                    if (childTransform.GetChild(j).localPosition.y != 0)
-                    {
-                        Debug.LogError("Child of a water mesh has nonzero " +
-                            "height, this will break the pathfinding and " +
-                            "hints at a misconfigured water import.");
-                    }
-                }
             }
-            return result; 
+            return result;
         }
     }
 }
