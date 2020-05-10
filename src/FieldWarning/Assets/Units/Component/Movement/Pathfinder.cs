@@ -13,7 +13,8 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.IO;
+using System;
 
 namespace PFW.Units.Component.Movement
 {
@@ -42,7 +43,7 @@ namespace PFW.Units.Component.Movement
         /// <summary>
         /// We want to get within this distance of any intermediate waypoints.
         /// </summary>
-        private const float COMPLETION_DIST = 30f * Constants.MAP_SCALE;
+        private const float COMPLETION_DIST = 15f * Constants.MAP_SCALE;
 
         /// <summary>
         /// Throttle the frequency of waypoint recalculation, for performance.
@@ -56,6 +57,13 @@ namespace PFW.Units.Component.Movement
 
         public PathfinderData Data { get; private set; }
         public MoveCommandType Command { get; private set; }
+
+        /// <summary>
+        /// Change in angle (in degrees) from current path node to the following node.
+        /// Needed because vehicles need to slow down more to make tight turns.
+        /// </summary>
+        public float WaypointAngleChange { get; private set; }
+        
         public readonly float FinalCompletionDist;
 
         private MovementComponent _unit;
@@ -109,6 +117,8 @@ namespace PFW.Units.Component.Movement
             if (pathTime >= FOREVER)
                 _path.Clear();
 
+            UpdateWaypointAngle();
+
             Logger.LogPathfinding(
                     $"Pathfinder::SetPath() for destination {destination}, " +
                     $"command = {command} chose path with {_path.Count} " +
@@ -160,16 +170,21 @@ namespace PFW.Units.Component.Movement
                 {
                     _previousNode = targetNode;
                     targetNode = _path[_path.Count - 1];
+                    UpdateWaypointAngle();
                 }
             }
 
             Vector3 targetPosition = PathfinderData.Position(targetNode);
-            //Debug.Log(targetNode.isRoad + (previousNode != null ? " "+previousNode.isRoad : ""));
+
+            // If the unit is supposed to be moving along a road, this will push it more toward the center
+            // to avoid having it drive along next to the road.
             if (targetNode.IsRoad && _previousNode != null && _previousNode.IsRoad)
+            {
                 targetPosition = GetRoadIntersection(
-                        PathfinderData.Position(targetNode),
+                        targetPosition,
                         PathfinderData.Position(_previousNode),
                         _unit.transform.position);
+            }
 
             Vector3 newWaypoint = TakeStep(
                     Data, 
@@ -215,6 +230,20 @@ namespace PFW.Units.Component.Movement
             }
         }
 
+        private void UpdateWaypointAngle()
+        {
+            if (_path.Count >= 2)
+            {
+                Vector3 nodePos = PathfinderData.Position(_path[_path.Count - 1]);
+                Vector3 nextPos = PathfinderData.Position(_path[_path.Count - 2]);
+                WaypointAngleChange = Math.Abs(Vector3.Angle(nodePos - _unit.transform.position, nextPos - nodePos));
+            }
+            else
+            {
+                WaypointAngleChange = 180;
+            }
+        }
+
         private Vector3 GetRoadIntersection(Vector3 forward, Vector3 behind, Vector3 position)
         {
             Vector3 roadUnit = (forward - behind).normalized;
@@ -224,7 +253,6 @@ namespace PFW.Units.Component.Movement
                 return forward;
             Vector3 parallel = roadUnit * projection;
             Vector3 normal = direct - parallel;
-            //float ratio = parallel.magnitude / direct.magnitude;
             return position + 3 * normal + roadUnit * Mathf.Min(0.8f * projection, 10 * STEP_SIZE);
         }
 

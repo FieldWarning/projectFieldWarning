@@ -14,6 +14,7 @@
 using UnityEngine;
 
 using PFW.Units.Component.Data;
+using System;
 
 namespace PFW.Units.Component.Movement
 {
@@ -74,7 +75,7 @@ namespace PFW.Units.Component.Movement
             float remainingTurn = isReverse ? turnReverse : turnForward;
 
             float targetSpeed = CalculateTargetSpeed(
-                    distanceToWaypoint, remainingTurn, linSpeed, rotationSpeed);
+                    distanceToWaypoint, remainingTurn, linSpeed, rotationSpeed, Pathfinder.WaypointAngleChange);
             if (isReverse)
                 targetSpeed = -targetSpeed;
 
@@ -200,21 +201,27 @@ namespace PFW.Units.Component.Movement
         // Finds the linear speed that gets the unit to the desired distance/angle the fastest.
         // All angles in units of radians
         private float CalculateTargetSpeed(
-                float linDist, float remainingTurn, float linSpeed, float rotSpeed)
+                float linDist, float remainingTurn, float linSpeed, float rotSpeed, float waypointAngleChange)
         {
 
             // Need to face approximately the right direction before speeding up
             float angDist = Mathf.Max(0f, Mathf.Abs(remainingTurn) - HEADING_THRESHOLD);
-            if (angDist > Mathf.PI / 4)
+            if (angDist > Mathf.PI / 5)
                 return _data.OptimumTurnSpeed;
 
+            // Need to slow down to make tight turns, but not along straighter paths
+            // This is just an arbitrary formula that works well
+            float turnTightness = Math.Min(1f, waypointAngleChange / 110f);
+            float slowdown = 0.01f + 0.8f * turnTightness * turnTightness * turnTightness;
+            
             // Want to go just fast enough to cover the linear and angular distance
             // if the unit starts slowing down now
             float longestDist = Mathf.Max(
-                    linDist - 0.7f * _data.AccelDampTime * linSpeed,
+                    linDist - 0.5f * _data.AccelDampTime * linSpeed,
                     _data.MinTurnRadius * angDist);
             float targetSpeed = Mathf.Sqrt(
-                    2 * longestDist * _data.AccelRate * DECELERATION_FACTOR);
+                    longestDist * _data.AccelRate * DECELERATION_FACTOR /
+                    (slowdown - slowdown*slowdown/2));
 
             // But not so fast that it cannot make the turn
             if (linSpeed > _data.OptimumTurnSpeed && angDist > 0f)

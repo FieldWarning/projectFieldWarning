@@ -21,8 +21,8 @@ namespace PFW.Units.Component.Movement
     public sealed class MovementComponent : MonoBehaviour
     {
         public const float NO_HEADING = float.MaxValue;
-        private const float ORIENTATION_RATE = 5.0f;
-        private const float TRANSLATION_RATE = 5.0f;
+        private const float ORIENTATION_RATE = 8.0f;
+        private const float TRANSLATION_RATE = 6.0f;
 
         public DataComponent Data { get; private set; }
         public Pathfinder Pathfinder { get; private set; }
