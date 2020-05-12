@@ -55,6 +55,7 @@ namespace PFW.Units.Component.Vision
         public bool IsSpotted { get { return _spotters.Count != 0; } }
 
         private UnitDispatcher _unit;
+        private TerrainMap _terrainMap;
 
         private Team _team {
             get { return _unit.Platoon.Owner.Team; }
@@ -63,6 +64,7 @@ namespace PFW.Units.Component.Vision
         public void Initialize(UnitDispatcher dispatcher)
         {
             _unit = dispatcher;
+            _terrainMap = MatchSession.Current.TerrainMap;
         }
 
         /// <summary>
@@ -104,7 +106,7 @@ namespace PFW.Units.Component.Vision
             _spotters.RemoveWhere(
                 s => s == null 
                 || !s.CanDetect(this) 
-                || !ClearLineOfSight(s, this));
+                || !IsInLineOfSight(s));
 
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
@@ -117,7 +119,7 @@ namespace PFW.Units.Component.Vision
         /// <param name="spotter"></param>
         private void MaybeReveal(VisionComponent spotter)
         {
-            if (spotter.CanDetect(this) && ClearLineOfSight(spotter, this)) 
+            if (spotter.CanDetect(this) && IsInLineOfSight(spotter)) 
             {
                 if (_spotters.Count == 0) 
                 {
@@ -137,12 +139,6 @@ namespace PFW.Units.Component.Vision
                 distance < max_spot_range
                 && distance < max_spot_range * stealth_pen_factor / target.stealth_factor;
                 
-        }
-
-        private bool ClearLineOfSight(VisionComponent spotter, VisionComponent target)
-        {
-            bool result = IsInLineOfSight(target.gameObject.transform.position, out _);
-            return result;
         }
 
         /// <summary>
@@ -175,6 +171,11 @@ namespace PFW.Units.Component.Vision
 
                 return false;
             }
+        }
+
+        public bool IsInLineOfSight(VisionComponent other)
+        {
+            return IsInLineOfSight(other.transform.position, out _);
         }
 
         public void ToggleUnitVisibility(bool revealUnit)
