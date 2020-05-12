@@ -33,7 +33,7 @@ namespace PFW.UI.Ingame.UnitLabel
 
         public int PlaceTargetingPreview(Vector3 targetPosition)
         {
-            bool losOk = _unit.VisionComponent.IsInLineOfSight(
+            bool losOk = _unit.VisionComponent.IsInHardLineOfSight(
                     targetPosition, out Vector3 farthestVisiblePoint);
 
             float fireRange = _unit.MaxRange();
@@ -71,7 +71,7 @@ namespace PFW.UI.Ingame.UnitLabel
         /// </summary>
         public int PlaceVisionPreview(Vector3 targetPosition)
         {
-            _unit.VisionComponent.IsInLineOfSight(
+            _unit.VisionComponent.IsInHardLineOfSight(
                     targetPosition, out Vector3 farthestVisiblePoint);
 
             _successLine.SetPosition(0, _unit.transform.position);
