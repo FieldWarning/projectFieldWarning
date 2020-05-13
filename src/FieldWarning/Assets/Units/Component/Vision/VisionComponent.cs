@@ -80,7 +80,7 @@ namespace PFW.Units.Component.Vision
         // END Constants for the soft line of sight system ---
 
         // TODO: Add these values to YAML / UnitConfig schema
-        private int max_spot_range = 10000;  // in meters
+        private int max_spot_range = 3000;  // in meters
         private float stealth_factor = 10f;
         private float stealth_pen_factor = 10f;
 
@@ -145,10 +145,10 @@ namespace PFW.Units.Component.Vision
         {
             if (!IsVisible)
                 return;
-            
+
             _spotters.RemoveWhere(
-                s => s == null 
-                || !s.IsInSoftLineOfSight(this) 
+                s => s == null
+                || !s.IsInSoftLineOfSight(this)
                 || !IsInHardLineOfSight(s));
 
             if (_spotters.Count == 0)
@@ -162,9 +162,9 @@ namespace PFW.Units.Component.Vision
         /// <param name="spotter"></param>
         private void MaybeReveal(VisionComponent spotter)
         {
-            if (spotter.IsInSoftLineOfSight(this) && IsInHardLineOfSight(spotter)) 
+            if (spotter.IsInSoftLineOfSight(this) && IsInHardLineOfSight(spotter))
             {
-                if (_spotters.Count == 0) 
+                if (_spotters.Count == 0)
                 {
                     ToggleUnitVisibility(true);
                 }
@@ -205,7 +205,7 @@ namespace PFW.Units.Component.Vision
             }
         }
 
-        public bool IsInHardLineOfSight(VisionComponent other) => 
+        public bool IsInHardLineOfSight(VisionComponent other) =>
                 IsInHardLineOfSight(other.transform.position, out _);
 
         /// <summary>
@@ -219,10 +219,10 @@ namespace PFW.Units.Component.Vision
         /// difference.
         /// Exceptions: 300m of distance = guaranteed spot;
         ///             300m+ of forest = guaranteed non-spot;
-        public bool IsInSoftLineOfSight(VisionComponent other)
+        public bool IsInSoftLineOfSight(Vector3 targetPos, float targetStealth)
         {
             float distance = Vector3.Distance(
-                    other.transform.position, this.transform.position);
+                    targetPos, transform.position);
             distance /= Constants.MAP_SCALE;
 
             if (GUARANTEED_VISION_CUTOFF >= distance)
@@ -235,39 +235,42 @@ namespace PFW.Units.Component.Vision
                 return false;
             }
 
-            float penaltyMultiplier;
-            if (other.stealth_factor >= stealth_pen_factor)
-            { 
-                penaltyMultiplier = 1 + other.stealth_factor - stealth_pen_factor;
+            float penaltyBonus;
+            if (targetStealth >= stealth_pen_factor)
+            {
+                penaltyBonus = 1 + targetStealth - stealth_pen_factor;
             }
             else
             {
-                penaltyMultiplier = 
-                        (other.stealth_factor + 1) / (stealth_pen_factor + 1);
+                penaltyBonus =
+                        (targetStealth + 1) / (stealth_pen_factor + 1);
             }
 
-            float penalty =
-                    distance * penaltyMultiplier * STEALTH_INFLUENCE_ON_DISTANCE;
+            float penalty = distance +
+                    distance * penaltyBonus * STEALTH_INFLUENCE_ON_DISTANCE;
 
-            if (_terrainMap.GetTerrainType(other.transform.position) == TerrainMap.FOREST)
+            if (_terrainMap.GetTerrainType(targetPos) == TerrainMap.FOREST)
             {
-                penalty += 
-                        FOREST_INITIAL_PENALTY * penaltyMultiplier * STEALTH_INFLUENCE_ON_INITIAL_CAMO;
+                penalty += FOREST_INITIAL_PENALTY +
+                        FOREST_INITIAL_PENALTY * penaltyBonus * STEALTH_INFLUENCE_ON_INITIAL_CAMO;
             }
 
             float forestLength = _terrainMap.GetForestLengthOnLine(
-                    other.transform.position, transform.position);
+                    targetPos, transform.position);
             if (forestLength > HARD_FOREST_VISION_CUTOFF)
             {
                 return false;
             }
 
             float forestPenalty = forestLength * FOREST_PENALTY_PER_METER;
-            penalty += forestPenalty * penaltyMultiplier 
-                    * STEALTH_INFLUENCE_ON_OBSTRUCTIONS;
+            penalty += forestPenalty + 
+                    forestPenalty * penaltyBonus * STEALTH_INFLUENCE_ON_OBSTRUCTIONS;
 
             return max_spot_range > penalty;
         }
+
+        private bool IsInSoftLineOfSight(VisionComponent other)
+                => IsInSoftLineOfSight(other.transform.position, other.stealth_factor);
 
         public void ToggleUnitVisibility(bool revealUnit)
         {
