@@ -49,7 +49,7 @@ namespace PFW
         private const int EXTENSION = 100;
 
         private const float ROAD_WIDTH_MULT = 0.5f;
-        private const float TREE_RADIUS = 18f * Constants.MAP_SCALE;
+        private const float TREE_RADIUS = 25f * Constants.MAP_SCALE;
 
         private const float _BRIDGE_WIDTH = 3f * Constants.MAP_SCALE;
         public const float BRIDGE_HEIGHT = 1.0f; // temporary
