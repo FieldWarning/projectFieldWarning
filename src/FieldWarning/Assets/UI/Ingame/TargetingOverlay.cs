@@ -35,7 +35,6 @@ namespace PFW.UI.Ingame.UnitLabel
         {
             Vector3 farthestVisiblePoint =
                     FindFarthestVisiblePosition(targetPosition);
-            bool losOk = targetPosition == farthestVisiblePoint;
 
             float fireRange = _unit.MaxRange();
             float visionBlockerDistance = Vector3.Distance(
