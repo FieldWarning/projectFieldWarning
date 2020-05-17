@@ -659,8 +659,6 @@ namespace PFW
                 }
             }
 
-            // TODO
-            // float distance = Vector3.Distance(start, end);
             return treeTilesSeen * METERS_PER_MAP_ENTRY;
         }
 

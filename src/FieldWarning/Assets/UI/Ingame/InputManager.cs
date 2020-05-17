@@ -132,6 +132,10 @@ namespace PFW.UI.Ingame
                 {
                     ShowGhostUnitsAndMaybePurchase(hit);
                 }
+                else
+                {
+                    _currentBuyTransaction.HidePreview();
+                }
 
                 MaybeExitPurchasingModeAndRefund();
                 break;

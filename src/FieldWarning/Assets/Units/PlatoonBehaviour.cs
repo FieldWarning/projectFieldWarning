@@ -189,6 +189,8 @@ namespace PFW.Units
 
         public void SetGhostOrientation(Vector3 center, float heading) =>
                 GhostPlatoon.SetPositionAndOrientation(center, heading);
+        public void ToggleGhostVisibility(bool visible) =>
+                GhostPlatoon.SetVisible(visible);
 
         /// <summary>
         ///     Initialization of units beyond the compiled prefab contents
