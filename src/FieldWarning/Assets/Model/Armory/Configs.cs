@@ -40,6 +40,15 @@ namespace PFW.Model.Armory.JsonContents
         public ArmorConfig Armor;
         public MobilityConfig Mobility;
         public List<TurretConfig> Turrets;
+        public ReconConfig Recon;
+    }
+
+    [Serializable]
+    public class ReconConfig
+    {
+        public int MaxSpottingRange;
+        public float Stealth;
+        public float StealthPenetration;
     }
 
     [Serializable]

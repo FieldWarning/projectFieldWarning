@@ -37,6 +37,10 @@ namespace PFW.Units.Component.Data
         public int RearArmor;
         public int TopArmor;
 
+        public int MaxSpottingRange;
+        public float Stealth;
+        public float StealthPenetration;
+
         // These variables are not read in from an external file
         public float Radius;
         public float OptimumTurnSpeed;
@@ -80,6 +84,11 @@ namespace PFW.Units.Component.Data
             c.SideArmor = armorConfig.SideArmor;
             c.RearArmor = armorConfig.RearArmor;
             c.TopArmor = armorConfig.TopArmor;
+
+            ReconConfig reconConfig = config.Recon;
+            c.MaxSpottingRange = reconConfig.MaxSpottingRange;
+            c.Stealth = reconConfig.Stealth;
+            c.StealthPenetration = reconConfig.StealthPenetration;
 
             return c;
         }

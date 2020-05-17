@@ -15,6 +15,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Model.Game;
+using PFW.Units.Component.Data;
 
 namespace PFW.Units.Component.Vision
 {
@@ -80,9 +81,9 @@ namespace PFW.Units.Component.Vision
         // END Constants for the soft line of sight system ---
 
         // TODO: Add these values to YAML / UnitConfig schema
-        private int max_spot_range = 3000;  // in meters
-        private float stealth_factor = 10f;
-        private float stealth_pen_factor = 10f;
+        private int _maxSpottingRange = 3000;  // in meters
+        private float _stealthFactor = 1f;
+        private float _stealthPenFactor = 1f;
 
         private HashSet<VisionComponent> _spotters = new HashSet<VisionComponent>();
 
@@ -104,10 +105,13 @@ namespace PFW.Units.Component.Vision
             get { return _unit.Platoon.Owner.Team; }
         }
 
-        public void Initialize(UnitDispatcher dispatcher)
+        public void Initialize(UnitDispatcher dispatcher, DataComponent unitData)
         {
             _unit = dispatcher;
             _terrainMap = MatchSession.Current.TerrainMap;
+            _maxSpottingRange = unitData.MaxSpottingRange;
+            _stealthFactor = unitData.Stealth;
+            _stealthPenFactor = unitData.StealthPenetration;
         }
 
         /// <summary>
@@ -118,7 +122,7 @@ namespace PFW.Units.Component.Vision
         {
             Collider[] hits = Physics.OverlapSphere(
                     gameObject.transform.position,
-                    max_spot_range,
+                    _maxSpottingRange,
                     LayerMask.NameToLayer("Selectable"),
                     QueryTriggerInteraction.Ignore);
 
@@ -230,20 +234,20 @@ namespace PFW.Units.Component.Vision
                 return true;
             }
 
-            if (distance > max_spot_range)
+            if (distance > _maxSpottingRange)
             {
                 return false;
             }
 
             float penaltyBonus;
-            if (targetStealth >= stealth_pen_factor)
+            if (targetStealth >= _stealthPenFactor)
             {
-                penaltyBonus = 1 + targetStealth - stealth_pen_factor;
+                penaltyBonus = 1 + targetStealth - _stealthPenFactor;
             }
             else
             {
                 penaltyBonus =
-                        (targetStealth + 1) / (stealth_pen_factor + 1);
+                        (targetStealth + 1) / (_stealthPenFactor + 1);
             }
 
             float penalty = distance +
@@ -266,11 +270,11 @@ namespace PFW.Units.Component.Vision
             penalty += forestPenalty + 
                     forestPenalty * penaltyBonus * STEALTH_INFLUENCE_ON_OBSTRUCTIONS;
 
-            return max_spot_range > penalty;
+            return _maxSpottingRange > penalty;
         }
 
         private bool IsInSoftLineOfSight(VisionComponent other)
-                => IsInSoftLineOfSight(other.transform.position, other.stealth_factor);
+                => IsInSoftLineOfSight(other.transform.position, other._stealthFactor);
 
         public void ToggleUnitVisibility(bool revealUnit)
         {
