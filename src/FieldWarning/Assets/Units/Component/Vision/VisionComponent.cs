@@ -180,13 +180,14 @@ namespace PFW.Units.Component.Vision
         /// <summary>
         /// For a given point, check if there is a clear line
         /// of sight. This does not use optics values, it only
-        /// checks that there are no buildings/dense forests in the way.
+        /// checks that there are no buildings/hills in the way.
         /// 
         /// The out parameter is set to the farthest visible point.
         /// </summary>
         public bool IsInHardLineOfSight(Vector3 point, out Vector3 visionBlocker)
         {
             int layerMask = 1 << LayerMask.NameToLayer("HardLosBlock");
+            layerMask |= 1 << LayerMask.NameToLayer("Terrain");
             Vector3 SpotterPosition = gameObject.transform.position;
             SpotterPosition.y += RAYCAST_WORKAROUND;
             Vector3 TargetPosition = point;
