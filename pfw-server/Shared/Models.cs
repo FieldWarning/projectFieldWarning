@@ -38,6 +38,7 @@ namespace Shared
         public string Password { get; set; }
 
         public bool IsRunning { get; set; }
+        public DateTime LastHeartbeat { get; set; }
 
     }
 

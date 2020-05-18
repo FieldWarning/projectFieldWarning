@@ -17,7 +17,7 @@ namespace PFW_OfficialHub.Controllers
     [ApiController]
     public class PublicServerController : ControllerBase
     {
-        [HttpPost("serverheartbeat")]
+        [HttpPost("serverhb")]
         public ActionResult<dynamic> Hearbeat([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
         {
             if (!jwt.Verify()) return BadRequest("Bad token");
@@ -26,7 +26,7 @@ namespace PFW_OfficialHub.Controllers
 
         }
 
-        [HttpPost("playerheartbeat")]
+        [HttpPost("playerhb")]
         public async Task<ActionResult<string>> PHeartbeat([FromForm] Jwt jwt)
         {
             if (!jwt.Verify()) return BadRequest("Bad token");
