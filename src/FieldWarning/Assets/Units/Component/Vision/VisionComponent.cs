@@ -51,12 +51,16 @@ namespace PFW.Units.Component.Vision
         /// <summary>
         /// An enemy behind more than n meters of forest can't ever be spotted.
         /// </summary>
-        const int HARD_FOREST_VISION_CUTOFF = 300;
+        /// This has to be at least 15% lower than the GUARANTEED_VISION_CUTOFF.
+        /// This is because forest detection has gaps, and we want to ensure
+        /// that anything below is cutoff is also caught by the
+        /// GUARANTEED_VISION_CUTOFF.
+        const int HARD_FOREST_VISION_CUTOFF = 250;
 
         /// <summary>
         /// Each meter of forest applies this much vision penalty.
         /// </summary>
-        const int FOREST_PENALTY_PER_METER = 5;
+        const int FOREST_PENALTY_PER_METER = 4;
 
         /// <summary>
         /// Magnifies the effect of stealth - pen differences
