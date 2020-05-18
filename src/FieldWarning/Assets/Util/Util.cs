@@ -49,5 +49,13 @@ namespace PFW
 
             return null;
         }
+
+        public static void Swap(ref int x, ref int y)
+        {
+            int tmp = x;
+            x = y;
+            y = tmp;
+            return;
+        }
     }
 }

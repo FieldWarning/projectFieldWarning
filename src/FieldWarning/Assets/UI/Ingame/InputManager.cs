@@ -35,12 +35,14 @@ namespace PFW.UI.Ingame
         private Texture2D _firePosReticle;
         private Texture2D _primedReticle;
         private Texture2D _visionRulerReticle;
+        private Texture2D _forestReticle;
 
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
         public enum MouseMode {
             NORMAL,       //< Left click selects, right click orders normal movement or attack.
+            NORMAL_COVER, //< Same as above, cursor over forest
             PURCHASING,   //< Left click purchases platoon, right click cancels.
             FIRE_POS,     //< Left click orders fire position, right click cancels.
             REVERSE_MOVE, //< Left click reverse moves to cursor, right click cancels.
@@ -86,15 +88,21 @@ namespace PFW.UI.Ingame
 
         private void Start()
         {
-            _firePosReticle = (Texture2D)Resources.Load("FirePosTestTexture");
+            _firePosReticle = (Texture2D)Resources.Load(
+                    "Cursors/FirePosCursor");
             if (_firePosReticle == null)
                 throw new Exception("No fire pos reticle specified!");
 
-            _visionRulerReticle = (Texture2D)Resources.Load("VisionRulerTexture");
+            _visionRulerReticle = (Texture2D)Resources.Load(
+                    "Cursors/VisionRulerCursor");
             if (_visionRulerReticle == null)
                 throw new Exception("No vision ruler reticle specified!");
 
-            _primedReticle = (Texture2D)Resources.Load("PrimedCursor");
+            _primedReticle = (Texture2D)Resources.Load("Cursors/PrimedCursor");
+            if (_primedReticle == null)
+                throw new Exception("No primed reticle specified!");
+
+            _forestReticle = (Texture2D)Resources.Load("Cursors/ForestCursor");
             if (_primedReticle == null)
                 throw new Exception("No primed reticle specified!");
 
@@ -124,15 +132,38 @@ namespace PFW.UI.Ingame
                 {
                     ShowGhostUnitsAndMaybePurchase(hit);
                 }
+                else
+                {
+                    _currentBuyTransaction.HidePreview();
+                }
 
                 MaybeExitPurchasingModeAndRefund();
                 break;
             }
             case MouseMode.NORMAL:
+            {
                 ApplyHotkeys();
                 _rightClickManager.Update();
-                break;
 
+                if (IsMouseOverCover())
+                {
+                    EnterNormalCoverMode();
+                }
+
+                break;
+            }
+            case MouseMode.NORMAL_COVER:
+            {
+                ApplyHotkeys();
+                _rightClickManager.Update();
+
+                if (!IsMouseOverCover())
+                {
+                    EnterNormalMode();
+                }
+
+                break;
+            }
             case MouseMode.VISION_RULER:
             {
                 ApplyHotkeys();
@@ -156,7 +187,7 @@ namespace PFW.UI.Ingame
                 
 
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
                 break;
             }
             case MouseMode.FIRE_POS:
@@ -186,7 +217,7 @@ namespace PFW.UI.Ingame
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
 
                 break;
             }
@@ -200,7 +231,7 @@ namespace PFW.UI.Ingame
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
                 break;
 
             case MouseMode.FAST_MOVE:
@@ -213,7 +244,7 @@ namespace PFW.UI.Ingame
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
                 break;
 
             case MouseMode.SPLIT:
@@ -224,7 +255,7 @@ namespace PFW.UI.Ingame
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
                 break;
             default:
                 throw new Exception("impossible state");
@@ -439,10 +470,51 @@ namespace PFW.UI.Ingame
             Cursor.SetCursor(_firePosReticle, hotspot, CursorMode.Auto);
         }
 
+        /// <summary>
+        /// Returns true if the user is hovering over a forest.
+        /// </summary>
+        private bool IsMouseOverCover() 
+        {
+            RaycastHit hit;
+            if (Util.GetTerrainClickLocation(out hit))
+            {
+                if (TerrainMap.FOREST == _session.TerrainMap.GetTerrainType(
+                                hit.point))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// We have two normal modes based on whether or not
+        /// we're hovering over a forest (only affects cursor color).
+        /// </summary>
+        private void EnterNormalModeNaive()
+        {
+            if (IsMouseOverCover())
+            {
+                EnterNormalCoverMode();
+            }
+            else 
+            {
+                EnterNormalMode();
+            }
+        }
+
         private void EnterNormalMode()
         {
             CurMouseMode = MouseMode.NORMAL;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
+        }
+
+        private void EnterNormalCoverMode()
+        {
+            CurMouseMode = MouseMode.NORMAL_COVER;
+            Cursor.SetCursor(_forestReticle, Vector2.zero, CursorMode.Auto);
             _selectionManager.ToggleTargetingPreview(false);
             _rangeTooltip.SetActive(false);
         }

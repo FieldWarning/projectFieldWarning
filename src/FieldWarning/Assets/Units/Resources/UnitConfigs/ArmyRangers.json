@@ -21,6 +21,12 @@
 			"Length": 12,
 			"Width": 7
 	},
+	
+	"Recon": {
+		"MaxSpottingRange": 3000,
+		"StealthPenetration": 2,
+		"Stealth": 3
+	},
     
     "Armor": {
         "FrontArmor": 0,

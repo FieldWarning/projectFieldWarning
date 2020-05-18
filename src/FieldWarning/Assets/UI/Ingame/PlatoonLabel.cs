@@ -86,7 +86,6 @@ namespace PFW.UI.Ingame
             _unitName.text = unit.Name;
             _color = colorScheme;
             SetColor(_color.GhostColor);
-            SetVisible(true);
         }
 
         /// <summary>

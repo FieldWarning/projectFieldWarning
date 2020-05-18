@@ -141,7 +141,7 @@ namespace PFW.Units
             FinalHeading = heading;
             transform.position = center;
 
-            var positions = Formations.GetLineFormation(center, heading, _units.Count);
+            List<Vector3> positions = Formations.GetLineFormation(center, heading, _units.Count);
             for (int i = 0; i < _units.Count; i++) {
                 _units[i].GetComponent<MovementComponent>()
                         .Teleport(positions[i], Mathf.PI / 2 - heading);

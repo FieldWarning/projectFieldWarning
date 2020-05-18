@@ -43,7 +43,7 @@ namespace PFW.Units.Component.Movement
         /// <summary>
         /// We want to get within this distance of any intermediate waypoints.
         /// </summary>
-        private const float COMPLETION_DIST = 15f * Constants.MAP_SCALE;
+        private const float COMPLETION_DIST = 30f * Constants.MAP_SCALE;
 
         /// <summary>
         /// Throttle the frequency of waypoint recalculation, for performance.

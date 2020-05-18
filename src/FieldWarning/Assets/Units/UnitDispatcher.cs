@@ -103,7 +103,7 @@ namespace PFW.Units
 
             _movementComponent.Initialize();
             _healthComponent.Initialize(this, _unitData);
-            VisionComponent.Initialize(this);
+            VisionComponent.Initialize(this, _unitData);
             _armorComponent.Initialize(_healthComponent, _unitData, _movementComponent);
 
             _targetingOverlay = OverlayFactory.Instance.CreateTargetingOverlay(this);

@@ -44,11 +44,12 @@ namespace PFW
         // this value is the minimum because the engine will determine the granularity around this number for best fit
         private const int GRANULARITY = 1;
 
-        private const float MAP_SPACING = 1.5f * Constants.MAP_SCALE;
+        private const float METERS_PER_MAP_ENTRY = 1.5f;
+        private const float MAP_SPACING = METERS_PER_MAP_ENTRY * Constants.MAP_SCALE;
         private const int EXTENSION = 100;
 
         private const float ROAD_WIDTH_MULT = 0.5f;
-        private const float TREE_RADIUS = 18f * Constants.MAP_SCALE;
+        private const float TREE_RADIUS = 25f * Constants.MAP_SCALE;
 
         private const float _BRIDGE_WIDTH = 3f * Constants.MAP_SCALE;
         public const float BRIDGE_HEIGHT = 1.0f; // temporary
@@ -568,6 +569,102 @@ namespace PFW
             //} else {
             //    return terrain.SampleHeight(position);
             //}
+        }
+
+        /// <summary>
+        /// For a given line, get how much forest it would
+        /// cross, in meters.
+        /// </summary>
+        public float GetForestLengthOnLine(Vector3 start, Vector3 end) 
+        {
+            int mappedStartX = MapIndex(start.x - MapCenter.x);
+            int mappedStartZ = MapIndex(start.z - MapCenter.z);
+            int mappedEndX = MapIndex(end.x - MapCenter.x);
+            int mappedEndZ = MapIndex(end.z - MapCenter.z);
+
+            int x0 = mappedStartX;
+            int x1 = mappedEndX;
+            int y0 = mappedStartZ;
+            int y1 = mappedEndZ;
+
+            float treeTilesSeen = 0;
+
+            // Draw a line from one point to the other,
+            // and check each tile that falls on the line
+
+            // Using Xiaolin Wu's line-drawing algorithm
+            bool steep = Mathf.Abs(y1 - y0) > Mathf.Abs(x1 - x0);
+
+            // swap the co-ordinates if slope > 1 or we 
+            // draw backwards 
+            if (steep)
+            {
+                Util.Swap(ref x0, ref y0);
+                Util.Swap(ref x1, ref y1);
+            }
+            if (x0 > x1)
+            {
+                Util.Swap(ref x0, ref x1);
+                Util.Swap(ref y0, ref y1);
+            }
+
+            //compute the slope 
+            float dx = x1 - x0;
+            float dy = y1 - y0;
+            float gradient = dy / dx;
+            if (dx == 0.0)
+                gradient = 1;
+
+            int xpxl1 = x0;
+            int xpxl2 = x1;
+            float intersectY = y0;
+
+            // main loop 
+            if (steep)
+            {
+                int x;
+                for (x = xpxl1; x <= xpxl2; x++)
+                {
+                    // pixel coverage is determined by fractional 
+                    // part of y co-ordinate 
+                    if (_map[(int)intersectY, x] == FOREST)
+                    {
+                        treeTilesSeen += 1 - FractionalPartOfNumber(intersectY);
+                    }
+
+                    if (_map[(int)intersectY - 1, x] == FOREST)
+                    {
+                        treeTilesSeen += FractionalPartOfNumber(intersectY);
+                    }
+                    intersectY += gradient;
+                }
+            }
+            else
+            {
+                int x;
+                for (x = xpxl1; x <= xpxl2; x++)
+                {
+                    // pixel coverage is determined by fractional 
+                    // part of y co-ordinate 
+                    if (_map[x, (int)intersectY] == FOREST)
+                    {
+                        treeTilesSeen += 1 - FractionalPartOfNumber(intersectY);
+                    }
+
+                    if (_map[x, (int)intersectY - 1] == FOREST)
+                    {
+                        treeTilesSeen += FractionalPartOfNumber(intersectY);
+                    }
+                    intersectY += gradient;
+                }
+            }
+
+            return treeTilesSeen * METERS_PER_MAP_ENTRY;
+        }
+
+        private float FractionalPartOfNumber(float f)
+        {
+            return f - (int)f;
         }
     }
 }

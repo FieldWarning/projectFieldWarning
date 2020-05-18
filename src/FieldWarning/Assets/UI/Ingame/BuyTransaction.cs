@@ -94,10 +94,19 @@ namespace PFW.UI.Ingame
             Vector3 diff = facingPoint - center;
             float heading = diff.getRadianAngle();
 
-            var positions = Formations.GetLineFormation(
+            List<Vector3> positions = Formations.GetLineFormation(
                     center, heading + Mathf.PI / 2, PreviewPlatoons.Count);
-            for (var i = 0; i < PreviewPlatoons.Count; i++)
+            for (int i = 0; i < PreviewPlatoons.Count; i++)
+            {
                 PreviewPlatoons[i].SetGhostOrientation(positions[i], heading);
+                PreviewPlatoons[i].ToggleGhostVisibility(true);
+            }
+        }
+
+        public void HidePreview()
+        {
+            for (int i = 0; i < PreviewPlatoons.Count; i++)
+                PreviewPlatoons[i].ToggleGhostVisibility(false);
         }
     }
 }
