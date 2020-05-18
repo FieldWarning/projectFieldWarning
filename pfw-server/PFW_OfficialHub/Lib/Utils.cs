@@ -15,9 +15,10 @@ namespace PFW_OfficialHub.Lib
             return true;
         }
 
-        public static Player GetPlayer(Jwt jwt)
+        public static Task<Player> GetPlayer(Jwt jwt)
         {
-            return Db.OnlinePlayers.Find(x => x.Username == jwt.Username).FirstOrDefault();
+            var p = Db.Players.Find(x => x.Username == jwt.Username).FirstOrDefault();
+            return Task.FromResult(p);
         }
         public static User GetUser(Jwt jwt)
         {

@@ -61,7 +61,7 @@ namespace PFW_OfficialHub.Controllers
         {
             if (!jwt.Verify()) return BadRequest(412);
             msg.Time = DateTime.UtcNow;
-            var pt = Db.OnlinePlayers.Find(x => x.UserId == playerId).FirstOrDefaultAsync();
+            var pt = Db.Players.Find(x => x.UserId == playerId).FirstOrDefaultAsync();
             if (msg.Content.Length > 240) msg.Content = msg.Content[0..240];
 
             //insert in db

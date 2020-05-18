@@ -7,15 +7,36 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson.IO;
 using MongoDB.Driver;
+using PFW_OfficialHub.Lib;
 using Shared;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace PFW_OfficialHub.Controllers
 {
-    [Route("server")]
+    [Route("gameapi")]
     [ApiController]
     public class PublicServerController : ControllerBase
     {
+        [HttpPost("serverheartbeat")]
+        public ActionResult<dynamic> Hearbeat([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
+        {
+            if (!jwt.Verify()) return BadRequest("Bad token");
+
+            var elob = Db.GameLobbies.Find(x => x.Id == lobby.Id).FirstOrDefaultAsync();
+
+        }
+
+        [HttpPost("playerheartbeat")]
+        public async Task<ActionResult<string>> PHeartbeat([FromForm] Jwt jwt)
+        {
+            if (!jwt.Verify()) return BadRequest("Bad token");
+            var p = await Utils.GetPlayer(jwt);
+            var upd = new UpdateDefinitionBuilder<Player>().Set("LastSeen", DateTime.UtcNow);
+            _ = Db.Players.UpdateOneAsync(x => x.Id == p.Id, upd);
+
+            return StatusCode(200);
+        }
+
         [HttpPost("getall")]
         public ActionResult<string> GetAll([FromForm]Jwt jwt, [FromForm]LobbySearchFilter filter)
         {
@@ -45,8 +66,16 @@ namespace PFW_OfficialHub.Controllers
         [HttpPost("join/{serverId}")]
         public ActionResult<string> Connect([FromForm]Jwt jwt, string serverId)
         {
+            var srv = Db.GameLobbies.Find(x => x.Id == serverId).FirstOrDefaultAsync();
+            if (!jwt.Verify()) return BadRequest();
+            var player = Db.Players.Find(x => jwt.Username == x.Username).FirstOrDefault();
+            if (srv.Result == null) return BadRequest(404);
+            
+            var upd = new UpdateDefinitionBuilder<Player>().Set("LastSeen", DateTime.UtcNow).Set("CurrentLobbyId", serverId);
+            _ = Db.Players.UpdateOneAsync(x => x.Id == player.Id, upd);
 
-            return "200";
+
+            return StatusCode(200);
         }
         [HttpPost("leave/{serverId}")]
         public ActionResult<string> Leave([FromForm]Jwt jwt, string serverId)

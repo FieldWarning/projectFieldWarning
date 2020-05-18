@@ -70,14 +70,9 @@ namespace Ez
 
 
 
-            static GameLobby GetLobbyById(string id)
+            public static GameLobby Get(string id)
             {
-                //var pres = Post(new Dictionary<string, string>
-                //{
-                //    {"jwt", JsonConvert.SerializeObject(Session.Token) }
-                //}, )
-
-                    return new GameLobby();
+                return new GameLobby();
             }
         }
         public static class Auth

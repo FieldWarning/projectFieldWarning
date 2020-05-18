@@ -39,24 +39,6 @@ namespace Shared
 
         public bool IsRunning { get; set; }
 
-
-        public void Join(string playerId)
-        {
-
-        }
-        public void QuitGame(string lobbyId)
-        {
-
-        }
-        public void StartLobby()
-        {
-
-        }
-
-        public static void GlobalQuit(string playerId)
-        {
-
-        }
     }
 
     /// <summary>
@@ -111,7 +93,7 @@ namespace Shared
         [BsonId][BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        public DateTime LastOnline { get; set; }
+        public DateTime LastSeen { get; set; }
         public string CurrentLobbyId { get; set; }
         public string Username { get; set; }
         public string UserId { get; set; }

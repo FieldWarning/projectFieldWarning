@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace Database
             Task.Run(delegate {
                 while (true) {
                     Task.Delay(10000).Wait();
-                    OnlinePlayers.DeleteManyAsync(x => x.LastOnline < DateTime.UtcNow - TimeSpan.FromSeconds(15));
+                    Players.DeleteManyAsync(x => x.LastSeen < DateTime.UtcNow - TimeSpan.FromSeconds(15));
                 }
             });
 
@@ -53,9 +54,10 @@ namespace Database
         public static IMongoDatabase Database = Client.GetDatabase("FieldWarningServer");
 
         public static IMongoCollection<GameLobby> GameLobbies = Database.GetCollection<GameLobby>("GameLobbies");
-        
+        public static ConcurrentDictionary<string, GameLobby> LiveLobbies = new ConcurrentDictionary<string, GameLobby>();
+
         public static IMongoCollection<User> Users = Database.GetCollection<User>("Users");
-        public static IMongoCollection<Player> OnlinePlayers = Database.GetCollection<Player>("Players");
+        public static IMongoCollection<Player> Players = Database.GetCollection<Player>("Players");
         public static IMongoCollection<WarchatMsg> Warchat = Database.GetCollection<WarchatMsg>("WarchatMessages");
         public static IMongoCollection<PrivateMessage> Messages = Database.GetCollection<PrivateMessage>("PrivateMessages");
         public static void Init() => Console.WriteLine("Db Init");
