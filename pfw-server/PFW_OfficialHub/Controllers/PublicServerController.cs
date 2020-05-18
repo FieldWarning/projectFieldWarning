@@ -21,9 +21,9 @@ namespace PFW_OfficialHub.Controllers
         public ActionResult<dynamic> Hearbeat([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
         {
             if (!jwt.Verify()) return BadRequest("Bad token");
-
             var elob = Db.GameLobbies.Find(x => x.Id == lobby.Id).FirstOrDefaultAsync();
-
+            
+            return StatusCode(200);
         }
 
         [HttpPost("playerhb")]
@@ -50,7 +50,7 @@ namespace PFW_OfficialHub.Controllers
                 && filter.GameModes.Contains(x.GameMode)).ToListAsync();
 
             //verify token sync
-            if (!jwt.Verify()) return BadRequest(412);
+            if (!jwt.Verify()) return BadRequest(403);
 
             return JsonConvert.SerializeObject(servers.Result);
         }
