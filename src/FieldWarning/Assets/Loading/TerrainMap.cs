@@ -181,7 +181,7 @@ namespace PFW
             else
             {
                 //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
-                AddMultithreadedRoutine(ReadHeightMap, "Reading Compressed Height Map Data");
+                AddMultithreadedRoutine(ReadHeightMapRunner, "Reading Compressed Height Map Data");
                 // Loading bridges from a separate thread throws an exception.
                 // This is why we first cache the bridge positions outside the thread
                 // before doing the below. same goes for roads and trees.
@@ -217,7 +217,7 @@ namespace PFW
             yield return LoadWater();
         }
 
-        private void ReadHeightMap()
+        private void ReadHeightMapRunner()
         {
             ReadHeightMap(_HEIGHT_MAP_PATH);
         }

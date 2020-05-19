@@ -75,10 +75,11 @@ namespace PFW.Units.Component.Movement
 
 
             // maybe turn this into a multithreaded worker later
-            if (!ReadGraph(_graphFile))
-            {
-                GenerateGraphRunner();
-            }
+            //if (!ReadGraph(_graphFile))
+            //{
+
+            GenerateGraphRunner();
+            //}
         }
 
         /// <summary>
@@ -153,8 +154,9 @@ namespace PFW.Units.Component.Movement
         {
             AddCouroutine(BuildRoadNodesRunner, "Creating Pathfinding road nodes");
             AddMultithreadedRoutine(BuildOpenSpaceNodes, "Building open space nodes");
-            //AddCouroutine(BuildGraphRunner, "Creating the rest of Pathfinding nodes");
             AddMultithreadedRoutine(BuildGraphRunner, "Creating the rest of Pathfinding nodes...");
+
+            // leave just in case we decide to create cache again
             //AddMultithreadedRoutine(WriteGraph, "Writing pathfinding cache to disk");
         }
 
@@ -290,6 +292,8 @@ namespace PFW.Units.Component.Movement
             _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
 
             // Compute arcs for all pairs of nodes within cutoff distance
+            // we are attempting to create a connected graph here with each edge
+            // representing time/value for each mobility type at the node
             for (int i = 0; i < _graph.Count; i++)
             {
                 for (int j = i + 1; j < _graph.Count; j++)
@@ -305,6 +309,8 @@ namespace PFW.Units.Component.Movement
 
 
 
+
+            // leave this for now in case things get a little crazy for path finding later
 
             // Remove unnecessary arcs.
             // An arc in necessary if for any MobilityType, the direct path
@@ -431,6 +437,7 @@ namespace PFW.Units.Component.Movement
             // (this can be optimized later by throwing out some from the start)
             _openSet.Clear();
 
+            // find the nearest neighbor start A* search
             foreach (PathNode neighbor in _graph)
             {
                 neighbor.IsClosed = false;
@@ -455,6 +462,7 @@ namespace PFW.Units.Component.Movement
                 }
             }
 
+            // generic A* algorithm based on distance to destination and arc time's as hueristic function weights
             while (_openSet.Count > 0)
             {
                 PathNode current = _openSet.Dequeue();
