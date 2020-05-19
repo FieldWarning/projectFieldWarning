@@ -1,4 +1,4 @@
-﻿using PFW;
+using PFW;
 using PFW.Model.Game;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ public class TerrainDebug : MonoBehaviour
 
         
         var heightField = transform.Find("HeightField").GetComponent<TextMeshProUGUI>();
-        heightField.text = _matchSession.TerrainMap.GetTerrainHeight(hit.point).ToString();
+        heightField.text = _matchSession.TerrainMap.GetTerrainCachedHeight(hit.point).ToString();
 
         var typeField = transform.Find("TypeField").GetComponent<TextMeshProUGUI>();
         typeField.text = terrainType.ToString();

@@ -66,10 +66,11 @@ namespace PFW
                 float unitRadius, 
                 Vector3 direction)
         {
-            Terrain terrain = map.GetTerrainAtPos(location);
-            if (terrain == null)
-                return 0f;
-
+            //Terrain terrain = map.GetTerrainAtPos(location);
+            //if (terrain == null)
+            //    return 0f;
+            
+            
             // This is a slow way to do it, and we will probably need a fast, generic method to find units within a given distance of a location
             if (unitRadius > 0f)
             {
@@ -82,7 +83,7 @@ namespace PFW
                         return 0f;
                 }
             }
-
+        
             // Find unit speed on terrain
             int terrainType = map.GetTerrainType(location);
 
@@ -118,20 +119,20 @@ namespace PFW
             if (terrainType == TerrainMap.BRIDGE || terrainType == TerrainMap.WATER)
                 return speed;
 
-            return speed * GetSlopeFactor(terrain, location, direction);
+            return speed * GetSlopeFactor(map, location, direction);
         }
 
         private float GetSlopeFactor(
-                Terrain terrain, Vector3 location, Vector3 direction)
+                TerrainMap terrain, Vector3 location, Vector3 direction)
         {
             direction.y = 0f;
             direction.Normalize();
             direction *= 10f * Constants.MAP_SCALE;
             Vector3 perpendicular = new Vector3(-direction.z, 0f, direction.x);
 
-            float height = terrain.SampleHeight(location);
-            float forwardHeight = terrain.SampleHeight(location - direction);
-            float sideHeight = terrain.SampleHeight(location + perpendicular);
+            float height = terrain.GetTerrainCachedHeight(location);//SampleHeight(location);
+            float forwardHeight = terrain.GetTerrainCachedHeight(location - direction);//SampleHeight(location - direction);
+            float sideHeight = terrain.GetTerrainCachedHeight(location + perpendicular); //SampleHeight(location + perpendicular);
 
             float forwardSlope = forwardHeight - height;
             float sideSlope = sideHeight - height;
