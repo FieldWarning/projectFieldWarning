@@ -154,6 +154,7 @@ namespace PFW.Units.Component.Movement
         private void GenerateGraphRunner()
         {
             AddCouroutine(BuildRoadNodesRunner, "Creating Pathfinding road nodes");
+            AddMultithreadedRoutine(BuildOpenSpaceNodes, "Building open space nodes");
             //AddCouroutine(BuildGraphRunner, "Creating the rest of Pathfinding nodes");
             AddMultithreadedRoutine(BuildGraphRunner, "Creating the rest of Pathfinding nodes...");
             //AddMultithreadedRoutine(WriteGraph, "Writing pathfinding cache to disk");
@@ -213,6 +214,42 @@ namespace PFW.Units.Component.Movement
             }
         }
 
+        private void BuildOpenSpaceNodes()
+        {
+            var min = _map.MapMin;
+            var max = _map.MapMax;
+        
+
+            var range = ARC_MAX_DIST - 10;
+
+            // yea O(N^3) .. bad
+            for (float x = min.x + range; x < max.x - range; x+= range)
+            {
+                for (float z = min.z + range; z < max.z - range; z += range)
+                {
+                    var pnt = new Vector3(x, 1, z);
+                    var type = _map.GetTerrainType(pnt);
+                    if (type == TerrainMap.PLAIN)
+                    {
+                        bool near_wp = false;
+                        foreach (PathNode pn in _graph)
+                        {
+                            if ((Position(pn) - pnt).magnitude < range)
+                            {
+                                near_wp = true;
+                            }
+                        }
+
+                        if (!near_wp)
+                        {
+                            _graph.Add(new PathNode(pnt, false));
+                        }
+                    }
+                }
+            }
+
+
+        }
 
         //TODO: maybe need to generate a height map file as well just for this, because it takes a long time
         private void BuildGraph()
