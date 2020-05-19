@@ -41,8 +41,6 @@ namespace PFW.Units.Component.Movement
         public List<PathNode> _graph;
         private List<MobilityData> _mobilityTypes;
 
-        private Dictionary<Vector3, List<PathNode>> _neighborCache = new Dictionary<Vector3, List<PathNode>>();
-
         private string _graphFile;
 
         /// <summary>
@@ -227,8 +225,9 @@ namespace PFW.Units.Component.Movement
             {
                 for (float z = min.z + range; z < max.z - range; z += range)
                 {
-                    var pnt = new Vector3(x, 1, z);
+                    var pnt = new Vector3(x, _map.GetTerrainCachedHeight(new Vector3(x,z)), z);
                     var type = _map.GetTerrainType(pnt);
+
                     if (type == TerrainMap.PLAIN)
                     {
                         bool near_wp = false;
@@ -246,9 +245,12 @@ namespace PFW.Units.Component.Movement
                         }
                     }
                 }
+
+                double percent = ((double)x / (double)_graph.Count) * 100.0;
+                SetPercentComplete(percent);
             }
 
-
+            SetPercentComplete(100);
         }
 
         //TODO: maybe need to generate a height map file as well just for this, because it takes a long time
@@ -282,25 +284,6 @@ namespace PFW.Units.Component.Movement
                 {
                     if ((Position(_graph[i]) - Position(_graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
                         _graph.RemoveAt(j);
-                }
-            }
-
-            for (int i = 0; i < _graph.Count; i++)
-            {
-                for (int j = i + 1; j < _graph.Count; j++)
-                {
-
-                    var neighborPos = Position(_graph[j]);
-                    var startPos = Position(_graph[i]);
-
-                    if ((startPos - neighborPos).magnitude < ARC_MAX_DIST)
-                    {
-                        if (!_neighborCache.ContainsKey(startPos))
-                        {
-                            _neighborCache[startPos] = new List<PathNode>();
-                        }
-                        _neighborCache[startPos].Add(_graph[j]);
-                    }
                 }
             }
 
@@ -405,10 +388,6 @@ namespace PFW.Units.Component.Movement
                                                                     mobility,
                                                                     0f);
 
-                //List<PathNode> path = new List<PathNode>();
-                //arc.Time[mobility.Index] = FindPath(path,
-                //            Position(node1), Position(node2),
-                //            mobility, 0f, MoveCommandType.FAST);
             }
         }
 
@@ -452,51 +431,26 @@ namespace PFW.Units.Component.Movement
             // (this can be optimized later by throwing out some from the start)
             _openSet.Clear();
 
-            if (_neighborCache.ContainsKey(start))
+            foreach (PathNode neighbor in _graph)
             {
-                foreach (var neighbor in _neighborCache[start])
-                {
-                    neighbor.IsClosed = false;
-                    neighbor.CameFrom = null;
-                    neighbor.GScore = Pathfinder.FOREVER;
-                    var neighborPos = Position(neighbor);
+                neighbor.IsClosed = false;
+                neighbor.CameFrom = null;
+                neighbor.GScore = Pathfinder.FOREVER;
+                Vector3 neighborPos = Position(neighbor);
 
+                if ((start - neighborPos).magnitude < ARC_MAX_DIST)
+                {
                     float gScoreNew = Pathfinder.FindLocalPath(this,
-                                                                   start,
-                                                                   neighborPos,
-                                                                   mobility,
-                                                                   unitRadius);
+                                                                start,
+                                                                neighborPos,
+                                                                mobility,
+                                                                unitRadius);
                     if (gScoreNew < Pathfinder.FOREVER)
                     {
                         neighbor.GScore = gScoreNew;
+                            
                         float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
                         _openSet.Enqueue(neighbor, fScoreNew);
-                    }
-                }
-            }
-            else
-            {
-                foreach (PathNode neighbor in _graph)
-                {
-                    neighbor.IsClosed = false;
-                    neighbor.CameFrom = null;
-                    neighbor.GScore = Pathfinder.FOREVER;
-                    Vector3 neighborPos = Position(neighbor);
-
-                    if ((start - neighborPos).magnitude < ARC_MAX_DIST)
-                    {
-                        float gScoreNew = Pathfinder.FindLocalPath(this,
-                                                                   start,
-                                                                   neighborPos,
-                                                                   mobility,
-                                                                   unitRadius);
-                        if (gScoreNew < Pathfinder.FOREVER)
-                        {
-                            neighbor.GScore = gScoreNew;
-                            
-                            float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
-                            _openSet.Enqueue(neighbor, fScoreNew);
-                        }
                     }
                 }
             }
