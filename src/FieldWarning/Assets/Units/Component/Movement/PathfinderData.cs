@@ -35,7 +35,7 @@ namespace PFW.Units.Component.Movement
         private const float SPARSE_GRID_SPACING = 1000f * Constants.MAP_SCALE;
         private const float ROAD_GRID_SPACING = 200f * Constants.MAP_SCALE;
         private const float NODE_PRUNE_DIST_THRESH = 10f * Constants.MAP_SCALE;
-        private const float ARC_MAX_DIST = 1200f * Constants.MAP_SCALE;//2500f * Constants.MAP_SCALE;
+        private const float ARC_MAX_DIST = 1200f * Constants.MAP_SCALE;
 
         public TerrainMap _map;
         public List<PathNode> _graph;
