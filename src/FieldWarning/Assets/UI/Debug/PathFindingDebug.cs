@@ -29,8 +29,7 @@ public class PathFindingDebug : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        var gameSession = GameObject.FindWithTag("GameSession");
-        _matchSession = gameSession.GetComponent<MatchSession>();
+        _matchSession = MatchSession.Current;
     }
 
     private void ToggleWPs(bool toggle)
