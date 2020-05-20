@@ -10,5 +10,6 @@ namespace PFW.UI.Ingame
         public static KeyCode ReverseMove = KeyCode.G;
         public static KeyCode FastMove = KeyCode.V;
         public static KeyCode Split = KeyCode.K;
+        public static KeyCode VisionRuler = KeyCode.R;
     }
 }

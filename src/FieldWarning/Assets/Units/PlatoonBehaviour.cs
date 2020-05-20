@@ -189,6 +189,8 @@ namespace PFW.Units
 
         public void SetGhostOrientation(Vector3 center, float heading) =>
                 GhostPlatoon.SetPositionAndOrientation(center, heading);
+        public void ToggleGhostVisibility(bool visible) =>
+                GhostPlatoon.SetVisible(visible);
 
         /// <summary>
         ///     Initialization of units beyond the compiled prefab contents
@@ -399,9 +401,38 @@ namespace PFW.Units
             _waypointOverlay.gameObject.SetActive(enabled);
         }
 
+        public int PlaceTargetingPreview(Vector3 targetPosition, bool respectMaxRange)
+        {
+            int minRange = 99999;
+            foreach (UnitDispatcher unit in Units)
+            {
+                int range = unit.PlaceTargetingPreview(targetPosition, respectMaxRange);
+                if (range < minRange)
+                {
+                    minRange = range;
+                }
+            }
+            return minRange;
+        }
+
+        public void ToggleTargetingPreview(bool enabled)
+        {
+            Units.ForEach(x => x.ToggleTargetingPreview(enabled));
+        }
+
         public void SendFirePosOrder(Vector3 position, bool enqueue = false)
         {
             OrderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
+        }
+
+        /// <summary>
+        /// Make the platoon (in)visible (assuming the
+        /// units are also (in)visible).
+        /// </summary>
+        /// <param name="visible"></param>
+        public void ToggleLabelVisibility(bool visible)
+        {
+            _platoonLabel.gameObject.SetActive(visible);
         }
 
         #region Movement

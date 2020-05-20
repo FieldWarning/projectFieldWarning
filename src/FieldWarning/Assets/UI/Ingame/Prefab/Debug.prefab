@@ -755,6 +755,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bc91a1ea2b68554eb1f720b34b7e225, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _positionField: {fileID: 6188335895953968115}
+  _typeField: {fileID: 5373315774957201955}
+  _heightField: {fileID: 2583466317595506174}
 --- !u!114 &7156812486087132362
 MonoBehaviour:
   m_ObjectHideFlags: 0

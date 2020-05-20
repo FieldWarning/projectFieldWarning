@@ -19,15 +19,14 @@ using UnityEngine;
 
 namespace PFW.UI.Ingame.UnitLabel
 {
+    /// <summary>
+    /// The line that shows ongoing move orders
+    /// when a platoon is selected.
+    /// </summary>
     public class WaypointOverlayBehavior : MonoBehaviour
     {
         private PlatoonBehaviour _platoon;
         private LineRenderer _lineR;
-
-        public void Destroy()
-        {
-            Destroy(gameObject);
-        }
 
         private void Update()
         {

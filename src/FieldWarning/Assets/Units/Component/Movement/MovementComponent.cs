@@ -21,8 +21,8 @@ namespace PFW.Units.Component.Movement
     public sealed class MovementComponent : MonoBehaviour
     {
         public const float NO_HEADING = float.MaxValue;
-        private const float ORIENTATION_RATE = 5.0f;
-        private const float TRANSLATION_RATE = 5.0f;
+        private const float ORIENTATION_RATE = 8.0f;
+        private const float TRANSLATION_RATE = 6.0f;
 
         public DataComponent Data { get; private set; }
         public Pathfinder Pathfinder { get; private set; }
@@ -104,7 +104,10 @@ namespace PFW.Units.Component.Movement
             Right = new Vector3(Forward.z, 0f, -Forward.x);
         }
 
-        // Sets the unit's destination location, with a specific given heading value
+        /// <summary>
+        /// Sets the unit's destination location, 
+        /// with a specific given heading value.
+        /// </summary>
         public void SetDestination(
                 Vector3 d, 
                 float heading = NO_HEADING, 
@@ -116,7 +119,9 @@ namespace PFW.Units.Component.Movement
 
         public bool AreOrdersComplete() => _moveStrategy.AreOrdersComplete();
 
-        // Heading given in radians
+        /// <summary>
+        /// Heading given in radians
+        /// </summary>
         public void Teleport(Vector3 pos, float heading)
         {
             _moveStrategy.NextPosition = pos;

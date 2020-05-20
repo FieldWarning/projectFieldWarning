@@ -34,17 +34,21 @@ namespace PFW.UI.Ingame
     {
         private Texture2D _firePosReticle;
         private Texture2D _primedReticle;
+        private Texture2D _visionRulerReticle;
+        private Texture2D _forestReticle;
 
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
         public enum MouseMode {
             NORMAL,       //< Left click selects, right click orders normal movement or attack.
+            NORMAL_COVER, //< Same as above, cursor over forest
             PURCHASING,   //< Left click purchases platoon, right click cancels.
             FIRE_POS,     //< Left click orders fire position, right click cancels.
             REVERSE_MOVE, //< Left click reverse moves to cursor, right click cancels.
             FAST_MOVE,    //< Left click fast moves to cursor, right click cancels.
-            SPLIT         //< Left click splits the platoon, right click cancels.
+            SPLIT,        //< Left click splits the platoon, right click cancels.
+            VISION_RULER  //< Left click selects and cancels, right click cancels.
         };
 
         public MouseMode CurMouseMode { get; private set; } = MouseMode.NORMAL;
@@ -53,13 +57,11 @@ namespace PFW.UI.Ingame
 
         private MatchSession _session;
         public MatchSession Session {
-            get {
-                return _session;
-            }
-
             set {
                 if (_session == null)
+                {
                     _session = value;
+                }
             }
         }
 
@@ -67,11 +69,16 @@ namespace PFW.UI.Ingame
         public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
                 _selectionManager.PlatoonLabelClicked(platoon);
 
-        private PlayerData _localPlayer {
-            get {
-                return Session.LocalPlayer.Data;
+        private PlayerData _localPlayer;
+        public PlayerData LocalPlayer {
+            set {
+                _localPlayer = value;
+                _selectionManager.LocalPlayer = value;
             }
         }
+
+        GameObject _rangeTooltip;
+        TMPro.TextMeshProUGUI _rangeTooltipText;
 
         private void Awake()
         {
@@ -81,15 +88,35 @@ namespace PFW.UI.Ingame
 
         private void Start()
         {
-            _firePosReticle = (Texture2D)Resources.Load("FirePosTestTexture");
+            _firePosReticle = (Texture2D)Resources.Load(
+                    "Cursors/FirePosCursor");
             if (_firePosReticle == null)
                 throw new Exception("No fire pos reticle specified!");
 
-            _primedReticle = (Texture2D)Resources.Load("PrimedCursor");
+            _visionRulerReticle = (Texture2D)Resources.Load(
+                    "Cursors/VisionRulerCursor");
+            if (_visionRulerReticle == null)
+                throw new Exception("No vision ruler reticle specified!");
+
+            _primedReticle = (Texture2D)Resources.Load("Cursors/PrimedCursor");
+            if (_primedReticle == null)
+                throw new Exception("No primed reticle specified!");
+
+            _forestReticle = (Texture2D)Resources.Load("Cursors/ForestCursor");
             if (_primedReticle == null)
                 throw new Exception("No primed reticle specified!");
 
             _rightClickManager = new ClickManager(1, MoveGhostsToMouse, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
+
+            _rangeTooltip = GameObject.Find("RangeTooltip");
+            _rangeTooltipText = 
+                    _rangeTooltip.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            if (_rangeTooltipText == null)
+            {
+                throw new Exception(
+                    "There should be a range tooltip in the HUD hierarchy!");
+            }
+            _rangeTooltip.SetActive(false);
         }
 
         private void Update()
@@ -99,32 +126,101 @@ namespace PFW.UI.Ingame
             switch (CurMouseMode) {
 
             case MouseMode.PURCHASING:
-
+            {
                 RaycastHit hit;
-                if (Util.GetTerrainClickLocation(out hit)) {
+                if (Util.GetTerrainClickLocation(out hit))
+                {
                     ShowGhostUnitsAndMaybePurchase(hit);
+                }
+                else
+                {
+                    _currentBuyTransaction.HidePreview();
                 }
 
                 MaybeExitPurchasingModeAndRefund();
                 break;
-
+            }
             case MouseMode.NORMAL:
+            {
                 ApplyHotkeys();
                 _rightClickManager.Update();
-                break;
 
-            case MouseMode.FIRE_POS:
+                if (IsMouseOverCover())
+                {
+                    EnterNormalCoverMode();
+                }
+
+                break;
+            }
+            case MouseMode.NORMAL_COVER:
+            {
+                ApplyHotkeys();
+                _rightClickManager.Update();
+
+                if (!IsMouseOverCover())
+                {
+                    EnterNormalMode();
+                }
+
+                break;
+            }
+            case MouseMode.VISION_RULER:
+            {
                 ApplyHotkeys();
 
+                // Show range and line of sight indicators
+                RaycastHit hit;
+                if (Util.GetTerrainClickLocation(out hit))
+                {
+                    _selectionManager.ToggleTargetingPreview(true);
+                    int minDistance = _selectionManager.PlaceTargetingPreview(
+                            hit.point, false);
+                    _rangeTooltipText.text = minDistance.ToString() + "m";
+                    _rangeTooltip.SetActive(true);
+                    _rangeTooltip.transform.position = Input.mousePosition;
+                }
+                else 
+                {
+                    _selectionManager.ToggleTargetingPreview(false);
+                    _rangeTooltip.SetActive(false);
+                }
+                
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                    EnterNormalModeNaive();
+                break;
+            }
+            case MouseMode.FIRE_POS:
+            {
+                ApplyHotkeys();
+
+                // Show range and line of sight indicators
+                RaycastHit hit;
+                if (Util.GetTerrainClickLocation(out hit))
+                {
+                    _selectionManager.ToggleTargetingPreview(true);
+                    int minDistance = _selectionManager.PlaceTargetingPreview(
+                            hit.point, true);
+                    _rangeTooltipText.text = minDistance.ToString() + "m";
+                    _rangeTooltip.SetActive(true);
+                    _rangeTooltip.transform.position = Input.mousePosition;
+                }
+                else 
+                {
+                    _selectionManager.ToggleTargetingPreview(false);
+                    _rangeTooltip.SetActive(false);
+                }
+
+                // React to clicks
                 if (Input.GetMouseButtonDown(0))
                     _selectionManager.DispatchFirePosCommand();
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
 
                 break;
-
+            }
             case MouseMode.REVERSE_MOVE:
                 ApplyHotkeys();
                 if (Input.GetMouseButtonDown(0)) {
@@ -135,7 +231,7 @@ namespace PFW.UI.Ingame
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
                 break;
 
             case MouseMode.FAST_MOVE:
@@ -148,7 +244,7 @@ namespace PFW.UI.Ingame
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
                 break;
 
             case MouseMode.SPLIT:
@@ -159,7 +255,7 @@ namespace PFW.UI.Ingame
 
                 if ((Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
                     || Input.GetMouseButtonDown(1))
-                    EnterNormalMode();
+                    EnterNormalModeNaive();
                 break;
             default:
                 throw new Exception("impossible state");
@@ -186,7 +282,6 @@ namespace PFW.UI.Ingame
         ///     Purchase units if there is a buy selection.
         /// </summary>
         /// <param name="closestSpawn"></param>
-
         private void MaybePurchaseGhostUnits(SpawnPointBehaviour closestSpawn)
         {
             if (Input.GetMouseButtonUp(0)) 
@@ -223,7 +318,7 @@ namespace PFW.UI.Ingame
                 }
 
                 int unitPrice = _currentBuyTransaction.Unit.Price;
-                Session.LocalPlayer.Refund(
+                _session.LocalPlayer.Refund(
                         unitPrice * _currentBuyTransaction.UnitCount);
 
                 ExitPurchasingMode();
@@ -288,7 +383,7 @@ namespace PFW.UI.Ingame
         /// <param name="unit"></param>
         public void BuyCallback(Unit unit)
         {
-            bool paid = Session.LocalPlayer.TryPay(unit.Price);
+            bool paid = _session.LocalPlayer.TryPay(unit.Price);
             if (!paid)
                 return;
 
@@ -335,7 +430,7 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
-            if (!_session.isChatFocused) 
+            if (!_session.IsChatFocused) 
             {
                 if (Commands.Unload) 
                 {
@@ -361,6 +456,10 @@ namespace PFW.UI.Ingame
                 {
                     EnterSplitMode();
                 }
+                else if (Commands.VisionRuler && !_selectionManager.Empty)
+                {
+                    EnterVisionRulerMode();
+                }
             }
         }
 
@@ -371,28 +470,83 @@ namespace PFW.UI.Ingame
             Cursor.SetCursor(_firePosReticle, hotspot, CursorMode.Auto);
         }
 
+        /// <summary>
+        /// Returns true if the user is hovering over a forest.
+        /// </summary>
+        private bool IsMouseOverCover() 
+        {
+            RaycastHit hit;
+            if (Util.GetTerrainClickLocation(out hit))
+            {
+                if (TerrainMap.FOREST == _session.TerrainMap.GetTerrainType(
+                                hit.point))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// We have two normal modes based on whether or not
+        /// we're hovering over a forest (only affects cursor color).
+        /// </summary>
+        private void EnterNormalModeNaive()
+        {
+            if (IsMouseOverCover())
+            {
+                EnterNormalCoverMode();
+            }
+            else 
+            {
+                EnterNormalMode();
+            }
+        }
+
         private void EnterNormalMode()
         {
             CurMouseMode = MouseMode.NORMAL;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
+        }
+
+        private void EnterNormalCoverMode()
+        {
+            CurMouseMode = MouseMode.NORMAL_COVER;
+            Cursor.SetCursor(_forestReticle, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
         }
 
         private void EnterFastMoveMode()
         {
             CurMouseMode = MouseMode.FAST_MOVE;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
         }
 
         private void EnterReverseMoveMode()
         {
             CurMouseMode = MouseMode.REVERSE_MOVE;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
         }
 
         private void EnterSplitMode()
         {
             CurMouseMode = MouseMode.SPLIT;
             Cursor.SetCursor(_primedReticle, Vector2.zero, CursorMode.Auto);
+            _selectionManager.ToggleTargetingPreview(false);
+            _rangeTooltip.SetActive(false);
+        }
+        private void EnterVisionRulerMode()
+        {
+            CurMouseMode = MouseMode.VISION_RULER;
+            Vector2 hotspot = new Vector2(_visionRulerReticle.width / 2, _visionRulerReticle.height / 2);
+            Cursor.SetCursor(_visionRulerReticle, hotspot, CursorMode.Auto);
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
@@ -441,6 +595,12 @@ namespace PFW.UI.Ingame
         public static bool Split {
             get {
                 return Input.GetKeyDown(Hotkeys.Split);
+            }
+        }
+
+        public static bool VisionRuler {
+            get {
+                return Input.GetKeyDown(Hotkeys.VisionRuler);
             }
         }
     }

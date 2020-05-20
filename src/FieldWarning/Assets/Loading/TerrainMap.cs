@@ -45,11 +45,12 @@ namespace PFW
         // this value is the minimum because the engine will determine the granularity around this number for best fit
         private const int GRANULARITY = 1;
 
-        private const float MAP_SPACING = 1.5f * Constants.MAP_SCALE;
+        private const float METERS_PER_MAP_ENTRY = 1.5f;
+        private const float MAP_SPACING = METERS_PER_MAP_ENTRY * Constants.MAP_SCALE;
         private const int EXTENSION = 100;
 
         private const float ROAD_WIDTH_MULT = 0.5f;
-        private const float TREE_RADIUS = 18f * Constants.MAP_SCALE;
+        private const float TREE_RADIUS = 25f * Constants.MAP_SCALE;
 
         private const float _BRIDGE_WIDTH = 3f * Constants.MAP_SCALE;
         public const float BRIDGE_HEIGHT = 1.0f; // temporary
@@ -62,7 +63,7 @@ namespace PFW
         private byte[,] _map;
         private float[,] _height_map;
         private int _mapSize;
-        private float _terrainSpacingX, _terrainSpacingZ;
+        private readonly float _terrainSpacingX, _terrainSpacingZ;
 
         // 2D array of terrain pieces for quickly finding which piece is at a given location
         private Terrain[,] _terrains;
@@ -85,11 +86,11 @@ namespace PFW
         public TerrainMap(Terrain[] terrains1D, int sceneBuildId)
         {
             _sceneBuildId = sceneBuildId;
-            // The water tag is only used for this
             WaterMarker water = GameObject.FindObjectOfType<WaterMarker>();
             if (water != null)
             {
                 WATER_HEIGHT = water.GetMaxChildHeight();
+                Debug.Log($"Water found with height {WATER_HEIGHT}.");
             }
             else
             {
@@ -122,8 +123,8 @@ namespace PFW
                     Vector3 corner = MapMin + new Vector3(_terrainSpacingX * i, 0f, _terrainSpacingZ * j);
                     foreach (Terrain terrain in terrains1D)
                     {
-                        if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2 &&
-                                Mathf.Abs(terrain.transform.position.z - corner.z) < _terrainSpacingZ / 2)
+                        if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2
+                            && Mathf.Abs(terrain.transform.position.z - corner.z) < _terrainSpacingZ / 2)
                         {
                             _terrains[i, j] = terrain;
                         }
@@ -135,7 +136,7 @@ namespace PFW
 
             _HEIGHT_MAP_PATH = GetTerrainMapCachePath();
 
-            var mapLen = 2 * _mapSize + 2 * EXTENSION;
+            int mapLen = 2 * _mapSize + 2 * EXTENSION;
             _map = new byte[mapLen, mapLen];
             _height_map = new float[mapLen, mapLen];
 
@@ -153,7 +154,7 @@ namespace PFW
             }
 
 
-            // get our bridge positions so we dont have to be in the main thread to access bridge into
+            // get our bridge positions so we dont have to be in the main thread to access bridge info
             for (int i = 0; i < _bridges.Length; i++)
             {
                 GameObject bridge = _bridges[i];
@@ -164,6 +165,12 @@ namespace PFW
 
             // TODO need to also somehow verify the height map is valid?? 
             // not sure how to do this each time without reading the original data.
+
+            if (!MapVersionCheck(_HEIGHT_MAP_PATH))
+            {
+                File.Delete(_HEIGHT_MAP_PATH);
+            }
+
             if (!File.Exists(_HEIGHT_MAP_PATH))
             {
                 // this cannot be in another thread because it uses the terrain and cannot cache the terrain because
@@ -174,21 +181,24 @@ namespace PFW
                 //LoadingScreen.SWorkers.Enqueue(new CoroutineWorker(LoadWaterRunner, "Loading water."));
 
                 //AddCouroutine(LoadWaterRunner, "Load water");
-                AddCouroutine(WriteHeightMap, "Writing Height Map...");
+                AddCouroutine(WriteHeightMap, "Writing Height Map data for the first time...");
 
                 //AddMultithreadedRoutine(ExportFinishedMapRunner, "Creating Compressed Map File");
             }
-            else
-            {
-                //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
-                AddMultithreadedRoutine(ReadHeightMapRunner, "Reading Compressed Height Map Data");
-                // Loading bridges from a separate thread throws an exception.
-                // This is why we first cache the bridge positions outside the thread
-                // before doing the below. same goes for roads and trees.
-                AddMultithreadedRoutine(LoadTreesRunner, "Loading trees...");
-                AddMultithreadedRoutine(LoadRoadsRunner, "Loading roads...");
-                AddMultithreadedRoutine(LoadBridgesRunner, "Loading bridges...");
-            }
+            
+            
+            //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
+            AddMultithreadedRoutine(ReadHeightMapRunner, "Reading Compressed Height Map Data...");
+            
+            
+                
+            // Loading bridges from a separate thread throws an exception.
+            // This is why we first cache the bridge positions outside the thread
+            // before doing the below. same goes for roads and trees.
+            AddMultithreadedRoutine(LoadTreesRunner, "Loading trees...");
+            AddMultithreadedRoutine(LoadRoadsRunner, "Loading roads...");
+            AddMultithreadedRoutine(LoadBridgesRunner, "Loading bridges...");
+            
 
             // leave this commented out until we make a change and need to retest the map
             //_loader.AddWorker(MapTester);
@@ -206,14 +216,12 @@ namespace PFW
 
         private void ExportFinishedMapRunner()
         {
-
             ExportCompressedMap(_map, _HEIGHT_MAP_PATH);
         }
 
 
         private IEnumerator LoadWaterRunner()
         {
-
             yield return LoadWater();
         }
 
@@ -224,7 +232,7 @@ namespace PFW
 
         private IEnumerator WriteHeightMap()
         {
-           yield return WriteHeightMap(GetTerrainMapCachePath());
+            yield return WriteHeightMap(GetTerrainMapCachePath());
         }
 
         /// <summary>
@@ -236,9 +244,9 @@ namespace PFW
             Debug.Log("Creating terrain cache.");
 
             int len = _map.GetLength(0);
-            for (var x = 0; x < _map.GetLength(0); x++)
+            for (int x = 0; x < _map.GetLength(0); x++)
             {
-                for (var z = 0; z < _map.GetLength(0); z += GRANULARITY)
+                for (int z = 0; z < _map.GetLength(0); z += GRANULARITY)
                 {
                     _map[x, z] = (byte)(GetTerrainHeight(PositionOf(x, z)) > WATER_HEIGHT ? PLAIN : WATER);
 
@@ -251,9 +259,7 @@ namespace PFW
                             _map[x, z + i] = savedVal;
                         }
                     }
-
                 }
-
 
                 SetPercentComplete(((double)x / (double)_map.GetLength(0)) * 100.0);
                 if ((int)GetPercentComplete() % 2 == 0)
@@ -264,20 +270,56 @@ namespace PFW
         }
 
 
-        /// <summary>
-        /// This unpacks/uncomporesses the binary height map.
-        /// The compression and structure of this height map is simple.
-        /// Every height value is stored as a fload with a corresponding number of times it appears with
-        /// maybe a newline to designate its now a different x coordinate.
-        ///
-        /// <height><number_of_times_it_occurs_consecutively>["\n"]
-        /// <4bytes><4bytes><4bytes>
-        ///
-        /// Everything is 4 bytes for simplicity, including the newline.
-        ///
-        /// </summary>
-        /// <param name="path"></param>
-        public void ReadHeightMap(string path)
+        private bool MapVersionCheck(string path)
+        {
+
+            if (!File.Exists(_HEIGHT_MAP_PATH))
+            {
+                return false;
+            }
+
+            var file = File.ReadAllBytes(path);
+
+
+
+            BinaryReader reader = new BinaryReader(new MemoryStream(file));
+
+            MapVersion version = GameObject.Find("map").GetComponent<MapVersion>();
+            String final_version = version.GetVersionString();
+
+           
+            string version_string = reader.ReadString();
+            char nl = reader.ReadChar();
+
+
+            if (version_string != final_version || nl != '\n')
+            {
+                reader.Close();
+                return false;
+
+            }
+
+            return true;
+  
+        }
+
+
+    /// <summary>
+    /// This unpacks/uncomporesses the binary height map.
+    /// The compression and structure of this height map is simple.
+    /// Every height value is stored as a fload with a corresponding number of times it appears with
+    /// maybe a newline to designate its now a different x coordinate.
+    ///
+    /// <version string>
+    /// <height><number_of_times_it_occurs_consecutively>["\n"]
+    /// <4bytes><4bytes><4bytes>
+    /// ...
+    ///
+    /// Everything is 4 bytes for simplicity, including the newline.
+    ///
+    /// </summary>
+    /// <param name="path"></param>
+    public void ReadHeightMap(string path)
         {
             //TODO : not much error checking is done in thsi function
 
@@ -292,8 +334,13 @@ namespace PFW
 
             BinaryReader reader = new BinaryReader(new MemoryStream(file));
 
+            // version need to get past the version information and newline
+            string version_string = reader.ReadString();
+            byte nl = reader.ReadByte();
+
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
+                
 
                 // the sampled height of terrain (4 bytes float) or a newline
                 byte[] heightOrNL = reader.ReadBytes(4);
@@ -346,8 +393,17 @@ namespace PFW
         public IEnumerator WriteHeightMap(string path)
         {
 
+            MapVersion version = GameObject.Find("map").GetComponent<MapVersion>();
+            String final_version = version.GetVersionString(); ;
+
             int nEntry = 2 * _mapSize + 2 * EXTENSION;
             BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
+
+            // write the version so at least we can verify
+            writer.Write(final_version);
+            writer.Write('\n');
+
+            
             for (int x = 0; x < nEntry; x++)
             {
                 float temp = 0;
@@ -406,7 +462,6 @@ namespace PFW
         /// <param name="path"></param>
         public void ExportCompressedMap(byte[,] map, string path)
         {
-
             BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
             for (int x = 0; x < map.GetLength(0); x++)
             {
@@ -432,16 +487,14 @@ namespace PFW
                     }
 
                     last = temp;
-
-
                 }
 
                 writer.Write(temp);
                 writer.Write(lastcnt);
 
 
-                writer.Write((char)'\n');
-                SetPercentComplete(((double)x / (double)map.GetLength(0)) * 100.0);
+                writer.Write('\n');
+                SetPercentComplete((x / map.GetLength(0)) * 100.0);
             }
 
             writer.Close();
@@ -466,7 +519,7 @@ namespace PFW
             //TODO : not much error checking is done in thsi function
 
             // read the entire file into memory
-            var file = File.ReadAllBytes(path);
+            byte[] file = File.ReadAllBytes(path);
 
             //var last_notify_msec = 0;
             int xCoord = 0;
@@ -488,7 +541,6 @@ namespace PFW
                 }
                 else
                 {
-
                     // since we already read a byte but we need 4 more bytes for an int 
                     // that represents the count
                     int numOfValues = reader.ReadInt32();
@@ -497,7 +549,7 @@ namespace PFW
                     byte bType = waterOrNL[0];
 
                     // this tells us how far to unpack the compression
-                    var zEnd = zCoord + numOfValues;
+                    int zEnd = zCoord + numOfValues;
 
                     // populate the rest of the same type
                     while (zCoord < zEnd)
@@ -507,9 +559,8 @@ namespace PFW
                     }
                 }
 
-
                 // this is our loading screen status
-                SetPercentComplete(((double)reader.BaseStream.Position / (double)reader.BaseStream.Length) * 100.0);
+                SetPercentComplete((reader.BaseStream.Position / reader.BaseStream.Length) * 100.0);
             }
 
             reader.Close();
@@ -520,13 +571,13 @@ namespace PFW
         {
             LoadTrees();
         }
+
         private void LoadTrees()
         {
-
             // assign tree positions
-            var currIdx = 0;
+            int currIdx = 0;
 
-            foreach (var tree in _treePositions)
+            foreach (Vector3 tree in _treePositions)
             {
                 AssignCircularPatch(tree, TREE_RADIUS, FOREST);
                 currIdx++;
@@ -543,10 +594,10 @@ namespace PFW
 
         private void LoadRoads()
         {
-            var currRoadIdx = 0;
+            int currRoadIdx = 0;
             foreach (ERModularRoad road in _roads)
             {
-                var currRoadVertIdx = 1;
+                int currRoadVertIdx = 1;
                 // Loop over linear road stretches
                 Vector3 previousVert = Vector3.zero;
                 foreach (Vector3 roadVert in road.middleIndentVecs)
@@ -724,6 +775,102 @@ namespace PFW
             //} else {
             //    return terrain.SampleHeight(position);
             //}
+        }
+
+        /// <summary>
+        /// For a given line, get how much forest it would
+        /// cross, in meters.
+        /// </summary>
+        public float GetForestLengthOnLine(Vector3 start, Vector3 end) 
+        {
+            int mappedStartX = MapIndex(start.x - MapCenter.x);
+            int mappedStartZ = MapIndex(start.z - MapCenter.z);
+            int mappedEndX = MapIndex(end.x - MapCenter.x);
+            int mappedEndZ = MapIndex(end.z - MapCenter.z);
+
+            int x0 = mappedStartX;
+            int x1 = mappedEndX;
+            int y0 = mappedStartZ;
+            int y1 = mappedEndZ;
+
+            float treeTilesSeen = 0;
+
+            // Draw a line from one point to the other,
+            // and check each tile that falls on the line
+
+            // Using Xiaolin Wu's line-drawing algorithm
+            bool steep = Mathf.Abs(y1 - y0) > Mathf.Abs(x1 - x0);
+
+            // swap the co-ordinates if slope > 1 or we 
+            // draw backwards 
+            if (steep)
+            {
+                Util.Swap(ref x0, ref y0);
+                Util.Swap(ref x1, ref y1);
+            }
+            if (x0 > x1)
+            {
+                Util.Swap(ref x0, ref x1);
+                Util.Swap(ref y0, ref y1);
+            }
+
+            //compute the slope 
+            float dx = x1 - x0;
+            float dy = y1 - y0;
+            float gradient = dy / dx;
+            if (dx == 0.0)
+                gradient = 1;
+
+            int xpxl1 = x0;
+            int xpxl2 = x1;
+            float intersectY = y0;
+
+            // main loop 
+            if (steep)
+            {
+                int x;
+                for (x = xpxl1; x <= xpxl2; x++)
+                {
+                    // pixel coverage is determined by fractional 
+                    // part of y co-ordinate 
+                    if (_map[(int)intersectY, x] == FOREST)
+                    {
+                        treeTilesSeen += 1 - FractionalPartOfNumber(intersectY);
+                    }
+
+                    if (_map[(int)intersectY - 1, x] == FOREST)
+                    {
+                        treeTilesSeen += FractionalPartOfNumber(intersectY);
+                    }
+                    intersectY += gradient;
+                }
+            }
+            else
+            {
+                int x;
+                for (x = xpxl1; x <= xpxl2; x++)
+                {
+                    // pixel coverage is determined by fractional 
+                    // part of y co-ordinate 
+                    if (_map[x, (int)intersectY] == FOREST)
+                    {
+                        treeTilesSeen += 1 - FractionalPartOfNumber(intersectY);
+                    }
+
+                    if (_map[x, (int)intersectY - 1] == FOREST)
+                    {
+                        treeTilesSeen += FractionalPartOfNumber(intersectY);
+                    }
+                    intersectY += gradient;
+                }
+            }
+
+            return treeTilesSeen * METERS_PER_MAP_ENTRY;
+        }
+
+        private float FractionalPartOfNumber(float f)
+        {
+            return f - (int)f;
         }
     }
 }

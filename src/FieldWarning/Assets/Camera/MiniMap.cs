@@ -75,11 +75,11 @@ namespace PFW
             _miniMapCamera.enabled = false;
         }
 
-        //TODO different signs for different unit Types
+        // TODO different signs for different unit Types
         private void OnGUI()
         {
-            //Draw all friendlies
-            //Maybe there is a better way to have this list updated
+            // Draw all friendlies
+            // Maybe there is a better way to have this list updated
             List<UnitDispatcher> allies = _matchSession.AllyUnits;
             foreach (UnitDispatcher unit in allies)
             {
@@ -90,7 +90,7 @@ namespace PFW
                 GUI.color = Color.white;
             }
 
-            //Draw all enemies
+            // Draw all enemies
             List<UnitDispatcher> enemies = _matchSession.EnemyUnits;
             foreach (UnitDispatcher unit in enemies)
             {
@@ -115,7 +115,8 @@ namespace PFW
 
         private void LateUpdate()
         {
-            //For some reason,which completely eludes me, this needs to be done in LateUpdate or otherwise it always returns just the targeted resolution
+            // For some reason,which completely eludes me, this needs to be done in 
+            // LateUpdate or otherwise it always returns just the targeted resolution
             _screenSize = new Vector2(Screen.width, Screen.height);
         }
 

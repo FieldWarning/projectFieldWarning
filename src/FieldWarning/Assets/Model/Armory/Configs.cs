@@ -40,6 +40,15 @@ namespace PFW.Model.Armory.JsonContents
         public ArmorConfig Armor;
         public MobilityConfig Mobility;
         public List<TurretConfig> Turrets;
+        public ReconConfig Recon;
+    }
+
+    [Serializable]
+    public class ReconConfig
+    {
+        public int MaxSpottingRange;
+        public float Stealth;
+        public float StealthPenetration;
     }
 
     [Serializable]
@@ -101,6 +110,7 @@ namespace PFW.Model.Armory.JsonContents
     public class CannonConfig
     {
         public int Damage;
+        // Beware: This is in meters, NOT unity units!
         public int FireRange;
         public int Accuracy;
         public float ShotReload;
@@ -112,6 +122,7 @@ namespace PFW.Model.Armory.JsonContents
     public class HowitzerConfig
     {
         public int Damage;
+        // Beware: This is in meters, NOT unity units!
         public int FireRange;
         public int Accuracy;
         public float ShotReload;

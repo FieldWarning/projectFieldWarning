@@ -49,9 +49,9 @@ namespace PFW.Units.Component.Weapon
         }
 
         /// <summary>
-        /// The max fire range to the current target.
+        /// The max fire range to the current target, in unity units.
         /// </summary>
-        private int _fireRange;  
+        private float _fireRange;  
         public List<Turret> Children; // sync
 
         /// <summary>
@@ -219,7 +219,8 @@ namespace PFW.Units.Component.Weapon
         }
 
         /// <summary>
-        /// Calculate the max range this turret can shoot at with at least one weapon.
+        /// Calculate the max range this turret can shoot at with at least one weapon,
+        /// IN UNITY UNITS.
         /// </summary>
         /// This is a method to avoid storing duplicate information, and
         /// because we may want to ignore disabled turrets, or turrets 
@@ -228,16 +229,26 @@ namespace PFW.Units.Component.Weapon
         /// TODO: Code duplication can be reduced if we only implement this in 
         /// the turret class and have a fake toplevel turret we call this method on,
         /// but a fake turret like that also adds complexity, hard to decide.
-        /// <returns></returns>
-        private int MaxRange(TargetTuple target)
+        private float MaxRange(TargetTuple target)
         {
-            int maxRange = 0;
+            float maxRange = 0;
             foreach (Turret turret in Children)
             {
-                int turretMax = turret.MaxRange(target);
+                float turretMax = turret.MaxRange(target);
                 maxRange = maxRange > turretMax ? maxRange : turretMax;
             }
             return maxRange;
+        }
+
+        /// <summary>
+        /// The max range of this turret system for fire position purposes,
+        /// IN UNITY UNITS.
+        /// Note that this can change as weapons are disabled, and so
+        /// return values from this method should not be cached.
+        /// </summary>
+        public float MaxRange()
+        {
+            return MaxRange(new TargetTuple(Vector3.zero));
         }
     }
 }

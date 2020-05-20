@@ -32,10 +32,20 @@ namespace PFW.Loading
         /// <returns></returns>
         public float GetMaxChildHeight()
         {
+            return GetMaxChildHeightRecursive(transform);
+        }
+
+        private static float GetMaxChildHeightRecursive(Transform transform)
+        {
+            if (transform.childCount == 0)
+                return transform.position.y;
+
             float result = -10000;
+
             for (int i = 0; i < transform.childCount; i++)
             {
-                float childHeight = transform.GetChild(i).transform.position.y;
+                Transform childTransform = transform.GetChild(i);
+                float childHeight = GetMaxChildHeightRecursive(childTransform);
                 if (childHeight > result)
                 {
                     result = childHeight;
