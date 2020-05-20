@@ -60,7 +60,7 @@ namespace PFW.Loading
 
             if (version)
             {
-                _versionLbl.SetText("Map Name: " + version.name + "\nVersion:" + version.version);
+                _versionLbl.SetText("Map Name: " + version.Name + "\nVersion:" + version.Version);
             }
             else
             {
