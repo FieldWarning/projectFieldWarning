@@ -2632,9 +2632,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25edf7a234635c94ebcba3d2cedaecb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wpPrefab: {fileID: 8085473865192564238, guid: 4c377c4c68349144abad82d72f3afd16,
+  _wpPrefab: {fileID: 8085473865192564238, guid: 4c377c4c68349144abad82d72f3afd16,
     type: 3}
-  wpEdgePrefab: {fileID: 712824664583729333, guid: a40498c8e9a08364eba796d988aac721,
+  _wpEdgePrefab: {fileID: 712824664583729333, guid: a40498c8e9a08364eba796d988aac721,
     type: 3}
 --- !u!1 &5508686030765750059
 GameObject:

@@ -19,12 +19,14 @@ using PFW.Units.Component.Movement;
 
 public class PathFindingDebug : MonoBehaviour
 {
-    public GameObject wpPrefab;
-    public GameObject wpEdgePrefab;
+    [SerializeField]
+    private GameObject _wpPrefab = null;
+    [SerializeField]
+    private GameObject _wpEdgePrefab = null;
     private MatchSession _matchSession = null;
 
-    List<GameObject> wps = new List<GameObject>();
-    List<GameObject> edges = new List<GameObject>();
+    private List<GameObject> _wps = new List<GameObject>();
+    private List<GameObject> _edges = new List<GameObject>();
 
     // Start is called before the first frame update
     private void Start()
@@ -34,29 +36,29 @@ public class PathFindingDebug : MonoBehaviour
 
     private void ToggleWPs(bool toggle)
     {
-        if (toggle && wps.Count == 0)
+        if (toggle && _wps.Count == 0)
         {
             List<PathNode> wpGraph = _matchSession.PathData.GetWaypointGraph();
             foreach (PathNode pn in wpGraph)
             {
-                wps.Add(Instantiate(wpPrefab, new Vector3(pn.x, pn.y, pn.z), Quaternion.identity));
+                _wps.Add(Instantiate(_wpPrefab, new Vector3(pn.x, pn.y, pn.z), Quaternion.identity));
             }
         }
 
-        if (!toggle && wps.Count > 0)
+        if (!toggle && _wps.Count > 0)
         {
-            foreach (var wp in wps)
+            foreach (GameObject wp in _wps)
             {
                 Destroy(wp);
             }
 
-            wps.Clear();
+            _wps.Clear();
         }
     }
 
     private void ToggleEdges(bool toggle)
     {
-        if (toggle && edges.Count == 0)
+        if (toggle && _edges.Count == 0)
         {
             List<PathNode> wpGraph = _matchSession.PathData.GetWaypointGraph();
             foreach (PathNode pn in wpGraph)
@@ -64,7 +66,7 @@ public class PathFindingDebug : MonoBehaviour
                 foreach (PathArc arc in pn.Arcs)
                 {
                     GameObject line = Instantiate(
-                            wpEdgePrefab, 
+                            _wpEdgePrefab, 
                             new Vector3(arc.Node1.x, arc.Node1.y, arc.Node1.z), 
                             Quaternion.identity);
                     LineRenderer _lineR = line.transform.Find("Line").GetComponent<LineRenderer>();
@@ -83,20 +85,20 @@ public class PathFindingDebug : MonoBehaviour
                     //_lineR.SetPosition(1, new Vector3(arc.Node1.x, arc.Node1.y, arc.Node1.z));
                     _lineR.SetPosition(1, new Vector3(arc.Node2.x, arc.Node2.y, arc.Node2.z));
                     line.SetActive(true);
-                    edges.Add(line);
+                    _edges.Add(line);
                 }
                 
             }
         }
 
-        if (!toggle && edges.Count > 0)
+        if (!toggle && _edges.Count > 0)
         {
-            foreach (GameObject line in edges)
+            foreach (GameObject line in _edges)
             {
                 Destroy(line);
             }
 
-            edges.Clear();
+            _edges.Clear();
         }
     }
 
