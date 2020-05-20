@@ -30,6 +30,7 @@ public class TerrainDebug : MonoBehaviour
     private void Start()
     {
         _matchSession = MatchSession.Current;
+        _heightField = transform.Find("HeightField").GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
@@ -45,7 +46,7 @@ public class TerrainDebug : MonoBehaviour
         // TODO should add this to debug at some point.
         Terrain terrainAtPos = _matchSession.TerrainMap.GetTerrainAtPos(hit.point);
 
-        _heightField.text = _matchSession.TerrainMap.GetTerrainHeight(hit.point).ToString();
+        _heightField.text = _matchSession.TerrainMap.GetTerrainCachedHeight(hit.point).ToString();
 
         _typeField.text = terrainType.ToString();
     }

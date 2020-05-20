@@ -32,6 +32,7 @@ namespace PFW.Loading
 
         private Slider _slider;
         private TextMeshProUGUI _descLbl;
+        private TextMeshProUGUI _versionLbl;
 
         private Loader _currentWorker = null;
 
@@ -49,9 +50,22 @@ namespace PFW.Loading
         {
             _slider = transform.Find("Slider").GetComponent<Slider>();
             _descLbl = GameObject.Find("LoadingLbl").GetComponent<TextMeshProUGUI>();
+            _versionLbl = GameObject.Find("MapVersionLbl").GetComponent<TextMeshProUGUI>();
+
 
             Instantiate(_loadedData);
             LoadedData.SceneBuildId = SceneBuildId;
+
+            MapVersion version = GameObject.Find("map").GetComponent<MapVersion>();
+
+            if (version)
+            {
+                _versionLbl.SetText("Map Name: " + version.Name + "\nVersion:" + version.Version);
+            }
+            else
+            {
+                _versionLbl.SetText("Unable to locate map version info");
+            }
         }
 
 

@@ -22,6 +22,7 @@ using EasyRoads3Dv3;
 
 using PFW.Loading;
 using PFW.Units.Component.Movement;
+using System;
 
 namespace PFW
 {
@@ -60,6 +61,7 @@ namespace PFW
         public readonly Vector3 MapMin, MapMax, MapCenter;
 
         private byte[,] _map;
+        private float[,] _height_map;
         private int _mapSize;
         private readonly float _terrainSpacingX, _terrainSpacingZ;
 
@@ -84,7 +86,6 @@ namespace PFW
         public TerrainMap(Terrain[] terrains1D, int sceneBuildId)
         {
             _sceneBuildId = sceneBuildId;
-
             WaterMarker water = GameObject.FindObjectOfType<WaterMarker>();
             if (water != null)
             {
@@ -122,7 +123,7 @@ namespace PFW
                     Vector3 corner = MapMin + new Vector3(_terrainSpacingX * i, 0f, _terrainSpacingZ * j);
                     foreach (Terrain terrain in terrains1D)
                     {
-                        if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2 
+                        if (Mathf.Abs(terrain.transform.position.x - corner.x) < _terrainSpacingX / 2
                             && Mathf.Abs(terrain.transform.position.z - corner.z) < _terrainSpacingZ / 2)
                         {
                             _terrains[i, j] = terrain;
@@ -137,6 +138,7 @@ namespace PFW
 
             int mapLen = 2 * _mapSize + 2 * EXTENSION;
             _map = new byte[mapLen, mapLen];
+            _height_map = new float[mapLen, mapLen];
 
             _roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
             _bridges = GameObject.FindGameObjectsWithTag("Bridge");
@@ -163,6 +165,12 @@ namespace PFW
 
             // TODO need to also somehow verify the height map is valid?? 
             // not sure how to do this each time without reading the original data.
+
+            if (!MapVersionCheck(_HEIGHT_MAP_PATH))
+            {
+                File.Delete(_HEIGHT_MAP_PATH);
+            }
+
             if (!File.Exists(_HEIGHT_MAP_PATH))
             {
                 // this cannot be in another thread because it uses the terrain and cannot cache the terrain because
@@ -172,21 +180,25 @@ namespace PFW
 
                 //LoadingScreen.SWorkers.Enqueue(new CoroutineWorker(LoadWaterRunner, "Loading water."));
 
-                AddCouroutine(LoadWaterRunner, "Load water");
+                //AddCouroutine(LoadWaterRunner, "Load water");
+                AddCouroutine(WriteHeightMap, "Writing Height Map data for the first time...");
 
-                // Loading bridges from a separate thread throws an exception.
-                // This is why we first cache the bridge positions outside the thread
-                // before doing the below. same goes for roads and trees.
-                AddMultithreadedRoutine(LoadTreesRunner, "Loading trees.");
-                AddMultithreadedRoutine(LoadRoadsRunner, "Loading roads.");
-                AddMultithreadedRoutine(LoadBridgesRunner, "Loading bridges.");
-                AddMultithreadedRoutine(ExportFinishedMapRunner, "Creating Compressed Map File");
+                //AddMultithreadedRoutine(ExportFinishedMapRunner, "Creating Compressed Map File");
             }
-            else
-            {
-                //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
-                AddMultithreadedRoutine(LoadCompressedMapRunner, "Reading Compressed Map Data");
-            }
+            
+            
+            //_loader.AddWorker(null, LoadCompressedMapRunner, false, "Reading Compressed Map Data");
+            AddMultithreadedRoutine(ReadHeightMapRunner, "Reading Compressed Height Map Data...");
+            
+            
+                
+            // Loading bridges from a separate thread throws an exception.
+            // This is why we first cache the bridge positions outside the thread
+            // before doing the below. same goes for roads and trees.
+            AddMultithreadedRoutine(LoadTreesRunner, "Loading trees...");
+            AddMultithreadedRoutine(LoadRoadsRunner, "Loading roads...");
+            AddMultithreadedRoutine(LoadBridgesRunner, "Loading bridges...");
+            
 
             // leave this commented out until we make a change and need to retest the map
             //_loader.AddWorker(MapTester);
@@ -211,6 +223,16 @@ namespace PFW
         private IEnumerator LoadWaterRunner()
         {
             yield return LoadWater();
+        }
+
+        private void ReadHeightMapRunner()
+        {
+            ReadHeightMap(_HEIGHT_MAP_PATH);
+        }
+
+        private IEnumerator WriteHeightMap()
+        {
+            yield return WriteHeightMap(GetTerrainMapCachePath());
         }
 
         /// <summary>
@@ -248,6 +270,185 @@ namespace PFW
         }
 
 
+        private bool MapVersionCheck(string path)
+        {
+
+            if (!File.Exists(_HEIGHT_MAP_PATH))
+            {
+                return false;
+            }
+
+            var file = File.ReadAllBytes(path);
+
+
+
+            BinaryReader reader = new BinaryReader(new MemoryStream(file));
+
+            MapVersion version = GameObject.Find("map").GetComponent<MapVersion>();
+            String final_version = version.GetVersionString();
+
+           
+            string version_string = reader.ReadString();
+            char nl = reader.ReadChar();
+
+
+            if (version_string != final_version || nl != '\n')
+            {
+                reader.Close();
+                return false;
+
+            }
+
+            return true;
+  
+        }
+
+
+    /// <summary>
+    /// This unpacks/uncomporesses the binary height map.
+    /// The compression and structure of this height map is simple.
+    /// Every height value is stored as a fload with a corresponding number of times it appears with
+    /// maybe a newline to designate its now a different x coordinate.
+    ///
+    /// <version string>
+    /// <height><number_of_times_it_occurs_consecutively>["\n"]
+    /// <4bytes><4bytes><4bytes>
+    /// ...
+    ///
+    /// Everything is 4 bytes for simplicity, including the newline.
+    ///
+    /// </summary>
+    /// <param name="path"></param>
+    public void ReadHeightMap(string path)
+        {
+            //TODO : not much error checking is done in thsi function
+
+            int nEntry = 2 * _mapSize + 2 * EXTENSION;
+
+            // read the entire file into memory
+            var file = File.ReadAllBytes(path);
+
+            //var last_notify_msec = 0;
+            int xCoord = 0;
+            int zCoord = 0;
+
+            BinaryReader reader = new BinaryReader(new MemoryStream(file));
+
+            // version need to get past the version information and newline
+            string version_string = reader.ReadString();
+            byte nl = reader.ReadByte();
+
+            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            {
+                
+
+                // the sampled height of terrain (4 bytes float) or a newline
+                byte[] heightOrNL = reader.ReadBytes(4);
+
+                // check to see if this is height or newline
+                if (BitConverter.ToInt32(heightOrNL, 0) == (int)0x0a)
+                {
+                    zCoord = 0;
+                    xCoord++;
+                }
+                else
+                {
+
+                    // since we already read a byte but we need 4 bytes
+                    int numOfValues = reader.ReadInt32();
+
+                    // convert this height into a terrain type.. water, forest etc - byte
+                    float fHeight = (BitConverter.ToSingle(heightOrNL, 0));
+                    var bType = (byte)(fHeight > WATER_HEIGHT ? PLAIN : WATER);
+
+                    // this tells us how far to unpack the compression
+                    var zEnd = zCoord + numOfValues;
+
+                    // populate the rest of the same type
+                    while (zCoord < zEnd)
+                    {
+                        _map[xCoord, zCoord] = bType;
+                        _height_map[xCoord, zCoord] = fHeight;
+                        zCoord++;
+                    }
+                    
+                }
+
+                SetPercentComplete(((double)reader.BaseStream.Position / (double)reader.BaseStream.Length) * 100.0);
+            }
+
+            reader.Close();
+        }
+
+        /// <summary>
+        /// Takes the sampled height from the terrain and packs/compresses it to a binary file with the format of:
+        /// <height><number_of_times_it_occurs_consecutively>["\n"]
+        /// <4bytes><4bytes><4bytes>
+        /// This can possibly be compressed more by creating a range of height to be included when it writes
+        /// the number of times the height occurs. For example, if height is 1.5 and 1.7 and our range is +- .2.. we
+        /// would combine 1.5 and 1.7 to be 1.5 because they are so close together.
+        ///
+        /// </summary>
+        /// <param name="path"></param>
+        public IEnumerator WriteHeightMap(string path)
+        {
+
+            MapVersion version = GameObject.Find("map").GetComponent<MapVersion>();
+            String final_version = version.GetVersionString(); ;
+
+            int nEntry = 2 * _mapSize + 2 * EXTENSION;
+            BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read));
+
+            // write the version so at least we can verify
+            writer.Write(final_version);
+            writer.Write('\n');
+
+            
+            for (int x = 0; x < nEntry; x++)
+            {
+                float temp = 0;
+                float last = 0;
+                int lastcnt = 0;
+
+                for (int z = 0; z < nEntry; z++)
+                {
+                    //Terrain terrain = GetTerrainAtPos(PositionOf(x, z));
+                    temp = GetTerrainHeight(PositionOf(x, z));//terrain.SampleHeight(PositionOf(x, z));
+
+                    //map[x, z] = (byte)(terrain.SampleHeight(PositionOf(x, z)) > waterHeight ? PLAIN : WATER);
+
+                    if (last == temp || lastcnt == 0)
+                    {
+                        lastcnt++;
+                    }
+                    else
+                    {
+                        writer.Write(last);
+                        writer.Write(lastcnt);
+
+                        lastcnt = 1;
+                    }
+
+                    last = temp;
+                }
+
+                writer.Write(temp);
+                writer.Write(lastcnt);
+
+
+                writer.Write((int)'\n');
+
+                SetPercentComplete(((double)x / (double)_map.GetLength(0)) * 100.0);
+
+                if ((int)GetPercentComplete() % 2 == 0)
+                    yield return null;
+            }
+
+            
+            
+            writer.Close();
+
+        }
 
         /// <summary>
         /// Takes the sampled height from the terrain and packs/compresses it to a binary file with the format of:
@@ -540,6 +741,11 @@ namespace PFW
         public int GetTerrainType(Vector3 position)
         {
             return _map[MapIndex(position.x - MapCenter.x), MapIndex(position.z - MapCenter.z)];
+        }
+
+        public float GetTerrainCachedHeight(Vector3 position)
+        {
+            return _height_map[MapIndex(position.x - MapCenter.x), MapIndex(position.z - MapCenter.z)];
         }
 
         public Terrain GetTerrainAtPos(Vector3 position)
