@@ -291,6 +291,21 @@ namespace PFW.Units.Component.Movement
 
             _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
 
+
+            // find all nodes that are around bridges. This will help pathfinding
+            // when not in fast move mode.
+            foreach (PathNode pn in _graph)
+            {
+                foreach (Vector3 bridge in _map.Bridges())
+                {
+                    Vector3 pnPos = new Vector3(pn.x,pn.y,pn.z);
+                    if (pn.IsRoad && (pnPos - bridge).magnitude < ARC_MAX_DIST/2)
+                    {
+                        pn.IsBridgeConnector = true;
+                    }
+                }
+            }
+
             // Compute arcs for all pairs of nodes within cutoff distance
             // we are attempting to create a connected graph here with each edge
             // representing time/value for each mobility type at the node
@@ -440,12 +455,34 @@ namespace PFW.Units.Component.Movement
             // find the nearest neighbor start A* search
             foreach (PathNode neighbor in _graph)
             {
+
                 neighbor.IsClosed = false;
                 neighbor.CameFrom = null;
                 neighbor.GScore = Pathfinder.FOREVER;
+
                 Vector3 neighborPos = Position(neighbor);
 
-                if ((start - neighborPos).magnitude < ARC_MAX_DIST)
+                // if we are just using regular non fast move, only worry about crossing bridges..
+                // we are not trying to find the best optimum path
+                if (command == MoveCommandType.NORMAL && neighbor.IsBridgeConnector)
+                {
+                    float gScoreNew = Pathfinder.FindLocalPath(this,
+                                                                start,
+                                                                neighborPos,
+                                                                mobility,
+                                                                unitRadius);
+                    if (gScoreNew < Pathfinder.FOREVER)
+                    {
+                        neighbor.GScore = gScoreNew;
+
+                        float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
+                        _openSet.Enqueue(neighbor, fScoreNew);
+                    }
+
+                }
+                // now if we are trying to fast move, we need to use our full node network and do
+                // and optimal search
+                else if (command == MoveCommandType.FAST && (start - neighborPos).magnitude < ARC_MAX_DIST )
                 {
                     float gScoreNew = Pathfinder.FindLocalPath(this,
                                                                 start,
@@ -551,6 +588,11 @@ namespace PFW.Units.Component.Movement
         public readonly float x, y, z;
 
         /// <summary>
+        /// is this path path node leading up to a bridge
+        /// </summary>
+        public bool IsBridgeConnector;
+
+        /// <summary>
         /// Cost from the start node to this node.
         /// </summary>
         public float GScore;
@@ -571,6 +613,7 @@ namespace PFW.Units.Component.Movement
             y = position.y;
             z = position.z;
             IsRoad = isRoad;
+            IsBridgeConnector = false;
             Arcs = new List<PathArc>(4);
         }
     }

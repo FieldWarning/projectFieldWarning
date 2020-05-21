@@ -204,6 +204,11 @@ namespace PFW
             //_loader.AddWorker(MapTester);
         }
 
+        public List<Vector3> Bridges()
+        {
+            return _bridgePositions;
+        }
+
         private string GetTerrainMapCachePath()
         {
             string scenePathWithFilename = SceneUtility.GetScenePathByBuildIndex(
