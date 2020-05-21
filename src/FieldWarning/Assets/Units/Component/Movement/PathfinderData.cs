@@ -38,7 +38,8 @@ namespace PFW.Units.Component.Movement
         private const float ARC_MAX_DIST = 1200f * Constants.MAP_SCALE;
 
         public TerrainMap _map;
-        public List<PathNode> _graph;
+        public List<PathNode> _graphFastMove;
+        public List<PathNode> _graphRegularMove;
         private List<MobilityData> _mobilityTypes;
 
         private string _graphFile;
@@ -63,7 +64,8 @@ namespace PFW.Units.Component.Movement
                 int sceneBuildId)
         {
             _map = map;
-            _graph = new List<PathNode>();
+            _graphFastMove = new List<PathNode>();
+            _graphRegularMove = new List<PathNode>();
             _mobilityTypes = mobilityTypes;
 
             string scenePathWithFilename = SceneUtility.GetScenePathByBuildIndex(
@@ -97,10 +99,10 @@ namespace PFW.Units.Component.Movement
                 Stream stream = File.Open(file, FileMode.Open);
                 BinaryFormatter formatter = new BinaryFormatter();
 
-                _graph = (List<PathNode>)formatter.Deserialize(stream);
+                _graphFastMove = (List<PathNode>)formatter.Deserialize(stream);
                 stream.Close();
 
-                _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
+                _openSet = new FastPriorityQueue<PathNode>(_graphFastMove.Count + 1);
 
                 if (SanityCheckGraph())
                 {
@@ -108,7 +110,7 @@ namespace PFW.Units.Component.Movement
                 }
                 else 
                 {
-                    _graph = null;
+                    _graphFastMove = null;
                     _openSet = null;
                     return false;
                 }
@@ -133,7 +135,7 @@ namespace PFW.Units.Component.Movement
             // The arcs in the graph need to have values for as many mobility 
             // types as there are in the unit roster, otherwise 
             // they were generated from different data.
-            if (_graph[0].Arcs[0].Time.Length != _mobilityTypes.Count)
+            if (_graphFastMove[0].Arcs[0].Time.Length != _mobilityTypes.Count)
             {
                 return false;
             }
@@ -146,7 +148,7 @@ namespace PFW.Units.Component.Movement
             Stream stream = File.Open(_graphFile, FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
 
-            formatter.Serialize(stream, _graph);
+            formatter.Serialize(stream, _graphFastMove);
             stream.Close();
         }
 
@@ -173,7 +175,7 @@ namespace PFW.Units.Component.Movement
         private IEnumerator BuildRoadNodes()
         {
             Logger.LogPathfinding($"PathfinderData::BuildRoadNodes()", LogLevel.DEBUG);
-            _graph.Clear();
+            _graphFastMove.Clear();
             // Add nodes for roads
             ERModularRoad[] roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
 
@@ -187,7 +189,7 @@ namespace PFW.Units.Component.Movement
                 {
                     Vector3 roadVert = road.middleIndentVecs[i];
                     if (_map.IsInMap(roadVert))
-                        _graph.Add(new PathNode(roadVert, true));
+                        _graphFastMove.Add(new PathNode(roadVert, true));
 
                     if (i < road.middleIndentVecs.Count - 1)
                     {
@@ -201,7 +203,7 @@ namespace PFW.Units.Component.Movement
                         {
                             intermediatePosition += stretch;
                             if (_map.IsInMap(intermediatePosition))
-                                _graph.Add(new PathNode(intermediatePosition, true));
+                                _graphFastMove.Add(new PathNode(intermediatePosition, true));
                         }
                     }
                 }
@@ -233,7 +235,7 @@ namespace PFW.Units.Component.Movement
                     if (type == TerrainMap.PLAIN)
                     {
                         bool near_wp = false;
-                        foreach (PathNode pn in _graph)
+                        foreach (PathNode pn in _graphFastMove)
                         {
                             if ((Position(pn) - pnt).magnitude < range)
                             {
@@ -243,12 +245,12 @@ namespace PFW.Units.Component.Movement
 
                         if (!near_wp)
                         {
-                            _graph.Add(new PathNode(pnt, false));
+                            _graphFastMove.Add(new PathNode(pnt, false));
                         }
                     }
                 }
 
-                double percent = ((double)x / (double)_graph.Count) * 100.0;
+                double percent = ((double)x / (double)_graphFastMove.Count) * 100.0;
                 SetPercentComplete(percent);
             }
 
@@ -280,45 +282,56 @@ namespace PFW.Units.Component.Movement
             }*/
 
             // Remove nodes that are right on top of each other
-            for (int i = 0; i < _graph.Count; i++)
+            for (int i = 0; i < _graphFastMove.Count; i++)
             {
-                for (int j = i + 1; j < _graph.Count; j++)
+                for (int j = i + 1; j < _graphFastMove.Count; j++)
                 {
-                    if ((Position(_graph[i]) - Position(_graph[j])).magnitude < NODE_PRUNE_DIST_THRESH)
-                        _graph.RemoveAt(j);
+                    if ((Position(_graphFastMove[i]) - Position(_graphFastMove[j])).magnitude < NODE_PRUNE_DIST_THRESH)
+                        _graphFastMove.RemoveAt(j);
                 }
             }
 
-            _openSet = new FastPriorityQueue<PathNode>(_graph.Count + 1);
+            _openSet = new FastPriorityQueue<PathNode>(_graphFastMove.Count + 1);
 
 
             // find all nodes that are around bridges. This will help pathfinding
             // when not in fast move mode.
-            foreach (PathNode pn in _graph)
+            foreach (PathNode pn in _graphFastMove)
             {
                 foreach (Vector3 bridge in _map.Bridges())
                 {
                     Vector3 pnPos = new Vector3(pn.x,pn.y,pn.z);
                     if (pn.IsRoad && (pnPos - bridge).magnitude < ARC_MAX_DIST/2)
                     {
-                        pn.IsBridgeConnector = true;
+                        _graphRegularMove.Add(new PathNode(pnPos, true));
                     }
                 }
+            }
+
+            for (int i = 0; i < _graphRegularMove.Count; i++)
+            {
+                for (int j = i + 1; j < _graphRegularMove.Count; j++)
+                {
+                    if ((Position(_graphRegularMove[i]) - Position(_graphRegularMove[j])).magnitude < ARC_MAX_DIST)
+                        AddArc(_graphRegularMove[i], _graphRegularMove[j]);
+
+                }
+
             }
 
             // Compute arcs for all pairs of nodes within cutoff distance
             // we are attempting to create a connected graph here with each edge
             // representing time/value for each mobility type at the node
-            for (int i = 0; i < _graph.Count; i++)
+            for (int i = 0; i < _graphFastMove.Count; i++)
             {
-                for (int j = i + 1; j < _graph.Count; j++)
+                for (int j = i + 1; j < _graphFastMove.Count; j++)
                 {
-                    if ((Position(_graph[i]) - Position(_graph[j])).magnitude < ARC_MAX_DIST)
-                        AddArc(_graph[i], _graph[j]);
+                    if ((Position(_graphFastMove[i]) - Position(_graphFastMove[j])).magnitude < ARC_MAX_DIST)
+                        AddArc(_graphFastMove[i], _graphFastMove[j]);
 
                 }
 
-                double percent = ((double)i / (double)_graph.Count) * 100.0;
+                double percent = ((double)i / (double)_graphFastMove.Count) * 100.0;
                 SetPercentComplete(percent);
             }
 
@@ -379,7 +392,7 @@ namespace PFW.Units.Component.Movement
 
         public List<PathNode> GetWaypointGraph()
         {
-            return _graph;
+            return _graphFastMove;
         }
 
         public PathArc GetArc(PathNode node1, PathNode node2)
@@ -452,8 +465,19 @@ namespace PFW.Units.Component.Movement
             // (this can be optimized later by throwing out some from the start)
             _openSet.Clear();
 
+            List<PathNode> graph = _graphRegularMove;
+            float neighborSearchDistance = Pathfinder.FOREVER;
+
+            // if we are in fast mode our graph is much more extensive and we have to 
+            // limit our neighor distance to use that extensive network of nodes
+            if (command == MoveCommandType.FAST)
+            {
+                graph = _graphFastMove;
+                neighborSearchDistance = ARC_MAX_DIST;
+            }
+
             // find the nearest neighbor start A* search
-            foreach (PathNode neighbor in _graph)
+            foreach (PathNode neighbor in graph)
             {
 
                 neighbor.IsClosed = false;
@@ -462,27 +486,8 @@ namespace PFW.Units.Component.Movement
 
                 Vector3 neighborPos = Position(neighbor);
 
-                // if we are just using regular non fast move, only worry about crossing bridges..
-                // we are not trying to find the best optimum path
-                if (command == MoveCommandType.NORMAL && neighbor.IsBridgeConnector)
-                {
-                    float gScoreNew = Pathfinder.FindLocalPath(this,
-                                                                start,
-                                                                neighborPos,
-                                                                mobility,
-                                                                unitRadius);
-                    if (gScoreNew < Pathfinder.FOREVER)
-                    {
-                        neighbor.GScore = gScoreNew;
-
-                        float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
-                        _openSet.Enqueue(neighbor, fScoreNew);
-                    }
-
-                }
-                // now if we are trying to fast move, we need to use our full node network and do
                 // and optimal search
-                else if (command == MoveCommandType.FAST && (start - neighborPos).magnitude < ARC_MAX_DIST )
+                if ((start - neighborPos).magnitude < neighborSearchDistance)
                 {
                     float gScoreNew = Pathfinder.FindLocalPath(this,
                                                                 start,
@@ -540,7 +545,8 @@ namespace PFW.Units.Component.Movement
                 }
 
                 float arcTimeDest = Pathfinder.FOREVER;
-                if (Vector3.Distance(Position(current), destination) < ARC_MAX_DIST)
+                // checks can we get to the last mile without more pathfinding
+                if (Vector3.Distance(Position(current), destination) < neighborSearchDistance)
                     arcTimeDest = Pathfinder.FindLocalPath(this, Position(current), destination, mobility, unitRadius);
                 // Debug.Log(openSet.Count + " " + Position(current) + " " + current.isRoad + " " + Vector3.Distance(Position(current), destination) + " " + (current.gScore + arcTimeDest) + " " + gScoreDest);
                 if (arcTimeDest >= Pathfinder.FOREVER)
@@ -588,11 +594,6 @@ namespace PFW.Units.Component.Movement
         public readonly float x, y, z;
 
         /// <summary>
-        /// is this path path node leading up to a bridge
-        /// </summary>
-        public bool IsBridgeConnector;
-
-        /// <summary>
         /// Cost from the start node to this node.
         /// </summary>
         public float GScore;
@@ -613,7 +614,6 @@ namespace PFW.Units.Component.Movement
             y = position.y;
             z = position.z;
             IsRoad = isRoad;
-            IsBridgeConnector = false;
             Arcs = new List<PathArc>(4);
         }
     }
