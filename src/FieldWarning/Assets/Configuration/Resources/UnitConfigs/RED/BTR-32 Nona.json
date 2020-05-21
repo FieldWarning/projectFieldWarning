@@ -1,13 +1,13 @@
 {
     "$schema": "../UnitConfigSchema.json",
 
-    "ID": "Unit__TNK--Bloodhound",
-    "CategoryKey": "TNK",
-    "Name": "Bloodhound",
+    "ID": "Unit__SUP--Nona",
+    "CategoryKey": "SUP",
+    "Name": "Nona",
     "Price": 15,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Bloodhound",
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 Nona",
+	"ArmoryImage": "Armory Images/Nona",
 
     "Data": {
         "MovementSpeed": 40,
@@ -44,8 +44,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "IFV",
-        "MountRef": "Bloodhound",
+        "TurretRef": "mortar",
+        "MountRef": "hull",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -53,8 +53,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "MG",
-                "MountRef": "IFV",
+                "TurretRef": "cannon",
+                "MountRef": "mortar",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -65,23 +65,6 @@
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
-                    "SalvoReload": 8
-                }
-            },
-            {
-                "Priority": 2,
-                "TurretRef": "Autocannon",
-                "MountRef": "IFV",
-                "ArcHorizontal": 0,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
-                "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 200,
-                    "Accuracy": 30,
-                    "ShotReload": 8,
-                    "SalvoLength": 1,
                     "SalvoReload": 8
                 }
             }

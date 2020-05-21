@@ -5,8 +5,8 @@
 	"CategoryKey": "LOG",
 	"Name": "Kamaz",
 	"Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Kamaz-Pantsir-Koalitsiya/Kamaz Truck Prefab",
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Kamaz Truck Prefab",
 	"ArmoryImage": "Armory Images/Kamaz Truck",
 
 	"Data": {
