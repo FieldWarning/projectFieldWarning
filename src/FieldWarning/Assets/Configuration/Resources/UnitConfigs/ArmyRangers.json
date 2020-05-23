@@ -1,13 +1,13 @@
 {
 	"$schema": "../UnitConfigSchema.json",
 
-	"ID": "Unit__SUP--Koalitsiya",
-	"CategoryKey": "SUP",
-	"Name": "Koalitsiya",
+	"ID": "Unit__REC--ArmyRangers",
+	"CategoryKey": "REC",
+	"Name": "U.S. Army Rangers",
 	"Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Kamaz-Pantsir-Koalitsiya/Kamaz Koalitsiya Prefab",
-	"ArmoryImage": "Armory Images/Koalitsiya",
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
 
 	"Data": {
 			"MovementSpeed": 500,
@@ -24,8 +24,8 @@
 	
 	"Recon": {
 		"MaxSpottingRange": 3000,
-		"StealthPenetration": 1,
-		"Stealth": 1
+		"StealthPenetration": 2,
+		"Stealth": 3
 	},
     
     "Armor": {
@@ -44,8 +44,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "Turret",
-        "MountRef": "Koalitsiya",
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -54,7 +54,7 @@
             {
                 "Priority": 1,
                 "TurretRef": "MG",
-                "MountRef": "Turret",
+                "MountRef": "IFV",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -70,8 +70,8 @@
             },
             {
                 "Priority": 2,
-                "TurretRef": "Cannon",
-                "MountRef": "Turret",
+                "TurretRef": "Autocannon",
+                "MountRef": "IFV",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,
