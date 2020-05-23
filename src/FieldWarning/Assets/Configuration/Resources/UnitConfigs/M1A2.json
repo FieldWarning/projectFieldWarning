@@ -1,31 +1,31 @@
 {
-	"$schema": "../UnitConfigSchema.json",
+    "$schema": "../UnitConfigSchema.json",
 
-	"ID": "Unit__REC--ArmyRangers",
-	"CategoryKey": "REC",
-	"Name": "U.S. Army Rangers",
-	"Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Bloodhound",
+    "ID": "Unit__TNK--M1A2",
+    "CategoryKey": "TNK",
+    "Name": "M1A2 Abrams",
+    "Price": 20,
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
 
-	"Data": {
-			"MovementSpeed": 500,
-			"ReverseSpeed": 15,
-			"AccelRate": 13,
-			"MaxRotationSpeed": 50,
-			"MinTurnRadius": 0,
-			"MaxLateralAccel": 15,
-			"Suspension": 0.01,
-			"MaxHealth": 10,
-			"Length": 12,
-			"Width": 7
-	},
+    "Data": {
+        "MovementSpeed": 50,
+        "ReverseSpeed": 15,
+        "AccelRate": 13,
+        "MaxRotationSpeed": 50,
+        "MinTurnRadius": 0,
+        "MaxLateralAccel": 15,
+        "Suspension": 0.01,
+        "MaxHealth": 10,
+        "Length": 12,
+        "Width": 7
+    },
 	
 	"Recon": {
 		"MaxSpottingRange": 3000,
-		"StealthPenetration": 2,
-		"Stealth": 3
+		"StealthPenetration": 1,
+		"Stealth": 1
 	},
     
     "Armor": {

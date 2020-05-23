@@ -1,13 +1,13 @@
 {
 	"$schema": "../UnitConfigSchema.json",
 
-	"ID": "Unit__INF--Marines",
+	"ID": "Unit__INF--Riflemen",
 	"CategoryKey": "INF",
-	"Name": "Marines",
+	"Name": "Riflemen",
 	"Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Anime",
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
 
 	"Data": {
 			"MovementSpeed": 500,

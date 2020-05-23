@@ -1,13 +1,13 @@
 {
 	"$schema": "../UnitConfigSchema.json",
 
-	"ID": "Unit__SUP--Pantsir",
+	"ID": "Unit__SUP--PLZ-5",
 	"CategoryKey": "SUP",
-	"Name": "Pantsir",
+	"Name": "PLZ-5",
 	"Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Kamaz-Pantsir-Koalitsiya/Pantsir Prefab",
-	"ArmoryImage": "Armory Images/Pantsir",
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
 
 	"Data": {
 			"MovementSpeed": 500,
@@ -44,8 +44,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "Turret",
-        "MountRef": "Pantsir",
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -53,8 +53,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "Gun",
-                "MountRef": "Turret",
+                "TurretRef": "MG",
+                "MountRef": "IFV",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -70,8 +70,8 @@
             },
             {
                 "Priority": 2,
-                "TurretRef": "Missile",
-                "MountRef": "Turret",
+                "TurretRef": "Autocannon",
+                "MountRef": "IFV",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,

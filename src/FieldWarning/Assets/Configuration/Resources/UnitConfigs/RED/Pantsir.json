@@ -1,13 +1,13 @@
 {
 	"$schema": "../UnitConfigSchema.json",
 
-	"ID": "Unit__HEL--AH-64D",
-	"CategoryKey": "HEL",
-	"Name": "AH64D Apache",
+	"ID": "Unit__SUP--Pantsir",
+	"CategoryKey": "SUP",
+	"Name": "Pantsir",
 	"Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Bloodhound",
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Pantsir Prefab",
+	"ArmoryImage": "Armory Images/Pantsir",
 
 	"Data": {
 			"MovementSpeed": 500,
@@ -23,7 +23,7 @@
 	},
 	
 	"Recon": {
-		"MaxSpottingRange": 4200,
+		"MaxSpottingRange": 3000,
 		"StealthPenetration": 1,
 		"Stealth": 1
 	},
@@ -44,8 +44,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "IFV",
-        "MountRef": "Bloodhound",
+        "TurretRef": "Turret",
+        "MountRef": "Pantsir",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -53,8 +53,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "MG",
-                "MountRef": "IFV",
+                "TurretRef": "Gun",
+                "MountRef": "Turret",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -70,8 +70,8 @@
             },
             {
                 "Priority": 2,
-                "TurretRef": "Autocannon",
-                "MountRef": "IFV",
+                "TurretRef": "Missile",
+                "MountRef": "Turret",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,

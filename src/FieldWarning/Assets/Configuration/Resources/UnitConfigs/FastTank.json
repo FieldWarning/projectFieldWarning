@@ -1,30 +1,30 @@
 {
     "$schema": "../UnitConfigSchema.json",
 
-    "ID": "Unit__TNK--BTR-32",
+    "ID": "Unit__TNK--FastTank",
     "CategoryKey": "TNK",
-    "Name": "BTR-32",
-    "Price": 15,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "BTR-32/BTR-32 APC",
-	"ArmoryImage": "Armory Images/BTR-32 APC",
+    "Name": "FastTank",
+    "Price": 20,
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
 
     "Data": {
-        "MovementSpeed": 40,
-        "ReverseSpeed": 12.5,
-        "AccelRate": 11.5,
-        "MaxRotationSpeed": 40,
+        "MovementSpeed": 250,
+        "ReverseSpeed": 50,
+        "AccelRate": 40,
+        "MaxRotationSpeed": 50,
         "MinTurnRadius": 0,
-        "MaxLateralAccel": 15,
+        "MaxLateralAccel": 50,
         "Suspension": 0.01,
-        "MaxHealth": 7.5,
+        "MaxHealth": 10,
         "Length": 12,
         "Width": 7
     },
 	
 	"Recon": {
-		"MaxSpottingRange": 3000,
-		"StealthPenetration": 1,
+		"MaxSpottingRange": 20000,
+		"StealthPenetration": 5,
 		"Stealth": 1
 	},
     
@@ -44,8 +44,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "APC",
-        "MountRef": "hull",
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -53,8 +53,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "HMG",
-                "MountRef": "APC",
+                "TurretRef": "MG",
+                "MountRef": "IFV",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -65,6 +65,23 @@
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
+                    "SalvoReload": 8
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Autocannon",
+                "MountRef": "IFV",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "Damage": 4,
+                    "FireRange" : 200,
+                    "Accuracy": 30,
+                    "ShotReload": 8,
+                    "SalvoLength": 1,
                     "SalvoReload": 8
                 }
             }

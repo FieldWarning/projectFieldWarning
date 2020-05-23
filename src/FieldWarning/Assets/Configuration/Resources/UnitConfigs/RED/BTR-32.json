@@ -1,23 +1,23 @@
 {
     "$schema": "../UnitConfigSchema.json",
 
-    "ID": "Unit__TNK--M1A2",
+    "ID": "Unit__TNK--BTR-32",
     "CategoryKey": "TNK",
-    "Name": "M1A2 Abrams",
-    "Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Bloodhound",
+    "Name": "BTR-32",
+    "Price": 15,
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 APC",
+	"ArmoryImage": "Armory Images/BTR-32 APC",
 
     "Data": {
-        "MovementSpeed": 50,
-        "ReverseSpeed": 15,
-        "AccelRate": 13,
-        "MaxRotationSpeed": 50,
+        "MovementSpeed": 40,
+        "ReverseSpeed": 12.5,
+        "AccelRate": 11.5,
+        "MaxRotationSpeed": 40,
         "MinTurnRadius": 0,
         "MaxLateralAccel": 15,
         "Suspension": 0.01,
-        "MaxHealth": 10,
+        "MaxHealth": 7.5,
         "Length": 12,
         "Width": 7
     },
@@ -44,8 +44,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "IFV",
-        "MountRef": "Bloodhound",
+        "TurretRef": "APC",
+        "MountRef": "hull",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -53,8 +53,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "MG",
-                "MountRef": "IFV",
+                "TurretRef": "HMG",
+                "MountRef": "APC",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -65,23 +65,6 @@
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
-                    "SalvoReload": 8
-                }
-            },
-            {
-                "Priority": 2,
-                "TurretRef": "Autocannon",
-                "MountRef": "IFV",
-                "ArcHorizontal": 0,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
-                "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 200,
-                    "Accuracy": 30,
-                    "ShotReload": 8,
-                    "SalvoLength": 1,
                     "SalvoReload": 8
                 }
             }

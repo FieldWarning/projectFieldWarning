@@ -1,13 +1,13 @@
 {
 	"$schema": "../UnitConfigSchema.json",
 
-	"ID": "Unit__VHC--Zhalo",
-	"CategoryKey": "VHC",
-	"Name": "BTR-32 Zhalo",
+	"ID": "Unit__LOG--HEMTT",
+	"CategoryKey": "LOG",
+	"Name": "HEMTT",
 	"Price": 20,
-    "PrefabPath": "GroundUnit",
-    "ArtPrefabPath": "BTR-32/BTR-32 Zhalo",
-	"ArmoryImage": "Armory Images/Zhalo",
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
 
 	"Data": {
 			"MovementSpeed": 500,
@@ -44,8 +44,8 @@
     },
     
     "Turrets": [{
-        "TurretRef": "turret",
-        "MountRef": "hull",
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -53,8 +53,8 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "aps",
-                "MountRef": "turret",
+                "TurretRef": "MG",
+                "MountRef": "IFV",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -70,8 +70,8 @@
             },
             {
                 "Priority": 2,
-                "TurretRef": "cannon",
-                "MountRef": "turret",
+                "TurretRef": "Autocannon",
+                "MountRef": "IFV",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,
