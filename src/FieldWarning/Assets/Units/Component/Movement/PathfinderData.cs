@@ -24,6 +24,7 @@ using Priority_Queue;
 using EasyRoads3Dv3;
 
 using PFW.Loading;
+using System.Runtime.CompilerServices;
 
 namespace PFW.Units.Component.Movement
 {
@@ -435,8 +436,10 @@ namespace PFW.Units.Component.Movement
         /// <summary>
         /// Run the A* algorithm and put the result in path.
         /// If no path was found, return 'forever' and put only the destination in path.
+        /// Note: this method MUST be syncrhonized as it is called from multiple threads.
         /// Returns the total path time.
-        /// </summary>
+        /// </summary> 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public float FindPath(
                 List<PathNode> path,
                 Vector3 start,

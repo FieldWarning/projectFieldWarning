@@ -113,8 +113,9 @@ namespace PFW.Units.Component.Movement
                 float heading = NO_HEADING, 
                 MoveCommandType moveMode = MoveCommandType.FAST)
         {
-            if (Pathfinder.SetPath(d, moveMode) < Pathfinder.FOREVER)
-                _moveStrategy.FinalHeading = heading;
+            // multithreading
+            Pathfinder.SetPathAndForget(d, moveMode);
+            _moveStrategy.FinalHeading = heading;
         }
 
         public bool AreOrdersComplete() => _moveStrategy.AreOrdersComplete();
