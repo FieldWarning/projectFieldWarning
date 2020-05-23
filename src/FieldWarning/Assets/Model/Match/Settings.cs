@@ -13,7 +13,7 @@
 
 using System;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
     public class Settings
     {

@@ -19,7 +19,7 @@ using System;
 
 using PFW.Model;
 using PFW.Model.Armory;
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Model.Settings;
 using PFW.Units;
 using PFW.Units.Component.Movement;

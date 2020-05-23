@@ -18,7 +18,7 @@ using UnityEngine;
 using Mirror;
 using TMPro;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Networking;
 
 namespace PFW.UI.Ingame

@@ -14,7 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Units.Component.Data;
 
 namespace PFW.Units.Component.Vision

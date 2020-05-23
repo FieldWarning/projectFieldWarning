@@ -16,7 +16,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using PFW.Model.Armory;
-using PFW.Model.Game;
+using PFW.Model.Match;
 
 namespace PFW.UI.Ingame
 {

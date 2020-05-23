@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using PFW.Units;
 using PFW.Units.Component.Vision;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
     /// <summary>
     /// Holds various lists of the units existing in a match.

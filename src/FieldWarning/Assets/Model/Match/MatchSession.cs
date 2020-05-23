@@ -25,7 +25,7 @@ using PFW.Units.Component.Movement;
 using Mirror;
 using UnityEngine.SceneManagement;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
     /// <summary>
     /// Represents the ongoing match.
