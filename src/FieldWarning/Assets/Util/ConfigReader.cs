@@ -50,7 +50,15 @@ namespace PFW
             TextAsset configFile = Resources.Load<TextAsset>("Settings/DefaultSettings");
             SettingsConfig config = JsonUtility.FromJson<SettingsConfig>(configFile.text);
 
-            return new UserSettings(config);
+            // The local settings file overrides anything set in the default
+            // settings file. This file may have partial content or not exist
+            // at all.
+            TextAsset configFile2 = Resources.Load<TextAsset>("Settings/LocalSettings");
+            SettingsConfig config2 = configFile2 == null ? 
+                config :
+                JsonUtility.FromJson<SettingsConfig>(configFile2.text);
+
+            return new UserSettings(config, config2);
         }
     }
 }

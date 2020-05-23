@@ -26,10 +26,10 @@ namespace PFW.Model.Settings
         public readonly Hotkeys Hotkeys;
         public readonly CameraSettings CameraSettings;
 
-        public UserSettings(SettingsConfig config)
+        public UserSettings(SettingsConfig defaultConfig, SettingsConfig localConfig)
         {
-            Hotkeys = new Hotkeys(config.Hotkeys, config.Hotkeys);
-            CameraSettings = new CameraSettings(config.Camera, config.Camera);
+            Hotkeys = new Hotkeys(defaultConfig.Hotkeys, localConfig.Hotkeys);
+            CameraSettings = new CameraSettings(defaultConfig.Camera, localConfig.Camera);
         }
     }
 

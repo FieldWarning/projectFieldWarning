@@ -21,31 +21,31 @@ namespace PFW.Model.Settings
     {
         public Hotkeys(HotkeyConfig defaultConfig, HotkeyConfig localConfig)
         {
-            Unload = localConfig.Unload == "" ?
+            Unload = localConfig.Unload == null ?
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), defaultConfig.Unload) :
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), localConfig.Unload);
 
-            Load = localConfig.Unload == "" ?
+            Load = localConfig.Unload == null ?
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), defaultConfig.Load) :
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), localConfig.Load);
 
-            FirePos = localConfig.Unload == "" ?
+            FirePos = localConfig.Unload == null ?
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), defaultConfig.FirePosition) :
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), localConfig.FirePosition);
 
-            ReverseMove = localConfig.Unload == "" ?
+            ReverseMove = localConfig.Unload == null ?
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), defaultConfig.ReverseMove) :
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), localConfig.ReverseMove);
 
-            FastMove = localConfig.Unload == "" ?
+            FastMove = localConfig.Unload == null ?
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), defaultConfig.FastMove) :
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), localConfig.FastMove);
 
-            Split = localConfig.Unload == "" ?
+            Split = localConfig.Unload == null ?
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), defaultConfig.Split) :
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), localConfig.Split);
 
-            VisionTool = localConfig.Unload == "" ?
+            VisionTool = localConfig.Unload == null ?
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), defaultConfig.VisionTool) :
                 (KeyCode)System.Enum.Parse(typeof(KeyCode), localConfig.VisionTool);
         }
