@@ -1,9 +1,9 @@
 {
     "Camera":
     {
-        "ZoomSpeed": 20,
+        "ZoomSpeed": 2000,
         "RotationSpeed": 200,
-        "PanSpeed": 8
+        "PanSpeed": 400
     },
     "Hotkeys":
     {

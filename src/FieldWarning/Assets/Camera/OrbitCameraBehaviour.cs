@@ -13,8 +13,8 @@
 
 using PFW;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using static PFW.SlidingCameraBehaviour;
+using PFW.Model;
 
 /// <summary>
 /// A camera moved around a pivot. 
@@ -48,8 +48,7 @@ public class OrbitCameraBehaviour : MonoBehaviour
     [SerializeField]
     private float _rotLerpSpeed = 10f;
 
-    [SerializeField]
-    private float _zoomSpeed = 10000f * Constants.MAP_SCALE;
+    private float _zoomSpeed => GameSession.Singleton.Settings.CameraSettings.ZoomSpeed;
 
     static public GameObject FollowObject = null;
 

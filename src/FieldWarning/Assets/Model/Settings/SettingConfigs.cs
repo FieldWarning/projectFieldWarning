@@ -34,9 +34,9 @@ namespace PFW.Model.Settings.JsonContents
     [Serializable]
     public class CameraConfig
     {
-        public float ZoomSpeed;
+        public float ZoomSpeed;  // in meters per sec
         public float RotationSpeed;
-        public float PanSpeed;
+        public float PanSpeed;  // in meters per sec
     }
 
     [Serializable]

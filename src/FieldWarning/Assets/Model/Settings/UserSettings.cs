@@ -39,14 +39,18 @@ namespace PFW.Model.Settings
         {
             ZoomSpeed = localConfig.ZoomSpeed == 0 ? 
                     defaultConfig.ZoomSpeed : localConfig.ZoomSpeed;
+            ZoomSpeed *= Constants.MAP_SCALE;
+
             RotationSpeed = localConfig.RotationSpeed == 0 ?
                     defaultConfig.RotationSpeed : localConfig.RotationSpeed;
+
             PanSpeed = localConfig.PanSpeed == 0 ?
                     defaultConfig.PanSpeed : localConfig.PanSpeed;
+            PanSpeed *= Constants.MAP_SCALE;
         }
 
-        public float ZoomSpeed;
+        public float ZoomSpeed;  // in unity units
         public float RotationSpeed;
-        public float PanSpeed;
+        public float PanSpeed;  // in unity units
     }
 }

@@ -16,6 +16,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+using PFW.Model;
 using PFW.Model.Match;
 
 namespace PFW
@@ -40,8 +41,6 @@ namespace PFW
     {
         [Header("Translational Movement")]
         [SerializeField]
-        private float _panSpeed = 50f * Constants.MAP_SCALE;
-        [SerializeField]
         private float _panLerpSpeed = 100f * Constants.MAP_SCALE;
         [SerializeField]
         private float _borderPanningOffset = 2; // Pixels
@@ -50,6 +49,8 @@ namespace PFW
         [SerializeField]
         private float _maxCameraHorizontalDistanceFromTerrain =
                 5000f * Constants.MAP_SCALE;
+        private float _panSpeed =>
+                GameSession.Singleton.Settings.CameraSettings.PanSpeed;
 
         private Image _cornerArrowBottomLeft;
         private Image _cornerArrowBottomRight;
@@ -62,19 +63,17 @@ namespace PFW
 
         [Header("Rotational Movement")]
         [SerializeField]
-        private float _horizontalRotationSpeed = 600f;
-        [SerializeField]
-        private float _verticalRotationSpeed = 600f;
-        [SerializeField]
         private float _rotLerpSpeed = 10f;
         [SerializeField]
         private float _maxCameraAngle = 85f;
         [SerializeField]
         private float _minCameraAngle = 5f;
+        private float _horizontalRotationSpeed => 
+                GameSession.Singleton.Settings.CameraSettings.RotationSpeed;
+        private float _verticalRotationSpeed => 
+                GameSession.Singleton.Settings.CameraSettings.RotationSpeed;
 
         [Header("Zoom Level")]
-        [SerializeField]
-        private float _zoomSpeed = 5000f * Constants.MAP_SCALE;
         [SerializeField]
         private float _zoomTiltSpeed = 4f;
         [SerializeField]
@@ -87,6 +86,9 @@ namespace PFW
         private float _heightSpeedScaling = 0.75f;
         [SerializeField]
         private float _zoomOutAngle = 45f;
+        private float _zoomSpeed =>
+                GameSession.Singleton.Settings.CameraSettings.ZoomSpeed;
+
         [SerializeField]
         private MatchSession _session = null;
 
