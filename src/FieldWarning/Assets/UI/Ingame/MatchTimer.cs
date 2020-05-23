@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -44,8 +44,16 @@ namespace PFW.UI.Ingame
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(MAX_TIME_SECONDS - NetworkTime.time);
 
-            _text.text =
-                    $"{timeSpan.Hours * 60 + timeSpan.Minutes}:{timeSpan.Seconds}";
+            string minutes = $"{timeSpan.Hours * 60 + timeSpan.Minutes}";
+            // Ensure the display is always double-digit:
+            if (10 > timeSpan.Hours * 60 + timeSpan.Minutes)
+            {
+                minutes = "0" + minutes;
+            }
+
+            string seconds = $"{(timeSpan.Seconds < 10 ? "0" : "")}{timeSpan.Seconds}";
+
+            _text.text = minutes + ":" + seconds;
         }
     }
 }
