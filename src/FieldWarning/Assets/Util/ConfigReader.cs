@@ -12,11 +12,12 @@
  */
 
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 using PFW.Model.Armory;
 using PFW.Model.Armory.JsonContents;
+using PFW.Model.Settings;
+using PFW.Model.Settings.JsonContents;
 
 namespace PFW
 {
@@ -42,6 +43,14 @@ namespace PFW
             }
 
             return new Armory(configs);
+        }
+
+        public static UserSettings ParseSettings()
+        {
+            TextAsset configFile = Resources.Load<TextAsset>("Settings/DefaultSettings");
+            SettingsConfig config = JsonUtility.FromJson<SettingsConfig>(configFile.text);
+
+            return new UserSettings(config);
         }
     }
 }

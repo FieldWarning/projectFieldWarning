@@ -17,8 +17,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-using PFW.Model.Game;
+using PFW.Model;
 using PFW.Model.Armory;
+using PFW.Model.Game;
+using PFW.Model.Settings;
 using PFW.Units;
 using PFW.Units.Component.Movement;
 
@@ -80,10 +82,14 @@ namespace PFW.UI.Ingame
         GameObject _rangeTooltip;
         TMPro.TextMeshProUGUI _rangeTooltipText;
 
+        private Commands _commands;
+
         private void Awake()
         {
             _selectionManager = new SelectionManager();
             _selectionManager.Awake();
+
+            _commands = new Commands(GameSession.Singleton.Settings.Hotkeys);
         }
 
         private void Start()
@@ -432,31 +438,31 @@ namespace PFW.UI.Ingame
         {
             if (!_session.IsChatFocused) 
             {
-                if (Commands.Unload) 
+                if (_commands.Unload) 
                 {
                     _selectionManager.DispatchUnloadCommand();
                 } 
-                else if (Commands.Load) 
+                else if (_commands.Load) 
                 {
                     _selectionManager.DispatchLoadCommand();
                 } 
-                else if (Commands.FirePos && !_selectionManager.Empty) 
+                else if (_commands.FirePos && !_selectionManager.Empty) 
                 {
                     EnterFirePosMode();
                 } 
-                else if (Commands.ReverseMove && !_selectionManager.Empty) 
+                else if (_commands.ReverseMove && !_selectionManager.Empty) 
                 {
                     EnterReverseMoveMode();
                 } 
-                else if (Commands.FastMove && !_selectionManager.Empty)
+                else if (_commands.FastMove && !_selectionManager.Empty)
                 {
                     EnterFastMoveMode();
                 } 
-                else if (Commands.Split && !_selectionManager.Empty)
+                else if (_commands.Split && !_selectionManager.Empty)
                 {
                     EnterSplitMode();
                 }
-                else if (Commands.VisionRuler && !_selectionManager.Empty)
+                else if (_commands.VisionTool && !_selectionManager.Empty)
                 {
                     EnterVisionRulerMode();
                 }
@@ -562,45 +568,52 @@ namespace PFW.UI.Ingame
 
     public class Commands
     {
-        public static bool Unload {
+        private Hotkeys _hotkeys;
+
+        public Commands(Hotkeys hotkeys)
+        {
+            _hotkeys = hotkeys;
+        }
+
+        public bool Unload {
             get {
-                return Input.GetKeyDown(Hotkeys.Unload);
+                return Input.GetKeyDown(_hotkeys.Unload);
             }
         }
 
-        public static bool Load {
+        public bool Load {
             get {
-                return Input.GetKeyDown(Hotkeys.Load);
+                return Input.GetKeyDown(_hotkeys.Load);
             }
         }
 
-        public static bool FirePos {
+        public bool FirePos {
             get {
-                return Input.GetKeyDown(Hotkeys.FirePos);
+                return Input.GetKeyDown(_hotkeys.FirePos);
             }
         }
 
-        public static bool ReverseMove {
+        public bool ReverseMove {
             get {
-                return Input.GetKeyDown(Hotkeys.ReverseMove);
+                return Input.GetKeyDown(_hotkeys.ReverseMove);
             }
         }
 
-        public static bool FastMove {
+        public bool FastMove {
             get {
-                return Input.GetKeyDown(Hotkeys.FastMove);
+                return Input.GetKeyDown(_hotkeys.FastMove);
             }
         }
 
-        public static bool Split {
+        public bool Split {
             get {
-                return Input.GetKeyDown(Hotkeys.Split);
+                return Input.GetKeyDown(_hotkeys.Split);
             }
         }
 
-        public static bool VisionRuler {
+        public bool VisionTool {
             get {
-                return Input.GetKeyDown(Hotkeys.VisionRuler);
+                return Input.GetKeyDown(_hotkeys.VisionTool);
             }
         }
     }

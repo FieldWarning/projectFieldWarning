@@ -1,0 +1,19 @@
+{
+    "Camera":
+    {
+        "ZoomSpeed": 20,
+        "RotationSpeed": 200,
+        "PanSpeed": 8
+    },
+    "Hotkeys":
+    {
+        "AttackMove": "Q",
+        "FastMove": "V",
+        "ReverseMove": "G",
+        "FirePosition": "T",
+        "Split": "K",
+        "VisionTool": "R",
+        "Load": "L",
+        "Unload": "U"
+    }
+}

@@ -11,16 +11,26 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
+using PFW.Model.Settings;
 
-namespace PFW.Model.Game
+namespace PFW.Model
 {
-    public class Settings
+    /// <summary>
+    /// Singleton that is created at game launch.
+    /// This represents the application session,
+    /// NOT individual matches (contrast: MatchSession).
+    /// </summary>
+    public class GameSession
     {
-        public int PointLimit { get; private set; }
-        public TimeSpan Duration { get; private set; }
-        public string Map { get; private set; }
+        // TODO: C# will only initialize static members when they
+        //       are accessed, so we might need an init script..
+        public static GameSession Singleton = new GameSession();
 
-        public long Seed { get; private set; }
+        public readonly UserSettings Settings;
+
+        private GameSession()
+        {
+            Settings = ConfigReader.ParseSettings();
+        }
     }
 }
