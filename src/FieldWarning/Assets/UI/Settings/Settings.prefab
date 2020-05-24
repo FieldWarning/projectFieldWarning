@@ -2345,7 +2345,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_textInfo.wordCount
@@ -2366,6 +2366,26 @@ PrefabInstance:
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_firstOverflowCharacterIndex
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_text
+      value: "99\u200B"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_ContentType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_KeyboardType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_Text
+      value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 650777490905377829, guid: 3e2e7554547dd53419b033c19ae661a2,
         type: 3}
@@ -2576,7 +2596,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_textInfo.wordCount
@@ -2597,6 +2617,26 @@ PrefabInstance:
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_firstOverflowCharacterIndex
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_text
+      value: "99\u200B"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_Text
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_ContentType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_KeyboardType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 650777490905377829, guid: 3e2e7554547dd53419b033c19ae661a2,
         type: 3}
@@ -3002,7 +3042,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_textInfo.wordCount
@@ -3023,6 +3063,26 @@ PrefabInstance:
     - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
       propertyPath: m_firstOverflowCharacterIndex
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845692, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_text
+      value: "99\u200B"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_Text
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_ContentType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_KeyboardType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189845693, guid: 3e2e7554547dd53419b033c19ae661a2, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 650777490905377829, guid: 3e2e7554547dd53419b033c19ae661a2,
         type: 3}
