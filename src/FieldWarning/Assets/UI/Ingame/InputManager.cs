@@ -445,11 +445,19 @@ namespace PFW.UI.Ingame
                 else if (_commands.Load) 
                 {
                     _selectionManager.DispatchLoadCommand();
-                } 
+                }
+                else if (_commands.ToggleMenu)
+                {
+                    //_selectionManager.DispatchLoadCommand();
+                }
                 else if (_commands.FirePos && !_selectionManager.Empty) 
                 {
                     EnterFirePosMode();
-                } 
+                }
+                else if (_commands.AttackMove && !_selectionManager.Empty)
+                {
+                    Debug.LogWarning("Attack move is not implemented.");
+                }
                 else if (_commands.ReverseMove && !_selectionManager.Empty) 
                 {
                     EnterReverseMoveMode();
@@ -568,7 +576,7 @@ namespace PFW.UI.Ingame
 
     public class Commands
     {
-        private Hotkeys _hotkeys;
+        private readonly Hotkeys _hotkeys;
 
         public Commands(Hotkeys hotkeys)
         {
@@ -592,10 +600,15 @@ namespace PFW.UI.Ingame
                 return Input.GetKeyDown(_hotkeys.FirePos);
             }
         }
-
         public bool ReverseMove {
             get {
                 return Input.GetKeyDown(_hotkeys.ReverseMove);
+            }
+        }
+
+        public bool AttackMove {
+            get {
+                return Input.GetKeyDown(_hotkeys.AttackMove);
             }
         }
 
@@ -614,6 +627,12 @@ namespace PFW.UI.Ingame
         public bool VisionTool {
             get {
                 return Input.GetKeyDown(_hotkeys.VisionTool);
+            }
+        }
+
+        public bool ToggleMenu {
+            get {
+                return Input.GetKeyDown(KeyCode.Escape);
             }
         }
     }

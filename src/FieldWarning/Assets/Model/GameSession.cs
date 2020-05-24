@@ -12,6 +12,7 @@
  */
 
 using PFW.Model.Settings;
+using PFW.Model.Settings.JsonContents;
 
 namespace PFW.Model
 {
@@ -28,9 +29,21 @@ namespace PFW.Model
 
         public readonly UserSettings Settings;
 
+        /// <summary>
+        ///  Cached for use by the settings menu.
+        /// </summary>
+        public SettingsConfig SettingsRaw; 
+
         private GameSession()
         {
-            Settings = ConfigReader.ParseSettings();
+            SettingsRaw = ConfigReader.ParseSettingsRaw();
+            Settings = new UserSettings(SettingsRaw);
+        }
+
+        public void ReloadSettings()
+        { 
+            SettingsRaw = ConfigReader.ParseSettingsRaw();
+            Settings.ApplyLocalSettings(SettingsRaw);
         }
     }
 }

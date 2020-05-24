@@ -26,27 +26,39 @@ namespace PFW.Model.Settings
         public readonly Hotkeys Hotkeys;
         public readonly CameraSettings CameraSettings;
 
-        public UserSettings(SettingsConfig defaultConfig, SettingsConfig localConfig)
+        public UserSettings(SettingsConfig config)
         {
-            Hotkeys = new Hotkeys(defaultConfig.Hotkeys, localConfig.Hotkeys);
-            CameraSettings = new CameraSettings(defaultConfig.Camera, localConfig.Camera);
+            Hotkeys = new Hotkeys(config.Hotkeys);
+            CameraSettings = new CameraSettings(config.Camera);
+        }
+
+        /// <summary>
+        /// Re-reads the settings after a config change,
+        /// storing the values into the existing settings objects.
+        /// </summary>
+        public void ApplyLocalSettings(SettingsConfig config)
+        {
+            Hotkeys.ApplySettings(config.Hotkeys);
+            CameraSettings.ApplySettings(config.Camera);
         }
     }
 
     public class CameraSettings
     {
-        public CameraSettings(CameraConfig defaultConfig, CameraConfig localConfig)
+        public CameraSettings(CameraConfig config)
         {
-            ZoomSpeed = localConfig.ZoomSpeed == 0 ? 
-                    defaultConfig.ZoomSpeed : localConfig.ZoomSpeed;
-            ZoomSpeed *= Constants.MAP_SCALE;
+            ApplySettings(config);
+        }
 
-            RotationSpeed = localConfig.RotationSpeed == 0 ?
-                    defaultConfig.RotationSpeed : localConfig.RotationSpeed;
-
-            PanSpeed = localConfig.PanSpeed == 0 ?
-                    defaultConfig.PanSpeed : localConfig.PanSpeed;
-            PanSpeed *= Constants.MAP_SCALE;
+        /// <summary>
+        /// Recreate the settings from a config, 
+        /// storing them in the current instance.
+        /// </summary>
+        public void ApplySettings(CameraConfig config)
+        {
+            ZoomSpeed = config.ZoomSpeed * Constants.MAP_SCALE;
+            RotationSpeed = config.RotationSpeed;
+            PanSpeed = config.PanSpeed * Constants.MAP_SCALE;
         }
 
         public float ZoomSpeed;  // in unity units
