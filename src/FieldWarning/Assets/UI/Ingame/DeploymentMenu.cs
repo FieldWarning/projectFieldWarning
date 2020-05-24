@@ -84,6 +84,9 @@ namespace PFW.UI.Ingame
                 GameObject card = Instantiate(
                         UnitCardDeploymentPrefab, _unitCardsPanel.transform);
                 card.GetComponentInChildren<Text>().text = unit.Name;
+                Util.RecursiveFindChild(card.transform, "Price")
+                        .GetComponent<TMPro.TMP_Text>()
+                        .text = unit.Price.ToString();
                 card.GetComponentInChildren<Button>().onClick.AddListener(
                         delegate {
                                 _inputManager.BuyCallback(unit);
