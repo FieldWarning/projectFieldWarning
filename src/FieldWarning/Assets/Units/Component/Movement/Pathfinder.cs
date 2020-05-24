@@ -15,10 +15,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace PFW.Units.Component.Movement
 {
-    public class Pathfinder
+    public class Pathfinder:IDisposable
     {
         public const float FOREVER = float.MaxValue / 2;
         public static readonly Vector3 NO_POSITION = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
@@ -55,6 +57,10 @@ namespace PFW.Units.Component.Movement
         /// </summary>
         private static bool _s_straightStep;
 
+        private EventWaitHandle _PathFinderRunnerEvent = new EventWaitHandle(false, EventResetMode.AutoReset);
+        private ConcurrentQueue<PathData> _PathQueue = new ConcurrentQueue<PathData>();
+        private bool IsQueueActive = false;
+
         public PathfinderData Data { get; private set; }
         public MoveCommandType Command { get; private set; }
 
@@ -74,12 +80,57 @@ namespace PFW.Units.Component.Movement
 
         public Pathfinder(MovementComponent unit, PathfinderData data)
         {
+            
             _unit = unit;
             Data = data;
             _path = new List<PathNode>();
             FinalCompletionDist =
                     2f * Constants.MAP_SCALE + unit.Data.MinTurnRadius;
             _nextUpdateTime = 0f;
+
+            Thread calculationThread = new Thread(() => PathFinderRunner());
+            calculationThread.IsBackground = true;
+            calculationThread.Start();
+
+
+        }
+
+        public void Dispose()
+        {
+            IsQueueActive = false;
+
+            _PathFinderRunnerEvent.Set();
+        }
+
+        private void PathFinderRunner()
+        {
+            IsQueueActive = true;
+            while (IsQueueActive)
+            {
+                
+                if (_PathQueue.IsEmpty)
+                {
+                    _PathFinderRunnerEvent.WaitOne();
+                }
+
+                PathData data;
+                if (_PathQueue.TryDequeue(out data))
+                {
+                    SetPath(data.CurrentPosition, data.DestinationPosition, data.Command);
+                }
+
+            }
+        }
+
+        public void SetPathAndForget(Vector3 destination, MoveCommandType command)
+        {
+            Vector3 pos = _unit.transform.position;
+            _PathQueue.Enqueue(new PathData(pos, destination, command));
+            _PathFinderRunnerEvent.Set();
+
+
+
+
         }
 
         /// <summary>
@@ -91,7 +142,7 @@ namespace PFW.Units.Component.Movement
         /// <param name="destination"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        public float SetPath(Vector3 destination, MoveCommandType command)
+        public float SetPath(Vector3 current, Vector3 destination, MoveCommandType command)
         {
             Logger.LogPathfinding(
                     $"Pathfinder::SetPath() called, destination = {destination}, command = {command}",
@@ -113,11 +164,11 @@ namespace PFW.Units.Component.Movement
             this.Command = command;
 
             float pathTime = Data.FindPath(
-                    _path, _unit.transform.position, destination, _unit.Mobility, 0f, command);
+                    _path, current, destination, _unit.Mobility, 0f, command);
             if (pathTime >= FOREVER)
                 _path.Clear();
 
-            UpdateWaypointAngle();
+            UpdateWaypointAngle(current);
 
             Logger.LogPathfinding(
                     $"Pathfinder::SetPath() for destination {destination}, " +
@@ -154,6 +205,11 @@ namespace PFW.Units.Component.Movement
 
         private void UpdateWaypoint()
         {
+            if (_path.Count == 0)
+            {
+                return;
+            }
+
             PathNode targetNode = _path[_path.Count - 1];
 
             float distance = Vector3.Distance(
@@ -170,7 +226,7 @@ namespace PFW.Units.Component.Movement
                 {
                     _previousNode = targetNode;
                     targetNode = _path[_path.Count - 1];
-                    UpdateWaypointAngle();
+                    UpdateWaypointAngle(_unit.transform.position);
                 }
             }
 
@@ -230,13 +286,17 @@ namespace PFW.Units.Component.Movement
             }
         }
 
-        private void UpdateWaypointAngle()
+        /// <summary>
+        /// Angle between our current position+next waypoint and current position + waypoint after next
+        /// </summary>
+        /// <param name="currentPosition"></param>
+        private void UpdateWaypointAngle(Vector3 currentPosition)
         {
             if (_path.Count >= 2)
             {
                 Vector3 nodePos = PathfinderData.Position(_path[_path.Count - 1]);
                 Vector3 nextPos = PathfinderData.Position(_path[_path.Count - 2]);
-                WaypointAngleChange = Math.Abs(Vector3.Angle(nodePos - _unit.transform.position, nextPos - nodePos));
+                WaypointAngleChange = Math.Abs(Vector3.Angle(nodePos - currentPosition, nextPos - nodePos));
             }
             else
             {
@@ -337,5 +397,21 @@ namespace PFW.Units.Component.Movement
             // No step was found
             return NO_POSITION;
         }
+
+    }
+
+    struct PathData
+    {
+        public Vector3 CurrentPosition;
+        public Vector3 DestinationPosition;
+        public MoveCommandType Command;
+
+        public PathData(Vector3 currentPosition, Vector3 destinationPosition, MoveCommandType command)
+        {
+            CurrentPosition = currentPosition;
+            DestinationPosition = destinationPosition;
+            Command = command;
+        }
+
     }
 }
