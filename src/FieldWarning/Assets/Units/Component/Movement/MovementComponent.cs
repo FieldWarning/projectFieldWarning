@@ -118,6 +118,15 @@ namespace PFW.Units.Component.Movement
             _moveStrategy.FinalHeading = heading;
         }
 
+        public void OnDestroy()
+        {
+            if (Pathfinder != null)
+            {
+                Pathfinder.Shutdown();
+            }
+            
+        }
+
         public bool AreOrdersComplete() => _moveStrategy.AreOrdersComplete();
 
         /// <summary>

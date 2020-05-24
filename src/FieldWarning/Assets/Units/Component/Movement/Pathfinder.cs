@@ -89,18 +89,17 @@ namespace PFW.Units.Component.Movement
             _nextUpdateTime = 0f;
 
             Thread calculationThread = new Thread(() => PathFinderRunner());
+            calculationThread.IsBackground = true;
             calculationThread.Start();
-            
+
 
         }
 
-        ~Pathfinder()
+        public void Shutdown()
         {
-            // clean up our thread
-            // HELP: guys please check to make sure this works exactly like I think it does
-            // and does not keep the thread or class active in memory.
             IsQueueActive = false;
-            _PathFinderRunnerSem.Release(1);
+
+            _PathFinderRunnerSem. Release();
         }
 
         private void PathFinderRunner()
@@ -395,6 +394,7 @@ namespace PFW.Units.Component.Movement
             // No step was found
             return NO_POSITION;
         }
+
     }
 
     struct PathData
