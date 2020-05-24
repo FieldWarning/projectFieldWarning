@@ -20,7 +20,7 @@ using System.Collections.Concurrent;
 
 namespace PFW.Units.Component.Movement
 {
-    public class Pathfinder
+    public class Pathfinder:IDisposable
     {
         public const float FOREVER = float.MaxValue / 2;
         public static readonly Vector3 NO_POSITION = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
@@ -95,11 +95,11 @@ namespace PFW.Units.Component.Movement
 
         }
 
-        public void Shutdown()
+        public void Dispose()
         {
             IsQueueActive = false;
 
-            _PathFinderRunnerSem. Release();
+            _PathFinderRunnerSem.Release(1);
         }
 
         private void PathFinderRunner()

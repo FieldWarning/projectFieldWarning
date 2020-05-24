@@ -122,7 +122,7 @@ namespace PFW.Units.Component.Movement
         {
             if (Pathfinder != null)
             {
-                Pathfinder.Shutdown();
+                Pathfinder.Dispose();
             }
             
         }
