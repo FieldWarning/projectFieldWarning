@@ -38,6 +38,7 @@ namespace PFW.Model.Armory
         public GameObject ArtPrefab { get; }
 
         public Sprite ArmoryImage { get; }
+        public Sprite ArmoryBackgroundImage { get; }
 
         /// <summary>
         /// If multiple units have the same mobility stats, they share
@@ -56,6 +57,7 @@ namespace PFW.Model.Armory
             Prefab = Resources.Load<GameObject>(config.PrefabPath);
             ArtPrefab = Resources.Load<GameObject>(config.ArtPrefabPath);
             ArmoryImage = Resources.Load<Sprite>(config.ArmoryImage);
+            ArmoryBackgroundImage = Resources.Load<Sprite>(config.ArmoryBackgroundImage);
             Config = config;
         }
     }

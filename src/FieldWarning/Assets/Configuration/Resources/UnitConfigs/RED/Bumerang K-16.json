@@ -8,6 +8,7 @@
     "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/Bumerang/Bumerang_K16",
 	"ArmoryImage": "Armory Images/K16",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
 
     "Data": {
         "MovementSpeed": 40,

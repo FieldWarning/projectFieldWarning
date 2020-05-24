@@ -94,6 +94,8 @@ namespace PFW.UI.Ingame
 
                 card.transform.Find("Image").GetComponent<Image>().sprite =
                         unit.ArmoryImage;
+                card.transform.Find("BackgroundImage").GetComponent<Image>().sprite =
+                        unit.ArmoryBackgroundImage;
                 // TODO Transports?
             }
         }

@@ -8,6 +8,7 @@
     "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 Zhalo",
 	"ArmoryImage": "Armory Images/Zhalo",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
 
 	"Data": {
 			"MovementSpeed": 500,
