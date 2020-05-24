@@ -52,6 +52,21 @@ namespace PFW.Model.Settings
         [SerializeField]
         private TMPro.TMP_InputField _menuToggle = null;
 
+        private void Start()
+        {
+            _zoomSpeed.scrollSensitivity = 0;
+            _turnSpeed.scrollSensitivity = 0;
+            _panSpeed.scrollSensitivity = 0;
+            _attackMove.scrollSensitivity = 0;
+            _fastMove.scrollSensitivity = 0;
+            _reverseMove.scrollSensitivity = 0;
+            _firePosition.scrollSensitivity = 0;
+            _split.scrollSensitivity = 0;
+            _visionTool.scrollSensitivity = 0;
+            _load.scrollSensitivity = 0;
+            _unload.scrollSensitivity = 0;
+            _menuToggle.scrollSensitivity = 0;
+        }
 
         public void OnApply()
         {
