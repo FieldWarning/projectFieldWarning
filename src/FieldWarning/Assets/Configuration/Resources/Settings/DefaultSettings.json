@@ -14,6 +14,7 @@
         "Split": "K",
         "VisionTool": "R",
         "Load": "L",
-        "Unload": "U"
+        "Unload": "U",
+        "MenuToggle": "Escape"
     }
 }

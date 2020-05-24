@@ -38,6 +38,7 @@ namespace PFW.Model.Settings
             FastMove = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.FastMove);
             Split = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.Split);
             VisionTool = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.VisionTool);
+            MenuToggle = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.MenuToggle);
         }
 
         public KeyCode Unload;
@@ -48,5 +49,6 @@ namespace PFW.Model.Settings
         public KeyCode FastMove;
         public KeyCode Split;
         public KeyCode VisionTool;
+        public KeyCode MenuToggle;
     }
 }

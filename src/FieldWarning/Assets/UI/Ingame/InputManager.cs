@@ -50,7 +50,8 @@ namespace PFW.UI.Ingame
             REVERSE_MOVE, //< Left click reverse moves to cursor, right click cancels.
             FAST_MOVE,    //< Left click fast moves to cursor, right click cancels.
             SPLIT,        //< Left click splits the platoon, right click cancels.
-            VISION_RULER  //< Left click selects and cancels, right click cancels.
+            VISION_RULER, //< Left click selects and cancels, right click cancels.
+            IN_MENU       //< Escape (or another hotkey) cancels, clicks do nothing
         };
 
         public MouseMode CurMouseMode { get; private set; } = MouseMode.NORMAL;
@@ -79,8 +80,9 @@ namespace PFW.UI.Ingame
             }
         }
 
-        GameObject _rangeTooltip;
-        TMPro.TextMeshProUGUI _rangeTooltipText;
+        private GameObject _rangeTooltip;
+        private TMPro.TextMeshProUGUI _rangeTooltipText;
+        private GameObject _settingsMenu;
 
         private Commands _commands;
 
@@ -123,14 +125,22 @@ namespace PFW.UI.Ingame
                     "There should be a range tooltip in the HUD hierarchy!");
             }
             _rangeTooltip.SetActive(false);
+
+            _settingsMenu = GameObject.Find("Settings");
+            if (_settingsMenu == null)
+            {
+                throw new Exception(
+                    "There should be a settings menu object in the HUD hierarchy!");
+            }
+            _settingsMenu.SetActive(false);
         }
 
         private void Update()
         {
             _selectionManager.UpdateMouseMode(CurMouseMode);
 
-            switch (CurMouseMode) {
-
+            switch (CurMouseMode) 
+            {
             case MouseMode.PURCHASING:
             {
                 RaycastHit hit;
@@ -263,6 +273,15 @@ namespace PFW.UI.Ingame
                     || Input.GetMouseButtonDown(1))
                     EnterNormalModeNaive();
                 break;
+            case MouseMode.IN_MENU:
+            {
+                if (_commands.ToggleMenu)
+                {
+                    _settingsMenu.SetActive(false);
+                    EnterNormalModeNaive();
+                }
+                break;
+            }
             default:
                 throw new Exception("impossible state");
             }
@@ -448,7 +467,7 @@ namespace PFW.UI.Ingame
                 }
                 else if (_commands.ToggleMenu)
                 {
-                    //_selectionManager.DispatchLoadCommand();
+                    EnterMenuMode();
                 }
                 else if (_commands.FirePos && !_selectionManager.Empty) 
                 {
@@ -556,11 +575,19 @@ namespace PFW.UI.Ingame
             _selectionManager.ToggleTargetingPreview(false);
             _rangeTooltip.SetActive(false);
         }
+
         private void EnterVisionRulerMode()
         {
             CurMouseMode = MouseMode.VISION_RULER;
             Vector2 hotspot = new Vector2(_visionRulerReticle.width / 2, _visionRulerReticle.height / 2);
             Cursor.SetCursor(_visionRulerReticle, hotspot, CursorMode.Auto);
+        }
+
+        private void EnterMenuMode()
+        {
+            CurMouseMode = MouseMode.IN_MENU;
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            _settingsMenu.SetActive(true);
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
@@ -632,7 +659,7 @@ namespace PFW.UI.Ingame
 
         public bool ToggleMenu {
             get {
-                return Input.GetKeyDown(KeyCode.Escape);
+                return Input.GetKeyDown(_hotkeys.MenuToggle);
             }
         }
     }

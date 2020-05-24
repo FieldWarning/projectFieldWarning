@@ -122,7 +122,10 @@ namespace PFW
                             defaultConfig.Hotkeys.Split : localConfig.Hotkeys.Split,
 
                     VisionTool = localConfig.Hotkeys.VisionTool == null || localConfig.Hotkeys.VisionTool == "" ?
-                            defaultConfig.Hotkeys.VisionTool : localConfig.Hotkeys.VisionTool
+                            defaultConfig.Hotkeys.VisionTool : localConfig.Hotkeys.VisionTool,
+
+                    MenuToggle = localConfig.Hotkeys.MenuToggle == null || localConfig.Hotkeys.MenuToggle == "" ?
+                            defaultConfig.Hotkeys.MenuToggle : localConfig.Hotkeys.MenuToggle
                 }
             };
         }

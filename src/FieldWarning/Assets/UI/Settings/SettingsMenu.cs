@@ -49,6 +49,8 @@ namespace PFW.Model.Settings
         private TMPro.TMP_InputField _load = null;
         [SerializeField]
         private TMPro.TMP_InputField _unload = null;
+        [SerializeField]
+        private TMPro.TMP_InputField _menuToggle = null;
 
 
         public void OnApply()
@@ -65,6 +67,15 @@ namespace PFW.Model.Settings
         public void OnReset()
         {
             SetFields(ConfigReader.ParseDefaultSettingsRaw());
+        }
+
+        public void OnExitGame()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
 
         private void OnEnable()
@@ -85,6 +96,7 @@ namespace PFW.Model.Settings
             _visionTool.text = config.Hotkeys.VisionTool;
             _load.text = config.Hotkeys.Load;
             _unload.text = config.Hotkeys.Unload;
+            _menuToggle.text = config.Hotkeys.MenuToggle;
         }
 
         private SettingsConfig GetFields()
@@ -107,6 +119,7 @@ namespace PFW.Model.Settings
                     VisionTool = _visionTool.text.ToUpper(),
                     Load = _load.text.ToUpper(),
                     Unload = _unload.text.ToUpper(),
+                    MenuToggle = _menuToggle.text
                 }
             };
         }

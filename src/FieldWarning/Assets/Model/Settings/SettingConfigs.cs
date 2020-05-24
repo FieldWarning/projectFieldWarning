@@ -50,5 +50,6 @@ namespace PFW.Model.Settings.JsonContents
         public string VisionTool;
         public string Load;
         public string Unload;
+        public string MenuToggle;
     }
 }
