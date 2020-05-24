@@ -57,7 +57,7 @@ namespace PFW.Units.Component.Movement
         /// </summary>
         private static bool _s_straightStep;
 
-        private Semaphore _PathFinderRunnerSem = new Semaphore(0,1);
+        private EventWaitHandle _PathFinderRunnerEvent = new EventWaitHandle(false, EventResetMode.AutoReset);
         private ConcurrentQueue<PathData> _PathQueue = new ConcurrentQueue<PathData>();
         private bool IsQueueActive = false;
 
@@ -99,7 +99,7 @@ namespace PFW.Units.Component.Movement
         {
             IsQueueActive = false;
 
-            _PathFinderRunnerSem.Release(1);
+            _PathFinderRunnerEvent.Set();
         }
 
         private void PathFinderRunner()
@@ -110,8 +110,7 @@ namespace PFW.Units.Component.Movement
                 
                 if (_PathQueue.IsEmpty)
                 {
-                    _PathFinderRunnerSem.WaitOne();
-                    //continue;
+                    _PathFinderRunnerEvent.WaitOne();
                 }
 
                 PathData data;
@@ -127,7 +126,7 @@ namespace PFW.Units.Component.Movement
         {
             Vector3 pos = _unit.transform.position;
             _PathQueue.Enqueue(new PathData(pos, destination, command));
-            _PathFinderRunnerSem.Release(1);
+            _PathFinderRunnerEvent.Set();
 
 
 
@@ -287,6 +286,10 @@ namespace PFW.Units.Component.Movement
             }
         }
 
+        /// <summary>
+        /// Angle between our current position+next waypoint and current position + waypoint after next
+        /// </summary>
+        /// <param name="currentPosition"></param>
         private void UpdateWaypointAngle(Vector3 currentPosition)
         {
             if (_path.Count >= 2)

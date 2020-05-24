@@ -25,6 +25,7 @@ using EasyRoads3Dv3;
 
 using PFW.Loading;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace PFW.Units.Component.Movement
 {
@@ -49,7 +50,7 @@ namespace PFW.Units.Component.Movement
         /// If a node is in the open set, it has been seen
         /// but it hasn't been visited yet.
         /// </summary>
-        private FastPriorityQueue<PathNode> _openSet;
+        //private FastPriorityQueue<PathNode> _openSet;
 
         /// <summary>
         ///     Create a pathfinder graph by either
@@ -103,24 +104,26 @@ namespace PFW.Units.Component.Movement
                 _graphFastMove = (List<PathNode>)formatter.Deserialize(stream);
                 stream.Close();
 
-                _openSet = new FastPriorityQueue<PathNode>(_graphFastMove.Count + 1);
+                //_openSet = new FastPriorityQueue<PathNode>(_graphFastMove.Count + 1);
 
                 if (SanityCheckGraph())
                 {
                     return true;
                 }
-                else 
-                {
-                    _graphFastMove = null;
-                    _openSet = null;
-                    return false;
-                }
+                //else 
+                //{
+                //    _graphFastMove = null;
+                //    _openSet = null;
+                //    return false;
+                //}
             }
             catch (Exception exception)
             {
                 Debug.Log("Error reading graph file: " + exception.Message);
                 return false;
             }
+
+            return true;
         }
 
         /// <summary>
@@ -292,7 +295,7 @@ namespace PFW.Units.Component.Movement
                 }
             }
 
-            _openSet = new FastPriorityQueue<PathNode>(_graphFastMove.Count + 1);
+            //_openSet = new FastPriorityQueue<PathNode>(_graphFastMove.Count + 1);
 
 
             // find all nodes that are around bridges. This will help pathfinding
@@ -439,7 +442,6 @@ namespace PFW.Units.Component.Movement
         /// Note: this method MUST be syncrhonized as it is called from multiple threads.
         /// Returns the total path time.
         /// </summary> 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public float FindPath(
                 List<PathNode> path,
                 Vector3 start,
@@ -448,132 +450,140 @@ namespace PFW.Units.Component.Movement
                 float unitRadius,
                 MoveCommandType command)
         {
-            path.Clear();
-            path.Add(new PathNode(destination, false));
-
-            PathNode cameFromDest = null;
-            float gScoreDest = Pathfinder.FindLocalPath(this, 
-                                                        start, 
-                                                        destination, 
-                                                        mobility, 
-                                                        unitRadius);
-
-            if (gScoreDest < Pathfinder.FOREVER)
-            {
-                if (command == MoveCommandType.NORMAL || command == MoveCommandType.REVERSE)
-                    return gScoreDest;
-            }
-
-            // Initialize with all nodes accessible from the starting point
-            // (this can be optimized later by throwing out some from the start)
-            _openSet.Clear();
-
-            List<PathNode> graph = _graphRegularMove;
-            float neighborSearchDistance = Pathfinder.FOREVER;
-
-            // if we are in fast mode our graph is much more extensive and we have to 
-            // limit our neighor distance to use that extensive network of nodes
-            if (command == MoveCommandType.FAST)
-            {
-                graph = _graphFastMove;
-                neighborSearchDistance = ARC_MAX_DIST;
-            }
-
-            // find the nearest neighbor start A* search
-            foreach (PathNode neighbor in graph)
+            lock (this)
             {
 
-                neighbor.IsClosed = false;
-                neighbor.CameFrom = null;
-                neighbor.GScore = Pathfinder.FOREVER;
+                path.Clear();
+                path.Add(new PathNode(destination, false));
 
-                Vector3 neighborPos = Position(neighbor);
+                PathNode cameFromDest = null;
+                float gScoreDest = Pathfinder.FindLocalPath(this,
+                                                            start,
+                                                            destination,
+                                                            mobility,
+                                                            unitRadius);
 
-                // and optimal search
-                if ((start - neighborPos).magnitude < neighborSearchDistance)
+                if (gScoreDest < Pathfinder.FOREVER)
                 {
-                    float gScoreNew = Pathfinder.FindLocalPath(this,
-                                                                start,
-                                                                neighborPos,
-                                                                mobility,
-                                                                unitRadius);
-                    if (gScoreNew < Pathfinder.FOREVER)
+                    if (command == MoveCommandType.NORMAL || command == MoveCommandType.REVERSE)
+                        return gScoreDest;
+                }
+
+                // Initialize with all nodes accessible from the starting point
+                // (this can be optimized later by throwing out some from the start)
+                //_openSet.Clear();
+                FastPriorityQueue<PathNode> _openSet = new FastPriorityQueue<PathNode>(_graphRegularMove.Count + 1);
+
+                List<PathNode> graph = _graphRegularMove;
+                float neighborSearchDistance = Pathfinder.FOREVER;
+
+                // if we are in fast mode our graph is much more extensive and we have to 
+                // limit our neighor distance to use that extensive network of nodes
+                if (command == MoveCommandType.FAST)
+                {
+                    graph = _graphFastMove;
+                    neighborSearchDistance = ARC_MAX_DIST;
+                    _openSet = new FastPriorityQueue<PathNode>(_graphFastMove.Count + 1);
+                }
+
+                // find the nearest neighbor start A* search
+                foreach (PathNode neighbor in graph)
+                {
+
+                    neighbor.IsClosed = false;
+                    neighbor.CameFrom = null;
+                    neighbor.GScore = Pathfinder.FOREVER;
+
+                    Vector3 neighborPos = Position(neighbor);
+
+                    // and optimal search
+                    if ((start - neighborPos).magnitude < neighborSearchDistance)
                     {
+                        float gScoreNew = Pathfinder.FindLocalPath(this,
+                                                                    start,
+                                                                    neighborPos,
+                                                                    mobility,
+                                                                    unitRadius);
+                        if (gScoreNew < Pathfinder.FOREVER)
+                        {
+                            neighbor.GScore = gScoreNew;
+
+                            float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
+                            _openSet.Enqueue(neighbor, fScoreNew);
+                        }
+                    }
+                }
+
+                // generic A* algorithm based on distance to destination and arc time's as hueristic function weights
+                while (_openSet.Count > 0)
+                {
+                    PathNode current = _openSet.Dequeue();
+                    current.IsClosed = true;
+
+                    if (gScoreDest < current.Priority)
+                        break;
+
+                    foreach (PathArc arc in current.Arcs)
+                    {
+                        PathNode neighbor = arc.Node1 == current ? arc.Node2 : arc.Node1;
+
+                        if (neighbor.IsClosed)
+                            continue;
+
+                        float arcTime = arc.Time[mobility.Index];
+                        if (arcTime >= Pathfinder.FOREVER)
+                            continue;
+
+                        float gScoreNew = current.GScore + arcTime;
+                        if (gScoreNew >= neighbor.GScore)
+                            continue;
+
+                        float fScoreNew = gScoreNew + TimeHeuristic(Position(neighbor),
+                                                                    destination,
+                                                                    mobility);
+
+                        if (!_openSet.Contains(neighbor))
+                        {
+                            _openSet.Enqueue(neighbor, fScoreNew);
+                        }
+                        else
+                        {
+                            _openSet.UpdatePriority(neighbor, fScoreNew);
+                        }
                         neighbor.GScore = gScoreNew;
-                            
-                        float fScoreNew = gScoreNew + TimeHeuristic(neighborPos, destination, mobility);
-                        _openSet.Enqueue(neighbor, fScoreNew);
+                        neighbor.CameFrom = current;
                     }
-                }
-            }
 
-            // generic A* algorithm based on distance to destination and arc time's as hueristic function weights
-            while (_openSet.Count > 0)
-            {
-                PathNode current = _openSet.Dequeue();
-                current.IsClosed = true;
-
-                if (gScoreDest < current.Priority)
-                    break;
-
-                foreach (PathArc arc in current.Arcs)
-                {
-                    PathNode neighbor = arc.Node1 == current ? arc.Node2 : arc.Node1;
-
-                    if (neighbor.IsClosed)
+                    float arcTimeDest = Pathfinder.FOREVER;
+                    // checks can we get to the last mile without more pathfinding
+                    if (Vector3.Distance(Position(current), destination) < neighborSearchDistance)
+                        arcTimeDest = Pathfinder.FindLocalPath(this, Position(current), destination, mobility, unitRadius);
+                    // Debug.Log(openSet.Count + " " + Position(current) + " " + current.isRoad + " " + Vector3.Distance(Position(current), destination) + " " + (current.gScore + arcTimeDest) + " " + gScoreDest);
+                    if (arcTimeDest >= Pathfinder.FOREVER)
                         continue;
+                    if (arcTimeDest < Pathfinder.FOREVER && command == MoveCommandType.NORMAL)
+                        arcTimeDest = 0f;
 
-                    float arcTime = arc.Time[mobility.Index];
-                    if (arcTime >= Pathfinder.FOREVER)
-                        continue;
-
-                    float gScoreNew = current.GScore + arcTime;
-                    if (gScoreNew >= neighbor.GScore)
-                        continue;
-
-                    float fScoreNew = gScoreNew + TimeHeuristic(Position(neighbor), 
-                                                                destination, 
-                                                                mobility);
-
-                    if (!_openSet.Contains(neighbor))
+                    float gScoreDestNew = current.GScore + arcTimeDest;
+                    if (gScoreDestNew < gScoreDest)
                     {
-                        _openSet.Enqueue(neighbor, fScoreNew);
+                        gScoreDest = gScoreDestNew;
+                        cameFromDest = current;
                     }
-                    else
-                    {
-                        _openSet.UpdatePriority(neighbor, fScoreNew);
-                    }
-                    neighbor.GScore = gScoreNew;
-                    neighbor.CameFrom = current;
+
                 }
 
-                float arcTimeDest = Pathfinder.FOREVER;
-                // checks can we get to the last mile without more pathfinding
-                if (Vector3.Distance(Position(current), destination) < neighborSearchDistance)
-                    arcTimeDest = Pathfinder.FindLocalPath(this, Position(current), destination, mobility, unitRadius);
-                // Debug.Log(openSet.Count + " " + Position(current) + " " + current.isRoad + " " + Vector3.Distance(Position(current), destination) + " " + (current.gScore + arcTimeDest) + " " + gScoreDest);
-                if (arcTimeDest >= Pathfinder.FOREVER)
-                    continue;
-                if (arcTimeDest < Pathfinder.FOREVER && command == MoveCommandType.NORMAL)
-                    arcTimeDest = 0f;
-
-                float gScoreDestNew = current.GScore + arcTimeDest;
-                if (gScoreDestNew < gScoreDest)
+                // Reconstruct best path
+                PathNode node = cameFromDest;
+                while (node != null)
                 {
-                    gScoreDest = gScoreDestNew;
-                    cameFromDest = current;
+                    path.Add(node);
+                    node = node.CameFrom;
                 }
 
-            }
 
-            // Reconstruct best path
-            PathNode node = cameFromDest;
-            while (node != null)
-            {
-                path.Add(node);
-                node = node.CameFrom;
+                return gScoreDest;
             }
-            return gScoreDest;
         }
 
         private float TimeHeuristic(Vector3 pos1, Vector3 pos2, MobilityData mobility)
