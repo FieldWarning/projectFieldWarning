@@ -75,6 +75,7 @@ namespace PFW.Model.Match
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
         public TerrainMap TerrainMap { get; private set; }
+        public VisionCache VisionCache { get; private set; }
         public PathfinderData PathData { get; private set; }
 
         public UnitFactory Factory { get; private set; }
@@ -99,6 +100,7 @@ namespace PFW.Model.Match
             if (_loadedData != null)
             {
                 TerrainMap = _loadedData.TerrainData;
+                VisionCache = new VisionCache(TerrainMap);
                 PathData = _loadedData.PathFinderData;
                 Factory = new UnitFactory();
                 Settings = new Settings();
