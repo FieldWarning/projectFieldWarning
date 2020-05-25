@@ -79,8 +79,6 @@ namespace PFW.Loading
                 };
             }
 
-            result = _terrainMap.GetForestLengthOnLine(start, end);
-
             return result;
         }
     }
