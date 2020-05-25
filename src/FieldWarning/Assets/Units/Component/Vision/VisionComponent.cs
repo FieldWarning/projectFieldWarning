@@ -14,6 +14,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+using PFW.Loading;
 using PFW.Model.Match;
 using PFW.Units.Component.Data;
 
@@ -104,6 +105,7 @@ namespace PFW.Units.Component.Vision
 
         private UnitDispatcher _unit;
         private TerrainMap _terrainMap;
+        private VisionCache _visionCache;
 
         private Team _team {
             get { return _unit.Platoon.Owner.Team; }
@@ -113,6 +115,7 @@ namespace PFW.Units.Component.Vision
         {
             _unit = dispatcher;
             _terrainMap = MatchSession.Current.TerrainMap;
+            _visionCache = MatchSession.Current.VisionCache;
             _maxSpottingRange = unitData.MaxSpottingRange;
             _stealthFactor = unitData.Stealth;
             _stealthPenFactor = unitData.StealthPenetration;
@@ -264,7 +267,7 @@ namespace PFW.Units.Component.Vision
                         FOREST_INITIAL_PENALTY * penaltyBonus * STEALTH_INFLUENCE_ON_INITIAL_CAMO;
             }
 
-            float forestLength = _terrainMap.GetForestLengthOnLine(
+            float forestLength = _visionCache.GetForestLengthOnLine(
                     targetPos, transform.position);
             if (forestLength > HARD_FOREST_VISION_CUTOFF)
             {

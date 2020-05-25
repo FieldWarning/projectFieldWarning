@@ -57,5 +57,13 @@ namespace PFW
             y = tmp;
             return;
         }
+
+        public static void Swap(ref Vector3 x, ref Vector3 y)
+        {
+            Vector3 tmp = x;
+            x = y;
+            y = tmp;
+            return;
+        }
     }
 }

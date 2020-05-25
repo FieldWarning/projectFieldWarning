@@ -20,7 +20,8 @@ namespace PFW
     /// <summary>
     /// A camera moved around a pivot. 
     /// 
-    /// Currently not used, but it may find use in the armory in the future.
+    /// Currently used for the follow cam, 
+    /// and it may find use in the armory in the future.
     /// </summary>
     public class OrbitCameraBehaviour : MonoBehaviour
     {

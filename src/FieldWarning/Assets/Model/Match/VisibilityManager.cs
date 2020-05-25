@@ -29,10 +29,10 @@ public class VisibilityManager : MonoBehaviour
 
     private void Update()
     {
-        foreach (var unit in UnitRegistry.AllyVisionComponents)
+        foreach (VisionComponent unit in UnitRegistry.AllyVisionComponents)
             unit.ScanForEnemies();
 
-        foreach (var unit in UnitRegistry.EnemyVisionComponents)
+        foreach (VisionComponent unit in UnitRegistry.EnemyVisionComponents)
         {
             unit.ScanForEnemies();
             unit.MaybeHideFromEnemies();
@@ -41,20 +41,6 @@ public class VisibilityManager : MonoBehaviour
             // Potential optimizations:
             // - Keep a table of distances and only update on moving units
             // - Keep a table of regions and only update when units enter/leave regions
-
-            // TODO get this legacy code to work:
-            //foreach (var unit in AllyUnits) {
-            //    foreach (var enemy in EnemyUnits) {
-
-            //        if (TerrainData.visionScore(unit.transform, enemy.transform, MAX_VIEW_DISTANCE)) {
-            //            unit.SetSpotting(enemy, true);
-            //            enemy.SetSpottedBy(unit, true);
-            //        } else {
-            //            unit.SetSpotting(enemy, false);
-            //            enemy.SetSpottedBy(unit, false);
-            //        }
-            //    }
-            //}
         }
     }
     public static void UpdateUnitRegion(VisionComponent unit, Point newRegion)
