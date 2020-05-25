@@ -36,6 +36,7 @@ namespace PFW.Model.Armory.JsonContents
         public string PrefabPath;
         public string ArtPrefabPath;
         public string ArmoryImage;
+        public string ArmoryBackgroundImage;
         public UnitDataConfig Data;
         public ArmorConfig Armor;
         public MobilityConfig Mobility;

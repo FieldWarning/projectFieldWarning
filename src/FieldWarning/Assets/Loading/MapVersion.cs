@@ -16,19 +16,7 @@ using UnityEngine;
 public class MapVersion : MonoBehaviour
 {
     public uint Version = 1;
-    public string Name = "Full Feature 2 Map";
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-        
-    }
+    public string Name = "WriteMapNameHere";
 
     public string GetVersionString()
     {

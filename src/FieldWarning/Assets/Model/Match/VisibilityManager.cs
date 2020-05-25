@@ -13,7 +13,7 @@
 
 using UnityEngine;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Units.Component.Vision;
 
 //[UpdateAfter(typeof(MovementSystem))]

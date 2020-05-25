@@ -13,7 +13,7 @@
 
 using UnityEngine;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
     /**
      * Represents "managed" players.

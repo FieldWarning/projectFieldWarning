@@ -25,13 +25,14 @@ using PFW.Units.Component.Movement;
 using Mirror;
 using UnityEngine.SceneManagement;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
-    /**
-     * Represents the ongoing match.
-     *
-     * Holds a lot of match-specific data that would be singleton or global.
-     */
+    /// <summary>
+    /// Represents the ongoing match.
+    /// 
+    /// Holds a lot of match-specific data that would be singleton or global.
+    /// </summary>
+    /// Contrast: GameSession, which represents the ongoing application session.
     public class MatchSession : MonoBehaviour
     {
         // The currently active match session. In matches (e.g. outside the lobby)

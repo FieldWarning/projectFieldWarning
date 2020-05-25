@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Model.Armory;
 using PFW.Model.Armory.JsonContents;
 

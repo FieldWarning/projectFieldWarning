@@ -13,7 +13,7 @@
 
 using UnityEngine;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 
 public class TeamButton : MonoBehaviour
 {

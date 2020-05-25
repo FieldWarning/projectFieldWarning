@@ -17,8 +17,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-using PFW.Model.Game;
+using PFW.Model;
 using PFW.Model.Armory;
+using PFW.Model.Match;
+using PFW.Model.Settings;
 using PFW.Units;
 using PFW.Units.Component.Movement;
 
@@ -48,7 +50,8 @@ namespace PFW.UI.Ingame
             REVERSE_MOVE, //< Left click reverse moves to cursor, right click cancels.
             FAST_MOVE,    //< Left click fast moves to cursor, right click cancels.
             SPLIT,        //< Left click splits the platoon, right click cancels.
-            VISION_RULER  //< Left click selects and cancels, right click cancels.
+            VISION_RULER, //< Left click selects and cancels, right click cancels.
+            IN_MENU       //< Escape (or another hotkey) cancels, clicks do nothing
         };
 
         public MouseMode CurMouseMode { get; private set; } = MouseMode.NORMAL;
@@ -77,13 +80,18 @@ namespace PFW.UI.Ingame
             }
         }
 
-        GameObject _rangeTooltip;
-        TMPro.TextMeshProUGUI _rangeTooltipText;
+        private GameObject _rangeTooltip;
+        private TMPro.TextMeshProUGUI _rangeTooltipText;
+        private GameObject _settingsMenu;
+
+        private Commands _commands;
 
         private void Awake()
         {
             _selectionManager = new SelectionManager();
             _selectionManager.Awake();
+
+            _commands = new Commands(GameSession.Singleton.Settings.Hotkeys);
         }
 
         private void Start()
@@ -117,14 +125,22 @@ namespace PFW.UI.Ingame
                     "There should be a range tooltip in the HUD hierarchy!");
             }
             _rangeTooltip.SetActive(false);
+
+            _settingsMenu = GameObject.Find("Settings");
+            if (_settingsMenu == null)
+            {
+                throw new Exception(
+                    "There should be a settings menu object in the HUD hierarchy!");
+            }
+            _settingsMenu.SetActive(false);
         }
 
         private void Update()
         {
             _selectionManager.UpdateMouseMode(CurMouseMode);
 
-            switch (CurMouseMode) {
-
+            switch (CurMouseMode) 
+            {
             case MouseMode.PURCHASING:
             {
                 RaycastHit hit;
@@ -257,6 +273,15 @@ namespace PFW.UI.Ingame
                     || Input.GetMouseButtonDown(1))
                     EnterNormalModeNaive();
                 break;
+            case MouseMode.IN_MENU:
+            {
+                if (_commands.ToggleMenu)
+                {
+                    _settingsMenu.SetActive(false);
+                    EnterNormalModeNaive();
+                }
+                break;
+            }
             default:
                 throw new Exception("impossible state");
             }
@@ -432,31 +457,39 @@ namespace PFW.UI.Ingame
         {
             if (!_session.IsChatFocused) 
             {
-                if (Commands.Unload) 
+                if (_commands.Unload) 
                 {
                     _selectionManager.DispatchUnloadCommand();
                 } 
-                else if (Commands.Load) 
+                else if (_commands.Load) 
                 {
                     _selectionManager.DispatchLoadCommand();
-                } 
-                else if (Commands.FirePos && !_selectionManager.Empty) 
+                }
+                else if (_commands.ToggleMenu)
+                {
+                    EnterMenuMode();
+                }
+                else if (_commands.FirePos && !_selectionManager.Empty) 
                 {
                     EnterFirePosMode();
-                } 
-                else if (Commands.ReverseMove && !_selectionManager.Empty) 
+                }
+                else if (_commands.AttackMove && !_selectionManager.Empty)
+                {
+                    Debug.LogWarning("Attack move is not implemented.");
+                }
+                else if (_commands.ReverseMove && !_selectionManager.Empty) 
                 {
                     EnterReverseMoveMode();
                 } 
-                else if (Commands.FastMove && !_selectionManager.Empty)
+                else if (_commands.FastMove && !_selectionManager.Empty)
                 {
                     EnterFastMoveMode();
                 } 
-                else if (Commands.Split && !_selectionManager.Empty)
+                else if (_commands.Split && !_selectionManager.Empty)
                 {
                     EnterSplitMode();
                 }
-                else if (Commands.VisionRuler && !_selectionManager.Empty)
+                else if (_commands.VisionTool && !_selectionManager.Empty)
                 {
                     EnterVisionRulerMode();
                 }
@@ -542,11 +575,19 @@ namespace PFW.UI.Ingame
             _selectionManager.ToggleTargetingPreview(false);
             _rangeTooltip.SetActive(false);
         }
+
         private void EnterVisionRulerMode()
         {
             CurMouseMode = MouseMode.VISION_RULER;
             Vector2 hotspot = new Vector2(_visionRulerReticle.width / 2, _visionRulerReticle.height / 2);
             Cursor.SetCursor(_visionRulerReticle, hotspot, CursorMode.Auto);
+        }
+
+        private void EnterMenuMode()
+        {
+            CurMouseMode = MouseMode.IN_MENU;
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            _settingsMenu.SetActive(true);
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
@@ -562,45 +603,63 @@ namespace PFW.UI.Ingame
 
     public class Commands
     {
-        public static bool Unload {
+        private readonly Hotkeys _hotkeys;
+
+        public Commands(Hotkeys hotkeys)
+        {
+            _hotkeys = hotkeys;
+        }
+
+        public bool Unload {
             get {
-                return Input.GetKeyDown(Hotkeys.Unload);
+                return Input.GetKeyDown(_hotkeys.Unload);
             }
         }
 
-        public static bool Load {
+        public bool Load {
             get {
-                return Input.GetKeyDown(Hotkeys.Load);
+                return Input.GetKeyDown(_hotkeys.Load);
             }
         }
 
-        public static bool FirePos {
+        public bool FirePos {
             get {
-                return Input.GetKeyDown(Hotkeys.FirePos);
+                return Input.GetKeyDown(_hotkeys.FirePos);
+            }
+        }
+        public bool ReverseMove {
+            get {
+                return Input.GetKeyDown(_hotkeys.ReverseMove);
             }
         }
 
-        public static bool ReverseMove {
+        public bool AttackMove {
             get {
-                return Input.GetKeyDown(Hotkeys.ReverseMove);
+                return Input.GetKeyDown(_hotkeys.AttackMove);
             }
         }
 
-        public static bool FastMove {
+        public bool FastMove {
             get {
-                return Input.GetKeyDown(Hotkeys.FastMove);
+                return Input.GetKeyDown(_hotkeys.FastMove);
             }
         }
 
-        public static bool Split {
+        public bool Split {
             get {
-                return Input.GetKeyDown(Hotkeys.Split);
+                return Input.GetKeyDown(_hotkeys.Split);
             }
         }
 
-        public static bool VisionRuler {
+        public bool VisionTool {
             get {
-                return Input.GetKeyDown(Hotkeys.VisionRuler);
+                return Input.GetKeyDown(_hotkeys.VisionTool);
+            }
+        }
+
+        public bool ToggleMenu {
+            get {
+                return Input.GetKeyDown(_hotkeys.MenuToggle);
             }
         }
     }

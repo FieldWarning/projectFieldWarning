@@ -14,7 +14,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Model.Armory;
 using PFW.Units;
 using static PFW.Constants;

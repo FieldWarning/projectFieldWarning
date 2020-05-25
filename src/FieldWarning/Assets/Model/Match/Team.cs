@@ -15,7 +15,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
     public class Team : MonoBehaviour
     {

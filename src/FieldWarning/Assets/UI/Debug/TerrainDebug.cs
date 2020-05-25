@@ -12,7 +12,7 @@
  */
  
 using PFW;
-using PFW.Model.Game;
+using PFW.Model.Match;
 using UnityEngine;
 using TMPro;
 
