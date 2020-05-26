@@ -40,9 +40,6 @@ namespace PFW.UI.Prototype
             GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
             voiceGo.name = "VoiceComponent";
 
-            Color minimapColor = platoon.Owner.Team.ColorScheme.BaseColor;
-            AddMinimapIcon(unit, minimapColor);
-
             UnitDispatcher unitDispatcher =
                     unit.GetComponent<UnitDispatcher>();
             unitDispatcher.Initialize(platoon);
@@ -62,16 +59,6 @@ namespace PFW.UI.Prototype
             Shader shader = Resources.Load<Shader>("Ghost");
             unit.ApplyShaderRecursively(shader);
             unit.transform.position = 100 * Vector3.down;
-        }
-
-        private void AddMinimapIcon(GameObject unit, Color minimapColor)
-        {
-            GameObject minimapIcon = Object.Instantiate(
-                    Resources.Load<GameObject>("MiniMapIcon"));
-            minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
-            minimapIcon.transform.parent = unit.transform;
-            // The icon is placed slightly above ground to prevent flickering
-            minimapIcon.transform.localPosition = new Vector3(0,0.01f,0);
         }
 
         /// <summary>
