@@ -15,7 +15,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Units;
 
 public class SpawnPointBehaviour : MonoBehaviour

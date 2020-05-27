@@ -13,7 +13,7 @@
 
 using PFW.Model.Armory;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
     /**
      * Most players are passive data containers.

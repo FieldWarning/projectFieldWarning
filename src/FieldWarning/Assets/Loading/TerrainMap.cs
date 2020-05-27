@@ -783,30 +783,19 @@ namespace PFW
         }
 
         /// <summary>
-        /// For a given line, get how much forest it would
-        /// cross, in meters.
+        /// Use Xiaolin Wu's line drawing algo, pick
+        /// which tiles to check for trees and count
+        /// any trees found.
         /// </summary>
-        public float GetForestLengthOnLine(Vector3 start, Vector3 end) 
+        private float XiaolinWuTreeCounting(int x0, int x1, int y0, int y1)
         {
-            int mappedStartX = MapIndex(start.x - MapCenter.x);
-            int mappedStartZ = MapIndex(start.z - MapCenter.z);
-            int mappedEndX = MapIndex(end.x - MapCenter.x);
-            int mappedEndZ = MapIndex(end.z - MapCenter.z);
-
-            int x0 = mappedStartX;
-            int x1 = mappedEndX;
-            int y0 = mappedStartZ;
-            int y1 = mappedEndZ;
-
             float treeTilesSeen = 0;
 
             // Draw a line from one point to the other,
             // and check each tile that falls on the line
-
-            // Using Xiaolin Wu's line-drawing algorithm
             bool steep = Mathf.Abs(y1 - y0) > Mathf.Abs(x1 - x0);
 
-            // swap the co-ordinates if slope > 1 or we 
+            // swap the coordinates if slope > 1 or we 
             // draw backwards 
             if (steep)
             {
@@ -819,7 +808,7 @@ namespace PFW
                 Util.Swap(ref y0, ref y1);
             }
 
-            //compute the slope 
+            // compute the slope 
             float dx = x1 - x0;
             float dy = y1 - y0;
             float gradient = dy / dx;
@@ -836,8 +825,9 @@ namespace PFW
                 int x;
                 for (x = xpxl1; x <= xpxl2; x++)
                 {
-                    // pixel coverage is determined by fractional 
-                    // part of y co-ordinate 
+                    // Each tile only counts partially into the line,
+                    // and so the tree is also counted partially,
+                    // determined by fractional part of the y coordinate 
                     if (_map[(int)intersectY, x] == FOREST)
                     {
                         treeTilesSeen += 1 - FractionalPartOfNumber(intersectY);
@@ -855,8 +845,9 @@ namespace PFW
                 int x;
                 for (x = xpxl1; x <= xpxl2; x++)
                 {
-                    // pixel coverage is determined by fractional 
-                    // part of y co-ordinate 
+                    // Each tile only counts partially into the line,
+                    // and so the tree is also counted partially,
+                    // determined by fractional part of the y coordinate 
                     if (_map[x, (int)intersectY] == FOREST)
                     {
                         treeTilesSeen += 1 - FractionalPartOfNumber(intersectY);
@@ -871,6 +862,20 @@ namespace PFW
             }
 
             return treeTilesSeen * METERS_PER_MAP_ENTRY;
+        }
+
+        /// <summary>
+        /// For a given line, get how much forest it would
+        /// cross, in meters.
+        /// </summary>
+        public float GetForestLengthOnLine(Vector3 start, Vector3 end) 
+        {
+            int mappedStartX = MapIndex(start.x - MapCenter.x);
+            int mappedStartZ = MapIndex(start.z - MapCenter.z);
+            int mappedEndX = MapIndex(end.x - MapCenter.x);
+            int mappedEndZ = MapIndex(end.z - MapCenter.z);
+
+            return XiaolinWuTreeCounting(mappedStartX, mappedEndX, mappedStartZ, mappedEndZ);
         }
 
         private float FractionalPartOfNumber(float f)

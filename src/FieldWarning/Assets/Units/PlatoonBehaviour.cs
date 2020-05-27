@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using Mirror;
 using PFW.UI.Ingame;
 using PFW.Units.Component.Movement;
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Model.Armory;
 using PFW.UI.Ingame.UnitLabel;
 using PFW.Units.Component.OrderQueue;

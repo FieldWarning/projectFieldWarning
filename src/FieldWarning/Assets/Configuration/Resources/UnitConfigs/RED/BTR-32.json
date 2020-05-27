@@ -8,6 +8,7 @@
     "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 APC",
 	"ArmoryImage": "Armory Images/BTR-32 APC",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
 
     "Data": {
         "MovementSpeed": 40,

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -19,12 +19,12 @@ namespace PFW.UI.Ingame
     {
         private Quaternion _rotation;
 
-        public void Start()
+        private void Start()
         {
             _rotation = Quaternion.AngleAxis(90, Vector3.right);
         }
 
-        public void LateUpdate()
+        private void LateUpdate()
         {
             transform.rotation = _rotation;
         }

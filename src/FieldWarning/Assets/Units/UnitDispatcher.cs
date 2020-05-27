@@ -20,7 +20,7 @@ using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
 using PFW.Units.Component.Movement;
 using PFW.Units.Component.Armor;
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.UI.Ingame.UnitLabel;
 
 namespace PFW.Units

@@ -25,13 +25,14 @@ using PFW.Units.Component.Movement;
 using Mirror;
 using UnityEngine.SceneManagement;
 
-namespace PFW.Model.Game
+namespace PFW.Model.Match
 {
-    /**
-     * Represents the ongoing match.
-     *
-     * Holds a lot of match-specific data that would be singleton or global.
-     */
+    /// <summary>
+    /// Represents the ongoing match.
+    /// 
+    /// Holds a lot of match-specific data that would be singleton or global.
+    /// </summary>
+    /// Contrast: GameSession, which represents the ongoing application session.
     public class MatchSession : MonoBehaviour
     {
         // The currently active match session. In matches (e.g. outside the lobby)
@@ -74,6 +75,7 @@ namespace PFW.Model.Game
         public ICollection<PlatoonBehaviour> Platoons { get; } = new List<PlatoonBehaviour>();
 
         public TerrainMap TerrainMap { get; private set; }
+        public VisionCache VisionCache { get; private set; }
         public PathfinderData PathData { get; private set; }
 
         public UnitFactory Factory { get; private set; }
@@ -98,6 +100,7 @@ namespace PFW.Model.Game
             if (_loadedData != null)
             {
                 TerrainMap = _loadedData.TerrainData;
+                VisionCache = new VisionCache(TerrainMap);
                 PathData = _loadedData.PathFinderData;
                 Factory = new UnitFactory();
                 Settings = new Settings();

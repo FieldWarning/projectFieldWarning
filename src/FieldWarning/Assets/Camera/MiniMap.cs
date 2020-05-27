@@ -16,7 +16,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Units;
 
 namespace PFW

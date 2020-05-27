@@ -15,7 +15,7 @@ using Mirror;
 using UnityEngine;
 
 using PFW.Model.Armory;
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.UI.Ingame;
 using PFW.Units;
 using PFW.Units.Component.Movement;

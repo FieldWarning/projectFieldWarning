@@ -17,7 +17,7 @@ using UnityEngine.UI;
 using TMPro;
 
 using PFW.Units;
-using PFW.Model.Game;
+using PFW.Model.Match;
 using PFW.Model.Armory;
 
 namespace PFW.UI.Ingame
