@@ -101,7 +101,7 @@ namespace PFW.UI.Ingame
         {
             _mouseMode = mouseMode;
 
-            if (_mouseMode == MouseMode.NORMAL)
+            if (_mouseMode == MouseMode.NORMAL || _mouseMode == MouseMode.NORMAL_COVER)
                 _clickManager.Update();
         }
 
