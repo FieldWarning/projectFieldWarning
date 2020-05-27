@@ -294,8 +294,6 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Sets a max-priority target for this turret.
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
         public void SetExplicitTarget(TargetTuple target)
         {
             _explicitTarget = target;
@@ -312,9 +310,6 @@ namespace PFW.Units.Component.Weapon
         /// 
         /// TODO In the future we will need to also return -1
         /// for turrets that can't shoot the target at all.
-        /// 
-        /// <param name="target"></param>
-        /// <returns></returns>
         public float MaxRange(TargetTuple target)
         { 
             float maxRange = _fireRange;

@@ -9,6 +9,24 @@
     "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Kamaz Truck Prefab",
 	"ArmoryImage": "Armory Images/Kamaz Truck",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "MinimapIcon": "MinimapIcon/Square",
+    "MinimapIconSize": 10,
+    
+    "DeathEffect": "TODO",
+    "VoiceLineFolders": {
+        "Movement" : [
+            "Voices/US/CommonMovement",
+            "Voices/US/TankMovement"
+        ],
+        "Aggressive" : [
+            "Voices/US/CommonAggressive",
+            "Voices/US/TankAggressive"
+        ],
+        "Selection" : [
+            "Voices/US/CommonSelection",
+            "Voices/US/TankSelection"
+        ]
+    },
 
 	"Data": {
 			"MovementSpeed": 500,

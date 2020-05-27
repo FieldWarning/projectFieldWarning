@@ -9,6 +9,24 @@
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "MinimapIcon": "MinimapIcon/Square",
+    "MinimapIconSize": 10,
+    
+    "DeathEffect": "TODO",
+    "VoiceLineFolders": {
+        "Movement" : [
+            "Voices/US/CommonMovement",
+            "Voices/US/TankMovement"
+        ],
+        "Aggressive" : [
+            "Voices/US/CommonAggressive",
+            "Voices/US/TankAggressive"
+        ],
+        "Selection" : [
+            "Voices/US/CommonSelection",
+            "Voices/US/TankSelection"
+        ]
+    },
 
 	"Data": {
 			"MovementSpeed": 500,
@@ -66,7 +84,11 @@
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
-                    "SalvoReload": 8
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/MuzzleFlashes/muzzle_flash",
+                    "Tracer": "Effects/Tracers/shot_emitter",
+                    "Explosion": "TODO",
+                    "Sound": "WeapondSounds/Tank_gun"
                 }
             },
             {
@@ -83,7 +105,11 @@
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,
-                    "SalvoReload": 8
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/MuzzleFlashes/muzzle_flash",
+                    "Tracer": "Effects/Tracers/shot_emitter",
+                    "Explosion": "TODO",
+                    "Sound": "WeapondSounds/Tank_gun"
                 }
             }
         ]
