@@ -115,7 +115,7 @@ namespace PFW.Units
                 {
                     _mainCamera.GetComponent<OrbitCameraBehaviour>().enabled = true;
                     _mainCamera.GetComponent<SlidingCameraBehaviour>().enabled = false;
-                    OrbitCameraBehaviour.FollowObject = this.gameObject;
+                    _mainCamera.GetComponent<OrbitCameraBehaviour>().SetTarget(this.gameObject);
                 }
             }
         }
