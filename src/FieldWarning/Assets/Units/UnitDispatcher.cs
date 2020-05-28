@@ -12,6 +12,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.VFX;
 using Mirror;
 
 using PFW.Units.Component.Data;
@@ -79,15 +80,24 @@ namespace PFW.Units
 
         private TargetingOverlay _targetingOverlay;
 
-        public void Initialize(PlatoonBehaviour platoon)
+        private GameObject _art;
+        private VisualEffect _deathEffect = null;
+
+        public void Initialize(
+                PlatoonBehaviour platoon, 
+                GameObject art,
+                GameObject deathEffect, 
+                VoiceComponent voice)
         {
             TargetTuple = new TargetTuple(this);
             Platoon = platoon;
 
+            _art = art;
+            _deathEffect = deathEffect?.GetComponent<VisualEffect>();
+
             _unitData = gameObject.GetComponent<DataComponent>();
 
-            _voiceComponent      = gameObject.transform.Find("VoiceComponent")
-                                               .GetComponent<VoiceComponent>();
+            _voiceComponent      = voice;
             _movementComponent   = gameObject.GetComponent<MovementComponent>();
             _healthComponent     = gameObject.GetComponent<HealthComponent>();
             _armorComponent      = gameObject.GetComponent<ArmorComponent>();
@@ -102,6 +112,7 @@ namespace PFW.Units
                     Resources.Load<GameObject>("SelectionCircle"), Transform);
 
             _movementComponent.Initialize();
+
             _healthComponent.Initialize(this, _unitData);
             VisionComponent.Initialize(this, _unitData);
             _armorComponent.Initialize(_healthComponent, _unitData, _movementComponent);
@@ -183,6 +194,15 @@ namespace PFW.Units
         
         public override void OnNetworkDestroy()
         {
+            // Model lingers as a wreck for 30s
+            if (_deathEffect != null)
+            {
+                _art.transform.parent = null;
+                _art.BlackenRecursively();
+                _deathEffect.Play();
+                Destroy(_art, 30f);
+            }
+
             TargetTuple.Reset();
                 
             MatchSession.Current.RegisterUnitDeath(this);

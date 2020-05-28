@@ -12,7 +12,7 @@
     "MinimapIcon": "MinimapIcon/Square",
     "MinimapIconSize": 10,
     
-    "DeathEffect": "TODO",
+    "DeathEffect": "Effects/ParticleFX/Prefab/Explosion Prefab",
     "VoiceLineFolders": {
         "Movement" : [
             "Voices/UK/CommonMovement",

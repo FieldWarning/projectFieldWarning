@@ -33,17 +33,26 @@ namespace PFW.UI.Prototype
         /// </summary>
         public void MakeUnit(Unit armoryUnit, GameObject unit, PlatoonBehaviour platoon)
         {
-            MakeUnitCommon(unit, armoryUnit);
+            GameObject art = MakeUnitCommon(unit, armoryUnit);
+
+            GameObject deathEffect = null;
+
+            if (armoryUnit.DeathEffectPrefab != null)
+            {
+                deathEffect = GameObject.Instantiate(
+                        armoryUnit.DeathEffectPrefab, art.transform);
+            }
 
             // TODO: Load different voice type depending on Owner country
             GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent");
             GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
             voiceGo.name = "VoiceComponent";
-            voiceGo.GetComponent<VoiceComponent>().Initialize(armoryUnit.VoiceLines);
+            VoiceComponent voice = voiceGo.GetComponent<VoiceComponent>();
+            voice.Initialize(armoryUnit.VoiceLines);
 
             UnitDispatcher unitDispatcher =
                     unit.GetComponent<UnitDispatcher>();
-            unitDispatcher.Initialize(platoon);
+            unitDispatcher.Initialize(platoon, art, deathEffect, voice);
             unitDispatcher.enabled = true;
         }
 
@@ -65,15 +74,14 @@ namespace PFW.UI.Prototype
         /// <summary>
         ///     Unit initialization shared by both real units and their ghosts.
         /// </summary>
-        /// <param name="freshUnit"></param>
-        /// <param name="config"></param>
-        private static void MakeUnitCommon(GameObject freshUnit, Unit armoryUnit)
+        private static GameObject MakeUnitCommon(GameObject freshUnit, Unit armoryUnit)
         {
             freshUnit.name = armoryUnit.Name;
             freshUnit.SetActive(false);
 
             GameObject art = Object.Instantiate(armoryUnit.ArtPrefab);
             art.transform.parent = freshUnit.transform;
+            art.name = "Mesh";
 
             DataComponent.CreateDataComponent(
                     freshUnit, armoryUnit.Config, armoryUnit.MobilityData);
@@ -84,6 +92,8 @@ namespace PFW.UI.Prototype
 
             TurretSystem turretSystem = freshUnit.GetComponent<TurretSystem>();
             turretSystem.Initialize(freshUnit, armoryUnit);
+
+            return art;
         }
     }
 }

@@ -12,7 +12,7 @@
     "MinimapIcon": "MinimapIcon/Square",
     "MinimapIconSize": 10,
     
-    "DeathEffect": "TODO",
+    "DeathEffect": "",
     "VoiceLineFolders": {
         "Movement" : [
             "Voices/US/CommonMovement",
