@@ -148,7 +148,7 @@ namespace PFW.Units
         public void PlayMoveCommandVoiceline() =>
                 _voiceComponent.PlayMoveCommandVoiceline();
         public void PlaySelectionVoiceline() =>
-                _voiceComponent.PlaySelectionVoiceline(true);
+                _voiceComponent.PlaySelectionVoiceline();
         #endregion
 
         public float GetHealth() => _healthComponent.Health;

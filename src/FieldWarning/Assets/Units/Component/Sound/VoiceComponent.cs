@@ -35,16 +35,13 @@ namespace PFW.Units
             _attackAudio = voiceLines.aggressiveLines;
         }
 
-        public void PlaySelectionVoiceline(bool selected)
+        public void PlaySelectionVoiceline()
         {
-            if (selected) 
+            if (_selectAudio.Count != 0) 
             {
-                if (_selectAudio.Count != 0) 
-                {
-                    int r = Random.Range(0, _selectAudio.Count);
-                    _audioSource.clip = _selectAudio[r];
-                    _audioSource.Play();
-                }
+                int r = Random.Range(0, _selectAudio.Count);
+                _audioSource.clip = _selectAudio[r];
+                _audioSource.Play();
             }
         }
 
