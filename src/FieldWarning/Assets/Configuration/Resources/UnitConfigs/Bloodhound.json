@@ -15,16 +15,16 @@
     "DeathEffect": "TODO",
     "VoiceLineFolders": {
         "Movement" : [
-            "Voices/US/CommonMovement",
-            "Voices/US/TankMovement"
+            "Voices/UK/CommonMovement",
+            "Voices/UK/TankMovement"
         ],
         "Aggressive" : [
-            "Voices/US/CommonAggressive",
-            "Voices/US/TankAggressive"
+            "Voices/UK/CommonAggressive",
+            "Voices/UK/TankAggressive"
         ],
         "Selection" : [
-            "Voices/US/CommonSelection",
-            "Voices/US/TankSelection"
+            "Voices/UK/CommonSelection",
+            "Voices/UK/TankSelection"
         ]
     },
 

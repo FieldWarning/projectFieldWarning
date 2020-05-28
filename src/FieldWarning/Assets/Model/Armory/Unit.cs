@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 using PFW.Model.Armory.JsonContents;
 
@@ -49,6 +50,8 @@ namespace PFW.Model.Armory
         /// </summary>
         public MobilityData MobilityData { get; }
 
+        public VoiceLines VoiceLines { get; }
+
         public Unit(UnitConfig config, MobilityData mobility)
         {
             MobilityData = mobility;
@@ -59,6 +62,32 @@ namespace PFW.Model.Armory
             ArmoryImage = Resources.Load<Sprite>(config.ArmoryImage);
             ArmoryBackgroundImage = Resources.Load<Sprite>(config.ArmoryBackgroundImage);
             Config = config;
+            VoiceLines = new VoiceLines(config.VoiceLineFolders);
+        }
+    }
+
+    public class VoiceLines
+    {
+        public List<AudioClip> aggressiveLines = new List<AudioClip>();
+        public List<AudioClip> movementLines = new List<AudioClip>();
+        public List<AudioClip> selectionLines = new List<AudioClip>();
+
+        public VoiceLines(VoiceLineConfig voiceLineFolders)
+        {
+            foreach (string folderName in voiceLineFolders.Agressive)
+            {
+                aggressiveLines.AddRange(Resources.LoadAll<AudioClip>(folderName));
+            }
+
+            foreach (string folderName in voiceLineFolders.Movement)
+            {
+                movementLines.AddRange(Resources.LoadAll<AudioClip>(folderName));
+            }
+
+            foreach (string folderName in voiceLineFolders.Selection)
+            {
+                selectionLines.AddRange(Resources.LoadAll<AudioClip>(folderName));
+            }
         }
     }
 }

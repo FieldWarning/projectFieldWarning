@@ -36,9 +36,10 @@ namespace PFW.UI.Prototype
             MakeUnitCommon(unit, armoryUnit);
 
             // TODO: Load different voice type depending on Owner country
-            GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
+            GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent");
             GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
             voiceGo.name = "VoiceComponent";
+            voiceGo.GetComponent<VoiceComponent>().Initialize(armoryUnit.VoiceLines);
 
             UnitDispatcher unitDispatcher =
                     unit.GetComponent<UnitDispatcher>();

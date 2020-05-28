@@ -96,7 +96,7 @@ namespace PFW.Units.Component.Weapon
                 }
                 if (!_gunSoundResource)
                 {
-                    _gunSoundResource = Resources.Load<AudioClip>("Tank_gun");
+                    _gunSoundResource = Resources.Load<AudioClip>("WeaponSounds/Tank_gun");
                 }
 
                 GameObject shotGO = GameObject.Instantiate(
