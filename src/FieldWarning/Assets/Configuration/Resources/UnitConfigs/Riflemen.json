@@ -12,7 +12,7 @@
     "MinimapIcon": "MinimapIcon/Square",
     "MinimapIconSize": 10,
     
-    "DeathEffect": "",
+    "LeavesExplodingWreck": false,
     "VoiceLineFolders": {
         "Movement" : [
             "Voices/US/CommonMovement",

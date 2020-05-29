@@ -37,7 +37,7 @@ namespace PFW.Model.Armory
         //[Tooltip("The gameobject this will be cloned from.")]
         public GameObject Prefab { get; }
         public GameObject ArtPrefab { get; }
-        public GameObject DeathEffectPrefab { get; }
+        public bool LeavesExplodingWreck { get; }
 
         public Sprite ArmoryImage { get; }
         public Sprite ArmoryBackgroundImage { get; }
@@ -61,10 +61,7 @@ namespace PFW.Model.Armory
             Prefab = Resources.Load<GameObject>(config.PrefabPath);
             ArtPrefab = Resources.Load<GameObject>(config.ArtPrefabPath);
 
-            if (config.DeathEffect != null && config.DeathEffect != "")
-            {
-                DeathEffectPrefab = Resources.Load<GameObject>(config.DeathEffect);
-            }
+            LeavesExplodingWreck = config.LeavesExplodingWreck;
 
             ArmoryImage = Resources.Load<Sprite>(config.ArmoryImage);
             ArmoryBackgroundImage = Resources.Load<Sprite>(config.ArmoryBackgroundImage);

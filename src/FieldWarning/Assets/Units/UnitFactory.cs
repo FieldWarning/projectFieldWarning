@@ -37,10 +37,10 @@ namespace PFW.UI.Prototype
 
             GameObject deathEffect = null;
 
-            if (armoryUnit.DeathEffectPrefab != null)
+            if (armoryUnit.LeavesExplodingWreck)
             {
                 deathEffect = GameObject.Instantiate(
-                        armoryUnit.DeathEffectPrefab, art.transform);
+                        Resources.Load<GameObject>("Wreck"), art.transform);
             }
 
             // TODO: Load different voice type depending on Owner country

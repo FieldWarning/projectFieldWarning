@@ -16,6 +16,7 @@ using UnityEngine.VFX;
 using Mirror;
 
 using PFW.Units.Component.Data;
+using PFW.Units.Component.Death;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
@@ -81,7 +82,7 @@ namespace PFW.Units
         private TargetingOverlay _targetingOverlay;
 
         private GameObject _art;
-        private VisualEffect _deathEffect = null;
+        private WreckComponent _deathEffect = null;
 
         public void Initialize(
                 PlatoonBehaviour platoon, 
@@ -93,7 +94,7 @@ namespace PFW.Units
             Platoon = platoon;
 
             _art = art;
-            _deathEffect = deathEffect?.GetComponent<VisualEffect>();
+            _deathEffect = deathEffect?.GetComponent<WreckComponent>();
 
             _unitData = gameObject.GetComponent<DataComponent>();
 
@@ -197,10 +198,7 @@ namespace PFW.Units
             // Model lingers as a wreck for 30s
             if (_deathEffect != null)
             {
-                _art.transform.parent = null;
-                _art.BlackenRecursively();
-                _deathEffect.Play();
-                Destroy(_art, 30f);
+                _deathEffect.Activate(_art);
             }
 
             TargetTuple.Reset();

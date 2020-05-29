@@ -39,7 +39,7 @@ namespace PFW.Model.Armory.JsonContents
         public string ArmoryBackgroundImage;
         public string MinimapIcon;
         public float MinimapIconSize;
-        public string DeathEffect;
+        public bool LeavesExplodingWreck;
         public VoiceLineConfig VoiceLineFolders;
         public UnitDataConfig Data;
         public ArmorConfig Armor;

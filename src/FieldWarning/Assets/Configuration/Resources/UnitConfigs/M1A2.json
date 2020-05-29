@@ -12,7 +12,7 @@
     "MinimapIcon": "MinimapIcon/Square",
     "MinimapIconSize": 10,
     
-    "DeathEffect": "Effects/ParticleFX/Prefab/Explosion Prefab",
+    "LeavesExplodingWreck": true,
     "VoiceLineFolders": {
         "Movement" : [
             "Voices/US/CommonMovement",
