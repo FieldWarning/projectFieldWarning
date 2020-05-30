@@ -31,7 +31,7 @@ namespace PFW.Units.Component.Death
         [SerializeField]
         private GameObject _smokePrefab = null;
         private const float SMOKE_DURATION = 40f;
-        private const float SMOKE_DELAY = 2f;
+        private const float SMOKE_DELAY = 1f;
         private const float WRECK_DURATION = 60f;
 
         private GameObject _art;
