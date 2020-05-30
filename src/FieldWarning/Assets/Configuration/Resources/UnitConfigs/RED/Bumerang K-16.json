@@ -85,7 +85,7 @@
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
                     "SalvoReload": 8,
-                    "MuzzleFlash": "Effects/MuzzleFlashes/muzzle_flash",
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
                     "Tracer": "Effects/Tracers/shot_emitter",
                     "Explosion": "TODO",
                     "Sound": "WeaponSounds/Tank_gun"

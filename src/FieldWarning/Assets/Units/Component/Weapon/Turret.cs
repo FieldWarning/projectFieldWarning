@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 using PFW.Model.Armory.JsonContents;
 using static PFW.Util;
@@ -90,10 +91,6 @@ namespace PFW.Units.Component.Weapon
                 {
                     _shotEmitterResource = Resources.Load<GameObject>("shot_emitter");
                 }
-                if (!_muzzleFlashResource)
-                {
-                    _muzzleFlashResource = Resources.Load<GameObject>("muzzle_flash");
-                }
 
                 GameObject shotGO = GameObject.Instantiate(
                         _shotEmitterResource, _turret);
@@ -104,19 +101,27 @@ namespace PFW.Units.Component.Weapon
                 if (turretConfig.Howitzer.FireRange != 0)
                 {
                     _isHowitzer = true;
+
+                    _muzzleFlashResource = Resources.Load<GameObject>(turretConfig.Howitzer.MuzzleFlash);
+                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Howitzer.Sound);
+                    GameObject muzzleFlashGO = GameObject.Instantiate(
+                            _muzzleFlashResource, _turret);
+
                     _weapon = new Howitzer(
                             turretConfig.Howitzer,
                             shotAudioSource,
                             shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
+                            muzzleFlashGO.GetComponent<VisualEffect>(),
                             _turret,
                             SHOT_VOLUME);
                     _fireRange =
                             turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
-                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Howitzer.Sound);
                 }
                 else if (turretConfig.Cannon.FireRange != 0)
                 {
+                    _muzzleFlashResource = Resources.Load<GameObject>(turretConfig.Cannon.MuzzleFlash);
+                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Cannon.Sound);
                     GameObject muzzleFlashGO = GameObject.Instantiate(
                             _muzzleFlashResource, _turret);
 
@@ -125,11 +130,10 @@ namespace PFW.Units.Component.Weapon
                             shotAudioSource,
                             shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
-                            muzzleFlashGO.GetComponent<ParticleSystem>(),
+                            muzzleFlashGO.GetComponent<VisualEffect>(),
                             SHOT_VOLUME);
                     _fireRange =
                             turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
-                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Cannon.Sound);
                 }
                 else
                 {

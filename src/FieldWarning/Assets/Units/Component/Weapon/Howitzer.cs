@@ -12,6 +12,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.VFX;
 
 using PFW.Model.Armory.JsonContents;
 
@@ -35,6 +36,7 @@ namespace PFW.Units.Component.Weapon
         // TODO Should aim to make actual objects fire and not effects:
         private ParticleSystem _shotEffect;
         private AudioClip _shotSound;
+        private readonly VisualEffect _muzzleFlashEffect;
         private float _shotVolume;
 
 
@@ -43,12 +45,14 @@ namespace PFW.Units.Component.Weapon
                 AudioSource source,
                 ParticleSystem shotEffect,
                 AudioClip shotSound,
+                VisualEffect muzzleFlashEffect,
                 Transform shotStarterPosition,
                 float shotVolume = 1.0F)
         {
             _data = data;
             _audioSource = source;
             _shotEffect = shotEffect;
+            _muzzleFlashEffect = muzzleFlashEffect;
             _shotSound = shotSound;
             _shotVolume = shotVolume;
             _shotStarterPosition = shotStarterPosition;
@@ -65,6 +69,13 @@ namespace PFW.Units.Component.Weapon
                     _shotStarterPosition.transform.rotation);
 
             shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
+
+            _audioSource.PlayOneShot(_shotSound, _shotVolume);
+            _shotEffect.Play();
+            if (_muzzleFlashEffect != null)
+            {
+                _muzzleFlashEffect.Play();
+            }
 
             if (isServer) 
             {

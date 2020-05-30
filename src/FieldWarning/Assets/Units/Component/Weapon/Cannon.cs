@@ -13,6 +13,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.VFX;
 using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Units.Component.Weapon
@@ -24,12 +25,12 @@ namespace PFW.Units.Component.Weapon
     {
         private CannonConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
-        private AudioSource _source { get; }
+        private AudioSource _audioSource { get; }
 
         // TODO Should aim to make actual objects fire and not effects:
         private readonly ParticleSystem _shotEffect;
         private readonly AudioClip _shotSound;
-        private readonly ParticleSystem _muzzleFlashEffect;
+        private readonly VisualEffect _muzzleFlashEffect;
         private readonly float _shotVolume;
         private static System.Random _random;
 
@@ -38,11 +39,11 @@ namespace PFW.Units.Component.Weapon
                 AudioSource source,
                 ParticleSystem shotEffect,
                 AudioClip shotSound,
-                ParticleSystem muzzleFlashEffect,
+                VisualEffect muzzleFlashEffect,
                 float shotVolume = 1.0f)
         {
             _data = data;
-            _source = source;
+            _audioSource = source;
             _shotEffect = shotEffect;
             _shotSound = shotSound;
             _muzzleFlashEffect = muzzleFlashEffect;
@@ -53,7 +54,7 @@ namespace PFW.Units.Component.Weapon
         private void FireWeapon(TargetTuple target, Vector3 displacement, bool isServer)
         {
             // sound
-            _source.PlayOneShot(_shotSound, _shotVolume);
+            _audioSource.PlayOneShot(_shotSound, _shotVolume);
             // particle
             _shotEffect.Play();
 
