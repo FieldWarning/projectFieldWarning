@@ -30,6 +30,8 @@ namespace PFW.Units.Component.Death
         private VisualEffect _deathEffect = null;
         [SerializeField]
         private GameObject _smokePrefab = null;
+        [SerializeField]
+        private AudioSource _explosionAudio = null;
         private const float SMOKE_DURATION = 40f;
         private const float SMOKE_DELAY = 1f;
         private const float WRECK_DURATION = 60f;
@@ -49,6 +51,7 @@ namespace PFW.Units.Component.Death
             _art.BlackenRecursively();
             gameObject.SetActive(true);
             _deathEffect.Play();
+            _explosionAudio.Play();
             Destroy(_art, WRECK_DURATION);
 
             _smokePrefab.SetActive(true);
@@ -63,7 +66,8 @@ namespace PFW.Units.Component.Death
             {
                 _smokePrefab.SetActive(true);
                 _smokePrefab.transform.parent = null;
-                Destroy(_smokePrefab, SMOKE_DURATION - SMOKE_DELAY);
+                float maxDuration = SMOKE_DURATION - SMOKE_DELAY;
+                Destroy(_smokePrefab, Random.Range(maxDuration / 2, maxDuration));
                 Destroy(gameObject);
             }
         }

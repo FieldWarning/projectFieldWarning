@@ -145,5 +145,9 @@ namespace PFW.Model.Armory.JsonContents
         public float ShotReload;
         public int SalvoLength;
         public float SalvoReload;
+        public string MuzzleFlash;
+        public string Tracer;
+        public string Explosion;
+        public string Sound;
     }
 }

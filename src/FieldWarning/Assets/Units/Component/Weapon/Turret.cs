@@ -94,10 +94,6 @@ namespace PFW.Units.Component.Weapon
                 {
                     _muzzleFlashResource = Resources.Load<GameObject>("muzzle_flash");
                 }
-                if (!_gunSoundResource)
-                {
-                    _gunSoundResource = Resources.Load<AudioClip>("WeaponSounds/Tank_gun");
-                }
 
                 GameObject shotGO = GameObject.Instantiate(
                         _shotEmitterResource, _turret);
@@ -117,6 +113,7 @@ namespace PFW.Units.Component.Weapon
                             SHOT_VOLUME);
                     _fireRange =
                             turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
+                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Howitzer.Sound);
                 }
                 else if (turretConfig.Cannon.FireRange != 0)
                 {
@@ -132,6 +129,7 @@ namespace PFW.Units.Component.Weapon
                             SHOT_VOLUME);
                     _fireRange =
                             turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
+                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Cannon.Sound);
                 }
                 else
                 {
