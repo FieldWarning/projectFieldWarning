@@ -33,8 +33,6 @@ namespace PFW.Units.Component.Weapon
         // Where the shell spawns
         private Transform _barrelTip;
 
-        // TODO Should aim to make actual objects fire and not effects:
-        private ParticleSystem _shotEffect;
         private AudioClip _shotSound;
         private readonly VisualEffect _muzzleFlashEffect;
         private float _shotVolume;
@@ -43,7 +41,6 @@ namespace PFW.Units.Component.Weapon
         public Howitzer(
                 HowitzerConfig data,
                 AudioSource source,
-                ParticleSystem shotEffect,
                 AudioClip shotSound,
                 VisualEffect muzzleFlashEffect,
                 Transform barrelTip,
@@ -51,7 +48,6 @@ namespace PFW.Units.Component.Weapon
         {
             _data = data;
             _audioSource = source;
-            _shotEffect = shotEffect;
             _muzzleFlashEffect = muzzleFlashEffect;
             _shotSound = shotSound;
             _shotVolume = shotVolume;
@@ -71,7 +67,6 @@ namespace PFW.Units.Component.Weapon
             shell.GetComponent<BulletBehavior>().SetUp(_barrelTip, target.Position, 60);
 
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
-            _shotEffect.Play();
             if (_muzzleFlashEffect != null)
             {
                 _muzzleFlashEffect.Play();

@@ -102,7 +102,7 @@
                 "RotationRate": 40,
                 "Cannon": {
                     "Damage": 4,
-                    "FireRange" : 200,
+                    "FireRange" : 2000,
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,

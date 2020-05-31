@@ -41,7 +41,7 @@ namespace PFW.Units.Component.Weapon
         /// The explicit target is one set by player input,
         /// while the real target can either be that or something
         /// picked automatically (for example, something that is in range
-        /// while the explicit target is not).surely y
+        /// while the explicit target is not).
         /// </summary>
         private TargetTuple _explicitTarget;  // weapon turret, sync
         private TargetTuple _target;  // weapon turret, sync
@@ -55,7 +55,6 @@ namespace PFW.Units.Component.Weapon
 
         public float ArcHorizontal = 180, ArcUp = 40, ArcDown = 20, RotationRate = 40f;
 
-        private static GameObject _shotEmitterResource;
         private static GameObject _muzzleFlashResource;
         private static AudioClip _gunSoundResource;
 
@@ -81,18 +80,6 @@ namespace PFW.Units.Component.Weapon
             }
             else
             {
-                // Hack: The old tank prefab has a particle system for shooting 
-                // that we want to remove,
-                // so instead of adding it to the models or having it in the config 
-                // we hardcode it in here.
-                // TODO might have to use a different object for the old arty effect.
-                if (!_shotEmitterResource)
-                {
-                    _shotEmitterResource = Resources.Load<GameObject>("shot_emitter");
-                }
-
-                GameObject shotGO = GameObject.Instantiate(
-                        _shotEmitterResource, _turret);
                 AudioSource shotAudioSource = _turret.gameObject.AddComponent<AudioSource>();
 
                 // The Unit json parser creates objects even when there are none,
@@ -122,7 +109,6 @@ namespace PFW.Units.Component.Weapon
                     _weapon = new Howitzer(
                             turretConfig.Howitzer,
                             shotAudioSource,
-                            shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
                             muzzleFlashGO.GetComponent<VisualEffect>(),
                             barrelTip);
@@ -150,7 +136,6 @@ namespace PFW.Units.Component.Weapon
                     _weapon = new Cannon(
                             turretConfig.Cannon,
                             shotAudioSource,
-                            shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
                             muzzleFlashGO.GetComponent<VisualEffect>(),
                             barrelTip);

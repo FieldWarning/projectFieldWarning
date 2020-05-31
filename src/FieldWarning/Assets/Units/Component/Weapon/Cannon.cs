@@ -29,8 +29,6 @@ namespace PFW.Units.Component.Weapon
 
         private Transform _barrelTip;
 
-        // TODO Should aim to make actual objects fire and not effects:
-        private readonly ParticleSystem _shotEffect;
         private readonly AudioClip _shotSound;
         private readonly VisualEffect _muzzleFlashEffect;
         private readonly float _shotVolume;
@@ -39,7 +37,6 @@ namespace PFW.Units.Component.Weapon
         public Cannon(
                 CannonConfig data,
                 AudioSource source,
-                ParticleSystem shotEffect,
                 AudioClip shotSound,
                 VisualEffect muzzleFlashEffect,
                 Transform barrelTip,
@@ -47,7 +44,6 @@ namespace PFW.Units.Component.Weapon
         {
             _data = data;
             _audioSource = source;
-            _shotEffect = shotEffect;
             _shotSound = shotSound;
             _muzzleFlashEffect = muzzleFlashEffect;
             _shotVolume = shotVolume;
@@ -62,8 +58,6 @@ namespace PFW.Units.Component.Weapon
         {
             // sound
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
-            // particle
-            _shotEffect.Play();
 
             if (_muzzleFlashEffect != null)
             {
@@ -77,7 +71,7 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.transform.rotation);
 
             shell.GetComponent<BulletBehavior>().SetUp(
-                    _barrelTip, target.Position, 0);
+                    _barrelTip, target.Position, 20);
 
             if (isServer)
             {

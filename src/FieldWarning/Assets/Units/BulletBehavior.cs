@@ -19,9 +19,11 @@ namespace PFW.Units
     {
         public BulletData Bullet; // contains attributes for the shell
         [Header("Explosion you want to appear when shell hits the target or ground")]
-        public GameObject ExplosionPrefab;
+        [SerializeField]
+        private GameObject _explosionPrefab = null;
         [Header("Trail emitter of this shell prefab - to be disabled on hit")]
-        public ParticleSystem TrailEmitter;
+        [SerializeField]
+        private GameObject _trailEmitter = null;
 
         private Rigidbody _rigid;
 
@@ -48,7 +50,7 @@ namespace PFW.Units
             Launch();
         }
 
-        private float Gravity = 9.8F * PFW.Constants.MAP_SCALE;
+        private float Gravity = 9.8F * Constants.MAP_SCALE;
         private float ForwardSpeed = 0F;
         private float VerticalSpeed = 0F;
 
@@ -61,18 +63,18 @@ namespace PFW.Units
             transform.LookAt(targetXZPos);
 
             // formula
-            float R = Vector3.Distance(projectileXZPos, targetXZPos);
-            //float G = 9.8F;     //TODO Readjust for our scale usinga utility class
-            float tanAlpha = Mathf.Tan(_launchAngle * Mathf.Deg2Rad);
-            float H = _targetCoordinates.y - transform.position.y;
+            float distanceToTarget = Vector3.Distance(projectileXZPos, targetXZPos);
+
+            // float tanAlpha = Mathf.Tan(_launchAngle * Mathf.Deg2Rad);
+            // float heading = _targetCoordinates.y - transform.position.y;
 
             // calculate the local space components of the velocity
             // required to land the projectile on the target object
             //float Vz = Mathf.Sqrt(G * R * R / (2.0f * (H - R * tanAlpha)));
 
-            float Vz = 20F;
+            float Vz = 2F;
 
-            float DistanceToHighestPoint = R / 2;
+            float DistanceToHighestPoint = distanceToTarget / 2;
             float TimeToHighestPoint = DistanceToHighestPoint / Vz;
             float GravityEffectToHighestPoint = Gravity * TimeToHighestPoint;
 
@@ -82,7 +84,7 @@ namespace PFW.Units
             VerticalSpeed = Vy;
 
             //Debug.LogFormat("BulletBehavior.Launch: ForwardSpeed={0}, VerticalSpeed={1}, LaunchAngle={2}, R={3}, tanALpha={4}, H={5}",
-            //    ForwardSpeed, VerticalSpeed, LaunchAngle, R, tanAlpha, H);
+            //    ForwardSpeed, VerticalSpeed, LaunchAngle, R, tanAlpha, heading);
 
             // create the velocity vector in local space and get it in global space
 
@@ -99,12 +101,14 @@ namespace PFW.Units
                 return;
             }
 
-            transform.Translate(ForwardSpeed * Vector3.forward * Time.deltaTime + VerticalSpeed * Vector3.up * Time.deltaTime);
+            transform.Translate(
+                    ForwardSpeed * Vector3.forward * Time.deltaTime 
+                    + VerticalSpeed * Vector3.up * Time.deltaTime);
 
-            VerticalSpeed = VerticalSpeed - (Gravity * Time.deltaTime);
+            VerticalSpeed -= Gravity * Time.deltaTime;
 
 
-            // small trick to detect if shell is reached the target
+            // small trick to detect if shell has reached the target
             float distanceToTarget = Vector3.Distance(transform.position, _targetCoordinates);
             if (distanceToTarget > _prevDistanceToTarget)
             {
@@ -121,18 +125,18 @@ namespace PFW.Units
         private void Explode()
         {
             _dead = true;
-            if (ExplosionPrefab != null)
+            if (_explosionPrefab != null)
             {
                 // instantiate explosion
-                GameObject explosion = Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
-                // destroy it in 10 seconds to not trash the scene
-                Destroy(explosion, 10F);
+                GameObject explosion = Instantiate(
+                        _explosionPrefab, transform.position, Quaternion.identity);
+                Destroy(explosion, 3F);
             }
 
-            if (TrailEmitter != null)
+            if (_trailEmitter != null)
             {
-                ParticleSystem.EmissionModule emission = TrailEmitter.emission;
-                emission.enabled = false;
+                //ParticleSystem.EmissionModule emission = _trailEmitter.emission;
+                //emission.enabled = false;
             }
 
             Destroy(gameObject, 10F);

@@ -120,7 +120,7 @@ namespace PFW.Units.Component.Weapon
                     _explicitTarget = null;
                     foreach (Turret turret in Children)
                     {
-                        turret.SetExplicitTarget(_explicitTarget);
+                        turret.SetExplicitTarget(null);
                     }
                 }
             }
