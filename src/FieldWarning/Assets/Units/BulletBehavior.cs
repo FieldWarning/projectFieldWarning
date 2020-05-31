@@ -11,14 +11,13 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using AssemblyCSharp;
 using UnityEngine;
 
 namespace PFW.Units
 {
     public class BulletBehavior : MonoBehaviour
     {
-        public Bullet Bullet; // contains attributes for the shell
+        public BulletData Bullet; // contains attributes for the shell
         [Header("Explosion you want to appear when shell hits the target or ground")]
         public GameObject ExplosionPrefab;
         [Header("Trail emitter of this shell prefab - to be disabled on hit")]
@@ -40,7 +39,7 @@ namespace PFW.Units
 
         private void Start()
         {
-            Bullet = new Bullet();
+            Bullet = new BulletData();
             _rigid = GetComponent<Rigidbody>();
 
             _rigid.useGravity = false;
@@ -113,12 +112,12 @@ namespace PFW.Units
             prevDistanceToTarget = distanceToTarget;
         }
 
-        void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             Explode();
         }
 
-        void Explode()
+        private void Explode()
         {
             dead = true;
             if (ExplosionPrefab != null)
@@ -145,6 +144,5 @@ namespace PFW.Units
         //    bullet._vellocity = Vellocity;
         //    bullet._arc = 60;
         //}
-
     }
 }

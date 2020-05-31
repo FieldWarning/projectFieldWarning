@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -13,18 +13,18 @@
 
 using UnityEngine;
 
-namespace AssemblyCSharp
+namespace PFW.Units
 {
-    public class Bullet
+    public class BulletData
     {
         private Vector3 _startPosition;
         private Vector3 _endPosition;
         private float _velocity;
         private int _arc;
 
-        public Bullet() { }
+        public BulletData() { }
 
-        public Bullet(Vector3 start_position, Vector3 end_position, int vellocity=100, bool isHit=true, int arc=60 )
+        public BulletData(Vector3 start_position, Vector3 end_position, int vellocity=100, bool isHit=true, int arc=60 )
         {
             _startPosition = start_position;
             _endPosition = end_position;
