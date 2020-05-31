@@ -133,6 +133,7 @@ namespace PFW.Model.Armory.JsonContents
         public string Tracer;
         public string Explosion;
         public string Sound;
+        public string BarrelTipRef;
     }
 
     [Serializable]
@@ -149,5 +150,6 @@ namespace PFW.Model.Armory.JsonContents
         public string Tracer;
         public string Explosion;
         public string Sound;
+        public string BarrelTipRef;
     }
 }

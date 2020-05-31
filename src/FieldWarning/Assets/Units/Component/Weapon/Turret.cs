@@ -47,7 +47,6 @@ namespace PFW.Units.Component.Weapon
         private TargetTuple _target;  // weapon turret, sync
         private int _priority;  // weapon turret, higher is better
         public List<Turret> Children; // parent turret, sync
-        private const float SHOT_VOLUME = 1.0f;
 
         private bool _isHowitzer = false; // purpose unclear, both
 
@@ -102,10 +101,23 @@ namespace PFW.Units.Component.Weapon
                 {
                     _isHowitzer = true;
 
-                    _muzzleFlashResource = Resources.Load<GameObject>(turretConfig.Howitzer.MuzzleFlash);
-                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Howitzer.Sound);
+                    Transform barrelTip = 
+                            turretConfig.Cannon.BarrelTipRef == "" ? 
+                                    _turret :
+                                    RecursiveFindChild(
+                                            _turret.parent, 
+                                            turretConfig.Howitzer.BarrelTipRef);
+                    if (barrelTip == null)
+                    {
+                        barrelTip = _turret;
+                    }
+
+                    _muzzleFlashResource = Resources.Load<GameObject>(
+                            turretConfig.Howitzer.MuzzleFlash);
+                    _gunSoundResource = Resources.Load<AudioClip>(
+                            turretConfig.Howitzer.Sound);
                     GameObject muzzleFlashGO = GameObject.Instantiate(
-                            _muzzleFlashResource, _turret);
+                            _muzzleFlashResource, barrelTip);
 
                     _weapon = new Howitzer(
                             turretConfig.Howitzer,
@@ -113,17 +125,27 @@ namespace PFW.Units.Component.Weapon
                             shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
                             muzzleFlashGO.GetComponent<VisualEffect>(),
-                            _turret,
-                            SHOT_VOLUME);
+                            barrelTip);
                     _fireRange =
                             turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
                 }
                 else if (turretConfig.Cannon.FireRange != 0)
                 {
+                    Transform barrelTip =
+                            turretConfig.Cannon.BarrelTipRef == "" ?
+                                    _turret :
+                                    RecursiveFindChild(
+                                            _turret.parent,
+                                            turretConfig.Cannon.BarrelTipRef);
+                    if (barrelTip == null)
+                    {
+                        barrelTip = _turret;
+                    }
+
                     _muzzleFlashResource = Resources.Load<GameObject>(turretConfig.Cannon.MuzzleFlash);
                     _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Cannon.Sound);
                     GameObject muzzleFlashGO = GameObject.Instantiate(
-                            _muzzleFlashResource, _turret);
+                            _muzzleFlashResource, barrelTip);
 
                     _weapon = new Cannon(
                             turretConfig.Cannon,
@@ -131,7 +153,7 @@ namespace PFW.Units.Component.Weapon
                             shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
                             muzzleFlashGO.GetComponent<VisualEffect>(),
-                            SHOT_VOLUME);
+                            barrelTip);
                     _fireRange =
                             turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
                 }

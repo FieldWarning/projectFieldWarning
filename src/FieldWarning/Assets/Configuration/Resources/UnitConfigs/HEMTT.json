@@ -84,7 +84,8 @@
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
-                    "SalvoReload": 8
+                    "SalvoReload": 8,
+                    "BarrelTipRef": "MG"
                 }
             },
             {
@@ -101,7 +102,8 @@
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,
-                    "SalvoReload": 8
+                    "SalvoReload": 8,
+                    "BarrelTipRef": "IFV"
                 }
             }
         ]

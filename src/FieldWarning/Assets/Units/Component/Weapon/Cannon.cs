@@ -27,6 +27,8 @@ namespace PFW.Units.Component.Weapon
         private float _reloadTimeLeft { get; set; }
         private AudioSource _audioSource { get; }
 
+        private Transform _barrelTip;
+
         // TODO Should aim to make actual objects fire and not effects:
         private readonly ParticleSystem _shotEffect;
         private readonly AudioClip _shotSound;
@@ -40,6 +42,7 @@ namespace PFW.Units.Component.Weapon
                 ParticleSystem shotEffect,
                 AudioClip shotSound,
                 VisualEffect muzzleFlashEffect,
+                Transform barrelTip,
                 float shotVolume = 1.0f)
         {
             _data = data;
@@ -48,10 +51,14 @@ namespace PFW.Units.Component.Weapon
             _shotSound = shotSound;
             _muzzleFlashEffect = muzzleFlashEffect;
             _shotVolume = shotVolume;
+            _barrelTip = barrelTip;
             _random = new System.Random(Environment.TickCount);
         }
 
-        private void FireWeapon(TargetTuple target, Vector3 displacement, bool isServer)
+        private void FireWeapon(
+                TargetTuple target, 
+                Vector3 displacement, 
+                bool isServer)
         {
             // sound
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
@@ -62,6 +69,15 @@ namespace PFW.Units.Component.Weapon
             {
                 _muzzleFlashEffect.Play();
             }
+
+            GameObject shellPrefab = Resources.Load<GameObject>("shell");
+            GameObject shell = GameObject.Instantiate(
+                    shellPrefab,
+                    _barrelTip.position,
+                    _barrelTip.transform.rotation);
+
+            shell.GetComponent<BulletBehavior>().SetUp(
+                    _barrelTip, target.Position, 0);
 
             if (isServer)
             {

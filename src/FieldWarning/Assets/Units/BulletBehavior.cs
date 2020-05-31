@@ -28,13 +28,13 @@ namespace PFW.Units
         private float _launchAngle;
         private Transform _startingTransform;
         private Vector3 _targetCoordinates;
-
-        //class used in the weapon behaviour to set stats of the shell
-        public void SetUp(Transform position, Vector3 target, float launchAngel)
+        
+        // called by the weapon behaviour to set stats of the shell
+        public void SetUp(Transform position, Vector3 target, float launchAngle)
         {
             _startingTransform = position;
             _targetCoordinates = target;
-            _launchAngle = launchAngel;
+            _launchAngle = launchAngle;
         }
 
         private void Start()
@@ -89,11 +89,12 @@ namespace PFW.Units
             //BulletBehavior.Launch: ForwardSpeed=NaN, VerticalSpeed=NaN, LaunchAngle=60, R=15.60759, tanALpha=1.732051, H=-0.8795097
         }
 
-        bool dead = false;
-        float prevDistanceToTarget = 100000F;
+        private bool _dead = false;
+        private float _prevDistanceToTarget = 100000F;
+
         private void Update()
         {
-            if (dead)
+            if (_dead)
             {
                 return;
             }
@@ -105,11 +106,11 @@ namespace PFW.Units
 
             // small trick to detect if shell is reached the target
             float distanceToTarget = Vector3.Distance(transform.position, _targetCoordinates);
-            if (distanceToTarget > prevDistanceToTarget)
+            if (distanceToTarget > _prevDistanceToTarget)
             {
                 Explode();
             }
-            prevDistanceToTarget = distanceToTarget;
+            _prevDistanceToTarget = distanceToTarget;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -119,7 +120,7 @@ namespace PFW.Units
 
         private void Explode()
         {
-            dead = true;
+            _dead = true;
             if (ExplosionPrefab != null)
             {
                 // instantiate explosion
@@ -130,7 +131,7 @@ namespace PFW.Units
 
             if (TrailEmitter != null)
             {
-                var emission = TrailEmitter.emission;
+                ParticleSystem.EmissionModule emission = TrailEmitter.emission;
                 emission.enabled = false;
             }
 

@@ -30,8 +30,8 @@ namespace PFW.Units.Component.Weapon
         private float _reloadTimeLeft { get; set; }
         private AudioSource _audioSource { get; }
 
-        // Where the shell spawns:
-        private Transform _shotStarterPosition;
+        // Where the shell spawns
+        private Transform _barrelTip;
 
         // TODO Should aim to make actual objects fire and not effects:
         private ParticleSystem _shotEffect;
@@ -46,7 +46,7 @@ namespace PFW.Units.Component.Weapon
                 ParticleSystem shotEffect,
                 AudioClip shotSound,
                 VisualEffect muzzleFlashEffect,
-                Transform shotStarterPosition,
+                Transform barrelTip,
                 float shotVolume = 1.0F)
         {
             _data = data;
@@ -55,20 +55,20 @@ namespace PFW.Units.Component.Weapon
             _muzzleFlashEffect = muzzleFlashEffect;
             _shotSound = shotSound;
             _shotVolume = shotVolume;
-            _shotStarterPosition = shotStarterPosition;
+            _barrelTip = barrelTip;
         }
 
         private bool Shoot(TargetTuple target, bool isServer)
         {
             //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
 
-            GameObject shell = Resources.Load<GameObject>("shell");
-            GameObject shell_new = GameObject.Instantiate(
-                    shell,
-                    _shotStarterPosition.position,
-                    _shotStarterPosition.transform.rotation);
+            GameObject shellPrefab = Resources.Load<GameObject>("shell");
+            GameObject shell = GameObject.Instantiate(
+                    shellPrefab,
+                    _barrelTip.position,
+                    _barrelTip.transform.rotation);
 
-            shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
+            shell.GetComponent<BulletBehavior>().SetUp(_barrelTip, target.Position, 60);
 
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
             _shotEffect.Play();

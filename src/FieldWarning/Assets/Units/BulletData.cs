@@ -24,7 +24,12 @@ namespace PFW.Units
 
         public BulletData() { }
 
-        public BulletData(Vector3 start_position, Vector3 end_position, int vellocity=100, bool isHit=true, int arc=60 )
+        public BulletData(
+                Vector3 start_position, 
+                Vector3 end_position, 
+                int vellocity=100, 
+                bool isHit=true, 
+                int arc=60 )
         {
             _startPosition = start_position;
             _endPosition = end_position;
