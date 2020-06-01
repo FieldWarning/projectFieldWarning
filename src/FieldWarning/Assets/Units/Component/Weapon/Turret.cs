@@ -205,7 +205,7 @@ namespace PFW.Units.Component.Weapon
                 //      the velocity of the most important gun?
                 float shellVelocity = _shellVelocity == 0 ?
                         1000 * Constants.MAP_SCALE : _shellVelocity;
-                rotationToTarget *= BulletBehavior.CalculateBarrelAngle(
+                rotationToTarget *= ShellBehaviour.CalculateBarrelAngle(
                         shellVelocity, _turret.transform.position, _target.Position, out _);
 
                 targetHorizontalAngle = rotationToTarget.eulerAngles.y.unwrapDegree();

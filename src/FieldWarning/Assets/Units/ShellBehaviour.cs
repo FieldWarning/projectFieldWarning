@@ -15,9 +15,8 @@ using UnityEngine;
 
 namespace PFW.Units
 {
-    public class BulletBehavior : MonoBehaviour
+    public class ShellBehaviour : MonoBehaviour
     {
-        public BulletData Bullet; // contains attributes for the shell
         [Header("Explosion you want to appear when shell hits the target or ground")]
         [SerializeField]
         private GameObject _explosionPrefab = null;
@@ -45,8 +44,6 @@ namespace PFW.Units
 
         private void Start()
         {
-            Bullet = new BulletData();
-
             Launch();
         }
 
