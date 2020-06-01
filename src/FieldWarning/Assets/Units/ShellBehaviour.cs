@@ -15,9 +15,8 @@ using UnityEngine;
 
 namespace PFW.Units
 {
-    public class BulletBehavior : MonoBehaviour
+    public class ShellBehaviour : MonoBehaviour
     {
-        public BulletData Bullet; // contains attributes for the shell
         [Header("Explosion you want to appear when shell hits the target or ground")]
         [SerializeField]
         private GameObject _explosionPrefab = null;
@@ -25,7 +24,7 @@ namespace PFW.Units
         [SerializeField]
         private GameObject _trailEmitter = null;
 
-        private readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
+        private static readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
         private float _forwardSpeed = 0F;
         private float _verticalSpeed = 0F;
         private Vector3 _targetCoordinates;
@@ -36,7 +35,6 @@ namespace PFW.Units
         /// <summary>
         ///     Call in the weapon class to initialize the shell/bullet.
         /// </summary>
-        /// <param name="target"></param>
         /// <param name="velocity">In meters.</param>
         public void Initialize(Vector3 target, float velocity)
         {
@@ -46,28 +44,55 @@ namespace PFW.Units
 
         private void Start()
         {
-            Bullet = new BulletData();
-
             Launch();
         }
 
         public void Launch()
         {
-            Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);
-            Vector3 targetXZPos = new Vector3(_targetCoordinates.x, 0.0f, _targetCoordinates.z);
+            Quaternion angle = CalculateBarrelAngle(
+                    _forwardSpeed, 
+                    transform.position, 
+                    _targetCoordinates, 
+                    out _verticalSpeed);
 
             // rotate the object to face the target
-            transform.LookAt(targetXZPos);
+            transform.LookAt(_targetCoordinates);
+            transform.rotation *= angle;
+        }
 
-            // formula
-            float distanceToTarget = Vector3.Distance(projectileXZPos, targetXZPos);
+        /// <summary>
+        /// Returns the barrel angle needed to hit at a given range.
+        /// Also returns the implied vertical velocity.
+        /// </summary>
+        /// A realistic calculation would have a certain max shell speed,
+        /// that would be divided between horizontal and vertical.
+        /// For simplicity we don't do this and instead assume horizontal always
+        /// moves at max speed and vertical can be infinite.
+        public static Quaternion CalculateBarrelAngle(
+                float horizontalSpeed, 
+                Vector3 start, 
+                Vector3 target, 
+                out float verticalSpeed)
+        {
+            Vector3 projectileXZPos = new Vector3(start.x, 0.0f, start.z);
+            Vector3 targetXZPos = new Vector3(target.x, 0.0f, target.z);
+
+            float horizontalDistanceToTarget = Vector3.Distance(projectileXZPos, targetXZPos);
 
             // TODO adjust based on height difference between start and target points
-            float distanceToHighestPoint = distanceToTarget / 2f; 
-            float timeToHighestPoint = distanceToHighestPoint / _forwardSpeed;
+            float distanceToHighestPoint = horizontalDistanceToTarget / 2f;
+            float timeToHighestPoint = distanceToHighestPoint / horizontalSpeed;
             float gravityEffectToHighestPoint = GRAVITY * timeToHighestPoint;
 
-            _verticalSpeed = gravityEffectToHighestPoint;
+            verticalSpeed = gravityEffectToHighestPoint;
+
+            // The vectors for the horizontal speed, vertical speed and 
+            // the direction of the barrel form a triangle.
+            // The angle can then be calculated with the formula
+            // tan(angle) = verticalSpeed / horizontalSpeed
+            return Quaternion.AngleAxis(
+                    Mathf.Rad2Deg * Mathf.Atan(verticalSpeed / horizontalSpeed),
+                    Vector3.left);
         }
 
         private void Update()
@@ -79,9 +104,11 @@ namespace PFW.Units
 
             Vector3 worldForward = transform.TransformDirection(Vector3.forward);
             worldForward = new Vector3(worldForward.x, 0, worldForward.z);
+            Vector3 translation = _forwardSpeed * worldForward * Time.deltaTime
+                                  + _verticalSpeed * Vector3.up * Time.deltaTime;
+            transform.LookAt(transform.position + translation);
             transform.Translate(
-                    _forwardSpeed * worldForward * Time.deltaTime 
-                    + _verticalSpeed * Vector3.up * Time.deltaTime,
+                    translation,
                     Space.World);
 
             _verticalSpeed -= GRAVITY * Time.deltaTime;
@@ -95,6 +122,8 @@ namespace PFW.Units
                 Explode();
             }
             _prevDistanceToTarget = distanceToTarget;
+
+            //transform.rotation.SetLookRotation(translation);
         }
 
         private void OnTriggerEnter(Collider other)

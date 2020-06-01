@@ -73,7 +73,6 @@
             {
                 "Priority": 1,
                 "TurretRef": "KPVT",
-                "MountRef": "APC",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,

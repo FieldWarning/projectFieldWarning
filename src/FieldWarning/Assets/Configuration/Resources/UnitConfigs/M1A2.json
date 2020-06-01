@@ -73,7 +73,6 @@
             {
                 "Priority": 1,
                 "TurretRef": "MG",
-                "MountRef": "IFV",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -95,7 +94,6 @@
             {
                 "Priority": 2,
                 "TurretRef": "Autocannon",
-                "MountRef": "IFV",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,

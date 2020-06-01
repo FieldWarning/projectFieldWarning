@@ -69,7 +69,7 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.transform.rotation);
             GameObject.Instantiate(_shellArtPrefab, shell.transform);
 
-            shell.GetComponent<BulletBehavior>().Initialize(target.Position, _data.Velocity);
+            shell.GetComponent<ShellBehaviour>().Initialize(target.Position, _data.Velocity);
 
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
             if (_muzzleFlashEffect != null)

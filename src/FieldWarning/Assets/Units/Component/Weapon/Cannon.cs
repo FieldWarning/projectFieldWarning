@@ -76,7 +76,7 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.transform.rotation);
             GameObject.Instantiate(_shellArtPrefab, shell.transform);
 
-            shell.GetComponent<BulletBehavior>().Initialize(
+            shell.GetComponent<ShellBehaviour>().Initialize(
                     target.Position, _data.Velocity);
 
             if (isServer)

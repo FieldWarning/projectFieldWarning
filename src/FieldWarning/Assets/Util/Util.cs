@@ -65,5 +65,12 @@ namespace PFW
             y = tmp;
             return;
         }
+
+        public static float RoundTowardZero(float f)
+        {
+            return f > 0 ?
+                    (float)System.Math.Floor(f)
+                    : (float)System.Math.Ceiling(f);
+        }
     }
 }

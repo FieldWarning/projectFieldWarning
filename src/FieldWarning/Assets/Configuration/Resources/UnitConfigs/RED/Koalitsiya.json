@@ -29,7 +29,7 @@
     },
 
 	"Data": {
-			"MovementSpeed": 500,
+			"MovementSpeed": 80,
 			"ReverseSpeed": 15,
 			"AccelRate": 13,
 			"MaxRotationSpeed": 50,
@@ -73,7 +73,6 @@
             {
                 "Priority": 1,
                 "TurretRef": "MG",
-                "MountRef": "Turret",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -95,14 +94,13 @@
             {
                 "Priority": 2,
                 "TurretRef": "Cannon",
-                "MountRef": "Turret",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
                     "Damage": 4,
-                    "FireRange" : 200,
+                    "FireRange" : 30000,
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,
