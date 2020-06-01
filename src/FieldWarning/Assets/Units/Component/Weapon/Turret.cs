@@ -54,7 +54,10 @@ namespace PFW.Units.Component.Weapon
         private Transform _mount = null;  // purpose unclear, both
         private Transform _turret = null; // object being rotated, both
 
-        public float ArcHorizontal = 180, ArcUp = 40, ArcDown = 20, RotationRate = 40f;
+        private readonly float _arcHorizontal = 180;
+        private readonly float _arcUp = 40;
+        private readonly float _arcDown = 20;
+        private readonly float _rotationRate = 40f;
 
         private static GameObject _muzzleFlashResource;
         private static AudioClip _gunSoundResource;
@@ -63,10 +66,10 @@ namespace PFW.Units.Component.Weapon
 
         public Turret(GameObject unit, TurretConfig turretConfig)
         {
-            ArcHorizontal = turretConfig.ArcHorizontal;
-            ArcUp = turretConfig.ArcUp;
-            ArcDown = turretConfig.ArcDown;
-            RotationRate = turretConfig.RotationRate;
+            _arcHorizontal = turretConfig.ArcHorizontal;
+            _arcUp = turretConfig.ArcUp;
+            _arcDown = turretConfig.ArcDown;
+            _rotationRate = turretConfig.RotationRate;
             _priority = turretConfig.Priority;
             _turret = RecursiveFindChild(unit.transform, turretConfig.TurretRef);
             _mount = RecursiveFindChild(unit.transform, turretConfig.MountRef);
@@ -218,7 +221,7 @@ namespace PFW.Units.Component.Weapon
                 targetHorizontalAngle = targetHorizontalAngle > 0 ?
                         (float)Math.Floor(targetHorizontalAngle)
                         : (float)Math.Ceiling(targetHorizontalAngle);
-                if (Mathf.Abs(targetHorizontalAngle) > ArcHorizontal)
+                if (Mathf.Abs(targetHorizontalAngle) > _arcHorizontal)
                 {
                     targetHorizontalAngle = 0f;
                     aimed = false;
@@ -226,14 +229,14 @@ namespace PFW.Units.Component.Weapon
 
                 targetVerticalAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
                 targetVerticalAngle = (float)Math.Floor(targetVerticalAngle);
-                if (targetVerticalAngle < -ArcUp || targetVerticalAngle > ArcDown)
+                if (targetVerticalAngle < -_arcUp || targetVerticalAngle > _arcDown)
                 {
                     targetVerticalAngle = 0f;
                     aimed = false;
                 }
             }
 
-            float turn = Time.deltaTime * RotationRate;
+            float turn = Time.deltaTime * _rotationRate;
             float horizontalAngle = _turret.localEulerAngles.y;
             float verticalAngle = _turret.localEulerAngles.x;
             float deltaAngle;
@@ -277,7 +280,7 @@ namespace PFW.Units.Component.Weapon
 
         private void TurnTurretBackToDefaultPosition()
         {
-            float turn = Time.deltaTime * RotationRate;
+            float turn = Time.deltaTime * _rotationRate;
             Vector3 localEulerAngles = _turret.localEulerAngles;
 
             float targetHorizontalAngle = 0f;
