@@ -103,7 +103,6 @@ namespace PFW.Model.Armory.JsonContents
     public class TurretConfig
     {
         public string TurretRef;
-        public string MountRef;
         public int ArcHorizontal;
         public int ArcUp;
         public int ArcDown;

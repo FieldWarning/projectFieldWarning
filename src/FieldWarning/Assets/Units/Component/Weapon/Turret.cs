@@ -56,7 +56,6 @@ namespace PFW.Units.Component.Weapon
 
         private bool _isHowitzer = false; // purpose unclear, both
 
-        private Transform _mount = null;  // purpose unclear, both
         private Transform _turret = null; // object being rotated, both
 
         private readonly float _arcHorizontal = 180;
@@ -77,7 +76,6 @@ namespace PFW.Units.Component.Weapon
             _rotationRate = turretConfig.RotationRate;
             _priority = turretConfig.Priority;
             _turret = RecursiveFindChild(unit.transform, turretConfig.TurretRef);
-            _mount = RecursiveFindChild(unit.transform, turretConfig.MountRef);
             Children = new List<Turret>();
 
             if (turretConfig.Children.Count > 0)
@@ -206,7 +204,7 @@ namespace PFW.Units.Component.Weapon
                 Vector3 directionToTarget = _target.Position - _turret.position;
                 directionToTarget = new Vector3(directionToTarget.x, 0, directionToTarget.z);
                 Quaternion rotationToTarget = Quaternion.LookRotation(
-                        _mount.transform.InverseTransformDirection(directionToTarget));
+                        _turret.parent.transform.InverseTransformDirection(directionToTarget));
 
                 // Add any necessary cannon elevation to the rotation
                 rotationToTarget *= ShellBehaviour.CalculateBarrelAngle(

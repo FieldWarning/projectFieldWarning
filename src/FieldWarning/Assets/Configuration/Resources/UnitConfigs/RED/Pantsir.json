@@ -73,7 +73,6 @@
             {
                 "Priority": 1,
                 "TurretRef": "Gun",
-                "MountRef": "Turret",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -95,7 +94,6 @@
             {
                 "Priority": 2,
                 "TurretRef": "Missile",
-                "MountRef": "Turret",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,
