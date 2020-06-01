@@ -37,6 +37,9 @@ namespace PFW.Units.Component.Weapon
         private readonly VisualEffect _muzzleFlashEffect;
         private float _shotVolume;
 
+        private readonly GameObject _shellArtPrefab;
+        private readonly GameObject _shellPrefab;
+
 
         public Howitzer(
                 HowitzerConfig data,
@@ -52,19 +55,21 @@ namespace PFW.Units.Component.Weapon
             _shotSound = shotSound;
             _shotVolume = shotVolume;
             _barrelTip = barrelTip;
+            _shellPrefab = Resources.Load<GameObject>("Shell");
+            _shellArtPrefab = Resources.Load<GameObject>(_data.Shell);
         }
 
         private bool Shoot(TargetTuple target, bool isServer)
         {
             //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
 
-            GameObject shellPrefab = Resources.Load<GameObject>("shell");
             GameObject shell = GameObject.Instantiate(
-                    shellPrefab,
+                    _shellPrefab,
                     _barrelTip.position,
                     _barrelTip.transform.rotation);
+            GameObject.Instantiate(_shellArtPrefab, shell.transform);
 
-            shell.GetComponent<BulletBehavior>().Initialize(target.Position, 20f);
+            shell.GetComponent<BulletBehavior>().Initialize(target.Position, _data.Velocity);
 
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
             if (_muzzleFlashEffect != null)

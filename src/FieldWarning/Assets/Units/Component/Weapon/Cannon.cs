@@ -34,6 +34,9 @@ namespace PFW.Units.Component.Weapon
         private readonly float _shotVolume;
         private static System.Random _random;
 
+        private readonly GameObject _shellArtPrefab;
+        private readonly GameObject _shellPrefab;
+
         public Cannon(
                 CannonConfig data,
                 AudioSource source,
@@ -49,6 +52,8 @@ namespace PFW.Units.Component.Weapon
             _shotVolume = shotVolume;
             _barrelTip = barrelTip;
             _random = new System.Random(Environment.TickCount);
+            _shellPrefab = Resources.Load<GameObject>("Shell");
+            _shellArtPrefab = Resources.Load<GameObject>(_data.Shell);
         }
 
         private void FireWeapon(
@@ -65,14 +70,14 @@ namespace PFW.Units.Component.Weapon
                 _muzzleFlashEffect.Play();
             }
 
-            GameObject shellPrefab = Resources.Load<GameObject>("shell");
             GameObject shell = GameObject.Instantiate(
-                    shellPrefab,
+                    _shellPrefab,
                     _barrelTip.position,
                     _barrelTip.transform.rotation);
+            GameObject.Instantiate(_shellArtPrefab, shell.transform);
 
             shell.GetComponent<BulletBehavior>().Initialize(
-                    target.Position, 10f);
+                    target.Position, _data.Velocity);
 
             if (isServer)
             {

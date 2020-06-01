@@ -130,8 +130,8 @@ namespace PFW.Model.Armory.JsonContents
         public int SalvoLength;
         public float SalvoReload;
         public string MuzzleFlash;
-        public string Tracer;
-        public string Explosion;
+        public string Shell;
+        public int Velocity;  // meters per second
         public string Sound;
         public string BarrelTipRef;
     }
@@ -147,8 +147,8 @@ namespace PFW.Model.Armory.JsonContents
         public int SalvoLength;
         public float SalvoReload;
         public string MuzzleFlash;
-        public string Tracer;
-        public string Explosion;
+        public string Shell;
+        public int Velocity;  // meters per second
         public string Sound;
         public string BarrelTipRef;
     }

@@ -110,7 +110,7 @@ namespace PFW.Units
                 // instantiate explosion
                 GameObject explosion = Instantiate(
                         _explosionPrefab, transform.position, transform.rotation);
-                explosion.transform.localScale = transform.localScale;
+                explosion.transform.localScale = new Vector3(10, 10, 10);
                 Destroy(explosion, 3F);
             }
 

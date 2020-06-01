@@ -86,8 +86,8 @@
                     "SalvoLength": 10,
                     "SalvoReload": 8,
                     "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
-                    "Tracer": "Effects/Tracers/shot_emitter",
-                    "Explosion": "TODO",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "aps"
                 }
@@ -108,8 +108,8 @@
                     "SalvoLength": 1,
                     "SalvoReload": 8,
                     "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
-                    "Tracer": "Effects/Tracers/shot_emitter",
-                    "Explosion": "TODO",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "cannon"
                 }
