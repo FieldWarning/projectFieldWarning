@@ -36,7 +36,12 @@ namespace PFW.Units.Component.Weapon
         // targetingStrategy
         private IWeapon _weapon; // weapon turret
         private float _fireRange; // weapon turret, in unity units
-        private float _shellVelocity;
+
+        // The default here has significance because only the
+        //      last turrets know the actual weapon's velocity. 
+        // TODO Give toplevel turrets the ability to know 
+        //      the velocity of the most important gun in their hierarchy.
+        private float _shellVelocity = 1000 * Constants.MAP_SCALE;
 
         /// <summary>
         /// The explicit target is one set by player input,
@@ -204,12 +209,8 @@ namespace PFW.Units.Component.Weapon
                         _mount.transform.InverseTransformDirection(directionToTarget));
 
                 // Add any necessary cannon elevation to the rotation
-                // TODO somehow give toplevel turrets the ability to know 
-                //      the velocity of the most important gun?
-                float shellVelocity = _shellVelocity == 0 ?
-                        1000 * Constants.MAP_SCALE : _shellVelocity;
                 rotationToTarget *= ShellBehaviour.CalculateBarrelAngle(
-                        shellVelocity, _turret.transform.position, _target.Position, out _);
+                        _shellVelocity, _turret.transform.position, _target.Position, out _);
 
                 targetHorizontalAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
 
@@ -218,9 +219,7 @@ namespace PFW.Units.Component.Weapon
                 // away from the target due to float rounding errors (parent rounds
                 // one way and decides he's done, child rounds the other way).
                 // So round away the last degree to avoid this case:
-                targetHorizontalAngle = targetHorizontalAngle > 0 ?
-                        (float)Math.Floor(targetHorizontalAngle)
-                        : (float)Math.Ceiling(targetHorizontalAngle);
+                targetHorizontalAngle = Util.RoundTowardZero(targetHorizontalAngle);
                 if (Mathf.Abs(targetHorizontalAngle) > _arcHorizontal)
                 {
                     targetHorizontalAngle = 0f;
