@@ -69,6 +69,7 @@ namespace PFW.Units.Component.Weapon
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
             if (_muzzleFlashEffect != null)
             {
+                _muzzleFlashEffect.transform.LookAt(target.Position);
                 _muzzleFlashEffect.Play();
             }
 

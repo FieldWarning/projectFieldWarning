@@ -61,6 +61,7 @@ namespace PFW.Units.Component.Weapon
 
             if (_muzzleFlashEffect != null)
             {
+                _muzzleFlashEffect.transform.LookAt(target.Position);
                 _muzzleFlashEffect.Play();
             }
 
@@ -71,7 +72,7 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.transform.rotation);
 
             shell.GetComponent<BulletBehavior>().SetUp(
-                    target.Position, 20, 20f);
+                    target.Position, 20, 10f);
 
             if (isServer)
             {

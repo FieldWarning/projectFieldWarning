@@ -25,15 +25,16 @@ namespace PFW.Units
         [SerializeField]
         private GameObject _trailEmitter = null;
 
-        private Rigidbody _rigid;
-
         private float _launchAngle;
-        private float GRAVITY = 9.8F * Constants.MAP_SCALE;
+        private readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
         private float _forwardSpeed = 0F;
         private float _verticalSpeed = 0F;
         private Vector3 _targetCoordinates;
-        
-        // called by the weapon behaviour to set stats of the shell
+
+        private bool _dead = false;
+        private float _prevDistanceToTarget = 100000F;
+
+        // Called by the weapon class to set the stats of the shell
         public void SetUp(Vector3 target, float launchAngle, float velocity)
         {
             _targetCoordinates = target;
@@ -44,10 +45,6 @@ namespace PFW.Units
         private void Start()
         {
             Bullet = new BulletData();
-            _rigid = GetComponent<Rigidbody>();
-
-            _rigid.useGravity = false;
-            _rigid.isKinematic = true; // means that rigidbody is moved by script and does not affected by physics engine
 
             Launch();
         }
@@ -63,31 +60,13 @@ namespace PFW.Units
             // formula
             float distanceToTarget = Vector3.Distance(projectileXZPos, targetXZPos);
 
-            // float tanAlpha = Mathf.Tan(_launchAngle * Mathf.Deg2Rad);
-            // float heading = _targetCoordinates.y - transform.position.y;
+            // TODO adjust based on height difference between start and target points
+            float distanceToHighestPoint = distanceToTarget / 2f; 
+            float timeToHighestPoint = distanceToHighestPoint / _forwardSpeed;
+            float gravityEffectToHighestPoint = GRAVITY * timeToHighestPoint;
 
-            // calculate the local space components of the velocity
-            // required to land the projectile on the target object
-            //float Vz = Mathf.Sqrt(G * R * R / (2.0f * (H - R * tanAlpha)));
-
-            float DistanceToHighestPoint = distanceToTarget / 2;
-            float TimeToHighestPoint = DistanceToHighestPoint / _forwardSpeed;
-            float GravityEffectToHighestPoint = GRAVITY * TimeToHighestPoint;
-
-            float verticalSpeed = GravityEffectToHighestPoint;
-
-            _verticalSpeed = verticalSpeed;
-
-            //Debug.LogFormat("BulletBehavior.Launch: ForwardSpeed={0}, VerticalSpeed={1}, LaunchAngle={2}, R={3}, tanALpha={4}, H={5}",
-            //    ForwardSpeed, VerticalSpeed, LaunchAngle, R, tanAlpha, heading);
-
-            // create the velocity vector in local space and get it in global space
-
-            //BulletBehavior.Launch: ForwardSpeed=NaN, VerticalSpeed=NaN, LaunchAngle=60, R=15.60759, tanALpha=1.732051, H=-0.8795097
+            _verticalSpeed = gravityEffectToHighestPoint;
         }
-
-        private bool _dead = false;
-        private float _prevDistanceToTarget = 100000F;
 
         private void Update()
         {
@@ -96,9 +75,12 @@ namespace PFW.Units
                 return;
             }
 
+            Vector3 worldForward = transform.TransformDirection(Vector3.forward);
+            worldForward = new Vector3(worldForward.x, 0, worldForward.z);
             transform.Translate(
-                    _forwardSpeed * Vector3.forward * Time.deltaTime 
-                    + _verticalSpeed * Vector3.up * Time.deltaTime);
+                    _forwardSpeed * worldForward * Time.deltaTime 
+                    + _verticalSpeed * Vector3.up * Time.deltaTime,
+                    Space.World);
 
             _verticalSpeed -= GRAVITY * Time.deltaTime;
 
@@ -107,6 +89,7 @@ namespace PFW.Units
             float distanceToTarget = Vector3.Distance(transform.position, _targetCoordinates);
             if (distanceToTarget > _prevDistanceToTarget)
             {
+                transform.position = _targetCoordinates;
                 Explode();
             }
             _prevDistanceToTarget = distanceToTarget;
@@ -124,7 +107,8 @@ namespace PFW.Units
             {
                 // instantiate explosion
                 GameObject explosion = Instantiate(
-                        _explosionPrefab, transform);
+                        _explosionPrefab, transform.position, transform.rotation);
+                explosion.transform.localScale = transform.localScale;
                 Destroy(explosion, 3F);
             }
 
@@ -134,15 +118,7 @@ namespace PFW.Units
                 //emission.enabled = false;
             }
 
-            Destroy(gameObject, 10F);
+            Destroy(gameObject);
         }
-
-        //public void setBullet(Vector3 StartPosition, Vector3 EndPosition, float Vellocity = 30, int arc = 60)
-        //{
-        //    bullet._startPosition = StartPosition;
-        //    bullet._endPosition = EndPosition;
-        //    bullet._vellocity = Vellocity;
-        //    bullet._arc = 60;
-        //}
     }
 }
