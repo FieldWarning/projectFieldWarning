@@ -104,9 +104,11 @@ namespace PFW.Units
 
             Vector3 worldForward = transform.TransformDirection(Vector3.forward);
             worldForward = new Vector3(worldForward.x, 0, worldForward.z);
+            Vector3 translation = _forwardSpeed * worldForward * Time.deltaTime
+                                  + _verticalSpeed * Vector3.up * Time.deltaTime;
+            transform.LookAt(transform.position + translation);
             transform.Translate(
-                    _forwardSpeed * worldForward * Time.deltaTime 
-                    + _verticalSpeed * Vector3.up * Time.deltaTime,
+                    translation,
                     Space.World);
 
             _verticalSpeed -= GRAVITY * Time.deltaTime;
@@ -120,6 +122,8 @@ namespace PFW.Units
                 Explode();
             }
             _prevDistanceToTarget = distanceToTarget;
+
+            //transform.rotation.SetLookRotation(translation);
         }
 
         private void OnTriggerEnter(Collider other)
