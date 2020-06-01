@@ -9,6 +9,24 @@
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "MinimapIcon": "MinimapIcon/Square",
+    "MinimapIconSize": 10,
+    
+    "LeavesExplodingWreck": true,
+    "VoiceLineFolders": {
+        "Movement" : [
+            "Voices/UK/CommonMovement",
+            "Voices/UK/TankMovement"
+        ],
+        "Aggressive" : [
+            "Voices/UK/CommonAggressive",
+            "Voices/UK/TankAggressive"
+        ],
+        "Selection" : [
+            "Voices/UK/CommonSelection",
+            "Voices/UK/TankSelection"
+        ]
+    },
 
     "Data": {
         "MovementSpeed": 40,
@@ -66,7 +84,12 @@
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
-                    "SalvoReload": 8
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "MG"
                 }
             },
             {
@@ -83,7 +106,12 @@
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,
-                    "SalvoReload": 8
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Autocannon"
                 }
             }
         ]

@@ -13,6 +13,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.VFX;
 using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Units.Component.Weapon
@@ -20,47 +21,63 @@ namespace PFW.Units.Component.Weapon
     /// <summary>
     /// A non-howitzer cannon.
     /// </summary>
-    public class Cannon : IWeapon
+    public sealed class Cannon : IWeapon
     {
         private CannonConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
-        private AudioSource _source { get; }
+        private AudioSource _audioSource { get; }
 
-        // TODO Should aim to make actual objects fire and not effects:
-        private readonly ParticleSystem _shotEffect;
+        private Transform _barrelTip;
+
         private readonly AudioClip _shotSound;
-        private readonly ParticleSystem _muzzleFlashEffect;
+        private readonly VisualEffect _muzzleFlashEffect;
         private readonly float _shotVolume;
         private static System.Random _random;
+
+        private readonly GameObject _shellArtPrefab;
+        private readonly GameObject _shellPrefab;
 
         public Cannon(
                 CannonConfig data,
                 AudioSource source,
-                ParticleSystem shotEffect,
                 AudioClip shotSound,
-                ParticleSystem muzzleFlashEffect,
+                VisualEffect muzzleFlashEffect,
+                Transform barrelTip,
                 float shotVolume = 1.0f)
         {
             _data = data;
-            _source = source;
-            _shotEffect = shotEffect;
+            _audioSource = source;
             _shotSound = shotSound;
             _muzzleFlashEffect = muzzleFlashEffect;
             _shotVolume = shotVolume;
+            _barrelTip = barrelTip;
             _random = new System.Random(Environment.TickCount);
+            _shellPrefab = Resources.Load<GameObject>("Shell");
+            _shellArtPrefab = Resources.Load<GameObject>(_data.Shell);
         }
 
-        private void FireWeapon(TargetTuple target, Vector3 displacement, bool isServer)
+        private void FireWeapon(
+                TargetTuple target,
+                Vector3 displacement,
+                bool isServer)
         {
             // sound
-            _source.PlayOneShot(_shotSound, _shotVolume);
-            // particle
-            _shotEffect.Play();
+            _audioSource.PlayOneShot(_shotSound, _shotVolume);
 
             if (_muzzleFlashEffect != null)
             {
+                _muzzleFlashEffect.transform.LookAt(target.Position);
                 _muzzleFlashEffect.Play();
             }
+
+            GameObject shell = GameObject.Instantiate(
+                    _shellPrefab,
+                    _barrelTip.position,
+                    _barrelTip.transform.rotation);
+            GameObject.Instantiate(_shellArtPrefab, shell.transform);
+
+            shell.GetComponent<BulletBehavior>().Initialize(
+                    target.Position, _data.Velocity);
 
             if (isServer)
             {
@@ -81,13 +98,17 @@ namespace PFW.Units.Component.Weapon
             }
         }
 
+        public void HandleUpdate()
+        {
+            if (_reloadTimeLeft > 0)
+                _reloadTimeLeft -= Time.deltaTime;
+        }
+
         public bool TryShoot(
                 TargetTuple target, 
-                float deltaTime, 
                 Vector3 displacement, 
                 bool isServer)
         {
-            _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
                 return false;
 

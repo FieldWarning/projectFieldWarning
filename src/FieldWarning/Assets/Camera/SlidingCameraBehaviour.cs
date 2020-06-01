@@ -190,12 +190,12 @@ namespace PFW
 
         public void LookAt(Vector3 target)
         {
-            var toTarget = target - _targetPosition;
-            var rotFromX =
+            Vector3 toTarget = target - _targetPosition;
+            float rotFromX =
                     Vector3.Angle(
                             Vector3.ProjectOnPlane(transform.forward, new Vector3(1, 0, 0)),
                             Vector3.ProjectOnPlane(toTarget, new Vector3(1, 0, 0)));
-            var rotFromY =
+            float rotFromY =
                     Vector3.Angle(
                             Vector3.ProjectOnPlane(transform.forward, new Vector3(0, 1, 0)),
                             Vector3.ProjectOnPlane(toTarget, new Vector3(0, 1, 0)));
@@ -217,23 +217,24 @@ namespace PFW
 
         private void LateUpdate()
         {
-            var dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
-            var dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
+            float dx = _translateX < GetScaledPanSpeed() ? _translateX : GetScaledPanSpeed();
+            float dz = _translateZ < GetScaledPanSpeed() ? _translateZ : GetScaledPanSpeed();
             _targetPosition += transform.TransformDirection(dx * Vector3.right);
 
             // If we move forward in local space, camera will also change altitude.
             // To properly move forward, we have to rotate the forward vector to be
             // horizontal in world space while keeping the magnitude:
-            var worldForward = transform.TransformDirection(Vector3.forward);
-            var angle = Quaternion.FromToRotation(worldForward, new Vector3(worldForward.x, 0, worldForward.z));
+            Vector3 worldForward = transform.TransformDirection(Vector3.forward);
+            Quaternion angle = Quaternion.FromToRotation(
+                    worldForward, new Vector3(worldForward.x, 0, worldForward.z));
             _targetPosition += angle * worldForward * dz;
 
             _translateX -= dx;
             _translateZ -= dz;
 
             // Apply zoom movement:
-            var dzoom = _leftoverZoom < GetScaledZoomSpeed() ? _leftoverZoom : GetScaledZoomSpeed();
-            var oldAltitude = _targetPosition.y;
+            float dzoom = _leftoverZoom < GetScaledZoomSpeed() ? _leftoverZoom : GetScaledZoomSpeed();
+            float oldAltitude = _targetPosition.y;
 
             // Zoom in:
             if (dzoom > 0)

@@ -12,9 +12,11 @@
  */
 
 using UnityEngine;
+using UnityEngine.VFX;
 using Mirror;
 
 using PFW.Units.Component.Data;
+using PFW.Units.Component.Death;
 using PFW.Units.Component.Weapon;
 using PFW.Units.Component.Vision;
 using PFW.Units.Component.Health;
@@ -79,15 +81,24 @@ namespace PFW.Units
 
         private TargetingOverlay _targetingOverlay;
 
-        public void Initialize(PlatoonBehaviour platoon)
+        private GameObject _art;
+        private WreckComponent _deathEffect = null;
+
+        public void Initialize(
+                PlatoonBehaviour platoon, 
+                GameObject art,
+                GameObject deathEffect, 
+                VoiceComponent voice)
         {
             TargetTuple = new TargetTuple(this);
             Platoon = platoon;
 
+            _art = art;
+            _deathEffect = deathEffect?.GetComponent<WreckComponent>();
+
             _unitData = gameObject.GetComponent<DataComponent>();
 
-            _voiceComponent      = gameObject.transform.Find("VoiceComponent")
-                                               .GetComponent<VoiceComponent>();
+            _voiceComponent      = voice;
             _movementComponent   = gameObject.GetComponent<MovementComponent>();
             _healthComponent     = gameObject.GetComponent<HealthComponent>();
             _armorComponent      = gameObject.GetComponent<ArmorComponent>();
@@ -102,6 +113,7 @@ namespace PFW.Units
                     Resources.Load<GameObject>("SelectionCircle"), Transform);
 
             _movementComponent.Initialize();
+
             _healthComponent.Initialize(this, _unitData);
             VisionComponent.Initialize(this, _unitData);
             _armorComponent.Initialize(_healthComponent, _unitData, _movementComponent);
@@ -148,7 +160,7 @@ namespace PFW.Units
         public void PlayMoveCommandVoiceline() =>
                 _voiceComponent.PlayMoveCommandVoiceline();
         public void PlaySelectionVoiceline() =>
-                _voiceComponent.PlaySelectionVoiceline(true);
+                _voiceComponent.PlaySelectionVoiceline();
         #endregion
 
         public float GetHealth() => _healthComponent.Health;
@@ -183,6 +195,12 @@ namespace PFW.Units
         
         public override void OnNetworkDestroy()
         {
+            // Model lingers as a wreck for 30s
+            if (_deathEffect != null)
+            {
+                _deathEffect.Activate(_art);
+            }
+
             TargetTuple.Reset();
                 
             MatchSession.Current.RegisterUnitDeath(this);

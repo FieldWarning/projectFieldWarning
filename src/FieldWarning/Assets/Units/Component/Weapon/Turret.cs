@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 using PFW.Model.Armory.JsonContents;
 using static PFW.Util;
@@ -40,13 +41,12 @@ namespace PFW.Units.Component.Weapon
         /// The explicit target is one set by player input,
         /// while the real target can either be that or something
         /// picked automatically (for example, something that is in range
-        /// while the explicit target is not).surely y
+        /// while the explicit target is not).
         /// </summary>
         private TargetTuple _explicitTarget;  // weapon turret, sync
         private TargetTuple _target;  // weapon turret, sync
         private int _priority;  // weapon turret, higher is better
         public List<Turret> Children; // parent turret, sync
-        private const float SHOT_VOLUME = 1.0f;
 
         private bool _isHowitzer = false; // purpose unclear, both
 
@@ -55,7 +55,6 @@ namespace PFW.Units.Component.Weapon
 
         public float ArcHorizontal = 180, ArcUp = 40, ArcDown = 20, RotationRate = 40f;
 
-        private static GameObject _shotEmitterResource;
         private static GameObject _muzzleFlashResource;
         private static AudioClip _gunSoundResource;
 
@@ -81,26 +80,6 @@ namespace PFW.Units.Component.Weapon
             }
             else
             {
-                // Hack: The old tank prefab has a particle system for shooting 
-                // that we want to remove,
-                // so instead of adding it to the models or having it in the config 
-                // we hardcode it in here.
-                // TODO might have to use a different object for the old arty effect.
-                if (!_shotEmitterResource)
-                {
-                    _shotEmitterResource = Resources.Load<GameObject>("shot_emitter");
-                }
-                if (!_muzzleFlashResource)
-                {
-                    _muzzleFlashResource = Resources.Load<GameObject>("muzzle_flash");
-                }
-                if (!_gunSoundResource)
-                {
-                    _gunSoundResource = Resources.Load<AudioClip>("Tank_gun");
-                }
-
-                GameObject shotGO = GameObject.Instantiate(
-                        _shotEmitterResource, _turret);
                 AudioSource shotAudioSource = _turret.gameObject.AddComponent<AudioSource>();
 
                 // The Unit json parser creates objects even when there are none,
@@ -108,28 +87,58 @@ namespace PFW.Units.Component.Weapon
                 if (turretConfig.Howitzer.FireRange != 0)
                 {
                     _isHowitzer = true;
+
+                    Transform barrelTip = 
+                            turretConfig.Cannon.BarrelTipRef == "" ? 
+                                    _turret :
+                                    RecursiveFindChild(
+                                            _turret.parent, 
+                                            turretConfig.Howitzer.BarrelTipRef);
+                    if (barrelTip == null)
+                    {
+                        barrelTip = _turret;
+                    }
+
+                    _muzzleFlashResource = Resources.Load<GameObject>(
+                            turretConfig.Howitzer.MuzzleFlash);
+                    _gunSoundResource = Resources.Load<AudioClip>(
+                            turretConfig.Howitzer.Sound);
+                    GameObject muzzleFlashGO = GameObject.Instantiate(
+                            _muzzleFlashResource, barrelTip);
+
                     _weapon = new Howitzer(
                             turretConfig.Howitzer,
                             shotAudioSource,
-                            shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
-                            _turret,
-                            SHOT_VOLUME);
+                            muzzleFlashGO.GetComponent<VisualEffect>(),
+                            barrelTip);
                     _fireRange =
                             turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
                 }
                 else if (turretConfig.Cannon.FireRange != 0)
                 {
+                    Transform barrelTip =
+                            turretConfig.Cannon.BarrelTipRef == "" ?
+                                    _turret :
+                                    RecursiveFindChild(
+                                            _turret.parent,
+                                            turretConfig.Cannon.BarrelTipRef);
+                    if (barrelTip == null)
+                    {
+                        barrelTip = _turret;
+                    }
+
+                    _muzzleFlashResource = Resources.Load<GameObject>(turretConfig.Cannon.MuzzleFlash);
+                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Cannon.Sound);
                     GameObject muzzleFlashGO = GameObject.Instantiate(
-                            _muzzleFlashResource, _turret);
+                            _muzzleFlashResource, barrelTip);
 
                     _weapon = new Cannon(
                             turretConfig.Cannon,
                             shotAudioSource,
-                            shotGO.GetComponent<ParticleSystem>(),
                             _gunSoundResource,
-                            muzzleFlashGO.GetComponent<ParticleSystem>(),
-                            SHOT_VOLUME);
+                            muzzleFlashGO.GetComponent<VisualEffect>(),
+                            barrelTip);
                     _fireRange =
                             turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
                 }
@@ -144,8 +153,6 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Shoot at the current target if in range.
         /// </summary>
-        /// <param name="distanceToTarget"></param>
-        /// <param name="isServer"></param>
         /// <returns>True if a shot was produced.</returns>
         public bool MaybeShoot(float distanceToTarget, bool isServer)
         {
@@ -155,7 +162,7 @@ namespace PFW.Units.Component.Weapon
             {
                 Vector3 vectorToTarget = _target.Position - _turret.transform.position;
                 shotFired = _weapon.TryShoot(
-                    _target, Time.deltaTime, vectorToTarget, isServer);
+                    _target, vectorToTarget, isServer);
             }
 
             foreach (Turret turret in Children)
@@ -168,6 +175,8 @@ namespace PFW.Units.Component.Weapon
 
         public void HandleUpdate()
         {
+            _weapon?.HandleUpdate();
+
             if (_target == null || !_target.Exists)
             {
                 TurnTurretBackToDefaultPosition();
@@ -192,6 +201,15 @@ namespace PFW.Units.Component.Weapon
                         _mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetHorizontalAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
+
+                // If this turret has no flexibility (ArcHorizontal = 0) and is fully
+                // rotated by a parent turret, it can get stuck 0.0000000001 degrees
+                // away from the target due to float rounding errors (parent rounds
+                // one way and decides he's done, child rounds the other way).
+                // So round away the last degree to avoid this case:
+                targetHorizontalAngle = targetHorizontalAngle > 0 ?
+                        (float)Math.Floor(targetHorizontalAngle)
+                        : (float)Math.Ceiling(targetHorizontalAngle);
                 if (Mathf.Abs(targetHorizontalAngle) > ArcHorizontal)
                 {
                     targetHorizontalAngle = 0f;
@@ -199,6 +217,7 @@ namespace PFW.Units.Component.Weapon
                 }
 
                 targetVerticalAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
+                targetVerticalAngle = (float)Math.Floor(targetVerticalAngle);
                 if (targetVerticalAngle < -ArcUp || targetVerticalAngle > ArcDown)
                 {
                     targetVerticalAngle = 0f;
@@ -294,8 +313,6 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Sets a max-priority target for this turret.
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
         public void SetExplicitTarget(TargetTuple target)
         {
             _explicitTarget = target;
@@ -312,9 +329,6 @@ namespace PFW.Units.Component.Weapon
         /// 
         /// TODO In the future we will need to also return -1
         /// for turrets that can't shoot the target at all.
-        /// 
-        /// <param name="target"></param>
-        /// <returns></returns>
         public float MaxRange(TargetTuple target)
         { 
             float maxRange = _fireRange;

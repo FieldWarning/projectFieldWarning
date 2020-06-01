@@ -33,19 +33,26 @@ namespace PFW.UI.Prototype
         /// </summary>
         public void MakeUnit(Unit armoryUnit, GameObject unit, PlatoonBehaviour platoon)
         {
-            MakeUnitCommon(unit, armoryUnit);
+            GameObject art = MakeUnitCommon(unit, armoryUnit);
+
+            GameObject deathEffect = null;
+
+            if (armoryUnit.LeavesExplodingWreck)
+            {
+                deathEffect = GameObject.Instantiate(
+                        Resources.Load<GameObject>("Wreck"), art.transform);
+            }
 
             // TODO: Load different voice type depending on Owner country
-            GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent_US");
+            GameObject voicePrefab = Resources.Load<GameObject>("VoiceComponent");
             GameObject voiceGo = Object.Instantiate(voicePrefab, unit.transform);
             voiceGo.name = "VoiceComponent";
-
-            Color minimapColor = platoon.Owner.Team.ColorScheme.BaseColor;
-            AddMinimapIcon(unit, minimapColor);
+            VoiceComponent voice = voiceGo.GetComponent<VoiceComponent>();
+            voice.Initialize(armoryUnit.VoiceLines);
 
             UnitDispatcher unitDispatcher =
                     unit.GetComponent<UnitDispatcher>();
-            unitDispatcher.Initialize(platoon);
+            unitDispatcher.Initialize(platoon, art, deathEffect, voice);
             unitDispatcher.enabled = true;
         }
 
@@ -64,28 +71,17 @@ namespace PFW.UI.Prototype
             unit.transform.position = 100 * Vector3.down;
         }
 
-        private void AddMinimapIcon(GameObject unit, Color minimapColor)
-        {
-            GameObject minimapIcon = Object.Instantiate(
-                    Resources.Load<GameObject>("MiniMapIcon"));
-            minimapIcon.GetComponent<SpriteRenderer>().color = minimapColor;
-            minimapIcon.transform.parent = unit.transform;
-            // The icon is placed slightly above ground to prevent flickering
-            minimapIcon.transform.localPosition = new Vector3(0,0.01f,0);
-        }
-
         /// <summary>
         ///     Unit initialization shared by both real units and their ghosts.
         /// </summary>
-        /// <param name="freshUnit"></param>
-        /// <param name="config"></param>
-        private static void MakeUnitCommon(GameObject freshUnit, Unit armoryUnit)
+        private static GameObject MakeUnitCommon(GameObject freshUnit, Unit armoryUnit)
         {
             freshUnit.name = armoryUnit.Name;
             freshUnit.SetActive(false);
 
             GameObject art = Object.Instantiate(armoryUnit.ArtPrefab);
             art.transform.parent = freshUnit.transform;
+            art.name = "Mesh";
 
             DataComponent.CreateDataComponent(
                     freshUnit, armoryUnit.Config, armoryUnit.MobilityData);
@@ -96,6 +92,8 @@ namespace PFW.UI.Prototype
 
             TurretSystem turretSystem = freshUnit.GetComponent<TurretSystem>();
             turretSystem.Initialize(freshUnit, armoryUnit);
+
+            return art;
         }
     }
 }

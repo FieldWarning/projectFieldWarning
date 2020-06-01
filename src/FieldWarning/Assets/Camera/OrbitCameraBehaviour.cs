@@ -136,9 +136,10 @@ namespace PFW
             }
         }
 
-        // this is needed to reset our zoom level after we are enabled again. We dont want to suddenly jump
+        // this is needed to reset our zoom level after we are enabled again. 
+        // We dont want to suddenly jump
         // back to the zoom before we were disabled.
-        void OnEnable()
+        private void OnEnable()
         {
             _camOffset = transform.position;
             if (_target)

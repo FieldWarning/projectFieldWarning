@@ -96,7 +96,9 @@ namespace PFW.Units.Component.Weapon
                 if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted)
                 {
                     Logger.LogTargeting(
-                        "Dropping a target because it is no longer spotted.", gameObject);
+                            "Dropping a target because it is no longer spotted.", 
+                            gameObject,
+                            LogLevel.DEBUG);
                     _target = null;
                 }
             }
@@ -118,7 +120,7 @@ namespace PFW.Units.Component.Weapon
                     _explicitTarget = null;
                     foreach (Turret turret in Children)
                     {
-                        turret.SetExplicitTarget(_explicitTarget);
+                        turret.SetExplicitTarget(null);
                     }
                 }
             }
@@ -134,12 +136,14 @@ namespace PFW.Units.Component.Weapon
             Unit.SetDestination(Unit.transform.position);
 
             Logger.LogTargeting(
-                "Stopped moving because a targeted enemy unit is in range.", gameObject);
+                    "Stopped moving because a targeted enemy unit is in range.", 
+                    gameObject,
+                    LogLevel.DEBUG);
         }
 
         private void FindAndTargetClosestEnemy()
         {
-            Logger.LogTargeting("Scanning for a target.", gameObject);
+            Logger.LogTargeting("Scanning for a target.", gameObject, LogLevel.DEBUG);
 
             // TODO utilize precomputed distance lists from session
             // Maybe add Sphere shaped collider with the radius of the range and then 
@@ -156,7 +160,10 @@ namespace PFW.Units.Component.Weapon
                 float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
                 if (distance < MaxRange(enemy.TargetTuple))
                 {
-                    Logger.LogTargeting("Target found and selected after scanning.", gameObject);
+                    Logger.LogTargeting(
+                            "Target found and selected after scanning.", 
+                            gameObject, 
+                            LogLevel.DEBUG);
                     SetTarget(enemy.TargetTuple, false);
                     break;
                 }
@@ -177,28 +184,30 @@ namespace PFW.Units.Component.Weapon
             if (distance > _fireRange)
             {
                 _target = null;
-                Logger.LogTargeting("Dropping a target because it is out of range.", gameObject);
+                Logger.LogTargeting(
+                        "Dropping a target because it is out of range.", 
+                        gameObject,
+                        LogLevel.DEBUG);
             }
         }
 
         /// <summary>
         /// Set a ground position as the shooting target.
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="autoApproach"></param>
         public void TargetPosition(Vector3 position, bool autoApproach = true)
         {
             SetTarget(new TargetTuple(position), autoApproach);
         }
 
         /// <summary>
-        /// 
+        /// Set a max-priority target for all child turrets.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="autoApproach"></param>
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
-            Logger.LogTargeting("Received target from the outside.", gameObject);
+            Logger.LogTargeting(
+                    "Received target from the outside.", 
+                    gameObject,
+                    LogLevel.DEBUG);
             float distance = Vector3.Distance(Unit.transform.position, target.Position);
 
             _explicitTarget = target;

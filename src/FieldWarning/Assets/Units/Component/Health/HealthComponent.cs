@@ -10,7 +10,7 @@
 * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
 * the License for the specific language governing permissions and limitations under the License.
 */
-using UnityEngine;
+
 using Mirror;
 
 using PFW.Units.Component.Data;
@@ -24,7 +24,9 @@ namespace PFW.Units.Component.Health
 
         private UnitDispatcher _dispatcher;
 
-        public void Initialize(UnitDispatcher dispatcher, DataComponent data)
+        public void Initialize(
+                UnitDispatcher dispatcher, 
+                DataComponent data)
         {
             _dispatcher = dispatcher;
             Health = data.MaxHealth;
@@ -34,9 +36,13 @@ namespace PFW.Units.Component.Health
         public void UpdateHealth(float newHealth)
         {
             if (newHealth <= 0)
+            {
                 _dispatcher.Destroy();
+            }
             else
+            {
                 Health = newHealth;
+            }
         }
     }
 }

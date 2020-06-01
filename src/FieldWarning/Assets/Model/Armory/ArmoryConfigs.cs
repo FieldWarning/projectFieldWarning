@@ -37,11 +37,23 @@ namespace PFW.Model.Armory.JsonContents
         public string ArtPrefabPath;
         public string ArmoryImage;
         public string ArmoryBackgroundImage;
+        public string MinimapIcon;
+        public float MinimapIconSize;
+        public bool LeavesExplodingWreck;
+        public VoiceLineConfig VoiceLineFolders;
         public UnitDataConfig Data;
         public ArmorConfig Armor;
         public MobilityConfig Mobility;
         public List<TurretConfig> Turrets;
         public ReconConfig Recon;
+    }
+
+    [Serializable]
+    public class VoiceLineConfig
+    {
+        public List<string> Movement;
+        public List<string> Agressive;
+        public List<string> Selection;
     }
 
     [Serializable]
@@ -117,6 +129,11 @@ namespace PFW.Model.Armory.JsonContents
         public float ShotReload;
         public int SalvoLength;
         public float SalvoReload;
+        public string MuzzleFlash;
+        public string Shell;
+        public int Velocity;  // meters per second
+        public string Sound;
+        public string BarrelTipRef;
     }
 
     [Serializable]
@@ -129,5 +146,10 @@ namespace PFW.Model.Armory.JsonContents
         public float ShotReload;
         public int SalvoLength;
         public float SalvoReload;
+        public string MuzzleFlash;
+        public string Shell;
+        public int Velocity;  // meters per second
+        public string Sound;
+        public string BarrelTipRef;
     }
 }

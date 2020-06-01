@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -118,14 +118,26 @@ public static class Extensions
     }
     public static void ApplyShaderRecursively(this GameObject obj, Shader s)
     {
-        foreach (var renderer in obj.GetComponents<Renderer>()) {
-            var mat = new Material(renderer.material);
+        foreach (Renderer renderer in obj.GetComponents<Renderer>()) {
+            Material mat = new Material(renderer.material);
             mat.shader = s;
             mat.color -= Color.black / 2;
             renderer.material = mat;
         }
-        for (var i = 0; i < obj.transform.childCount; i++) {
+        for (int i = 0; i < obj.transform.childCount; i++) {
             obj.transform.GetChild(i).gameObject.ApplyShaderRecursively(s);
+        }
+    }
+    public static void BlackenRecursively(this GameObject obj)
+    {
+        foreach (Renderer renderer in obj.GetComponents<Renderer>())
+        {
+            Material mat = Resources.Load<Material>("Wreck");
+            renderer.material = mat;
+        }
+        for (int i = 0; i < obj.transform.childCount; i++)
+        {
+            obj.transform.GetChild(i).gameObject.BlackenRecursively();
         }
     }
     public static float unwrapDegree(this float f)

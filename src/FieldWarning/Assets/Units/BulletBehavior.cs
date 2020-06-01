@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -11,136 +11,116 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using AssemblyCSharp;
 using UnityEngine;
 
-public class BulletBehavior : MonoBehaviour
+namespace PFW.Units
 {
-    public Bullet bullet; //contains attributes for the shell
-    [Header("Explosion you want to appear when shell hits the target or ground")]
-    public GameObject ExplosionPrefab;
-    [Header("Trail emitter of this shell prefab - to be disabled on hit")]
-    public ParticleSystem TrailEmitter;
-
-    private Rigidbody rigid;
-
-    private float LaunchAngle;
-    private Transform StartingTransform;
-    private Vector3 TargetCoordinates;
-    //class used in the weapon behaviour to set stats of the shell
-    public void SetUp(Transform position, Vector3 target, float launchAngel)
+    public class BulletBehavior : MonoBehaviour
     {
-        StartingTransform = position;
-        TargetCoordinates = target;
-        LaunchAngle = launchAngel;
-    }
+        public BulletData Bullet; // contains attributes for the shell
+        [Header("Explosion you want to appear when shell hits the target or ground")]
+        [SerializeField]
+        private GameObject _explosionPrefab = null;
+        [Header("Trail emitter of this shell prefab - to be disabled on hit")]
+        [SerializeField]
+        private GameObject _trailEmitter = null;
 
-    void Start()
-    {
-        bullet = new Bullet();
-        rigid = GetComponent<Rigidbody>();
+        private readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
+        private float _forwardSpeed = 0F;
+        private float _verticalSpeed = 0F;
+        private Vector3 _targetCoordinates;
 
-        rigid.useGravity = false;
-        rigid.isKinematic = true; // means that rigidbody is moved by script and does not affected by physics engine
+        private bool _dead = false;
+        private float _prevDistanceToTarget = 100000F;
 
-        Launch();
-    }
-
-    private float Gravity = 9.8F;
-    private float ForwardSpeed = 0F;
-    private float VerticalSpeed = 0F;
-    public void Launch()
-    {
-        Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);
-        Vector3 targetXZPos = new Vector3(TargetCoordinates.x, 0.0f, TargetCoordinates.z);
-
-        // rotate the object to face the target
-        transform.LookAt(targetXZPos);
-
-        // formula
-        float R = Vector3.Distance(projectileXZPos, targetXZPos);
-        //float G = 9.8F;     //TODO Readjust for our scale usinga utility class
-        float tanAlpha = Mathf.Tan(LaunchAngle * Mathf.Deg2Rad);
-        float H = TargetCoordinates.y - transform.position.y;
-
-        // calculate the local space components of the velocity
-        // required to land the projectile on the target object
-        //float Vz = Mathf.Sqrt(G * R * R / (2.0f * (H - R * tanAlpha)));
-
-        float Vz = 20F;
-
-        float DistanceToHighestPoint = R / 2;
-        float TimeToHighestPoint = DistanceToHighestPoint / Vz;
-        float GravityEffectToHighestPoint = Gravity * TimeToHighestPoint;
-
-        float Vy = GravityEffectToHighestPoint;
-
-        ForwardSpeed = Vz;
-        VerticalSpeed = Vy;
-
-        //Debug.LogFormat("BulletBehavior.Launch: ForwardSpeed={0}, VerticalSpeed={1}, LaunchAngle={2}, R={3}, tanALpha={4}, H={5}",
-        //    ForwardSpeed, VerticalSpeed, LaunchAngle, R, tanAlpha, H);
-
-        // create the velocity vector in local space and get it in global space
-
-        //BulletBehavior.Launch: ForwardSpeed=NaN, VerticalSpeed=NaN, LaunchAngle=60, R=15.60759, tanALpha=1.732051, H=-0.8795097
-    }
-
-    bool dead = false;
-    float prevDistanceToTarget = 100000F;
-    void Update()
-    {
-        if(dead) {
-            return;
+        /// <summary>
+        ///     Call in the weapon class to initialize the shell/bullet.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="velocity">In meters.</param>
+        public void Initialize(Vector3 target, float velocity)
+        {
+            _targetCoordinates = target;
+            _forwardSpeed = velocity * Constants.MAP_SCALE;
         }
 
-        transform.Translate(ForwardSpeed * Vector3.forward * Time.deltaTime + VerticalSpeed * Vector3.up * Time.deltaTime);
+        private void Start()
+        {
+            Bullet = new BulletData();
 
-        VerticalSpeed = VerticalSpeed - (Gravity * Time.deltaTime);
+            Launch();
+        }
+
+        public void Launch()
+        {
+            Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);
+            Vector3 targetXZPos = new Vector3(_targetCoordinates.x, 0.0f, _targetCoordinates.z);
+
+            // rotate the object to face the target
+            transform.LookAt(targetXZPos);
+
+            // formula
+            float distanceToTarget = Vector3.Distance(projectileXZPos, targetXZPos);
+
+            // TODO adjust based on height difference between start and target points
+            float distanceToHighestPoint = distanceToTarget / 2f; 
+            float timeToHighestPoint = distanceToHighestPoint / _forwardSpeed;
+            float gravityEffectToHighestPoint = GRAVITY * timeToHighestPoint;
+
+            _verticalSpeed = gravityEffectToHighestPoint;
+        }
+
+        private void Update()
+        {
+            if (_dead)
+            {
+                return;
+            }
+
+            Vector3 worldForward = transform.TransformDirection(Vector3.forward);
+            worldForward = new Vector3(worldForward.x, 0, worldForward.z);
+            transform.Translate(
+                    _forwardSpeed * worldForward * Time.deltaTime 
+                    + _verticalSpeed * Vector3.up * Time.deltaTime,
+                    Space.World);
+
+            _verticalSpeed -= GRAVITY * Time.deltaTime;
 
 
-        // small trick to detect if shell is reached the target
-        float distanceToTarget = Vector3.Distance(transform.position, TargetCoordinates);
-        if(distanceToTarget > prevDistanceToTarget) {
+            // small trick to detect if shell has reached the target
+            float distanceToTarget = Vector3.Distance(transform.position, _targetCoordinates);
+            if (distanceToTarget > _prevDistanceToTarget)
+            {
+                transform.position = _targetCoordinates;
+                Explode();
+            }
+            _prevDistanceToTarget = distanceToTarget;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
             Explode();
         }
-        prevDistanceToTarget = distanceToTarget;
-    }
 
-    void OnTriggerEnter(Collider other)
-    {
-        Explode();
-    }
+        private void Explode()
+        {
+            _dead = true;
+            if (_explosionPrefab != null)
+            {
+                // instantiate explosion
+                GameObject explosion = Instantiate(
+                        _explosionPrefab, transform.position, transform.rotation);
+                explosion.transform.localScale = new Vector3(10, 10, 10);
+                Destroy(explosion, 3F);
+            }
 
-    void Explode() {
-        dead = true;
-        if(ExplosionPrefab != null) {
-            // instantiate explosion
-            GameObject explosion = Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
-            // destroy it in 10 seconds to not trash the scene
-            Destroy(explosion, 10F);
+            if (_trailEmitter != null)
+            {
+                //ParticleSystem.EmissionModule emission = _trailEmitter.emission;
+                //emission.enabled = false;
+            }
+
+            Destroy(gameObject);
         }
-
-        if(TrailEmitter != null) {
-            var emission = TrailEmitter.emission;
-            emission.enabled = false;
-        }
-
-        Destroy(gameObject, 10F);
     }
-
-
-
-
-
-    //public void setBullet(Vector3 StartPosition, Vector3 EndPosition, float Vellocity = 30, int arc = 60)
-    //{
-    //    bullet._startPosition = StartPosition;
-    //    bullet._endPosition = EndPosition;
-    //    bullet._vellocity = Vellocity;
-    //    bullet._arc = 60;
-    //}
-
-
-
 }

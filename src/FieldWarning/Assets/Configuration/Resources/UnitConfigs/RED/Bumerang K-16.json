@@ -9,6 +9,24 @@
     "ArtPrefabPath": "UnitModels/Bumerang/Bumerang_K16",
 	"ArmoryImage": "Armory Images/K16",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "MinimapIcon": "MinimapIcon/Square",
+    "MinimapIconSize": 10,
+    
+    "LeavesExplodingWreck": true,
+    "VoiceLineFolders": {
+        "Movement" : [
+            "Voices/US/CommonMovement",
+            "Voices/US/TankMovement"
+        ],
+        "Aggressive" : [
+            "Voices/US/CommonAggressive",
+            "Voices/US/TankAggressive"
+        ],
+        "Selection" : [
+            "Voices/US/CommonSelection",
+            "Voices/US/TankSelection"
+        ]
+    },
 
     "Data": {
         "MovementSpeed": 40,
@@ -66,7 +84,12 @@
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
-                    "SalvoReload": 8
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "KPVT"
                 }
             }
         ]

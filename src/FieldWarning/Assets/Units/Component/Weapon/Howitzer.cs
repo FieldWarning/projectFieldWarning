@@ -12,6 +12,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.VFX;
 
 using PFW.Model.Armory.JsonContents;
 
@@ -23,48 +24,59 @@ namespace PFW.Units.Component.Weapon
     /// TODO rewrite or hopefully even entirely remove, this should not require
     /// a separate class.
     /// </summary>
-    public class Howitzer : IWeapon
+    public sealed class Howitzer : IWeapon
     {
         private HowitzerConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
         private AudioSource _audioSource { get; }
 
-        // Where the shell spawns:
-        private Transform _shotStarterPosition;
+        // Where the shell spawns
+        private Transform _barrelTip;
 
-        // TODO Should aim to make actual objects fire and not effects:
-        private ParticleSystem _shotEffect;
         private AudioClip _shotSound;
+        private readonly VisualEffect _muzzleFlashEffect;
         private float _shotVolume;
+
+        private readonly GameObject _shellArtPrefab;
+        private readonly GameObject _shellPrefab;
 
 
         public Howitzer(
                 HowitzerConfig data,
                 AudioSource source,
-                ParticleSystem shotEffect,
                 AudioClip shotSound,
-                Transform shotStarterPosition,
+                VisualEffect muzzleFlashEffect,
+                Transform barrelTip,
                 float shotVolume = 1.0F)
         {
             _data = data;
             _audioSource = source;
-            _shotEffect = shotEffect;
+            _muzzleFlashEffect = muzzleFlashEffect;
             _shotSound = shotSound;
             _shotVolume = shotVolume;
-            _shotStarterPosition = shotStarterPosition;
+            _barrelTip = barrelTip;
+            _shellPrefab = Resources.Load<GameObject>("Shell");
+            _shellArtPrefab = Resources.Load<GameObject>(_data.Shell);
         }
 
         private bool Shoot(TargetTuple target, bool isServer)
         {
             //  Vector3 start = new Vector3(ShotStarterPosition.position.x, ShotStarterPosition.position.y+0., ShotStarterPosition.position.z);
 
-            GameObject shell = Resources.Load<GameObject>("shell");
-            GameObject shell_new = GameObject.Instantiate(
-                    shell,
-                    _shotStarterPosition.position,
-                    _shotStarterPosition.transform.rotation);
+            GameObject shell = GameObject.Instantiate(
+                    _shellPrefab,
+                    _barrelTip.position,
+                    _barrelTip.transform.rotation);
+            GameObject.Instantiate(_shellArtPrefab, shell.transform);
 
-            shell_new.GetComponent<BulletBehavior>().SetUp(_shotStarterPosition, target.Position, 60);
+            shell.GetComponent<BulletBehavior>().Initialize(target.Position, _data.Velocity);
+
+            _audioSource.PlayOneShot(_shotSound, _shotVolume);
+            if (_muzzleFlashEffect != null)
+            {
+                _muzzleFlashEffect.transform.LookAt(target.Position);
+                _muzzleFlashEffect.Play();
+            }
 
             if (isServer) 
             {
@@ -74,13 +86,17 @@ namespace PFW.Units.Component.Weapon
             return true;
         }
 
+        public void HandleUpdate()
+        {
+            if (_reloadTimeLeft > 0)
+                _reloadTimeLeft -= Time.deltaTime;
+        }
+
         public bool TryShoot(
                 TargetTuple target,
-                float deltaTime,
                 Vector3 displacement,
                 bool isServer)
         {
-            _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
                 return false;
 
