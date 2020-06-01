@@ -153,8 +153,6 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Shoot at the current target if in range.
         /// </summary>
-        /// <param name="distanceToTarget"></param>
-        /// <param name="isServer"></param>
         /// <returns>True if a shot was produced.</returns>
         public bool MaybeShoot(float distanceToTarget, bool isServer)
         {
@@ -164,7 +162,7 @@ namespace PFW.Units.Component.Weapon
             {
                 Vector3 vectorToTarget = _target.Position - _turret.transform.position;
                 shotFired = _weapon.TryShoot(
-                    _target, Time.deltaTime, vectorToTarget, isServer);
+                    _target, vectorToTarget, isServer);
             }
 
             foreach (Turret turret in Children)
@@ -177,6 +175,8 @@ namespace PFW.Units.Component.Weapon
 
         public void HandleUpdate()
         {
+            _weapon?.HandleUpdate();
+
             if (_target == null || !_target.Exists)
             {
                 TurnTurretBackToDefaultPosition();
@@ -201,6 +201,15 @@ namespace PFW.Units.Component.Weapon
                         _mount.transform.InverseTransformDirection(directionToTarget));
 
                 targetHorizontalAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
+
+                // If this turret has no flexibility (ArcHorizontal = 0) and is fully
+                // rotated by a parent turret, it can get stuck 0.0000000001 degrees
+                // away from the target due to float rounding errors (parent rounds
+                // one way and decides he's done, child rounds the other way).
+                // So round away the last degree to avoid this case:
+                targetHorizontalAngle = targetHorizontalAngle > 0 ?
+                        (float)Math.Floor(targetHorizontalAngle)
+                        : (float)Math.Ceiling(targetHorizontalAngle);
                 if (Mathf.Abs(targetHorizontalAngle) > ArcHorizontal)
                 {
                     targetHorizontalAngle = 0f;
@@ -208,6 +217,7 @@ namespace PFW.Units.Component.Weapon
                 }
 
                 targetVerticalAngle = rotationToTarget.eulerAngles.x.unwrapDegree();
+                targetVerticalAngle = (float)Math.Floor(targetVerticalAngle);
                 if (targetVerticalAngle < -ArcUp || targetVerticalAngle > ArcDown)
                 {
                     targetVerticalAngle = 0f;

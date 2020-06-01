@@ -24,7 +24,7 @@ namespace PFW.Units.Component.Weapon
     /// TODO rewrite or hopefully even entirely remove, this should not require
     /// a separate class.
     /// </summary>
-    public class Howitzer : IWeapon
+    public sealed class Howitzer : IWeapon
     {
         private HowitzerConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
@@ -64,7 +64,7 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.position,
                     _barrelTip.transform.rotation);
 
-            shell.GetComponent<BulletBehavior>().SetUp(_barrelTip, target.Position, 60);
+            shell.GetComponent<BulletBehavior>().SetUp(target.Position, 60, 20f);
 
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
             if (_muzzleFlashEffect != null)
@@ -80,13 +80,17 @@ namespace PFW.Units.Component.Weapon
             return true;
         }
 
+        public void HandleUpdate()
+        {
+            if (_reloadTimeLeft > 0)
+                _reloadTimeLeft -= Time.deltaTime;
+        }
+
         public bool TryShoot(
                 TargetTuple target,
-                float deltaTime,
                 Vector3 displacement,
                 bool isServer)
         {
-            _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
                 return false;
 

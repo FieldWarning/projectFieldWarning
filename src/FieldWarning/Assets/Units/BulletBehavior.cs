@@ -28,15 +28,17 @@ namespace PFW.Units
         private Rigidbody _rigid;
 
         private float _launchAngle;
-        private Transform _startingTransform;
+        private float GRAVITY = 9.8F * Constants.MAP_SCALE;
+        private float _forwardSpeed = 0F;
+        private float _verticalSpeed = 0F;
         private Vector3 _targetCoordinates;
         
         // called by the weapon behaviour to set stats of the shell
-        public void SetUp(Transform position, Vector3 target, float launchAngle)
+        public void SetUp(Vector3 target, float launchAngle, float velocity)
         {
-            _startingTransform = position;
             _targetCoordinates = target;
             _launchAngle = launchAngle;
+            _forwardSpeed = velocity;
         }
 
         private void Start()
@@ -49,10 +51,6 @@ namespace PFW.Units
 
             Launch();
         }
-
-        private float Gravity = 9.8F * Constants.MAP_SCALE;
-        private float ForwardSpeed = 0F;
-        private float VerticalSpeed = 0F;
 
         public void Launch()
         {
@@ -72,16 +70,13 @@ namespace PFW.Units
             // required to land the projectile on the target object
             //float Vz = Mathf.Sqrt(G * R * R / (2.0f * (H - R * tanAlpha)));
 
-            float Vz = 2F;
-
             float DistanceToHighestPoint = distanceToTarget / 2;
-            float TimeToHighestPoint = DistanceToHighestPoint / Vz;
-            float GravityEffectToHighestPoint = Gravity * TimeToHighestPoint;
+            float TimeToHighestPoint = DistanceToHighestPoint / _forwardSpeed;
+            float GravityEffectToHighestPoint = GRAVITY * TimeToHighestPoint;
 
-            float Vy = GravityEffectToHighestPoint;
+            float verticalSpeed = GravityEffectToHighestPoint;
 
-            ForwardSpeed = Vz;
-            VerticalSpeed = Vy;
+            _verticalSpeed = verticalSpeed;
 
             //Debug.LogFormat("BulletBehavior.Launch: ForwardSpeed={0}, VerticalSpeed={1}, LaunchAngle={2}, R={3}, tanALpha={4}, H={5}",
             //    ForwardSpeed, VerticalSpeed, LaunchAngle, R, tanAlpha, heading);
@@ -102,10 +97,10 @@ namespace PFW.Units
             }
 
             transform.Translate(
-                    ForwardSpeed * Vector3.forward * Time.deltaTime 
-                    + VerticalSpeed * Vector3.up * Time.deltaTime);
+                    _forwardSpeed * Vector3.forward * Time.deltaTime 
+                    + _verticalSpeed * Vector3.up * Time.deltaTime);
 
-            VerticalSpeed -= Gravity * Time.deltaTime;
+            _verticalSpeed -= GRAVITY * Time.deltaTime;
 
 
             // small trick to detect if shell has reached the target
@@ -129,7 +124,7 @@ namespace PFW.Units
             {
                 // instantiate explosion
                 GameObject explosion = Instantiate(
-                        _explosionPrefab, transform.position, Quaternion.identity);
+                        _explosionPrefab, transform);
                 Destroy(explosion, 3F);
             }
 

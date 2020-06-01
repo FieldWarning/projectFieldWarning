@@ -21,7 +21,7 @@ namespace PFW.Units.Component.Weapon
     /// <summary>
     /// A non-howitzer cannon.
     /// </summary>
-    public class Cannon : IWeapon
+    public sealed class Cannon : IWeapon
     {
         private CannonConfig _data { get; }
         private float _reloadTimeLeft { get; set; }
@@ -52,8 +52,8 @@ namespace PFW.Units.Component.Weapon
         }
 
         private void FireWeapon(
-                TargetTuple target, 
-                Vector3 displacement, 
+                TargetTuple target,
+                Vector3 displacement,
                 bool isServer)
         {
             // sound
@@ -71,7 +71,7 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.transform.rotation);
 
             shell.GetComponent<BulletBehavior>().SetUp(
-                    _barrelTip, target.Position, 20);
+                    target.Position, 20, 20f);
 
             if (isServer)
             {
@@ -92,13 +92,17 @@ namespace PFW.Units.Component.Weapon
             }
         }
 
+        public void HandleUpdate()
+        {
+            if (_reloadTimeLeft > 0)
+                _reloadTimeLeft -= Time.deltaTime;
+        }
+
         public bool TryShoot(
                 TargetTuple target, 
-                float deltaTime, 
                 Vector3 displacement, 
                 bool isServer)
         {
-            _reloadTimeLeft -= deltaTime;
             if (_reloadTimeLeft > 0)
                 return false;
 

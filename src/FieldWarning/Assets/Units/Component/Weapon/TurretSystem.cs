@@ -194,18 +194,14 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Set a ground position as the shooting target.
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="autoApproach"></param>
         public void TargetPosition(Vector3 position, bool autoApproach = true)
         {
             SetTarget(new TargetTuple(position), autoApproach);
         }
 
         /// <summary>
-        /// 
+        /// Set a max-priority target for all child turrets.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="autoApproach"></param>
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
             Logger.LogTargeting(
