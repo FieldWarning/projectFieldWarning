@@ -25,7 +25,6 @@ namespace PFW.Units
         [SerializeField]
         private GameObject _trailEmitter = null;
 
-        private float _launchAngle;
         private readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
         private float _forwardSpeed = 0F;
         private float _verticalSpeed = 0F;
@@ -34,12 +33,15 @@ namespace PFW.Units
         private bool _dead = false;
         private float _prevDistanceToTarget = 100000F;
 
-        // Called by the weapon class to set the stats of the shell
-        public void SetUp(Vector3 target, float launchAngle, float velocity)
+        /// <summary>
+        ///     Call in the weapon class to initialize the shell/bullet.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="velocity">In meters.</param>
+        public void Initialize(Vector3 target, float velocity)
         {
             _targetCoordinates = target;
-            _launchAngle = launchAngle;
-            _forwardSpeed = velocity;
+            _forwardSpeed = velocity * Constants.MAP_SCALE;
         }
 
         private void Start()

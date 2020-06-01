@@ -71,8 +71,8 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.position,
                     _barrelTip.transform.rotation);
 
-            shell.GetComponent<BulletBehavior>().SetUp(
-                    target.Position, 20, 10f);
+            shell.GetComponent<BulletBehavior>().Initialize(
+                    target.Position, 10f);
 
             if (isServer)
             {

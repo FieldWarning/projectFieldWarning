@@ -64,7 +64,7 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.position,
                     _barrelTip.transform.rotation);
 
-            shell.GetComponent<BulletBehavior>().SetUp(target.Position, 60, 20f);
+            shell.GetComponent<BulletBehavior>().Initialize(target.Position, 20f);
 
             _audioSource.PlayOneShot(_shotSound, _shotVolume);
             if (_muzzleFlashEffect != null)
