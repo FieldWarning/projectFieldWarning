@@ -29,7 +29,7 @@
     },
 
 	"Data": {
-			"MovementSpeed": 500,
+			"MovementSpeed": 80,
 			"ReverseSpeed": 15,
 			"AccelRate": 13,
 			"MaxRotationSpeed": 50,
@@ -102,7 +102,7 @@
                 "RotationRate": 40,
                 "Cannon": {
                     "Damage": 4,
-                    "FireRange" : 200,
+                    "FireRange" : 30000,
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,

@@ -36,6 +36,7 @@ namespace PFW.Units.Component.Weapon
         // targetingStrategy
         private IWeapon _weapon; // weapon turret
         private float _fireRange; // weapon turret, in unity units
+        private float _shellVelocity;
 
         /// <summary>
         /// The explicit target is one set by player input,
@@ -114,6 +115,7 @@ namespace PFW.Units.Component.Weapon
                             barrelTip);
                     _fireRange =
                             turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
+                    _shellVelocity = turretConfig.Howitzer.Velocity * Constants.MAP_SCALE;
                 }
                 else if (turretConfig.Cannon.FireRange != 0)
                 {
@@ -141,6 +143,7 @@ namespace PFW.Units.Component.Weapon
                             barrelTip);
                     _fireRange =
                             turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
+                    _shellVelocity = turretConfig.Cannon.Velocity * Constants.MAP_SCALE;
                 }
                 else
                 {
@@ -188,17 +191,22 @@ namespace PFW.Units.Component.Weapon
             float targetHorizontalAngle = 0f;
             float targetVerticalAngle = 0f;
 
-            Vector3 pos = _target.Position;
-
-            if (pos != Vector3.zero)
+            if (_target.Position != Vector3.zero)
             {
                 aimed = true;
-                // commented out because arty has no shot emmiter:
-                // shotEmitter.LookAt(pos);
 
-                Vector3 directionToTarget = pos - _turret.position;
+                Vector3 directionToTarget = _target.Position - _turret.position;
+                directionToTarget = new Vector3(directionToTarget.x, 0, directionToTarget.z);
                 Quaternion rotationToTarget = Quaternion.LookRotation(
                         _mount.transform.InverseTransformDirection(directionToTarget));
+
+                // Add any necessary cannon elevation to the rotation
+                // TODO somehow give toplevel turrets the ability to know 
+                //      the velocity of the most important gun?
+                float shellVelocity = _shellVelocity == 0 ?
+                        1000 * Constants.MAP_SCALE : _shellVelocity;
+                rotationToTarget *= BulletBehavior.CalculateBarrelAngle(
+                        shellVelocity, _turret.transform.position, _target.Position, out _);
 
                 targetHorizontalAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
 
@@ -240,11 +248,6 @@ namespace PFW.Units.Component.Weapon
             {
                 horizontalAngle = targetHorizontalAngle;
             }
-
-            #region ArtyAdditionalCode
-            if (_isHowitzer)
-                targetVerticalAngle = -ArcUp;
-            #endregion
 
             deltaAngle = (targetVerticalAngle - verticalAngle).unwrapDegree();
             if (Mathf.Abs(deltaAngle) > turn)
