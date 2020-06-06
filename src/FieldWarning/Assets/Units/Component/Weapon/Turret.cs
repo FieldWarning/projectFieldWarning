@@ -91,39 +91,7 @@ namespace PFW.Units.Component.Weapon
 
                 // The Unit json parser creates objects even when there are none,
                 // so instead of testing for null we have to test for a 0 value..
-                if (turretConfig.Howitzer.FireRange != 0)
-                {
-                    _isHowitzer = true;
-
-                    Transform barrelTip = 
-                            turretConfig.Cannon.BarrelTipRef == "" ? 
-                                    _turret :
-                                    RecursiveFindChild(
-                                            _turret.parent, 
-                                            turretConfig.Howitzer.BarrelTipRef);
-                    if (barrelTip == null)
-                    {
-                        barrelTip = _turret;
-                    }
-
-                    _muzzleFlashResource = Resources.Load<GameObject>(
-                            turretConfig.Howitzer.MuzzleFlash);
-                    _gunSoundResource = Resources.Load<AudioClip>(
-                            turretConfig.Howitzer.Sound);
-                    GameObject muzzleFlashGO = GameObject.Instantiate(
-                            _muzzleFlashResource, barrelTip);
-
-                    _weapon = new Howitzer(
-                            turretConfig.Howitzer,
-                            shotAudioSource,
-                            _gunSoundResource,
-                            muzzleFlashGO.GetComponent<VisualEffect>(),
-                            barrelTip);
-                    _fireRange =
-                            turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
-                    _shellVelocity = turretConfig.Howitzer.Velocity * Constants.MAP_SCALE;
-                }
-                else if (turretConfig.Cannon.FireRange != 0)
+                if (turretConfig.Cannon.FireRange != 0)
                 {
                     Transform barrelTip =
                             turretConfig.Cannon.BarrelTipRef == "" ?

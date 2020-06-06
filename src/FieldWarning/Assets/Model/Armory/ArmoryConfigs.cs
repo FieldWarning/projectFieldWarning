@@ -115,28 +115,10 @@ namespace PFW.Model.Armory.JsonContents
         public List<TurretConfig> Children;  // JSONUtility generates a
                                              // warning about the recursion..
         public CannonConfig Cannon;
-        public HowitzerConfig Howitzer;
     }
 
     [Serializable]
     public class CannonConfig
-    {
-        public int Damage;
-        // Beware: This is in meters, NOT unity units!
-        public int FireRange;
-        public int Accuracy;
-        public float ShotReload;
-        public int SalvoLength;
-        public float SalvoReload;
-        public string MuzzleFlash;
-        public string Shell;
-        public int Velocity;  // meters per second
-        public string Sound;
-        public string BarrelTipRef;
-    }
-
-    [Serializable]
-    public class HowitzerConfig
     {
         public int Damage;
         // Beware: This is in meters, NOT unity units!
