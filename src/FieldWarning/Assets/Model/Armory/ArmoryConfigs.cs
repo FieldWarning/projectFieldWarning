@@ -120,16 +120,43 @@ namespace PFW.Model.Armory.JsonContents
     [Serializable]
     public class CannonConfig
     {
-        public int Damage;
+        public string DamageType;
+        public int DamageValue;
         // Beware: This is in meters, NOT unity units!
         public int FireRange;
         public int Accuracy;
         public float ShotReload;
         public int SalvoLength;
         public float SalvoReload;
+        public int Velocity;  // meters per second
+        public bool Indirect;
+        public bool Guided;
         public string MuzzleFlash;
         public string Shell;
+        public string Sound;
+        public string BarrelTipRef;
+        public List<AmmoConfig> Ammo;
+    }
+
+    /// <summary>
+    ///     Copy of the cannon config containing optional overrides
+    /// </summary>
+    [Serializable]
+    public class AmmoConfig
+    {
+        public string DamageType;
+        public int DamageValue;
+        // Beware: This is in meters, NOT unity units!
+        public int FireRange;
+        public int Accuracy;
+        public float ShotReload;
+        public int SalvoLength;
+        public float SalvoReload;
         public int Velocity;  // meters per second
+        public bool Indirect;
+        public bool Guided;
+        public string MuzzleFlash;
+        public string Shell;
         public string Sound;
         public string BarrelTipRef;
     }

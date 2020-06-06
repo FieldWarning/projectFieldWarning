@@ -78,7 +78,7 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "Damage": 4,
+                    "DamageValue": 4,
                     "FireRange" : 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
