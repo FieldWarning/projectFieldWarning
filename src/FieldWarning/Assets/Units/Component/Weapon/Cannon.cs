@@ -118,4 +118,9 @@ namespace PFW.Units.Component.Weapon
             return true;
         }
     }
+
+    public class Ammo 
+    {
+
+    }
 }

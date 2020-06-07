@@ -13,8 +13,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using UnityEngine;
 
 using PFW.Model.Armory.JsonContents;
 
@@ -45,6 +43,10 @@ namespace PFW.Model.Armory
 
             foreach (UnitConfig unitConfig in configs)
             {
+                bool valid = unitConfig.ParsingDone();
+                if (!valid)
+                    continue;
+
                 MobilityData mobility = null;
                 foreach (MobilityData m in UniqueMobilityTypes)
                 {

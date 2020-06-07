@@ -35,7 +35,7 @@ namespace PFW.Units.Component.Weapon
     {
         // targetingStrategy
         private IWeapon _weapon; // weapon turret
-        private float _fireRange; // weapon turret, in unity units
+        private float[] _fireRange;
 
         // The default here has significance because only the
         //      last turrets know the actual weapon's velocity. 
@@ -70,6 +70,7 @@ namespace PFW.Units.Component.Weapon
 
         public Turret(GameObject unit, TurretConfig turretConfig)
         {
+            _fireRange = new float[(int)TargetType._SIZE];
             _arcHorizontal = turretConfig.ArcHorizontal;
             _arcUp = turretConfig.ArcUp;
             _arcDown = turretConfig.ArcDown;
@@ -91,7 +92,7 @@ namespace PFW.Units.Component.Weapon
 
                 // The Unit json parser creates objects even when there are none,
                 // so instead of testing for null we have to test for a 0 value..
-                if (turretConfig.Cannon.FireRange != 0)
+                if (turretConfig.Cannon.GroundRange != 0)
                 {
                     Transform barrelTip =
                             turretConfig.Cannon.BarrelTipRef == "" ?
@@ -116,7 +117,7 @@ namespace PFW.Units.Component.Weapon
                             muzzleFlashGO.GetComponent<VisualEffect>(),
                             barrelTip);
                     _fireRange =
-                            turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
+                            turretConfig.Cannon.GroundRange * Constants.MAP_SCALE;
                     _shellVelocity = turretConfig.Cannon.Velocity * Constants.MAP_SCALE;
                 }
                 else
@@ -134,7 +135,7 @@ namespace PFW.Units.Component.Weapon
         public bool MaybeShoot(float distanceToTarget, bool isServer)
         {
             bool shotFired = false;
-            bool targetInRange = _fireRange > distanceToTarget;
+            bool targetInRange = _fireRange[(int)_target.Type] > distanceToTarget;
             if (IsFacingTarget && targetInRange)
             {
                 Vector3 vectorToTarget = _target.Position - _turret.transform.position;
@@ -302,7 +303,7 @@ namespace PFW.Units.Component.Weapon
         /// for turrets that can't shoot the target at all.
         public float MaxRange(TargetTuple target)
         { 
-            float maxRange = _fireRange;
+            float maxRange = _fireRange[(int)target.Type];
             foreach (Turret turret in Children)
             {
                 float turretMax = turret.MaxRange(target);

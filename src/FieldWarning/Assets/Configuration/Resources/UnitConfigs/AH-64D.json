@@ -80,7 +80,7 @@
                 "RotationRate": 40,
                 "Cannon": {
                     "DamageValue": 4,
-                    "FireRange" : 20,
+                    "GroundRange" : 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
@@ -89,7 +89,16 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "MG"
+                    "BarrelTipRef": "MG",
+                    "Ammo":
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
                 }
             },
             {
@@ -101,7 +110,7 @@
                 "RotationRate": 40,
                 "Cannon": {
                     "DamageValue": 4,
-                    "FireRange" : 200,
+                    "GroundRange" : 200,
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,
@@ -110,7 +119,16 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "Autocannon"
+                    "BarrelTipRef": "Autocannon",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
                 }
             }
         ]

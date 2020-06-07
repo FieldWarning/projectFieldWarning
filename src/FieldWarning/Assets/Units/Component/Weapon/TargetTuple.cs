@@ -101,9 +101,10 @@ namespace PFW.Units.Component.Weapon
 
     public enum TargetType
     {
-        GROUND,
+        GROUND = 0,
         INFANTRY,
         VEHICLE,
-        HELO
+        HELO,
+        _SIZE
     }
 }
