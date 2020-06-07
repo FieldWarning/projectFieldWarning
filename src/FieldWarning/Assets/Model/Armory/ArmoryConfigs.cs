@@ -67,6 +67,7 @@ namespace PFW.Model.Armory.JsonContents
     [Serializable]
     public class ArmorConfig
     {
+        public bool ApImmunity;  // Infantry and flying units can't be shot with KE etc.
         public int FrontArmor;
         public int SideArmor;
         public int RearArmor;
