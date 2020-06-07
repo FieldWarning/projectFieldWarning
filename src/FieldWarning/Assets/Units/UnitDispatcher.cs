@@ -90,7 +90,8 @@ namespace PFW.Units
                 GameObject deathEffect, 
                 VoiceComponent voice)
         {
-            TargetTuple = new TargetTuple(this);
+            TargetType type = _unitData.ApImmunity ? TargetType.INFANTRY : TargetType.VEHICLE;
+            TargetTuple = new TargetTuple(this, type);
             Platoon = platoon;
 
             _art = art;
