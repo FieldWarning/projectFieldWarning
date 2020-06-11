@@ -16,7 +16,6 @@ using UnityEngine;
 
 using PFW.Model.Armory;
 using PFW.Model.Armory.JsonContents;
-using PFW.Model.Settings;
 using PFW.Model.Settings.JsonContents;
 using Newtonsoft.Json;
 
@@ -49,7 +48,8 @@ namespace PFW
         public static SettingsConfig ParseDefaultSettingsRaw()
         {
             TextAsset configFile = Resources.Load<TextAsset>("Settings/DefaultSettings");
-            SettingsConfig config = JsonUtility.FromJson<SettingsConfig>(configFile.text);
+            SettingsConfig config = 
+                    JsonConvert.DeserializeObject<SettingsConfig>(configFile.text);
 
             return config;
         }
@@ -72,7 +72,8 @@ namespace PFW
             else
             {
                 string localSettingsText = System.IO.File.ReadAllText(path);
-                SettingsConfig config2 = JsonUtility.FromJson<SettingsConfig>(localSettingsText);
+                SettingsConfig config2 =
+                        JsonConvert.DeserializeObject<SettingsConfig>(localSettingsText);
 
                 return MergeSettings(config, config2);
             }
@@ -138,7 +139,7 @@ namespace PFW
             string path = Application.dataPath + 
                     "/Configuration/Resources/Settings/LocalSettings.json";
 
-            string contents = JsonUtility.ToJson(localConfig, true);
+            string contents = JsonConvert.SerializeObject(localConfig, Formatting.Indented);
 
             // Overwrite the file if it exists
             using (System.IO.FileStream fs = System.IO.File.Create(path))

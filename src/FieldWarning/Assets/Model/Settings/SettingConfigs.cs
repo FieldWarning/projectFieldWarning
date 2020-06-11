@@ -11,8 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
-
 /// <summary>
 /// The classes here represent purely what we write
 /// in our json config for the user settings.
@@ -22,16 +20,15 @@ namespace PFW.Model.Settings.JsonContents
     // Careful: If in the future we add config fields that
     //          allow zero, then we wont be able to distinguish
     //          unset values from values explicitly set to zero 
-    //          in the local config.
+    //          in the local config. Such values should be wrapped
+    //          in an object (which will be null on missing value).
 
-    [Serializable]
     public class SettingsConfig
     {
         public CameraConfig Camera;
         public HotkeyConfig Hotkeys;
     }
 
-    [Serializable]
     public class CameraConfig
     {
         public int ZoomSpeed;  // in meters per sec
@@ -39,7 +36,6 @@ namespace PFW.Model.Settings.JsonContents
         public int PanSpeed;  // in meters per sec
     }
 
-    [Serializable]
     public class HotkeyConfig
     {
         public string AttackMove;
