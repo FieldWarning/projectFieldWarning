@@ -11,8 +11,8 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 /// <summary>
 /// The classes here represent purely what we write
@@ -20,13 +20,11 @@ using System.Collections.Generic;
 /// </summary>
 namespace PFW.Model.Armory.JsonContents
 {
-    [Serializable]
     public class DeckConfig
     {
         public List<string> UnitIds;
     }
 
-    [Serializable]
     public class UnitConfig
     {
         public string ID;
@@ -54,23 +52,27 @@ namespace PFW.Model.Armory.JsonContents
         public bool ParsingDone()
         {
             bool result = true;
-            foreach (TurretConfig turret in Turrets)
+            if (Turrets != null)
             {
-                result &= turret.ParsingDone(Name);
+                foreach (TurretConfig turret in Turrets)
+                {
+                    result &= turret.ParsingDone(Name);
+                }
             }
             return result;
         }
     }
 
-    [Serializable]
     public class VoiceLineConfig
     {
+        [JsonProperty("Movement")]
         public List<string> Movement;
-        public List<string> Agressive;
+        [JsonProperty("Aggressive")]
+        public List<string> Aggressive;
+        [JsonProperty("Selection")]
         public List<string> Selection;
     }
 
-    [Serializable]
     public class ReconConfig
     {
         public int MaxSpottingRange;
@@ -78,7 +80,6 @@ namespace PFW.Model.Armory.JsonContents
         public float StealthPenetration;
     }
 
-    [Serializable]
     public class ArmorConfig
     {
         public bool ApImmunity;  // Infantry and flying units can't be shot with KE etc.
@@ -88,7 +89,6 @@ namespace PFW.Model.Armory.JsonContents
         public int TopArmor;
     }
 
-    [Serializable]
     public class UnitDataConfig
     {
         public float MovementSpeed;
@@ -104,7 +104,6 @@ namespace PFW.Model.Armory.JsonContents
         public int MobilityTypeIndex;
     }
 
-    [Serializable]
     public class MobilityConfig
     {
         public float SlopeSensitivity;
@@ -114,7 +113,6 @@ namespace PFW.Model.Armory.JsonContents
         public float WaterSpeed;
     }
 
-    [Serializable]
     public class TurretConfig
     {
         public string TurretRef;
@@ -140,16 +138,18 @@ namespace PFW.Model.Armory.JsonContents
                 result &= Cannon.ParsingDone(unitName);
             }
 
-            foreach (TurretConfig turret in Children)
+            if (Children != null)
             {
-                result &= turret.ParsingDone(unitName);
+                foreach (TurretConfig turret in Children)
+                {
+                    result &= turret.ParsingDone(unitName);
+                }
             }
 
             return result;
         }
     }
 
-    [Serializable]
     public class CannonConfig
     {
         public string DamageType;
@@ -213,7 +213,6 @@ namespace PFW.Model.Armory.JsonContents
     /// <summary>
     ///     Copy of the cannon config containing optional overrides
     /// </summary>
-    [Serializable]
     public class AmmoConfig
     {
         public string DamageType;

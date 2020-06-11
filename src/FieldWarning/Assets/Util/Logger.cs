@@ -98,6 +98,23 @@ namespace PFW
         {
             Debug.Log($"[{level}] Pathfinding: {logMsg}", context);
         }
+
+        [System.Diagnostics.Conditional("PFW_LOG_CONFIG")]
+        public static void LogConfig(
+                string logMsg,
+                LogLevel level = LogLevel.DEBUG)
+        {
+            Debug.Log($"[{level}] Config: {logMsg}");
+        }
+
+        [System.Diagnostics.Conditional("PFW_LOG_CONFIG")]
+        public static void LogConfig(
+                string logMsg,
+                Object context,
+                LogLevel level = LogLevel.DEBUG)
+        {
+            Debug.Log($"[{level}] Config: {logMsg}", context);
+        }
     }
 
     /// <summary>

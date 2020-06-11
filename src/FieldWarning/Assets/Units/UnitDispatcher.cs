@@ -90,14 +90,14 @@ namespace PFW.Units
                 GameObject deathEffect, 
                 VoiceComponent voice)
         {
+            _unitData = gameObject.GetComponent<DataComponent>();
+
             TargetType type = _unitData.ApImmunity ? TargetType.INFANTRY : TargetType.VEHICLE;
             TargetTuple = new TargetTuple(this, type);
             Platoon = platoon;
 
             _art = art;
             _deathEffect = deathEffect?.GetComponent<WreckComponent>();
-
-            _unitData = gameObject.GetComponent<DataComponent>();
 
             _voiceComponent      = voice;
             _movementComponent   = gameObject.GetComponent<MovementComponent>();

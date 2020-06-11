@@ -55,6 +55,7 @@ namespace PFW.Model.Armory
 
         public Unit(UnitConfig config, MobilityData mobility)
         {
+            Logger.LogConfig($"Creating unit object for {config.Name}.", LogLevel.DEBUG);
             MobilityData = mobility;
             Name = config.Name;
             Price = config.Price;
@@ -78,7 +79,7 @@ namespace PFW.Model.Armory
 
         public VoiceLines(VoiceLineConfig voiceLineFolders)
         {
-            foreach (string folderName in voiceLineFolders.Agressive)
+            foreach (string folderName in voiceLineFolders.Aggressive)
             {
                 aggressiveLines.AddRange(Resources.LoadAll<AudioClip>(folderName));
             }

@@ -79,7 +79,7 @@ namespace PFW.Units.Component.Weapon
             _turret = RecursiveFindChild(unit.transform, turretConfig.TurretRef);
             Children = new List<Turret>();
 
-            if (turretConfig.Children.Count > 0)
+            if (turretConfig.Children != null && turretConfig.Children.Count > 0)
             {
                 foreach (TurretConfig childTurretConfig in turretConfig.Children)
                 {
@@ -116,7 +116,7 @@ namespace PFW.Units.Component.Weapon
                             _gunSoundResource,
                             muzzleFlashGO.GetComponent<VisualEffect>(),
                             barrelTip);
-                    _fireRange =
+                    _fireRange[0] =
                             turretConfig.Cannon.GroundRange * Constants.MAP_SCALE;
                     _shellVelocity = turretConfig.Cannon.Velocity * Constants.MAP_SCALE;
                 }

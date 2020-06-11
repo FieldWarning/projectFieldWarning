@@ -60,9 +60,12 @@ namespace PFW.Units.Component.Weapon
         public void Initialize(GameObject unit, Unit armoryUnit)
         {
             Children = new List<Turret>();
-            foreach (TurretConfig turretConfig in armoryUnit.Config.Turrets)
+            if (armoryUnit.Config.Turrets != null)
             {
-                Children.Add(new Turret(unit, turretConfig));
+                foreach (TurretConfig turretConfig in armoryUnit.Config.Turrets)
+                {
+                    Children.Add(new Turret(unit, turretConfig));
+                }
             }
             Unit = GetComponent<UnitDispatcher>();
             enabled = true;
@@ -220,7 +223,7 @@ namespace PFW.Units.Component.Weapon
                 // would be able to drop the handle to it
                 Unit.SetDestination(target.Position);
             }
-
+            
             foreach (Turret turret in Children)
             {
                 turret.SetExplicitTarget(_explicitTarget);

@@ -18,6 +18,7 @@ using PFW.Model.Armory;
 using PFW.Model.Armory.JsonContents;
 using PFW.Model.Settings;
 using PFW.Model.Settings.JsonContents;
+using Newtonsoft.Json;
 
 namespace PFW
 {
@@ -26,7 +27,7 @@ namespace PFW
         public static Deck ParseDeck(string deckName, Armory armory)
         {
             TextAsset configFile = Resources.Load<TextAsset>($"Decks/{deckName}");
-            DeckConfig config = JsonUtility.FromJson<DeckConfig>(configFile.text);
+            DeckConfig config = JsonConvert.DeserializeObject<DeckConfig>(configFile.text);
 
             return new Deck(config, armory);
         }
@@ -39,7 +40,7 @@ namespace PFW
 
             foreach (TextAsset configFile in configFiles)
             {
-                configs.Add(JsonUtility.FromJson<UnitConfig>(configFile.text));
+                configs.Add(JsonConvert.DeserializeObject<UnitConfig>(configFile.text));
             }
 
             return new Armory(configs);
