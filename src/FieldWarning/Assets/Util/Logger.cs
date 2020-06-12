@@ -31,6 +31,7 @@ namespace PFW
     /// </summary>
     public static class Logger
     {
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_NETWORKING")]
         public static void LogNetworking(
                 string logMsg,
@@ -39,6 +40,7 @@ namespace PFW
             Debug.Log($"[{level}] Networking: {logMsg}");
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_NETWORKING")]
         public static void LogNetworking(
                 string logMsg,
@@ -48,6 +50,7 @@ namespace PFW
             Debug.Log($"[{level}] Networking: {logMsg}", context);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_TARGETING")]
         public static void LogTargeting(
                 string logMsg,
@@ -56,6 +59,7 @@ namespace PFW
             Debug.Log($"[{level}] Targeting: {logMsg}");
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_TARGETING")]
         public static void LogTargeting(
                 string logMsg,
@@ -65,6 +69,7 @@ namespace PFW
             Debug.Log($"[{level}] Targeting: {logMsg}", context);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_DAMAGE")]
         public static void LogDamage(
                 string logMsg,
@@ -73,6 +78,7 @@ namespace PFW
             Debug.Log($"[{level}] Damage: {logMsg}");
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_DAMAGE")]
         public static void LogDamage(
                 string logMsg,
@@ -82,6 +88,7 @@ namespace PFW
             Debug.Log($"[{level}] Damage: {logMsg}", context);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_PATHFINDING")]
         public static void LogPathfinding(
                 string logMsg,
@@ -90,6 +97,7 @@ namespace PFW
             Debug.Log($"[{level}] Pathfinding: {logMsg}");
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_PATHFINDING")]
         public static void LogPathfinding(
                 string logMsg,
@@ -99,6 +107,7 @@ namespace PFW
             Debug.Log($"[{level}] Pathfinding: {logMsg}", context);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_CONFIG")]
         public static void LogConfig(
                 string logMsg,
@@ -107,6 +116,7 @@ namespace PFW
             Debug.Log($"[{level}] Config: {logMsg}");
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_CONFIG")]
         public static void LogConfig(
                 string logMsg,
