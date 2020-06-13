@@ -157,7 +157,7 @@ namespace PFW.Model.Armory.JsonContents
         // Beware: This is in meters, NOT unity units!
         public int GroundRange;
         public int HeloRange;
-        public int Accuracy;
+        public float Accuracy;
         public float ShotReload;
         public int SalvoLength;
         public float SalvoReload;
@@ -203,8 +203,6 @@ namespace PFW.Model.Armory.JsonContents
                     ammo.Shell = Shell;
                 if (ammo.Sound == "" || ammo.Sound == null)
                     ammo.Sound = Sound;
-                if (ammo.BarrelTipRef == "" || ammo.BarrelTipRef == null)
-                    ammo.BarrelTipRef = BarrelTipRef;
             }
             return true;
         }
@@ -220,13 +218,12 @@ namespace PFW.Model.Armory.JsonContents
         // Beware: This is in meters, NOT unity units!
         public int GroundRange;
         public int HeloRange;
-        public int Accuracy;
+        public float Accuracy;
         public int Velocity;  // meters per second
         public bool Indirect;
         public bool Guided;
         public string MuzzleFlash;
         public string Shell;
         public string Sound;
-        public string BarrelTipRef;
     }
 }

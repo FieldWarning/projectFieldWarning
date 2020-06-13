@@ -38,5 +38,11 @@ namespace PFW.Units.Component.Weapon
         ///     Used, for example, to update reload timers.
         /// </summary>
         void HandleUpdate();
+
+        /// <summary>
+        ///     For every target type, find the max range
+        ///     that this weapon can shoot it at (0 if it can't).
+        /// </summary>
+        float[] CalculateMaxRanges();
     }
 }

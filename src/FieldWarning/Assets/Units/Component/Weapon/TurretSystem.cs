@@ -37,7 +37,11 @@ namespace PFW.Units.Component.Weapon
             set
             {
                 __targetBackingField = value;
-                _fireRange = MaxRange(value);
+
+                if (value != null)
+                {
+                    _fireRange = MaxRange(value);
+                }
             }
         }
         public bool HasTargetingOrder 
