@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5339715861356207272
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 0
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -9,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: UnitSelectable
   m_Shader: {fileID: 4800000, guid: 1d64af84bdc970c4fae0c1e06dd95b73, type: 3}
-  m_ShaderKeywords: _ALBEDOCONTRIBUTION _COLORMAP
+  m_ShaderKeywords: _ALBEDOCONTRIBUTION _COLORMAP _EMISSIVEMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -56,7 +69,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissiveColorMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 78e2d4735fe3e17409644a1da8eb9857, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -135,6 +148,6 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissiveColor: {r: 1.1743097, g: 2.851895, b: 5.3403134, a: 1}
-    - _EmissiveColorHDR: {r: 1.1743097, g: 2.851895, b: 5.3403134, a: 1}
+    - _EmissiveColor: {r: 4.6413193, g: 8.555685, b: 14.259475, a: 1}
+    - _EmissiveColorHDR: {r: 4.6413193, g: 8.555685, b: 14.259475, a: 1}
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
