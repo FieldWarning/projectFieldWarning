@@ -155,12 +155,11 @@ namespace PFW.Units.Component.Weapon
                 //emission.enabled = false;
             }
 
-            if (_ammo.DamageType == DamageType.HE)
+            if (_ammo.IsAoe)
             {
-                float explosionRadius = _ammo.DamageValue * Constants.HE_FALLOFF;
                 List<UnitDispatcher> units = 
                         MatchSession.Current.FindUnitsAroundPoint(
-                                transform.position, explosionRadius);
+                                transform.position, _ammo.ExplosionRadius);
 
                 foreach (UnitDispatcher unit in units)
                 {

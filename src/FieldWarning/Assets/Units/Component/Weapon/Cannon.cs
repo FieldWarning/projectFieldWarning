@@ -125,7 +125,7 @@ namespace PFW.Units.Component.Weapon
             {
                 if (target.IsUnit)
                 {
-                    if (isHit && ammo.DamageType != DamageType.HE)
+                    if (isHit && !ammo.IsAoe)
                     {
                         target.Enemy.HandleHit(
                                 ammo.DamageType, ammo.DamageValue, displacement, distance);

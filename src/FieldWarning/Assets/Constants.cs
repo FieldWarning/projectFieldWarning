@@ -35,6 +35,8 @@ namespace PFW
 
         public const float KE_FALLOFF = 175 * MAP_SCALE;
         public const float HE_FALLOFF = 25 * MAP_SCALE;
+        public const float SMALL_ARMS_FALLOFF = 5 * MAP_SCALE;
+        public const float HEAVY_ARMS_FALLOFF = 5 * MAP_SCALE;
 
         /// <summary>
         /// When a shot misses, the projectile lands away from the target.

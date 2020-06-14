@@ -24,7 +24,7 @@ namespace PFW.Units.Component.Weapon
     public class Ammo
     {
         public readonly DamageType DamageType;
-        public readonly int DamageValue;
+        public readonly float DamageValue;
         private readonly float _groundRange;
         private readonly float _heloRange;
         public readonly float Accuracy;
@@ -34,6 +34,44 @@ namespace PFW.Units.Component.Weapon
         public readonly AudioClip ShotSound;
         public readonly VisualEffect MuzzleFlashEffect;
         public readonly GameObject ShellArtPrefab;
+
+        public bool IsAoe {
+            get {
+                if (DamageType == DamageType.HE
+                    || DamageType == DamageType.SMALL_ARMS
+                    || DamageType == DamageType.HEAVY_ARMS)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public float ExplosionRadius {
+            get {
+                float result = 0;
+
+                switch (DamageType)
+                {
+                    case DamageType.KE:
+                        break;
+                    case DamageType.HE:
+                        result = DamageValue * Constants.HE_FALLOFF;
+                        break;
+                    case DamageType.HEAT:
+                        break;
+                    case DamageType.SMALL_ARMS:
+                        result = DamageValue * Constants.SMALL_ARMS_FALLOFF;
+                        break;
+                    case DamageType.HEAVY_ARMS:
+                        result = DamageValue * Constants.HEAVY_ARMS_FALLOFF;
+                        break;
+                }
+
+                return result;
+            }
+        }
 
         public Ammo(AmmoConfig config, Transform barrelTip)
         {
@@ -83,15 +121,25 @@ namespace PFW.Units.Component.Weapon
             {
                 case TargetType.GROUND:
                 case TargetType.INFANTRY:
-                    if (DamageType == DamageType.HE)
+                    if (DamageType == DamageType.HE 
+                        || DamageType == DamageType.SMALL_ARMS
+                        || DamageType == DamageType.HEAVY_ARMS)
                         result = _groundRange;
                     break;
                 case TargetType.VEHICLE:
-                    if (DamageType == DamageType.KE || DamageType == DamageType.HEAT)
+                    // TODO this is wrong. Small arms can also shoot at vehicles (<2AV).
+                    // If we add small arms here we should be careful to make sure
+                    // that the turret system doesn't forever lock on a vehicle target 
+                    // that we can only shoot from behind
+                    if (DamageType == DamageType.KE 
+                        || DamageType == DamageType.HEAT
+                        || DamageType == DamageType.HE)
                         result = _groundRange;
                     break;
                 case TargetType.HELO:
-                    if (DamageType == DamageType.HE)
+                    if (DamageType == DamageType.HE
+                        || DamageType == DamageType.SMALL_ARMS
+                        || DamageType == DamageType.HEAVY_ARMS)
                         result = _heloRange;
                     break;
             }
@@ -153,6 +201,14 @@ namespace PFW.Units.Component.Weapon
         KE = 0,
         HE,
         HEAT,
+        /// <summary>
+        /// Like HE, but does trivial dmg vs 1AV and no dmg vs 2AV.
+        /// </summary>
+        SMALL_ARMS,
+        /// <summary>
+        /// Larger small arms, e.g. .50 cals; smaller penalty vs 1AV targets.
+        /// </summary>
+        HEAVY_ARMS,
         _SIZE
     }
 }

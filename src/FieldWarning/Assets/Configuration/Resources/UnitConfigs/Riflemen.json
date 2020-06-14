@@ -79,7 +79,6 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "DamageValue": 4,
                     "GroundRange" : 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
@@ -93,10 +92,8 @@
                     "Ammo": 
                     [
                         {
-                            "DamageType" : "HE"
-                        },
-                        {
-                            "DamageType" : "KE"
+                            "DamageType" : "HEAVY_ARMS",
+                            "DamageValue": 0.75,
                         }
                     ]
                 }
@@ -109,7 +106,6 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "DamageValue": 4,
                     "GroundRange" : 200,
                     "Accuracy": 30,
                     "ShotReload": 8,
@@ -123,10 +119,8 @@
                     "Ammo": 
                     [
                         {
-                            "DamageType" : "HE"
-                        },
-                        {
-                            "DamageType" : "KE"
+                            "DamageType" : "SMALL_ARMS",
+                            "DamageValue": 0.5,
                         }
                     ]
                 }

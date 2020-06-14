@@ -51,7 +51,7 @@ namespace PFW.Units.Component.Armor
         /// </summary>
         public void HandleHit(
             DamageType damageType,
-            int firepower,
+            float firepower,
             Vector3 displacementToThis,
             float distance)
         {
@@ -73,7 +73,7 @@ namespace PFW.Units.Component.Armor
         /// </summary>
         public float EstimateDamage(
                 DamageType damageType,
-                int firepower,
+                float firepower,
                 Vector3 displacement,
                 float distance)
         {
@@ -91,6 +91,12 @@ namespace PFW.Units.Component.Armor
                     break;
                 case DamageType.KE:
                     result = KeDamage(firepower, armorOfImpact, distance);
+                    break;
+                case DamageType.SMALL_ARMS:
+                    result = SmallArmsDamage(firepower, armorOfImpact);
+                    break;
+                case DamageType.HEAVY_ARMS:
+                    result = HeavyArmsDamage(firepower, armorOfImpact);
                     break;
             }
 
@@ -132,7 +138,7 @@ namespace PFW.Units.Component.Armor
         }
 
         private float KeDamage(
-                int firepower,
+                float firepower,
                 int armor,
                 float distance)
         {
@@ -161,7 +167,7 @@ namespace PFW.Units.Component.Armor
             return result;
         }
         private float HeatDamage(
-                int firepower,
+                float firepower,
                 int armor)
         {
             float result;
@@ -191,7 +197,7 @@ namespace PFW.Units.Component.Armor
         }
 
         private float HeDamage(
-                int firepower,
+                float firepower,
                 int armor,
                 float distance)
         {
@@ -232,6 +238,40 @@ namespace PFW.Units.Component.Armor
                 default:
                     result *= 0.01f;
                     break;
+            }
+
+            return result;
+        }
+        private float SmallArmsDamage(
+                float firepower,
+                int armor)
+        {
+            float result = 0;
+
+            if (armor == 0)
+            {
+                result = firepower;
+            }
+            else if (armor == 1)
+            {
+                result = firepower * 0.1f;
+            }
+
+            return result;
+        }
+        private float HeavyArmsDamage(
+                float firepower,
+                int armor)
+        {
+            float result = 0;
+
+            if (armor == 0)
+            {
+                result = firepower;
+            }
+            else if (armor == 1)
+            {
+                result = firepower * 0.5f;
             }
 
             return result;

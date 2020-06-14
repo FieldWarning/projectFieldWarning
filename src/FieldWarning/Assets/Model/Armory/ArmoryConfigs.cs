@@ -214,7 +214,7 @@ namespace PFW.Model.Armory.JsonContents
     public class AmmoConfig
     {
         public string DamageType;
-        public int DamageValue;
+        public float DamageValue;
         // Beware: This is in meters, NOT unity units!
         public int GroundRange;
         public int HeloRange;

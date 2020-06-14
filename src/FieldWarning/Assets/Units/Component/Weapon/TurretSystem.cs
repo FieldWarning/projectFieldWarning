@@ -164,7 +164,9 @@ namespace PFW.Units.Component.Weapon
                 }
 
                 // See if they are in range of weapon:
-                float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
+                float distance = Vector3.Distance(
+                        Unit.transform.position, 
+                        enemy.Transform.position);
                 if (distance < MaxRange(enemy.TargetTuple))
                 {
                     Logger.LogTargeting(

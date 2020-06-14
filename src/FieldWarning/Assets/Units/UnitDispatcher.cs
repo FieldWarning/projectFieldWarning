@@ -169,7 +169,7 @@ namespace PFW.Units
 
         public float EstimateDamage(
                 DamageType damageType,
-                int firepower,
+                float firepower,
                 Vector3 displacement,
                 float distance)
             =>
@@ -177,7 +177,7 @@ namespace PFW.Units
 
         public void HandleHit(
             DamageType damageType,
-            int firepower,
+            float firepower,
             Vector3 displacementToTarget,
             float distance)
             =>
