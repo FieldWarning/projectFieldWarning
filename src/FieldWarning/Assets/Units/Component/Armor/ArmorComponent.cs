@@ -55,12 +55,11 @@ namespace PFW.Units.Component.Armor
             Vector3 displacementToThis,
             float distance)
         {
-            Logger.LogDamage($"ArmorComponent::HandleHit() called");
-
             float receivedDamage = EstimateDamage(
                     damageType, firepower, displacementToThis, distance);
 
-            Debug.Log($"damage {receivedDamage} with type {damageType} power {firepower}");
+            Logger.LogDamage($"Received {receivedDamage} damage with type {damageType}," +
+                $"pre-calculation firepower was {firepower}", LogLevel.DEBUG);
 
             if (receivedDamage > 0)
             {

@@ -213,5 +213,16 @@ namespace PFW.Model.Match
         /// for this call?
         public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
             _inputManager.PlatoonLabelClicked(platoon);
+
+
+        public List<UnitDispatcher> FindUnitsAroundPoint(
+                Vector3 point, float radius) =>
+            _unitRegistry.FindUnitsAroundPoint(point, radius);
+        public List<UnitDispatcher> FindEnemiesAroundPoint(
+                Vector3 point, float radius) =>
+            _unitRegistry.FindEnemiesAroundPoint(point, radius);
+        public List<UnitDispatcher> FindAlliesAroundPoint(
+                Vector3 point, float radius) =>
+            _unitRegistry.FindAlliesAroundPoint(point, radius);
     }
 }

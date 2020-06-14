@@ -84,24 +84,50 @@ namespace PFW.Units.Component.Weapon
                     _barrelTip.transform.rotation);
             GameObject.Instantiate(ammo.ShellArtPrefab, shell.transform);
 
-            shell.GetComponent<ShellBehaviour>().Initialize(
-                    target.Position, ammo.Velocity);
+            float roll = _random.NextFloat(0.0, 100.0);
+            bool isHit = roll <= ammo.Accuracy;
+            Vector3 shellDestination = target.Position;
+            if (!isHit)
+            {
+                int deviationMode = (int)roll % 4;
+
+                switch (deviationMode)
+                {
+                    case 0:
+                        shellDestination.x += distance / 50;
+                        shellDestination.y += distance / 50;
+                        break;
+                    case 1:
+                        shellDestination.x -= distance / 50;
+                        shellDestination.y += distance / 50;
+                        break;
+                    case 2:
+                        shellDestination.x += distance / 50;
+                        shellDestination.y -= distance / 50;
+                        break;
+                    case 3:
+                        shellDestination.x -= distance / 50;
+                        shellDestination.y -= distance / 50;
+                        break;
+                }
+            }
+
+            ShellBehaviour shellBehaviour = shell.GetComponent<ShellBehaviour>();
+            shellBehaviour.Initialize(shellDestination, ammo);
 
             if (isServer)
             {
                 if (target.IsUnit)
                 {
-                    float roll = _random.NextFloat(0.0, 100.0);
-                    // HIT
-                    if (roll <= ammo.Accuracy)
+                    if (isHit && ammo.DamageType != DamageType.HE)
                     {
-                        Debug.LogWarning("Cannon shell dispersion is not implemented yet");
-                        target.Enemy.HandleHit(ammo.DamageType, ammo.DamageValue, displacement, distance);
+                        target.Enemy.HandleHit(
+                                ammo.DamageType, ammo.DamageValue, displacement, distance);
                     }
                 }
                 else
                 {
-                    // TODO: fire pos damage not implemented
+                    // HE damage is applied by the shellBehavior when it explodes
                 }
             }
         }

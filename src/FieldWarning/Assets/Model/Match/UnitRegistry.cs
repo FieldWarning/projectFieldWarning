@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using UnityEngine;
 using System.Collections.Generic;
 
 using PFW.Units;
@@ -155,6 +156,39 @@ namespace PFW.Model.Match
                     EnemyVisionComponents.Add(unit.VisionComponent);
                 }
             }
+        }
+
+        public List<UnitDispatcher> FindUnitsAroundPoint(
+                Vector3 point, float radius)
+        {
+            List<UnitDispatcher> result = FindAlliesAroundPoint(point, radius);
+            result.AddRange(FindEnemiesAroundPoint(point, radius));
+            return result;
+        }
+        public List<UnitDispatcher> FindEnemiesAroundPoint(
+                Vector3 point, float radius)
+        {
+            return FindUnitsAroundPoint(point, radius, EnemyUnits);
+        }
+        public List<UnitDispatcher> FindAlliesAroundPoint(
+                Vector3 point, float radius)
+        {
+            return FindUnitsAroundPoint(point, radius, AllyUnits);
+        }
+
+        private List<UnitDispatcher> FindUnitsAroundPoint(
+                Vector3 point, float radius, List<UnitDispatcher> searchSet)
+        {
+            List<UnitDispatcher> result = new List<UnitDispatcher>();
+            foreach (UnitDispatcher unit in searchSet)
+            {
+                float distance = Vector3.Distance(point, unit.transform.position);
+                if (radius > distance)
+                {
+                    result.Add(unit);
+                }
+            }
+            return result;
         }
     }
 }
