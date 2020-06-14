@@ -122,10 +122,19 @@
                     "Ammo": 
                     [
                         {
-                            "DamageType" : "HE"
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
                         },
                         {
-                            "DamageType" : "KE"
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
                         }
                     ]
                 }
