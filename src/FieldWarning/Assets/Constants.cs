@@ -32,5 +32,8 @@ namespace PFW
         /// X meters * MAP_SCALE = Y unity units
         /// </summary>
         public const float MAP_SCALE = 1f / 50f;
+
+        public const float KE_FALLOFF = 175 * MAP_SCALE;
+        public const float HE_FALLOFF = 25 * MAP_SCALE;
     }
 }

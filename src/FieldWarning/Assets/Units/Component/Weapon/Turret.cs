@@ -131,7 +131,7 @@ namespace PFW.Units.Component.Weapon
             {
                 Vector3 vectorToTarget = _target.Position - _turret.transform.position;
                 shotFired = _weapon.TryShoot(
-                    _target, vectorToTarget, isServer);
+                    _target, vectorToTarget, distanceToTarget, isServer);
             }
 
             foreach (Turret turret in Children)

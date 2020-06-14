@@ -167,12 +167,21 @@ namespace PFW.Units
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _unitData.MaxHealth;
 
-        public void HandleHit(
-            int firepower,
-            Vector3? displacementToTarget,
-            float? distanceToCentre)
+        public float EstimateDamage(
+                DamageType damageType,
+                int firepower,
+                Vector3 displacement,
+                float distance)
             =>
-            _armorComponent.HandleHit(firepower, displacementToTarget, distanceToCentre);
+            _armorComponent.EstimateDamage(damageType, firepower, displacement, distance);
+
+        public void HandleHit(
+            DamageType damageType,
+            int firepower,
+            Vector3 displacementToTarget,
+            float distance)
+            =>
+            _armorComponent.HandleHit(damageType, firepower, displacementToTarget, distance);
 
         public void Teleport(Vector3 position, float heading) =>
                 _movementComponent.Teleport(position, heading);

@@ -65,9 +65,10 @@ namespace PFW.Units.Component.Weapon
         private void FireWeapon(
                 TargetTuple target,
                 Vector3 displacement,
+                float distance,
                 bool isServer)
         {
-            Ammo ammo = PickBestAmmo(target, displacement);
+            Ammo ammo = PickBestAmmo(target, displacement, distance);
 
             // sound
             _audioSource.PlayOneShot(ammo.ShotSound, _shotVolume);
@@ -96,7 +97,7 @@ namespace PFW.Units.Component.Weapon
                     if (roll <= ammo.Accuracy)
                     {
                         Debug.LogWarning("Cannon shell dispersion is not implemented yet");
-                        target.Enemy.HandleHit(ammo.DamageValue, displacement, null);
+                        target.Enemy.HandleHit(ammo.DamageType, ammo.DamageValue, displacement, distance);
                     }
                 }
                 else
@@ -113,8 +114,9 @@ namespace PFW.Units.Component.Weapon
         }
 
         public bool TryShoot(
-                TargetTuple target, 
-                Vector3 displacement, 
+                TargetTuple target,
+                Vector3 displacement,
+                float distance,
                 bool isServer)
         {
             if (_reloadTimeLeft > 0)
@@ -122,16 +124,31 @@ namespace PFW.Units.Component.Weapon
 
             // TODO implement salvo + shot reload
             _reloadTimeLeft = _salvoReload;
-            FireWeapon(target, displacement, isServer);
+            FireWeapon(target, displacement, distance, isServer);
             return true;
         }
 
         private Ammo PickBestAmmo(
                 TargetTuple target,
-                Vector3 displacement)
+                Vector3 displacement,
+                float distance)
         {
-            // TODO
-            return _ammo[0];
+            Ammo result = _ammo[0];
+            float bestDamage = result.EstimateDamageAgainstTarget(
+                        target, displacement, distance);
+
+            for (int i = 1; i < _ammo.Length; i++)
+            {
+                float damage = _ammo[i].EstimateDamageAgainstTarget(
+                        target, displacement, distance);
+                if (damage > bestDamage)
+                {
+                    result = _ammo[i];
+                    bestDamage = damage;
+                }
+            }
+
+            return result;
         }
 
         public float[] CalculateMaxRanges()
@@ -159,7 +176,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class Ammo 
     {
-        private readonly DamageType _damageType;
+        public readonly DamageType DamageType;
         public readonly int DamageValue;
         private readonly float _groundRange;
         private readonly float _heloRange;
@@ -173,7 +190,7 @@ namespace PFW.Units.Component.Weapon
 
         public Ammo(AmmoConfig config, Transform barrelTip)
         {
-            if (!Enum.TryParse(config.DamageType.ToUpper(), out _damageType))
+            if (!Enum.TryParse(config.DamageType.ToUpper(), out DamageType))
             {
                 Logger.LogConfig($"Could not parse damage type value '{config.DamageType}'" +
                     $" in a weapon's ammo entry. Defaulting to KE.", LogLevel.ERROR);
@@ -214,17 +231,61 @@ namespace PFW.Units.Component.Weapon
             {
                 case TargetType.GROUND:
                 case TargetType.INFANTRY:
-                    if (_damageType == DamageType.HE)
+                    if (DamageType == DamageType.HE)
                         result = _groundRange;
                     break;
                 case TargetType.VEHICLE:
-                    if (_damageType == DamageType.KE || _damageType == DamageType.HEAT)
+                    if (DamageType == DamageType.KE || DamageType == DamageType.HEAT)
                         result = _groundRange;
                     break;
                 case TargetType.HELO:
-                    if (_damageType == DamageType.HE)
+                    if (DamageType == DamageType.HE)
                         result = _heloRange;
                     break;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        ///     To pick which ammo type to use we need an estimation
+        ///     of the expected damage. This can differ from the actual
+        ///     damage dealt if we hit a different armor section,
+        ///     if the explosion lands to the side etc..
+        /// </summary>
+        public float EstimateDamageAgainstTarget(
+                TargetTuple target,
+                Vector3 displacement,
+                float distance)
+        {
+            float result = 0;
+
+            float range = GetRangeAgainstTargetType(target.Type);
+            if (distance <= range)
+            {
+                switch (DamageType)
+                {
+                    case DamageType.HE:
+                        if (target.Type == TargetType.GROUND)
+                        {
+                            result = DamageValue;
+                        }
+                        else 
+                        {
+                            // Distance = 0 because we assume the explosion is on the target
+                            result = target.Enemy.EstimateDamage(
+                                    DamageType, DamageValue, displacement, 0);
+                        }
+                        break;
+                    case DamageType.HEAT:
+                        result = target.Enemy.EstimateDamage(
+                                DamageType, DamageValue, displacement, distance);
+                        break;
+                    case DamageType.KE:
+                        result = target.Enemy.EstimateDamage(
+                                DamageType, DamageValue, displacement, distance);
+                        break;
+                }
             }
 
             return result;
