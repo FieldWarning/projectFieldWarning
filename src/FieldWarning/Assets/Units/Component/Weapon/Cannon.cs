@@ -91,23 +91,29 @@ namespace PFW.Units.Component.Weapon
             {
                 int deviationMode = (int)roll % 4;
 
+                float missFactor = _random.NextFloat(
+                        Constants.MISS_FACTOR_MIN,
+                        Constants.MISS_FACTOR_MAX);
+
+                float weightX = _random.NextFloat(0, 1);
+
                 switch (deviationMode)
                 {
                     case 0:
-                        shellDestination.x += distance / 50;
-                        shellDestination.y += distance / 50;
+                        shellDestination.x += distance * missFactor * weightX;
+                        shellDestination.y += distance * missFactor * (1 - weightX);
                         break;
                     case 1:
-                        shellDestination.x -= distance / 50;
-                        shellDestination.y += distance / 50;
+                        shellDestination.x -= distance * missFactor * weightX;
+                        shellDestination.y += distance * missFactor * (1 - weightX);
                         break;
                     case 2:
-                        shellDestination.x += distance / 50;
-                        shellDestination.y -= distance / 50;
+                        shellDestination.x += distance * missFactor * weightX;
+                        shellDestination.y -= distance * missFactor * (1 - weightX);
                         break;
                     case 3:
-                        shellDestination.x -= distance / 50;
-                        shellDestination.y -= distance / 50;
+                        shellDestination.x -= distance * missFactor * weightX;
+                        shellDestination.y -= distance * missFactor * (1 - weightX);
                         break;
                 }
             }
