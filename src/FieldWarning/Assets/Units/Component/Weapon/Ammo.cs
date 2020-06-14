@@ -42,9 +42,14 @@ namespace PFW.Units.Component.Weapon
                 Logger.LogConfig($"Could not parse damage type value '{config.DamageType}'" +
                     $" in a weapon's ammo entry. Defaulting to KE.", LogLevel.ERROR);
             }
-
+            
             DamageValue = config.DamageValue;
             _groundRange = config.GroundRange * Constants.MAP_SCALE;
+            if (DamageType == DamageType.KE)
+            {
+                DamageValue += (int)(_groundRange / Constants.KE_FALLOFF);
+            }
+
             _heloRange = config.HeloRange * Constants.MAP_SCALE;
             Accuracy = config.Accuracy;
             Velocity = config.Velocity * Constants.MAP_SCALE;
@@ -134,6 +139,10 @@ namespace PFW.Units.Component.Weapon
                         break;
                 }
             }
+            Logger.LogDamage(
+                    $"Estimating {result} damage with dmg type {DamageType}," +
+                    $" firepower {DamageValue} at range {distance}", 
+                    LogLevel.DUMP);
 
             return result;
         }

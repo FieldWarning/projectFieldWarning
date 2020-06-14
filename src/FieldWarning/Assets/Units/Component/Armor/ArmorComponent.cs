@@ -60,6 +60,8 @@ namespace PFW.Units.Component.Armor
             float receivedDamage = EstimateDamage(
                     damageType, firepower, displacementToThis, distance);
 
+            Debug.Log($"damage {receivedDamage} with type {damageType} power {firepower}");
+
             if (receivedDamage > 0)
             {
                 _healthComponent.UpdateHealth(_healthComponent.Health - receivedDamage);
@@ -83,13 +85,13 @@ namespace PFW.Units.Component.Armor
             switch (damageType)
             {
                 case DamageType.HE:
-                    HeDamage(firepower, armorOfImpact, distance);
+                    result = HeDamage(firepower, armorOfImpact, distance);
                     break;
                 case DamageType.HEAT:
-                    HeatDamage(firepower, armorOfImpact);
+                    result = HeatDamage(firepower, armorOfImpact);
                     break;
                 case DamageType.KE:
-                    KeDamage(firepower, armorOfImpact, distance);
+                    result = KeDamage(firepower, armorOfImpact, distance);
                     break;
             }
 
@@ -138,7 +140,11 @@ namespace PFW.Units.Component.Armor
             float result;
 
             // range scaling
-            firepower += (int)(distance / Constants.KE_FALLOFF);
+            firepower -= (int)(distance / Constants.KE_FALLOFF);
+            if (firepower < 0)
+            {
+                firepower = 0;
+            }
 
             if (armor == 0)
             {
