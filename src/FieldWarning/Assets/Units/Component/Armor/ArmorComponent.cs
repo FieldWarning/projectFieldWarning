@@ -59,7 +59,7 @@ namespace PFW.Units.Component.Armor
                     damageType, firepower, displacementToThis, distance);
 
             Logger.LogDamage($"Received {receivedDamage} damage with type {damageType}," +
-                $"pre-calculation firepower was {firepower}", LogLevel.DEBUG);
+                $"pre-calculation firepower was {firepower}", LogLevel.INFO);
 
             if (receivedDamage > 0)
             {

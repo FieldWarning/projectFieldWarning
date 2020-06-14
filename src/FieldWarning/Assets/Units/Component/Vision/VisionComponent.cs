@@ -123,28 +123,19 @@ namespace PFW.Units.Component.Vision
 
         /// <summary>
         /// Notify all nearby enemy units that they may have to show themselves.
-        /// Only works if they have colliders!
         /// </summary>
         public void ScanForEnemies()
         {
-            Collider[] hits = Physics.OverlapSphere(
-                    gameObject.transform.position,
-                    _maxSpottingRange,
-                    LayerMask.NameToLayer("Selectable"),
-                    QueryTriggerInteraction.Ignore);
+            List<UnitDispatcher> units =
+                    MatchSession.Current.FindUnitsAroundPoint(
+                            transform.position,
+                            _maxSpottingRange);
 
-            foreach (Collider c in hits) {
-                GameObject go = c.gameObject;
-
-                // this finds colliders, health bars and all other crap except units
-                UnitDispatcher unit = go.GetComponentInParent<UnitDispatcher>();
-                if (unit == null || !unit.enabled)
-                    continue;
-
-                // This assumes that all selectables with colliders have 
-                // a visibility manager, which may be a bad assumption:
+            foreach (UnitDispatcher unit in units) {
                 if (unit.Platoon.Owner.Team != _team)
+                {
                     unit.VisionComponent.MaybeReveal(this);
+                }
             }
         }
 
