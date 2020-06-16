@@ -20,7 +20,7 @@ namespace PFW.Units.Component.Weapon
     /// <summary>
     /// A non-howitzer cannon.
     /// </summary>
-    public sealed class Cannon : IWeapon
+    public sealed class Cannon
     {
         private float _shotReload;
         private int _salvoLength;
@@ -138,12 +138,24 @@ namespace PFW.Units.Component.Weapon
             }
         }
 
+        /// <summary>
+        ///     Same as the update method on a MonoBehavior.
+        ///     Used, for example, to update reload timers.
+        /// </summary>
         public void HandleUpdate()
         {
             if (_reloadTimeLeft > 0)
                 _reloadTimeLeft -= Time.deltaTime;
         }
 
+        /// <summary>
+        ///     Fire on the provided target if the weapon is not reloading etc.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="displacement">Vector from the firing unit to the target unit</param>
+        /// <param name="distance">Distance from the firing unit to the target unit</param>
+        /// <param name="isServer">Non-server code should only affect art.</param>
+        /// <returns>True if a shot was fired, false otherwise.</returns>
         public bool TryShoot(
                 TargetTuple target,
                 Vector3 displacement,
@@ -182,6 +194,10 @@ namespace PFW.Units.Component.Weapon
             return result;
         }
 
+        /// <summary>
+        ///     For every target type, find the max range
+        ///     that this weapon can shoot it at (0 if it can't).
+        /// </summary>
         public float[] CalculateMaxRanges()
         {
             float[] result = new float[(int)TargetType._SIZE];

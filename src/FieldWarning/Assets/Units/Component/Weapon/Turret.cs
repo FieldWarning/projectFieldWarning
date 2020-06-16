@@ -34,7 +34,7 @@ namespace PFW.Units.Component.Weapon
     public class Turret
     {
         // targetingStrategy
-        private IWeapon _weapon; // weapon turret
+        private Cannon _weapon; // weapon turret
 
         /// <summary>
         ///     Represents the max ranges against
