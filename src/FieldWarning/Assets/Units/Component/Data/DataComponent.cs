@@ -32,6 +32,7 @@ namespace PFW.Units.Component.Data
         public float Width;
         public MobilityData MobilityData;
 
+        public bool ApImmunity;
         public int FrontArmor;
         public int SideArmor;
         public int RearArmor;
@@ -80,6 +81,7 @@ namespace PFW.Units.Component.Data
 
             c.AccelDampTime = 0.15f * c.MovementSpeed / c.AccelRate;
 
+            c.ApImmunity = armorConfig.ApImmunity;
             c.FrontArmor = armorConfig.FrontArmor;
             c.SideArmor = armorConfig.SideArmor;
             c.RearArmor = armorConfig.RearArmor;

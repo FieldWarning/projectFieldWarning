@@ -48,8 +48,8 @@
 	},
     
     "Armor": {
-        "FrontArmor": 0,
-        "SideArmor": 0,
+        "FrontArmor": 10,
+        "SideArmor": 3,
         "RearArmor": 0,
         "TopArmor": 0
     },
@@ -78,8 +78,7 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 20,
+                    "GroundRange" : 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
@@ -88,7 +87,14 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "MG"
+                    "BarrelTipRef": "MG",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HEAVY_ARMS",
+                            "DamageValue": 0.75,
+                        }
+                    ]
                 }
             },
             {
@@ -99,8 +105,8 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 2000,
+                    "DamageValue": 4,
+                    "GroundRange" : 2000,
                     "Accuracy": 30,
                     "ShotReload": 4,
                     "SalvoLength": 1,
@@ -109,7 +115,25 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "Autocannon"
+                    "BarrelTipRef": "Autocannon",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
+                        },
+                        {
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
+                        }
+                    ]
                 }
             }
         ]

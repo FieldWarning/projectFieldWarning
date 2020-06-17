@@ -11,8 +11,8 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 /// <summary>
 /// The classes here represent purely what we write
@@ -20,13 +20,11 @@ using System.Collections.Generic;
 /// </summary>
 namespace PFW.Model.Armory.JsonContents
 {
-    [Serializable]
     public class DeckConfig
     {
         public List<string> UnitIds;
     }
 
-    [Serializable]
     public class UnitConfig
     {
         public string ID;
@@ -46,17 +44,35 @@ namespace PFW.Model.Armory.JsonContents
         public MobilityConfig Mobility;
         public List<TurretConfig> Turrets;
         public ReconConfig Recon;
+
+        /// <summary>
+        ///     Do consistency checks and final post-parse
+        ///     adjustments to the config contents.
+        /// </summary>
+        public bool ParsingDone()
+        {
+            bool result = true;
+            if (Turrets != null)
+            {
+                foreach (TurretConfig turret in Turrets)
+                {
+                    result &= turret.ParsingDone(Name);
+                }
+            }
+            return result;
+        }
     }
 
-    [Serializable]
     public class VoiceLineConfig
     {
+        [JsonProperty("Movement")]
         public List<string> Movement;
-        public List<string> Agressive;
+        [JsonProperty("Aggressive")]
+        public List<string> Aggressive;
+        [JsonProperty("Selection")]
         public List<string> Selection;
     }
 
-    [Serializable]
     public class ReconConfig
     {
         public int MaxSpottingRange;
@@ -64,16 +80,15 @@ namespace PFW.Model.Armory.JsonContents
         public float StealthPenetration;
     }
 
-    [Serializable]
     public class ArmorConfig
     {
+        public bool ApImmunity;  // Infantry and flying units can't be shot with KE etc.
         public int FrontArmor;
         public int SideArmor;
         public int RearArmor;
         public int TopArmor;
     }
 
-    [Serializable]
     public class UnitDataConfig
     {
         public float MovementSpeed;
@@ -89,7 +104,6 @@ namespace PFW.Model.Armory.JsonContents
         public int MobilityTypeIndex;
     }
 
-    [Serializable]
     public class MobilityConfig
     {
         public float SlopeSensitivity;
@@ -99,7 +113,6 @@ namespace PFW.Model.Armory.JsonContents
         public float WaterSpeed;
     }
 
-    [Serializable]
     public class TurretConfig
     {
         public string TurretRef;
@@ -115,40 +128,102 @@ namespace PFW.Model.Armory.JsonContents
         public List<TurretConfig> Children;  // JSONUtility generates a
                                              // warning about the recursion..
         public CannonConfig Cannon;
-        public HowitzerConfig Howitzer;
+
+        public bool ParsingDone(string unitName)
+        {
+            bool result = true;
+
+            if (Cannon != null)
+            {
+                result &= Cannon.ParsingDone(unitName);
+            }
+
+            if (Children != null)
+            {
+                foreach (TurretConfig turret in Children)
+                {
+                    result &= turret.ParsingDone(unitName);
+                }
+            }
+
+            return result;
+        }
     }
 
-    [Serializable]
     public class CannonConfig
     {
-        public int Damage;
+        public string DamageType;
+        public int DamageValue;
         // Beware: This is in meters, NOT unity units!
-        public int FireRange;
-        public int Accuracy;
+        public int GroundRange;
+        public int HeloRange;
+        public float Accuracy;
         public float ShotReload;
         public int SalvoLength;
         public float SalvoReload;
+        public int Velocity;  // meters per second
+        public bool Indirect;
+        public bool Guided;
         public string MuzzleFlash;
         public string Shell;
-        public int Velocity;  // meters per second
         public string Sound;
         public string BarrelTipRef;
+        public List<AmmoConfig> Ammo;
+
+        public bool ParsingDone(string unitName) 
+        {
+            /// This config has default values for its children ammo
+            /// configs. Before use, we check for unset ammo fields
+            /// and set them to the default values held here.
+
+            if (Ammo == null || Ammo.Count == 0)
+            {
+                UnityEngine.Debug.LogError(
+                        $"Unit {unitName} has a cannon with no ammo config!");
+                return false;
+            }
+
+            foreach (AmmoConfig ammo in Ammo)
+            {
+                if (ammo.DamageType == "" || ammo.DamageType == null)
+                    ammo.DamageType = DamageType;
+                if (ammo.DamageValue == 0)
+                    ammo.DamageValue = DamageValue;
+                if (ammo.GroundRange == 0)
+                    ammo.GroundRange = GroundRange;
+                if (ammo.HeloRange == 0)
+                    ammo.HeloRange = HeloRange;
+                if (ammo.Accuracy == 0)
+                    ammo.Accuracy = Accuracy;
+                if (ammo.Velocity == 0)
+                    ammo.Velocity = Velocity;
+                if (ammo.MuzzleFlash == "" || ammo.MuzzleFlash == null)
+                    ammo.MuzzleFlash = MuzzleFlash;
+                if (ammo.Shell == "" || ammo.Shell == null)
+                    ammo.Shell = Shell;
+                if (ammo.Sound == "" || ammo.Sound == null)
+                    ammo.Sound = Sound;
+            }
+            return true;
+        }
     }
 
-    [Serializable]
-    public class HowitzerConfig
+    /// <summary>
+    ///     Copy of the cannon config containing optional overrides
+    /// </summary>
+    public class AmmoConfig
     {
-        public int Damage;
+        public string DamageType;
+        public float DamageValue;
         // Beware: This is in meters, NOT unity units!
-        public int FireRange;
-        public int Accuracy;
-        public float ShotReload;
-        public int SalvoLength;
-        public float SalvoReload;
+        public int GroundRange;
+        public int HeloRange;
+        public float Accuracy;
+        public int Velocity;  // meters per second
+        public bool Indirect;
+        public bool Guided;
         public string MuzzleFlash;
         public string Shell;
-        public int Velocity;  // meters per second
         public string Sound;
-        public string BarrelTipRef;
     }
 }

@@ -32,5 +32,17 @@ namespace PFW
         /// X meters * MAP_SCALE = Y unity units
         /// </summary>
         public const float MAP_SCALE = 1f / 50f;
+
+        public const float KE_FALLOFF = 175 * MAP_SCALE;
+        public const float HE_FALLOFF = 25 * MAP_SCALE;
+        public const float SMALL_ARMS_FALLOFF = 5 * MAP_SCALE;
+        public const float HEAVY_ARMS_FALLOFF = 5 * MAP_SCALE;
+
+        /// <summary>
+        /// When a shot misses, the projectile lands away from the target.
+        /// Larger value = projectiles miss by more.
+        /// </summary>
+        public const float MISS_FACTOR_MIN = 0.4f;
+        public const float MISS_FACTOR_MAX = 0.8f;
     }
 }

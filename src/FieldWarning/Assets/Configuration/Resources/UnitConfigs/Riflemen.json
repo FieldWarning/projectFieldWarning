@@ -51,7 +51,8 @@
         "FrontArmor": 0,
         "SideArmor": 0,
         "RearArmor": 0,
-        "TopArmor": 0
+        "TopArmor": 0,
+        "ApImmunity": true
     },
 
     "Mobility": {
@@ -78,8 +79,7 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 20,
+                    "GroundRange" : 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
@@ -88,7 +88,14 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "MG"
+                    "BarrelTipRef": "MG",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HEAVY_ARMS",
+                            "DamageValue": 0.75,
+                        }
+                    ]
                 }
             },
             {
@@ -99,8 +106,7 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 200,
+                    "GroundRange" : 200,
                     "Accuracy": 30,
                     "ShotReload": 8,
                     "SalvoLength": 1,
@@ -109,7 +115,14 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "IFV"
+                    "BarrelTipRef": "IFV",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "SMALL_ARMS",
+                            "DamageValue": 0.5,
+                        }
+                    ]
                 }
             }
         ]

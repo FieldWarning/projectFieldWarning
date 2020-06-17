@@ -11,9 +11,13 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace PFW.Units
+using PFW.Model.Match;
+
+namespace PFW.Units.Component.Weapon
 {
     public class ShellBehaviour : MonoBehaviour
     {
@@ -25,21 +29,23 @@ namespace PFW.Units
         private GameObject _trailEmitter = null;
 
         private static readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
-        private float _forwardSpeed = 0F;
+        private float _forwardSpeed => _ammo.Velocity;
         private float _verticalSpeed = 0F;
         private Vector3 _targetCoordinates;
 
         private bool _dead = false;
         private float _prevDistanceToTarget = 100000F;
 
+        private Ammo _ammo;
+
         /// <summary>
         ///     Call in the weapon class to initialize the shell/bullet.
         /// </summary>
         /// <param name="velocity">In meters.</param>
-        public void Initialize(Vector3 target, float velocity)
+        public void Initialize(Vector3 target,  Ammo ammo)
         {
             _targetCoordinates = target;
-            _forwardSpeed = velocity * Constants.MAP_SCALE;
+            _ammo = ammo;
         }
 
         private void Start()
@@ -147,6 +153,23 @@ namespace PFW.Units
             {
                 //ParticleSystem.EmissionModule emission = _trailEmitter.emission;
                 //emission.enabled = false;
+            }
+
+            if (_ammo.IsAoe)
+            {
+                List<UnitDispatcher> units = 
+                        MatchSession.Current.FindUnitsAroundPoint(
+                                transform.position, _ammo.ExplosionRadius);
+
+                foreach (UnitDispatcher unit in units)
+                {
+                    Vector3 vectorToTarget = unit.transform.position - transform.position;
+                    unit.HandleHit(
+                            _ammo.DamageType, 
+                            _ammo.DamageValue, 
+                            vectorToTarget, 
+                            vectorToTarget.magnitude);
+                }
             }
 
             Destroy(gameObject);

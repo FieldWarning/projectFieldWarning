@@ -23,80 +23,185 @@ namespace PFW
     /// Alternatively, you can write '#define PFW_LOG_NETWORKING' at the top of all
     /// files that call the relevant logging function (LogNetworking).
     /// 
-    /// This logger is still a work in progress. The goals are:
-    /// -> Ability to remove the messages of specific subsystems at compile time.
+    /// Features:
+    /// -> Ability to enable the messages of specific subsystems at compile time.
+    /// [enable PFW_LOG_ALL or name a specific subsystem, e.g. PFW_LOG_NETWORKING]
+    /// -> Ability to disable the different log levels at compile time.
+    /// [enable PFW_DEBUG to disable DUMP, enable PFW_ERROR to only see ERROR and BUG etc]
     /// TODO: 
-    /// -> Ability to disable the different log levels at run and compile time.
+    /// -> Ability to remove the messages of specific subsystems at compile time.
     /// -> Redirecting logging to a file.
     /// </summary>
     public static class Logger
     {
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_NETWORKING")]
         public static void LogNetworking(
                 string logMsg,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Networking: {logMsg}");
+            Log(logMsg, "Networking", level);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_NETWORKING")]
         public static void LogNetworking(
                 string logMsg,
                 Object context,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Networking: {logMsg}", context);
+            Log(logMsg, context, "Networking", level);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_TARGETING")]
         public static void LogTargeting(
                 string logMsg,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Targeting: {logMsg}");
+            Log(logMsg, "Targeting", level);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_TARGETING")]
         public static void LogTargeting(
                 string logMsg,
                 Object context,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Targeting: {logMsg}", context);
+            Log(logMsg, context, "Targeting", level);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_DAMAGE")]
         public static void LogDamage(
                 string logMsg,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Damage: {logMsg}");
+            Log(logMsg, "Damage", level);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_DAMAGE")]
         public static void LogDamage(
                 string logMsg,
                 Object context,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Damage: {logMsg}", context);
+            Log(logMsg, context, "Damage", level);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_PATHFINDING")]
         public static void LogPathfinding(
                 string logMsg,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Pathfinding: {logMsg}");
+            Log(logMsg, "Pathfinding", level);
         }
 
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_PATHFINDING")]
         public static void LogPathfinding(
                 string logMsg,
                 Object context,
                 LogLevel level = LogLevel.DEBUG)
         {
-            Debug.Log($"[{level}] Pathfinding: {logMsg}", context);
+            Log(logMsg, context, "Pathfinding", level);
+        }
+
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        [System.Diagnostics.Conditional("PFW_LOG_CONFIG")]
+        public static void LogConfig(
+                string logMsg,
+                LogLevel level = LogLevel.DEBUG)
+        {
+            Log(logMsg, "Config", level);
+        }
+
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        [System.Diagnostics.Conditional("PFW_LOG_CONFIG")]
+        public static void LogConfig(
+                string logMsg,
+                Object context,
+                LogLevel level = LogLevel.DEBUG)
+        {
+            Log(logMsg, context, "Config", level);
+        }
+
+        private static void Log(
+                string logMsg,
+                string subsystem,
+                LogLevel level = LogLevel.DEBUG)
+        {
+            switch (level)
+            {
+                case LogLevel.DUMP:
+#if PFW_DEBUG
+                    break;
+#endif
+                case LogLevel.DEBUG:
+#if PFW_INFO
+                    break;
+#endif
+                case LogLevel.INFO:
+#if PFW_WARNING
+                    break;
+#endif
+                case LogLevel.WARNING:
+#if PFW_ERROR
+                    break;
+#endif
+                case LogLevel.ERROR:
+#if PFW_BUG
+                    break;
+#endif
+                case LogLevel.BUG:
+#if PFW_QUIET
+                    break;
+#endif
+                default:
+                    Debug.Log($"[{level}] {subsystem}: {logMsg}");
+                    break;
+            }
+        }
+
+        private static void Log(
+                string logMsg,
+                Object context, 
+                string subsystem,
+                LogLevel level = LogLevel.DEBUG)
+        {
+            switch (level)
+            {
+                case LogLevel.DUMP:
+#if PFW_DEBUG
+                    break;
+#endif
+                case LogLevel.DEBUG:
+#if PFW_INFO
+                    break;
+#endif
+                case LogLevel.INFO:
+#if PFW_WARNING
+                    break;
+#endif
+                case LogLevel.WARNING:
+#if PFW_ERROR
+                    break;
+#endif
+                case LogLevel.ERROR:
+#if PFW_BUG
+                    break;
+#endif
+                case LogLevel.BUG:
+#if PFW_QUIET
+                    break;
+#endif
+                default:
+                    Debug.Log($"[{level}] {subsystem}: {logMsg}", context);
+                    break;
+            }
         }
     }
 

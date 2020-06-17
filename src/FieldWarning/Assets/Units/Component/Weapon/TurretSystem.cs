@@ -37,7 +37,11 @@ namespace PFW.Units.Component.Weapon
             set
             {
                 __targetBackingField = value;
-                _fireRange = MaxRange(value);
+
+                if (value != null)
+                {
+                    _fireRange = MaxRange(value);
+                }
             }
         }
         public bool HasTargetingOrder 
@@ -60,9 +64,12 @@ namespace PFW.Units.Component.Weapon
         public void Initialize(GameObject unit, Unit armoryUnit)
         {
             Children = new List<Turret>();
-            foreach (TurretConfig turretConfig in armoryUnit.Config.Turrets)
+            if (armoryUnit.Config.Turrets != null)
             {
-                Children.Add(new Turret(unit, turretConfig));
+                foreach (TurretConfig turretConfig in armoryUnit.Config.Turrets)
+                {
+                    Children.Add(new Turret(unit, turretConfig));
+                }
             }
             Unit = GetComponent<UnitDispatcher>();
             enabled = true;
@@ -157,7 +164,9 @@ namespace PFW.Units.Component.Weapon
                 }
 
                 // See if they are in range of weapon:
-                float distance = Vector3.Distance(Unit.transform.position, enemy.Transform.position);
+                float distance = Vector3.Distance(
+                        Unit.transform.position, 
+                        enemy.Transform.position);
                 if (distance < MaxRange(enemy.TargetTuple))
                 {
                     Logger.LogTargeting(
@@ -220,7 +229,7 @@ namespace PFW.Units.Component.Weapon
                 // would be able to drop the handle to it
                 Unit.SetDestination(target.Position);
             }
-
+            
             foreach (Turret turret in Children)
             {
                 turret.SetExplicitTarget(_explicitTarget);

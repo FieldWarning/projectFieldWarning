@@ -17,6 +17,7 @@ using Mirror;
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Movement;
 using PFW.Units.Component.Health;
+using PFW.Units.Component.Weapon;
 
 namespace PFW.Units.Component.Armor
 {
@@ -49,45 +50,57 @@ namespace PFW.Units.Component.Armor
         /// Calculate the total damage dealt within a successful hit, then update health.
         /// </summary>
         public void HandleHit(
-            int firepower,
-            Vector3? displacementToThis,
-            float? distanceToCentre)
+            DamageType damageType,
+            float firepower,
+            Vector3 displacementToThis,
+            float distance)
         {
-            Logger.LogDamage($"ArmorComponent::HandleHit() called");
-            int armorOfImpact;
+            float receivedDamage = EstimateDamage(
+                    damageType, firepower, displacementToThis, distance);
 
-            if (displacementToThis == null)
-            {
-                armorOfImpact = DetermineSideOfImpact();
-            }
-            else
-            {
-                armorOfImpact = DetermineSideOfImpact(displacementToThis.GetValueOrDefault());
-            }
-
-            float receivedDamage = 0;
-
-            // Simple KE formula:
-            if (armorOfImpact == 0)
-            {
-                receivedDamage = 2 * firepower;
-            }
-            else if (armorOfImpact == 1)
-            {
-                receivedDamage = firepower;
-            }
-            else
-            {
-                // Each point of firepower more than the armor value equals 0.5 damage,
-                // but if we have 10 more firepower than armor, those points count double.
-                float overkill = Mathf.Max(firepower - armorOfImpact - 10, 0);
-                receivedDamage = (firepower + overkill - armorOfImpact) / 2 + 1;
-            }
+            Logger.LogDamage($"Received {receivedDamage} damage with type {damageType}," +
+                $"pre-calculation firepower was {firepower}", LogLevel.INFO);
 
             if (receivedDamage > 0)
             {
                 _healthComponent.UpdateHealth(_healthComponent.Health - receivedDamage);
             }
+        }
+
+        /// <summary>
+        ///     Calculate the damage that would be applied if
+        ///     a hit with the given stats were to occur.
+        /// </summary>
+        public float EstimateDamage(
+                DamageType damageType,
+                float firepower,
+                Vector3 displacement,
+                float distance)
+        {
+            float result = 0;
+
+            int armorOfImpact = DetermineSideOfImpact(displacement);
+
+            switch (damageType)
+            {
+                case DamageType.HE:
+                    result = HeDamage(firepower, armorOfImpact, distance);
+                    break;
+                case DamageType.HEAT:
+                    result = HeatDamage(firepower, armorOfImpact);
+                    break;
+                case DamageType.KE:
+                    result = KeDamage(firepower, armorOfImpact, distance);
+                    break;
+                case DamageType.SMALL_ARMS:
+                    result = SmallArmsDamage(firepower, armorOfImpact);
+                    break;
+                case DamageType.HEAVY_ARMS:
+                    result = HeavyArmsDamage(firepower, armorOfImpact);
+                    break;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -124,10 +137,144 @@ namespace PFW.Units.Component.Armor
             return armor;
         }
 
-        private int DetermineSideOfImpact()
+        private float KeDamage(
+                float firepower,
+                int armor,
+                float distance)
         {
-            // When no displacement vector is supplied, the damage is dealt to the top armor
-            return _data.TopArmor;
+            float result;
+
+            // range scaling
+            firepower -= (int)(distance / Constants.KE_FALLOFF);
+            if (firepower < 0)
+            {
+                firepower = 0;
+            }
+
+            if (armor == 0)
+            {
+                result = 2 * firepower;
+            }
+            else if (armor == 1)
+            {
+                result = firepower;
+            }
+            else
+            {
+                result = ((firepower - armor) / 2) + 1;
+            }
+
+            return result;
+        }
+        private float HeatDamage(
+                float firepower,
+                int armor)
+        {
+            float result;
+
+            if (armor > 20)
+            {
+                armor = 20;
+            }
+
+            if (armor == 0)
+            {
+                result = 2 * firepower;
+            }
+            else if (armor == 1)
+            {
+                result = firepower;
+            }
+            else
+            {
+                // Each point of firepower more than the armor value equals 0.5 damage,
+                // but if we have 10 more firepower than armor, those points count double.
+                float overkill = Mathf.Max(firepower - armor - 10, 0);
+                result = (firepower + overkill - armor) / 2 + 1;
+            }
+
+            return result;
+        }
+
+        private float HeDamage(
+                float firepower,
+                int armor,
+                float distance)
+        {
+            float result = firepower;
+
+            // range scaling
+            result -= (int)(distance / Constants.HE_FALLOFF);
+
+            switch (armor)
+            {
+                case 0:
+                case 1:
+                    break;
+                case 2:
+                    result *= 0.4f;
+                    break;
+                case 3:
+                    result *= 0.3f;
+                    break;
+                case 4:
+                    result *= 0.2f;
+                    break;
+                case 5:
+                    result *= 0.15f;
+                    break;
+                case 6:
+                case 7:
+                    result *= 0.1f;
+                    break;
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                    result *= 0.05f;
+                    break;
+                default:
+                    result *= 0.01f;
+                    break;
+            }
+
+            return result;
+        }
+        private float SmallArmsDamage(
+                float firepower,
+                int armor)
+        {
+            float result = 0;
+
+            if (armor == 0)
+            {
+                result = firepower;
+            }
+            else if (armor == 1)
+            {
+                result = firepower * 0.1f;
+            }
+
+            return result;
+        }
+        private float HeavyArmsDamage(
+                float firepower,
+                int armor)
+        {
+            float result = 0;
+
+            if (armor == 0)
+            {
+                result = firepower;
+            }
+            else if (armor == 1)
+            {
+                result = firepower * 0.5f;
+            }
+
+            return result;
         }
     }
 }

@@ -78,8 +78,8 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "Damage": 4,
-                    "FireRange" : 20,
+                    "DamageValue": 4,
+                    "GroundRange" : 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
@@ -88,7 +88,16 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "cannon"
+                    "BarrelTipRef": "cannon",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
                 }
             }
         ]

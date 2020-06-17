@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Copyright (c) 2017-present, PFW Contributors.
 *
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -24,6 +24,8 @@ namespace PFW.Units.Component.Weapon
         private Vector3 _position { get; set; }
         public UnitDispatcher Enemy { get; private set; }
 
+        public readonly TargetType Type;
+
         /// <summary>
         /// The position (location) of the target,
         /// regardless of whether its a unit or not.
@@ -41,16 +43,18 @@ namespace PFW.Units.Component.Weapon
         {
             _position = position;
             Enemy = null;
+            Type = TargetType.GROUND;
         }
 
         /// <summary>
         /// Do not call this constructor outside of the UnitDispatcher class!
         /// </summary>
         /// <param name="enemy"></param>
-        public TargetTuple(UnitDispatcher enemy)
+        public TargetTuple(UnitDispatcher enemy, TargetType type)
         {
             _position = Vector3.zero;
             Enemy = enemy;
+            Type = type;
         }
 
         /// <summary>
@@ -59,7 +63,7 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         public bool IsGround {
             get {
-                return Enemy == null;
+                return Type == TargetType.GROUND;
             }
         }
 
@@ -69,7 +73,7 @@ namespace PFW.Units.Component.Weapon
         /// </summary>
         public bool IsUnit {
             get {
-                return Enemy != null;
+                return !IsGround;
             }
         }
 
@@ -93,5 +97,14 @@ namespace PFW.Units.Component.Weapon
             Enemy = null;
             _position = Vector3.zero;
         }
+    }
+
+    public enum TargetType
+    {
+        GROUND = 0,
+        INFANTRY,
+        VEHICLE,
+        HELO,
+        _SIZE
     }
 }

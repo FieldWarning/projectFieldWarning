@@ -90,13 +90,14 @@ namespace PFW.Units
                 GameObject deathEffect, 
                 VoiceComponent voice)
         {
-            TargetTuple = new TargetTuple(this);
+            _unitData = gameObject.GetComponent<DataComponent>();
+
+            TargetType type = _unitData.ApImmunity ? TargetType.INFANTRY : TargetType.VEHICLE;
+            TargetTuple = new TargetTuple(this, type);
             Platoon = platoon;
 
             _art = art;
             _deathEffect = deathEffect?.GetComponent<WreckComponent>();
-
-            _unitData = gameObject.GetComponent<DataComponent>();
 
             _voiceComponent      = voice;
             _movementComponent   = gameObject.GetComponent<MovementComponent>();
@@ -166,12 +167,21 @@ namespace PFW.Units
         public float GetHealth() => _healthComponent.Health;
         public float MaxHealth => _unitData.MaxHealth;
 
-        public void HandleHit(
-            int firepower,
-            Vector3? displacementToTarget,
-            float? distanceToCentre)
+        public float EstimateDamage(
+                DamageType damageType,
+                float firepower,
+                Vector3 displacement,
+                float distance)
             =>
-            _armorComponent.HandleHit(firepower, displacementToTarget, distanceToCentre);
+            _armorComponent.EstimateDamage(damageType, firepower, displacement, distance);
+
+        public void HandleHit(
+            DamageType damageType,
+            float firepower,
+            Vector3 displacementToTarget,
+            float distance)
+            =>
+            _armorComponent.HandleHit(damageType, firepower, displacementToTarget, distance);
 
         public void Teleport(Vector3 position, float heading) =>
                 _movementComponent.Teleport(position, heading);

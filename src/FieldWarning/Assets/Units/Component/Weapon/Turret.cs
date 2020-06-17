@@ -34,8 +34,13 @@ namespace PFW.Units.Component.Weapon
     public class Turret
     {
         // targetingStrategy
-        private IWeapon _weapon; // weapon turret
-        private float _fireRange; // weapon turret, in unity units
+        private Cannon _weapon; // weapon turret
+
+        /// <summary>
+        ///     Represents the max ranges against
+        ///     each possible target type.
+        /// </summary>
+        private float[] _maxRanges;
 
         // The default here has significance because only the
         //      last turrets know the actual weapon's velocity. 
@@ -54,8 +59,6 @@ namespace PFW.Units.Component.Weapon
         private int _priority;  // weapon turret, higher is better
         public List<Turret> Children; // parent turret, sync
 
-        private bool _isHowitzer = false; // purpose unclear, both
-
         private Transform _turret = null; // object being rotated, both
 
         private readonly float _arcHorizontal = 180;
@@ -63,13 +66,11 @@ namespace PFW.Units.Component.Weapon
         private readonly float _arcDown = 20;
         private readonly float _rotationRate = 40f;
 
-        private static GameObject _muzzleFlashResource;
-        private static AudioClip _gunSoundResource;
-
         public bool IsFacingTarget { get; private set; } = false;
 
         public Turret(GameObject unit, TurretConfig turretConfig)
         {
+            _maxRanges = new float[(int)TargetType._SIZE];
             _arcHorizontal = turretConfig.ArcHorizontal;
             _arcUp = turretConfig.ArcUp;
             _arcDown = turretConfig.ArcDown;
@@ -78,7 +79,7 @@ namespace PFW.Units.Component.Weapon
             _turret = RecursiveFindChild(unit.transform, turretConfig.TurretRef);
             Children = new List<Turret>();
 
-            if (turretConfig.Children.Count > 0)
+            if (turretConfig.Children != null && turretConfig.Children.Count > 0)
             {
                 foreach (TurretConfig childTurretConfig in turretConfig.Children)
                 {
@@ -89,41 +90,7 @@ namespace PFW.Units.Component.Weapon
             {
                 AudioSource shotAudioSource = _turret.gameObject.AddComponent<AudioSource>();
 
-                // The Unit json parser creates objects even when there are none,
-                // so instead of testing for null we have to test for a 0 value..
-                if (turretConfig.Howitzer.FireRange != 0)
-                {
-                    _isHowitzer = true;
-
-                    Transform barrelTip = 
-                            turretConfig.Cannon.BarrelTipRef == "" ? 
-                                    _turret :
-                                    RecursiveFindChild(
-                                            _turret.parent, 
-                                            turretConfig.Howitzer.BarrelTipRef);
-                    if (barrelTip == null)
-                    {
-                        barrelTip = _turret;
-                    }
-
-                    _muzzleFlashResource = Resources.Load<GameObject>(
-                            turretConfig.Howitzer.MuzzleFlash);
-                    _gunSoundResource = Resources.Load<AudioClip>(
-                            turretConfig.Howitzer.Sound);
-                    GameObject muzzleFlashGO = GameObject.Instantiate(
-                            _muzzleFlashResource, barrelTip);
-
-                    _weapon = new Howitzer(
-                            turretConfig.Howitzer,
-                            shotAudioSource,
-                            _gunSoundResource,
-                            muzzleFlashGO.GetComponent<VisualEffect>(),
-                            barrelTip);
-                    _fireRange =
-                            turretConfig.Howitzer.FireRange * Constants.MAP_SCALE;
-                    _shellVelocity = turretConfig.Howitzer.Velocity * Constants.MAP_SCALE;
-                }
-                else if (turretConfig.Cannon.FireRange != 0)
+                if (turretConfig.Cannon != null)
                 {
                     Transform barrelTip =
                             turretConfig.Cannon.BarrelTipRef == "" ?
@@ -136,19 +103,12 @@ namespace PFW.Units.Component.Weapon
                         barrelTip = _turret;
                     }
 
-                    _muzzleFlashResource = Resources.Load<GameObject>(turretConfig.Cannon.MuzzleFlash);
-                    _gunSoundResource = Resources.Load<AudioClip>(turretConfig.Cannon.Sound);
-                    GameObject muzzleFlashGO = GameObject.Instantiate(
-                            _muzzleFlashResource, barrelTip);
-
                     _weapon = new Cannon(
                             turretConfig.Cannon,
                             shotAudioSource,
-                            _gunSoundResource,
-                            muzzleFlashGO.GetComponent<VisualEffect>(),
                             barrelTip);
-                    _fireRange =
-                            turretConfig.Cannon.FireRange * Constants.MAP_SCALE;
+
+                    _maxRanges = _weapon.CalculateMaxRanges();
                     _shellVelocity = turretConfig.Cannon.Velocity * Constants.MAP_SCALE;
                 }
                 else
@@ -166,12 +126,12 @@ namespace PFW.Units.Component.Weapon
         public bool MaybeShoot(float distanceToTarget, bool isServer)
         {
             bool shotFired = false;
-            bool targetInRange = _fireRange > distanceToTarget;
+            bool targetInRange = _maxRanges[(int)_target.Type] > distanceToTarget;
             if (IsFacingTarget && targetInRange)
             {
                 Vector3 vectorToTarget = _target.Position - _turret.transform.position;
                 shotFired = _weapon.TryShoot(
-                    _target, vectorToTarget, isServer);
+                    _target, vectorToTarget, distanceToTarget, isServer);
             }
 
             foreach (Turret turret in Children)
@@ -189,7 +149,6 @@ namespace PFW.Units.Component.Weapon
             if (_target == null || !_target.Exists)
             {
                 TurnTurretBackToDefaultPosition();
-                IsFacingTarget = _isHowitzer;
                 return;
             }
 
@@ -264,11 +223,6 @@ namespace PFW.Units.Component.Weapon
 
             IsFacingTarget = aimed;
 
-            #region ArtyAdditionalCode
-            if (_isHowitzer)
-                IsFacingTarget = true;
-            #endregion
-
             foreach (Turret turret in Children)
             {
                 turret.HandleUpdate();
@@ -333,8 +287,8 @@ namespace PFW.Units.Component.Weapon
         /// TODO In the future we will need to also return -1
         /// for turrets that can't shoot the target at all.
         public float MaxRange(TargetTuple target)
-        { 
-            float maxRange = _fireRange;
+        {
+            float maxRange = _maxRanges[(int)target.Type];
             foreach (Turret turret in Children)
             {
                 float turretMax = turret.MaxRange(target);
