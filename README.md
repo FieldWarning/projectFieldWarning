@@ -1,6 +1,6 @@
 # Project: Field Warning
 Project: Field Warning is a community-made RTS game centered around squad and company-scale warfare.
-We are currently on Unity version **2019.3.0**.
+We are currently on Unity version **2019.4.0**.
 
 ## Downloading and Installing
 **We recommend using [GitHub Desktop](https://desktop.github.com) to download**;
@@ -29,7 +29,7 @@ to check this page often, and redownload. You will also be unable to make commit
 2. Extract the ZIP into any folder you like.
 
 ## Running and Playing
-1. Download [Unity version 2019.3.0](https://unity3d.com/get-unity/download/archive)
+1. Download [Unity version 2019.4.0](https://unity3d.com/get-unity/download/archive)
 2. Run the Unity Installer
 3. Once the Installer finishes, open Unity, and click "Open" in the top right.
 4. Navigate to [Clone Destination Folder](https://github.com/FieldWarning/projectFieldWarning/tree/master/src/FieldWarning), and select the FieldWarning folder.
