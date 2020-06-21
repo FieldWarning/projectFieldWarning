@@ -1,5 +1,5 @@
-using UnityEngine;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace Mirror.Tests
 {
@@ -121,8 +121,10 @@ namespace Mirror.Tests
 
             // serialize all the data as we would for the network
             NetworkWriter ownerWriter = new NetworkWriter();
-            NetworkWriter observersWriter = new NetworkWriter(); // not really used in this Test
-            identity1.OnSerializeAllSafely(true, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
+            // not really used in this Test
+            NetworkWriter observersWriter = new NetworkWriter();
+            ulong mask = identity1.GetInitialComponentsMask();
+            identity1.OnSerializeAllSafely(true, mask, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
 
             // set up a "client" object
             GameObject gameObject2 = new GameObject();

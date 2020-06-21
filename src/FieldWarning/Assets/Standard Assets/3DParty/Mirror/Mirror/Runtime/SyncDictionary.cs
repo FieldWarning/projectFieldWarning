@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,6 +37,14 @@ namespace Mirror
         // we might later receive changes that have already been applied
         // so we need to skip them
         int changesAhead;
+
+        public void Reset()
+        {
+            IsReadOnly = false;
+            changes.Clear();
+            changesAhead = 0;
+            objects.Clear();
+        }
 
         protected virtual void SerializeKey(NetworkWriter writer, TKey item) { }
         protected virtual void SerializeItem(NetworkWriter writer, TValue item) { }

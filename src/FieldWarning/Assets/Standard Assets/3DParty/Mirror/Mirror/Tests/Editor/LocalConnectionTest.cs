@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine.TestTools;
 
@@ -100,7 +99,8 @@ namespace Mirror.Tests
         [Test]
         public void ClientToServerFailTest()
         {
-            LogAssert.ignoreFailingMessages = true; // error log is expected
+            // error log is expected
+            LogAssert.ignoreFailingMessages = true;
             bool result = connectionToServer.Send(new ArraySegment<byte>(new byte[0]));
             LogAssert.ignoreFailingMessages = false;
 

@@ -20,6 +20,8 @@ namespace Mirror
     [HelpURL("https://mirror-networking.com/docs/Components/NetworkRoomManager.html")]
     public class NetworkRoomManager : NetworkManager
     {
+        static readonly ILogger logger = LogFactory.GetLogger(typeof(NetworkRoomManager));
+
         public struct PendingPlayer
         {
             public NetworkConnection conn;
@@ -36,7 +38,7 @@ namespace Mirror
         [FormerlySerializedAs("m_MinPlayers")]
         [SerializeField]
         [Tooltip("Minimum number of players to auto-start the game")]
-        int minPlayers = 1;
+        protected int minPlayers = 1;
 
         [FormerlySerializedAs("m_RoomPlayerPrefab")]
         [SerializeField]
@@ -67,7 +69,8 @@ namespace Mirror
         /// True when all players have submitted a Ready message
         /// </summary>
         [Tooltip("Diagnostic flag indicating all players are ready to play")]
-        public bool allPlayersReady;
+        [FormerlySerializedAs("allPlayersReady")]
+        [SerializeField] bool _allPlayersReady;
 
         /// <summary>
         /// These slots track players that enter the room.
@@ -75,6 +78,30 @@ namespace Mirror
         /// </summary>
         [Tooltip("List of Room Player objects")]
         public List<NetworkRoomPlayer> roomSlots = new List<NetworkRoomPlayer>();
+
+        public bool allPlayersReady
+        {
+            get => _allPlayersReady;
+            set
+            {
+                bool wasReady = _allPlayersReady;
+                bool nowReady = value;
+
+                if (wasReady != nowReady)
+                {
+                    _allPlayersReady = value;
+
+                    if (nowReady)
+                    {
+                        OnRoomServerPlayersReady();
+                    }
+                    else
+                    {
+                        OnRoomServerPlayersNotReady();
+                    }
+                }
+            }
+        }
 
         public override void OnValidate()
         {
@@ -93,7 +120,7 @@ namespace Mirror
                 if (identity == null)
                 {
                     roomPlayerPrefab = null;
-                    Debug.LogError("RoomPlayer prefab must have a NetworkIdentity component.");
+                    logger.LogError("RoomPlayer prefab must have a NetworkIdentity component.");
                 }
             }
 
@@ -128,7 +155,7 @@ namespace Mirror
         /// <param name="conn">Connection from client.</param>
         public override void OnServerReady(NetworkConnection conn)
         {
-            if (LogFilter.Debug) Debug.Log("NetworkRoomManager OnServerReady");
+            logger.Log("NetworkRoomManager OnServerReady");
             base.OnServerReady(conn);
 
             if (conn != null && conn.identity != null)
@@ -143,9 +170,9 @@ namespace Mirror
 
         void SceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer)
         {
-            if (LogFilter.Debug) Debug.LogFormat("NetworkRoom SceneLoadedForPlayer scene: {0} {1}", SceneManager.GetActiveScene().name, conn);
+            if (logger.LogEnabled()) logger.LogFormat(LogType.Log, "NetworkRoom SceneLoadedForPlayer scene: {0} {1}", SceneManager.GetActiveScene().path, conn);
 
-            if (SceneManager.GetActiveScene().name == RoomScene)
+            if (IsSceneActive(RoomScene))
             {
                 // cant be ready in room, add to ready list
                 PendingPlayer pending;
@@ -163,7 +190,6 @@ namespace Mirror
                 gamePlayer = startPos != null
                     ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
                     : Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-                gamePlayer.name = playerPrefab.name;
             }
 
             if (!OnRoomServerSceneLoadedForPlayer(conn, roomPlayer, gamePlayer))
@@ -175,22 +201,24 @@ namespace Mirror
 
         /// <summary>
         /// CheckReadyToBegin checks all of the players in the room to see if their readyToBegin flag is set.
-        /// <para>If all of the players are ready, then the server switches from the RoomScene to the PlayScene, essentially starting the game. This is called automatically in response to NetworkRoomPlayer.SendReadyToBeginMessage().</para>
+        /// <para>If all of the players are ready, then the server switches from the RoomScene to the PlayScene, essentially starting the game. This is called automatically in response to NetworkRoomPlayer.CmdChangeReadyState.</para>
         /// </summary>
         public void CheckReadyToBegin()
         {
-            if (SceneManager.GetActiveScene().name != RoomScene)
+            if (!IsSceneActive(RoomScene))
                 return;
 
-            if (minPlayers > 0 && NetworkServer.connections.Count(conn => conn.Value != null && conn.Value.identity.gameObject.GetComponent<NetworkRoomPlayer>().readyToBegin) < minPlayers)
+            int numberOfReadyPlayers = NetworkServer.connections.Count(conn => conn.Value != null && conn.Value.identity.gameObject.GetComponent<NetworkRoomPlayer>().readyToBegin);
+            bool enoughReadyPlayers = minPlayers <= 0 || numberOfReadyPlayers >= minPlayers;
+            if (enoughReadyPlayers)
+            {
+                pendingPlayers.Clear();
+                allPlayersReady = true;
+            }
+            else
             {
                 allPlayersReady = false;
-                return;
             }
-
-            pendingPlayers.Clear();
-            allPlayersReady = true;
-            OnRoomServerPlayersReady();
         }
 
         void CallOnClientEnterRoom()
@@ -229,7 +257,7 @@ namespace Mirror
             }
 
             // cannot join game in progress
-            if (SceneManager.GetActiveScene().name != RoomScene)
+            if (!IsSceneActive(RoomScene))
             {
                 conn.Disconnect();
                 return;
@@ -248,10 +276,17 @@ namespace Mirror
         {
             if (conn.identity != null)
             {
-                NetworkRoomPlayer player = conn.identity.GetComponent<NetworkRoomPlayer>();
+                NetworkRoomPlayer roomPlayer = conn.identity.GetComponent<NetworkRoomPlayer>();
 
-                if (player != null)
-                    roomSlots.Remove(player);
+                if (roomPlayer != null)
+                    roomSlots.Remove(roomPlayer);
+
+                foreach (NetworkIdentity clientOwnedObject in conn.clientOwnedObjects)
+                {
+                    roomPlayer = clientOwnedObject.GetComponent<NetworkRoomPlayer>();
+                    if (roomPlayer != null)
+                        roomSlots.Remove(roomPlayer);
+                }
             }
 
             allPlayersReady = false;
@@ -262,11 +297,11 @@ namespace Mirror
                     player.GetComponent<NetworkRoomPlayer>().readyToBegin = false;
             }
 
-            if (SceneManager.GetActiveScene().name == RoomScene)
+            if (IsSceneActive(RoomScene))
                 RecalculateRoomPlayerIndices();
 
-            base.OnServerDisconnect(conn);
             OnRoomServerDisconnect(conn);
+            base.OnServerDisconnect(conn);
         }
 
         /// <summary>
@@ -276,14 +311,14 @@ namespace Mirror
         /// <param name="conn">Connection from client.</param>
         public override void OnServerAddPlayer(NetworkConnection conn)
         {
-            if (SceneManager.GetActiveScene().name == RoomScene)
+            if (IsSceneActive(RoomScene))
             {
                 if (roomSlots.Count == maxConnections)
                     return;
 
                 allPlayersReady = false;
 
-                if (LogFilter.Debug) Debug.LogFormat("NetworkRoomManager.OnServerAddPlayer playerPrefab:{0}", roomPlayerPrefab.name);
+                if (logger.LogEnabled()) logger.LogFormat(LogType.Log, "NetworkRoomManager.OnServerAddPlayer playerPrefab:{0}", roomPlayerPrefab.name);
 
                 GameObject newRoomGameObject = OnRoomServerCreateRoomPlayer(conn);
                 if (newRoomGameObject == null)
@@ -310,10 +345,10 @@ namespace Mirror
         /// This causes the server to switch scenes and sets the networkSceneName.
         /// <para>Clients that connect to this server will automatically switch to this scene. This is called autmatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready. The clients must call NetworkClient.Ready() again to participate in the new scene.</para>
         /// </summary>
-        /// <param name="sceneName"></param>
-        public override void ServerChangeScene(string sceneName)
+        /// <param name="newSceneName"></param>
+        public override void ServerChangeScene(string newSceneName)
         {
-            if (sceneName == RoomScene)
+            if (newSceneName == RoomScene)
             {
                 foreach (NetworkRoomPlayer roomPlayer in roomSlots)
                 {
@@ -322,9 +357,6 @@ namespace Mirror
 
                     // find the game-player object for this connection, and destroy it
                     NetworkIdentity identity = roomPlayer.GetComponent<NetworkIdentity>();
-
-                    NetworkIdentity playerController = identity.connectionToClient.identity;
-                    NetworkServer.Destroy(playerController.gameObject);
 
                     if (NetworkServer.active)
                     {
@@ -337,7 +369,7 @@ namespace Mirror
                 allPlayersReady = false;
             }
 
-            base.ServerChangeScene(sceneName);
+            base.ServerChangeScene(newSceneName);
         }
 
         /// <summary>
@@ -366,13 +398,13 @@ namespace Mirror
         {
             if (string.IsNullOrEmpty(RoomScene))
             {
-                Debug.LogError("NetworkRoomManager RoomScene is empty. Set the RoomScene in the inspector for the NetworkRoomMangaer");
+                logger.LogError("NetworkRoomManager RoomScene is empty. Set the RoomScene in the inspector for the NetworkRoomMangaer");
                 return;
             }
 
             if (string.IsNullOrEmpty(GameplayScene))
             {
-                Debug.LogError("NetworkRoomManager PlayScene is empty. Set the PlayScene in the inspector for the NetworkRoomMangaer");
+                logger.LogError("NetworkRoomManager PlayScene is empty. Set the PlayScene in the inspector for the NetworkRoomMangaer");
                 return;
             }
 
@@ -394,7 +426,7 @@ namespace Mirror
         public override void OnStopServer()
         {
             roomSlots.Clear();
-            base.OnStopServer();
+            OnRoomStopServer();
         }
 
         /// <summary>
@@ -415,14 +447,12 @@ namespace Mirror
         public override void OnStartClient()
         {
             if (roomPlayerPrefab == null || roomPlayerPrefab.gameObject == null)
-                Debug.LogError("NetworkRoomManager no RoomPlayer prefab is registered. Please add a RoomPlayer prefab.");
+                logger.LogError("NetworkRoomManager no RoomPlayer prefab is registered. Please add a RoomPlayer prefab.");
             else
                 ClientScene.RegisterPrefab(roomPlayerPrefab.gameObject);
 
             if (playerPrefab == null)
-                Debug.LogError("NetworkRoomManager no GamePlayer prefab is registered. Please add a GamePlayer prefab.");
-            else
-                ClientScene.RegisterPrefab(playerPrefab);
+                logger.LogError("NetworkRoomManager no GamePlayer prefab is registered. Please add a GamePlayer prefab.");
 
             OnRoomStartClient();
         }
@@ -467,7 +497,7 @@ namespace Mirror
         /// <param name="conn">Connection of the client</param>
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
-            if (SceneManager.GetActiveScene().name == RoomScene)
+            if (IsSceneActive(RoomScene))
             {
                 if (NetworkClient.isConnected)
                     CallOnClientEnterRoom();
@@ -497,6 +527,11 @@ namespace Mirror
         /// This is called on the server when the server is started - including when a host is started.
         /// </summary>
         public virtual void OnRoomStartServer() { }
+
+        /// <summary>
+        /// This is called on the server when the server is started - including when a host is stopped.
+        /// </summary>
+        public virtual void OnRoomStopServer() { }
 
         /// <summary>
         /// This is called on the server when a new client connects to the server.
@@ -529,11 +564,11 @@ namespace Mirror
 
         // Deprecated 12/17/2019
         /// <summary>
-        /// Obsolete: Use <see cref="OnRoomServerCreateGamePlayer(NetworkConnection, GameObject)"/> instead.
+        /// Obsolete: Use <see cref="OnRoomServerCreateGamePlayer(NetworkConnection, GameObject)">OnRoomServerCreateGamePlayer(NetworkConnection, GameObject)</see> instead.
         /// </summary>
         /// <param name="conn">The connection the player object is for.</param>
         /// <returns>A new GamePlayer object.</returns>
-        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use OnRoomServerCreateGamePlayer(NetworkConnection conn, GameObject roomPlayer) instead")]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use OnRoomServerCreateGamePlayer(NetworkConnection conn, GameObject roomPlayer) instead", true)]
         public virtual GameObject OnRoomServerCreateGamePlayer(NetworkConnection conn)
         {
             return null;
@@ -554,7 +589,7 @@ namespace Mirror
         /// <summary>
         /// This allows customization of the creation of the GamePlayer object on the server.
         /// <para>This is only called for subsequent GamePlay scenes after the first one.</para>
-        /// <para>See <see cref="OnRoomServerCreateGamePlayer(NetworkConnection, GameObject)"/> to customize the player object for the initial GamePlay scene.</para>
+        /// <para>See <see cref="OnRoomServerCreateGamePlayer(NetworkConnection, GameObject)">OnRoomServerCreateGamePlayer(NetworkConnection, GameObject)</see> to customize the player object for the initial GamePlay scene.</para>
         /// </summary>
         /// <param name="conn">The connection the player object is for.</param>
         public virtual void OnRoomServerAddPlayer(NetworkConnection conn)
@@ -564,7 +599,7 @@ namespace Mirror
 
         // Deprecated 02/22/2020
         /// <summary>
-        /// Obsolete: Use <see cref="OnRoomServerSceneLoadedForPlayer(NetworkConnection, GameObject, GameObject)"/> instead.
+        /// Obsolete: Use <see cref="OnRoomServerSceneLoadedForPlayer(NetworkConnection, GameObject, GameObject)">OnRoomServerSceneLoadedForPlayer(NetworkConnection, GameObject, GameObject)</see> instead.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use OnRoomServerSceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer, GameObject gamePlayer) instead")]
         public virtual bool OnRoomServerSceneLoadedForPlayer(GameObject roomPlayer, GameObject gamePlayer)
@@ -595,6 +630,12 @@ namespace Mirror
             // all players are readyToBegin, start the game
             ServerChangeScene(GameplayScene);
         }
+
+        /// <summary>
+        /// This is called on the server when CheckReadyToBegin finds that players are not ready
+        /// <para>May be called multiple times while not ready players are joining</para>
+        /// </summary>
+        public virtual void OnRoomServerPlayersNotReady() { }
 
         #endregion
 
@@ -657,7 +698,7 @@ namespace Mirror
             if (!showRoomGUI)
                 return;
 
-            if (NetworkServer.active && SceneManager.GetActiveScene().name == GameplayScene)
+            if (NetworkServer.active && IsSceneActive(GameplayScene))
             {
                 GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
                 if (GUILayout.Button("Return to Room"))
@@ -665,7 +706,7 @@ namespace Mirror
                 GUILayout.EndArea();
             }
 
-            if (SceneManager.GetActiveScene().name == RoomScene)
+            if (IsSceneActive(RoomScene))
                 GUI.Box(new Rect(10f, 180f, 520f, 150f), "PLAYERS");
         }
 

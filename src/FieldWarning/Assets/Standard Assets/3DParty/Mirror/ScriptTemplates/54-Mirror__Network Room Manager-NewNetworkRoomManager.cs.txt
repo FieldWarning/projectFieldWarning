@@ -26,6 +26,11 @@ public class #SCRIPTNAME# : NetworkRoomManager
     public override void OnRoomStartServer() { }
 
     /// <summary>
+    /// This is called on the server when the server is stopped - including when a host is stopped.
+    /// </summary>
+    public override void OnRoomStopServer() { }
+
+    /// <summary>
     /// This is called on the host when a host is started.
     /// </summary>
     public override void OnRoomStartHost() { }
@@ -108,6 +113,12 @@ public class #SCRIPTNAME# : NetworkRoomManager
     {
         base.OnRoomServerPlayersReady();
     }
+
+    /// <summary>
+    /// This is called on the server when CheckReadyToBegin finds that players are not ready
+    /// <para>May be called multiple times while not ready players are joining</para>
+    /// </summary>
+    public override void OnRoomServerPlayersNotReady() { }
 
     #endregion
 

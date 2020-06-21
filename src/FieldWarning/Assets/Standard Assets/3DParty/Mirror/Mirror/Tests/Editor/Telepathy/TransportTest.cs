@@ -1,13 +1,12 @@
-﻿using NUnit.Framework;
-using System;
-using System.Net;
 using System.Text;
 using System.Threading;
+using NUnit.Framework;
 using UnityEngine.TestTools;
 
 namespace Telepathy.Tests
 {
     [TestFixture]
+    [Category("Telepathy")]
     [Ignore("Telepathy tests are flaky")]
     public class TransportTest
     {

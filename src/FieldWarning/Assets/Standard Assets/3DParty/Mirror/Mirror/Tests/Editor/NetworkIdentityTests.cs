@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using Mirror;
+using System.Text.RegularExpressions;
+using Mirror.RemoteCalls;
 using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
@@ -93,7 +93,7 @@ namespace Mirror.Tests
         class NetworkDestroyExceptionNetworkBehaviour : NetworkBehaviour
         {
             public int called;
-            public override void OnNetworkDestroy()
+            public override void OnStopClient()
             {
                 ++called;
                 throw new Exception("some exception");
@@ -103,51 +103,88 @@ namespace Mirror.Tests
         class NetworkDestroyCalledNetworkBehaviour : NetworkBehaviour
         {
             public int called;
-            public override void OnNetworkDestroy() { ++called; }
+            public override void OnStopClient() { ++called; }
         }
 
-        class SetHostVisibilityExceptionNetworkBehaviour : NetworkBehaviour
+        class StopServerCalledNetworkBehaviour : NetworkBehaviour
+        {
+            public int called;
+            public override void OnStopServer() { ++called; }
+        }
+
+        class StopServerExceptionNetworkBehaviour : NetworkBehaviour
+        {
+            public int called;
+            public override void OnStopServer()
+            {
+                ++called;
+                throw new Exception("some exception");
+            }
+        }
+
+        class SetHostVisibilityExceptionNetworkBehaviour : NetworkVisibility
         {
             public int called;
             public bool valuePassed;
+            public override void OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize) { }
+            public override bool OnCheckObserver(NetworkConnection conn) { return true; }
             public override void OnSetHostVisibility(bool visible)
             {
                 ++called;
                 valuePassed = visible;
                 throw new Exception("some exception");
             }
+
         }
 
-        class CheckObserverExceptionNetworkBehaviour : NetworkBehaviour
+        class SetHostVisibilityNetworkBehaviour : NetworkVisibility
+        {
+            public int called;
+            public override void OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize) { }
+            public override bool OnCheckObserver(NetworkConnection conn) { return true; }
+            public override void OnSetHostVisibility(bool visible)
+            {
+                ++called;
+                base.OnSetHostVisibility(visible);
+            }
+        }
+
+        class CheckObserverExceptionNetworkBehaviour : NetworkVisibility
         {
             public int called;
             public NetworkConnection valuePassed;
+            public override void OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize) { }
             public override bool OnCheckObserver(NetworkConnection conn)
             {
                 ++called;
                 valuePassed = conn;
                 throw new Exception("some exception");
             }
+            public override void OnSetHostVisibility(bool visible) { }
         }
 
-        class CheckObserverTrueNetworkBehaviour : NetworkBehaviour
+        class CheckObserverTrueNetworkBehaviour : NetworkVisibility
         {
             public int called;
+            public override void OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize) { }
             public override bool OnCheckObserver(NetworkConnection conn)
             {
                 ++called;
                 return true;
             }
+            public override void OnSetHostVisibility(bool visible) { }
         }
 
-        class CheckObserverFalseNetworkBehaviour : NetworkBehaviour
+        class CheckObserverFalseNetworkBehaviour : NetworkVisibility
         {
             public int called;
+            public override void OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize) { }
             public override bool OnCheckObserver(NetworkConnection conn)
             {
                 ++called;
                 return false;
             }
+            public override void OnSetHostVisibility(bool visible) { }
         }
 
         class SerializeTest1NetworkBehaviour : NetworkBehaviour
@@ -196,7 +233,8 @@ namespace Mirror.Tests
             public override bool OnSerialize(NetworkWriter writer, bool initialState)
             {
                 writer.WriteInt32(value);
-                writer.WriteInt32(value); // one too many
+                // one too many
+                writer.WriteInt32(value);
                 return true;
             }
             public override void OnDeserialize(NetworkReader reader, bool initialState)
@@ -205,25 +243,21 @@ namespace Mirror.Tests
             }
         }
 
-        class RebuildObserversNetworkBehaviour : NetworkBehaviour
+        class RebuildObserversNetworkBehaviour : NetworkVisibility
         {
             public NetworkConnection observer;
-            public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize)
+            public override bool OnCheckObserver(NetworkConnection conn) { return true; }
+            public override void OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize)
             {
                 observers.Add(observer);
-                return true;
             }
+            public override void OnSetHostVisibility(bool visible) { }
         }
 
-        class RebuildEmptyObserversNetworkBehaviour : NetworkBehaviour
+        class RebuildEmptyObserversNetworkBehaviour : NetworkVisibility
         {
-            public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize)
-            {
-                // return true so that caller knows we implemented
-                // OnRebuildObservers, but return no observers
-                return true;
-            }
-
+            public override bool OnCheckObserver(NetworkConnection conn) { return true; }
+            public override void OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize) { }
             public int hostVisibilityCalled;
             public bool hostVisibilityValue;
             public override void OnSetHostVisibility(bool visible)
@@ -304,7 +338,12 @@ namespace Mirror.Tests
         [TearDown]
         public void TearDown()
         {
+            // set isServer is false. otherwise Destroy instead of
+            // DestroyImmediate is called internally, giving an error in Editor
+            identity.isServer = false;
             GameObject.DestroyImmediate(gameObject);
+            // clean so that null entries are not in dictionary
+            NetworkIdentity.spawned.Clear();
         }
 
         // A Test behaves as an ordinary method
@@ -398,6 +437,56 @@ namespace Mirror.Tests
         }
 
         [Test]
+        public void SetAssetId_GivesErrorIfOneExists()
+        {
+            if (identity.assetId == Guid.Empty)
+            {
+                identity.assetId = Guid.NewGuid();
+            }
+
+            Guid guid1 = identity.assetId;
+
+            // assign a guid
+            Guid guid2 = Guid.NewGuid();
+            LogAssert.Expect(LogType.Error, $"Can not Set AssetId on NetworkIdentity '{identity.name}' becasue it already had an assetId, current assetId '{guid1.ToString("N")}', attempted new assetId '{guid2.ToString("N")}'");
+            identity.assetId = guid2;
+
+            // guid was changed
+            Assert.That(identity.assetId, Is.EqualTo(guid1));
+        }
+
+        [Test]
+        public void SetAssetId_GivesErrorForEmptyGuid()
+        {
+            if (identity.assetId == Guid.Empty)
+            {
+                identity.assetId = Guid.NewGuid();
+            }
+
+            Guid guid1 = identity.assetId;
+
+            // assign a guid
+            Guid guid2 = new Guid();
+            LogAssert.Expect(LogType.Error, $"Can not set AssetId to empty guid on NetworkIdentity '{identity.name}', old assetId '{guid1.ToString("N")}'");
+            identity.assetId = guid2;
+
+            // guid was NOT changed
+            Assert.That(identity.assetId, Is.EqualTo(guid1));
+        }
+        [Test]
+        public void SetAssetId_DoesNotGiveErrorIfBothOldAndNewAreEmpty()
+        {
+            Debug.Assert(identity.assetId == Guid.Empty, "assetId needs to be empty at the start of this test");
+            // assign a guid
+            Guid guid2 = new Guid();
+            // expect no errors
+            identity.assetId = guid2;
+
+            // guid was still empty
+            Assert.That(identity.assetId, Is.EqualTo(Guid.Empty));
+        }
+
+        [Test]
         public void SetClientOwner()
         {
             // SetClientOwner
@@ -407,7 +496,8 @@ namespace Mirror.Tests
 
             // setting it when it's already set shouldn't overwrite the original
             ULocalConnectionToClient overwrite = new ULocalConnectionToClient();
-            LogAssert.ignoreFailingMessages = true; // will log a warning
+            // will log a warning
+            LogAssert.ignoreFailingMessages = true;
             identity.SetClientOwner(overwrite);
             Assert.That(identity.connectionToClient, Is.EqualTo(original));
             LogAssert.ignoreFailingMessages = false;
@@ -491,7 +581,8 @@ namespace Mirror.Tests
             // being initialized
             // (an error log is expected though)
             LogAssert.ignoreFailingMessages = true;
-            identity.OnStartServer(); // should catch the exception internally and not throw it
+            // should catch the exception internally and not throw it
+            identity.OnStartServer();
             Assert.That(comp.called, Is.EqualTo(1));
             LogAssert.ignoreFailingMessages = false;
         }
@@ -509,14 +600,16 @@ namespace Mirror.Tests
             // being initialized
             // (an error log is expected though)
             LogAssert.ignoreFailingMessages = true;
-            identity.OnStartClient(); // should catch the exception internally and not throw it
+            // should catch the exception internally and not throw it
+            identity.OnStartClient();
             Assert.That(comp.called, Is.EqualTo(1));
             LogAssert.ignoreFailingMessages = false;
 
             // we have checks to make sure that it's only called once.
             // let's see if they work.
             identity.OnStartClient();
-            Assert.That(comp.called, Is.EqualTo(1)); // same as before?
+            // same as before?
+            Assert.That(comp.called, Is.EqualTo(1));
         }
 
         [Test]
@@ -532,7 +625,8 @@ namespace Mirror.Tests
             // being initialized
             // (an error log is expected though)
             LogAssert.ignoreFailingMessages = true;
-            identity.OnStartAuthority(); // should catch the exception internally and not throw it
+            // should catch the exception internally and not throw it
+            identity.OnStartAuthority();
             Assert.That(comp.called, Is.EqualTo(1));
             LogAssert.ignoreFailingMessages = false;
         }
@@ -550,7 +644,8 @@ namespace Mirror.Tests
             // being initialized
             // (an error log is expected though)
             LogAssert.ignoreFailingMessages = true;
-            identity.OnStopAuthority(); // should catch the exception internally and not throw it
+            // should catch the exception internally and not throw it
+            identity.OnStopAuthority();
             Assert.That(comp.called, Is.EqualTo(1));
             LogAssert.ignoreFailingMessages = false;
         }
@@ -558,15 +653,13 @@ namespace Mirror.Tests
         [Test]
         public void AssignAndRemoveClientAuthority()
         {
-            // netId is needed for isServer to be true
-            identity.netId = 42;
-
             // test the callback too
             int callbackCalled = 0;
             NetworkConnection callbackConnection = null;
             NetworkIdentity callbackIdentity = null;
             bool callbackState = false;
-            NetworkIdentity.clientAuthorityCallback += (conn, networkIdentity, state) => {
+            NetworkIdentity.clientAuthorityCallback += (conn, networkIdentity, state) =>
+            {
                 ++callbackCalled;
                 callbackConnection = conn;
                 callbackIdentity = identity;
@@ -586,15 +679,18 @@ namespace Mirror.Tests
             // assigning authority should only work on server.
             // if isServer is false because server isn't running yet then it
             // should fail.
-            LogAssert.ignoreFailingMessages = true; // error log is expected
+            // error log is expected
+            LogAssert.ignoreFailingMessages = true;
             bool result = identity.AssignClientAuthority(owner);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(result, Is.False);
 
-            // we can only handle authority on the server.
-            // start the server so that isServer is true.
-            Transport.activeTransport = Substitute.For<Transport>(); // needed in .Listen
+            // server is needed
+            Transport.activeTransport = Substitute.For<Transport>();
             NetworkServer.Listen(1);
+
+            // call OnStartServer so that isServer is true
+            identity.OnStartServer();
             Assert.That(identity.isServer, Is.True);
 
             // assign authority
@@ -608,12 +704,14 @@ namespace Mirror.Tests
 
             // assigning authority should respawn the object with proper authority
             // on the client. that's the best way to sync the new state right now.
-            owner.connectionToServer.Update(); // process pending messages
+            // process pending messages
+            owner.connectionToServer.Update();
             Assert.That(spawnCalled, Is.EqualTo(1));
 
             // shouldn't be able to assign authority while already owned by
             // another connection
-            LogAssert.ignoreFailingMessages = true; // error log is expected
+            // error log is expected
+            LogAssert.ignoreFailingMessages = true;
             result = identity.AssignClientAuthority(new NetworkConnectionToClient(43));
             LogAssert.ignoreFailingMessages = false;
             Assert.That(result, Is.False);
@@ -622,24 +720,31 @@ namespace Mirror.Tests
 
             // someone might try to remove authority by assigning null.
             // make sure this fails.
-            LogAssert.ignoreFailingMessages = true; // error log is expected
+            // error log is expected
+            LogAssert.ignoreFailingMessages = true;
             result = identity.AssignClientAuthority(null);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(result, Is.False);
 
             // removing authority while not isServer shouldn't work.
             // only allow it on server.
-            NetworkServer.Shutdown();
-            LogAssert.ignoreFailingMessages = true; // error log is expected
+            identity.isServer = false;
+
+            // error log is expected
+            LogAssert.ignoreFailingMessages = true;
             identity.RemoveClientAuthority();
             LogAssert.ignoreFailingMessages = false;
             Assert.That(identity.connectionToClient, Is.EqualTo(owner));
             Assert.That(callbackCalled, Is.EqualTo(1));
-            NetworkServer.Listen(1); // restart it gain
+
+            // enable isServer again
+            identity.isServer = true;
 
             // removing authority for the main player object shouldn't work
-            owner.identity = identity; // set connection's player object
-            LogAssert.ignoreFailingMessages = true; // error log is expected
+            // set connection's player object
+            owner.identity = identity;
+            // error log is expected
+            LogAssert.ignoreFailingMessages = true;
             identity.RemoveClientAuthority();
             LogAssert.ignoreFailingMessages = false;
             Assert.That(identity.connectionToClient, Is.EqualTo(owner));
@@ -650,7 +755,8 @@ namespace Mirror.Tests
             identity.RemoveClientAuthority();
             Assert.That(identity.connectionToClient, Is.Null);
             Assert.That(callbackCalled, Is.EqualTo(2));
-            Assert.That(callbackConnection, Is.EqualTo(owner)); // the one that was removed
+            // the one that was removed
+            Assert.That(callbackConnection, Is.EqualTo(owner));
             Assert.That(callbackIdentity, Is.EqualTo(identity));
             Assert.That(callbackState, Is.EqualTo(false));
 
@@ -669,30 +775,42 @@ namespace Mirror.Tests
             // set authority from false to true, which should call OnStartAuthority
             identity.hasAuthority = true;
             identity.NotifyAuthority();
-            Assert.That(identity.hasAuthority, Is.True); // shouldn't be touched
-            Assert.That(compStart.called, Is.EqualTo(1)); // start should be called
-            Assert.That(compStop.called, Is.EqualTo(0)); // stop shouldn't
+            // shouldn't be touched
+            Assert.That(identity.hasAuthority, Is.True);
+            // start should be called
+            Assert.That(compStart.called, Is.EqualTo(1));
+            // stop shouldn't
+            Assert.That(compStop.called, Is.EqualTo(0));
 
             // set it to true again, should do nothing because already true
             identity.hasAuthority = true;
             identity.NotifyAuthority();
-            Assert.That(identity.hasAuthority, Is.True); // shouldn't be touched
-            Assert.That(compStart.called, Is.EqualTo(1)); // same as before
-            Assert.That(compStop.called, Is.EqualTo(0)); // same as before
+            // shouldn't be touched
+            Assert.That(identity.hasAuthority, Is.True);
+            // same as before
+            Assert.That(compStart.called, Is.EqualTo(1));
+            // same as before
+            Assert.That(compStop.called, Is.EqualTo(0));
 
             // set it to false, should call OnStopAuthority
             identity.hasAuthority = false;
             identity.NotifyAuthority();
-            Assert.That(identity.hasAuthority, Is.False); // shouldn't be touched
-            Assert.That(compStart.called, Is.EqualTo(1)); // same as before
-            Assert.That(compStop.called, Is.EqualTo(1)); // stop should be called
+            // shouldn't be touched
+            Assert.That(identity.hasAuthority, Is.False);
+            // same as before
+            Assert.That(compStart.called, Is.EqualTo(1));
+            // stop should be called
+            Assert.That(compStop.called, Is.EqualTo(1));
 
             // set it to false again, should do nothing because already false
             identity.hasAuthority = false;
             identity.NotifyAuthority();
-            Assert.That(identity.hasAuthority, Is.False); // shouldn't be touched
-            Assert.That(compStart.called, Is.EqualTo(1)); // same as before
-            Assert.That(compStop.called, Is.EqualTo(1)); // same as before
+            // shouldn't be touched
+            Assert.That(identity.hasAuthority, Is.False);
+            // same as before
+            Assert.That(compStart.called, Is.EqualTo(1));
+            // same as before
+            Assert.That(compStop.called, Is.EqualTo(1));
         }
 
         [Test]
@@ -709,11 +827,13 @@ namespace Mirror.Tests
             // (an error log is expected though)
             LogAssert.ignoreFailingMessages = true;
 
-            identity.OnSetHostVisibility(true); // should catch the exception internally and not throw it
+            // should catch the exception internally and not throw it
+            identity.OnSetHostVisibility(true);
             Assert.That(comp.called, Is.EqualTo(1));
             Assert.That(comp.valuePassed, Is.True);
 
-            identity.OnSetHostVisibility(false); // should catch the exception internally and not throw it
+            // should catch the exception internally and not throw it
+            identity.OnSetHostVisibility(false);
             Assert.That(comp.called, Is.EqualTo(2));
             Assert.That(comp.valuePassed, Is.False);
 
@@ -733,7 +853,7 @@ namespace Mirror.Tests
             // call client connect so that internals are set up
             // (it won't actually successfully connect)
             // -> also set up connectmessage handler to avoid unhandled msg error
-            NetworkClient.RegisterHandler<ConnectMessage>(msg => {}, false);
+            NetworkClient.RegisterHandler<ConnectMessage>(msg => { }, false);
             NetworkClient.Connect("localhost");
 
             // manually invoke transport.OnConnected so that NetworkClient.active is set to true
@@ -759,19 +879,18 @@ namespace Mirror.Tests
         }
 
         [Test]
-        public void OnCheckObserver()
+        public void OnCheckObserverCatchesException()
         {
             // add component
             CheckObserverExceptionNetworkBehaviour compExc = gameObject.AddComponent<CheckObserverExceptionNetworkBehaviour>();
 
             NetworkConnection connection = new NetworkConnectionToClient(42);
 
-            // an exception in OnCheckObserver should be caught, so that one
-            // component's exception doesn't stop all other components from
-            // being checked
-            // (an error log is expected though)
+            // an exception in OnCheckObserver should be caught
+            // (an error log is expected)
             LogAssert.ignoreFailingMessages = true;
-            bool result = identity.OnCheckObserver(connection); // should catch the exception internally and not throw it
+            // should catch the exception internally and not throw it
+            bool result = identity.OnCheckObserver(connection);
             Assert.That(result, Is.True);
             Assert.That(compExc.called, Is.EqualTo(1));
             LogAssert.ignoreFailingMessages = false;
@@ -779,31 +898,30 @@ namespace Mirror.Tests
             // let's also make sure that the correct connection was passed, just
             // to be sure
             Assert.That(compExc.valuePassed, Is.EqualTo(connection));
+        }
 
+        [Test]
+        public void OnCheckObserverTrue()
+        {
             // create a networkidentity with a component that returns true
-            // result should still be true.
-            GameObject gameObjectTrue = new GameObject();
-            NetworkIdentity identityTrue = gameObjectTrue.AddComponent<NetworkIdentity>();
-            CheckObserverTrueNetworkBehaviour compTrue = gameObjectTrue.AddComponent<CheckObserverTrueNetworkBehaviour>();
-            result = identityTrue.OnCheckObserver(connection);
+            // result should be true.
+            CheckObserverTrueNetworkBehaviour compTrue = gameObject.AddComponent<CheckObserverTrueNetworkBehaviour>();
+            NetworkConnection connection = new NetworkConnectionToClient(42);
+            bool result = identity.OnCheckObserver(connection);
             Assert.That(result, Is.True);
             Assert.That(compTrue.called, Is.EqualTo(1));
+        }
 
-            // create a networkidentity with a component that returns true and
-            // one component that returns false.
-            // result should still be false if any one returns false.
-            GameObject gameObjectFalse = new GameObject();
-            NetworkIdentity identityFalse = gameObjectFalse.AddComponent<NetworkIdentity>();
-            compTrue = gameObjectFalse.AddComponent<CheckObserverTrueNetworkBehaviour>();
-            CheckObserverFalseNetworkBehaviour compFalse = gameObjectFalse.AddComponent<CheckObserverFalseNetworkBehaviour>();
-            result = identityFalse.OnCheckObserver(connection);
+        [Test]
+        public void OnCheckObserverFalse()
+        {
+            // create a networkidentity with a component that returns false
+            // result should be false.
+            CheckObserverFalseNetworkBehaviour compFalse = gameObject.AddComponent<CheckObserverFalseNetworkBehaviour>();
+            NetworkConnection connection = new NetworkConnectionToClient(42);
+            bool result = identity.OnCheckObserver(connection);
             Assert.That(result, Is.False);
-            Assert.That(compTrue.called, Is.EqualTo(1));
             Assert.That(compFalse.called, Is.EqualTo(1));
-
-            // clean up
-            GameObject.DestroyImmediate(gameObjectFalse);
-            GameObject.DestroyImmediate(gameObjectTrue);
         }
 
         [Test]
@@ -824,8 +942,10 @@ namespace Mirror.Tests
             // serialize all - should work even if compExc throws an exception
             NetworkWriter ownerWriter = new NetworkWriter();
             NetworkWriter observersWriter = new NetworkWriter();
-            LogAssert.ignoreFailingMessages = true; // error log because of the exception is expected
-            identity.OnSerializeAllSafely(true, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
+            ulong mask = identity.GetInitialComponentsMask();
+            // error log because of the exception is expected
+            LogAssert.ignoreFailingMessages = true;
+            identity.OnSerializeAllSafely(true, mask, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
             LogAssert.ignoreFailingMessages = false;
 
             // owner should have written all components
@@ -840,7 +960,8 @@ namespace Mirror.Tests
 
             // deserialize all for owner - should work even if compExc throws an exception
             NetworkReader reader = new NetworkReader(ownerWriter.ToArray());
-            LogAssert.ignoreFailingMessages = true; // error log because of the exception is expected
+            // error log because of the exception is expected
+            LogAssert.ignoreFailingMessages = true;
             identity.OnDeserializeAllSafely(reader, true);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(comp1.value, Is.EqualTo(12345));
@@ -852,17 +973,48 @@ namespace Mirror.Tests
 
             // deserialize all for observers - should work even if compExc throws an exception
             reader = new NetworkReader(observersWriter.ToArray());
-            LogAssert.ignoreFailingMessages = true; // error log because of the exception is expected
+            // error log because of the exception is expected
+            LogAssert.ignoreFailingMessages = true;
             identity.OnDeserializeAllSafely(reader, true);
             LogAssert.ignoreFailingMessages = false;
-            Assert.That(comp1.value, Is.EqualTo(12345)); // observers mode, should be in data
-            Assert.That(comp2.value, Is.EqualTo(null)); // owner mode, should not be in data
+            // observers mode, should be in data
+            Assert.That(comp1.value, Is.EqualTo(12345));
+            // owner mode, should not be in data
+            Assert.That(comp2.value, Is.EqualTo(null));
         }
 
         // OnSerializeAllSafely supports at max 64 components, because our
         // dirty mask is ulong and can only handle so many bits.
         [Test]
-        public void OnSerializeAllSafelyShouldDetectTooManyComponents()
+        public void OnSerializeAllSafelyShouldNotLogErrorsForTooManyComponents()
+        {
+            // add 65 components
+            for (int i = 0; i < 65; ++i)
+            {
+                gameObject.AddComponent<SerializeTest1NetworkBehaviour>();
+            }
+            // ingore error from creating cache (has its own test)
+            LogAssert.ignoreFailingMessages = true;
+            _ = identity.NetworkBehaviours;
+            LogAssert.ignoreFailingMessages = false;
+
+
+            // try to serialize
+            NetworkWriter ownerWriter = new NetworkWriter();
+            NetworkWriter observersWriter = new NetworkWriter();
+
+            ulong mask = identity.GetInitialComponentsMask();
+            identity.OnSerializeAllSafely(true, mask, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
+
+            // Should still write with too mnay Components because NetworkBehavioursCache should handle the error
+            Assert.That(ownerWriter.Position, Is.GreaterThan(0));
+            Assert.That(observersWriter.Position, Is.GreaterThan(0));
+            Assert.That(ownerWritten, Is.GreaterThan(0));
+            Assert.That(observersWritten, Is.GreaterThan(0));
+        }
+
+        [Test]
+        public void CreatingNetworkBehavioursCacheShouldLogErrorForTooComponents()
         {
             // add 65 components
             for (int i = 0; i < 65; ++i)
@@ -870,18 +1022,9 @@ namespace Mirror.Tests
                 gameObject.AddComponent<SerializeTest1NetworkBehaviour>();
             }
 
-            // try to serialize
-            NetworkWriter ownerWriter = new NetworkWriter();
-            NetworkWriter observersWriter = new NetworkWriter();
-            LogAssert.ignoreFailingMessages = true; // error log is expected because of too many components
-            identity.OnSerializeAllSafely(true, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
-            LogAssert.ignoreFailingMessages = false;
-
-            // shouldn't have written anything because too many components
-            Assert.That(ownerWriter.Position, Is.EqualTo(0));
-            Assert.That(observersWriter.Position, Is.EqualTo(0));
-            Assert.That(ownerWritten, Is.EqualTo(0));
-            Assert.That(observersWritten, Is.EqualTo(0));
+            // call NetworkBehaviours property to create the cache
+            LogAssert.Expect(LogType.Error, new Regex("Only 64 NetworkBehaviour components are allowed for NetworkIdentity.+"));
+            _ = identity.NetworkBehaviours;
         }
 
         // OnDeserializeSafely should be able to detect and handle serialization
@@ -904,7 +1047,8 @@ namespace Mirror.Tests
             // serialize
             NetworkWriter ownerWriter = new NetworkWriter();
             NetworkWriter observersWriter = new NetworkWriter();
-            identity.OnSerializeAllSafely(true, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
+            ulong mask = identity.GetInitialComponentsMask();
+            identity.OnSerializeAllSafely(true, mask, ownerWriter, out int ownerWritten, observersWriter, out int observersWritten);
 
             // reset component values
             comp1.value = 0;
@@ -912,7 +1056,8 @@ namespace Mirror.Tests
 
             // deserialize all
             NetworkReader reader = new NetworkReader(ownerWriter.ToArray());
-            LogAssert.ignoreFailingMessages = true; // warning log because of serialization mismatch
+            // warning log because of serialization mismatch
+            LogAssert.ignoreFailingMessages = true;
             identity.OnDeserializeAllSafely(reader, true);
             LogAssert.ignoreFailingMessages = false;
 
@@ -936,7 +1081,8 @@ namespace Mirror.Tests
             // call OnStartLocalPlayer in identity
             // one component will throw an exception, but that shouldn't stop
             // OnStartLocalPlayer from being called in the second one
-            LogAssert.ignoreFailingMessages = true; // exception will log an error
+            // exception will log an error
+            LogAssert.ignoreFailingMessages = true;
             identity.OnStartLocalPlayer();
             LogAssert.ignoreFailingMessages = false;
             Assert.That(compEx.called, Is.EqualTo(1));
@@ -945,8 +1091,10 @@ namespace Mirror.Tests
             // we have checks to make sure that it's only called once.
             // let's see if they work.
             identity.OnStartLocalPlayer();
-            Assert.That(compEx.called, Is.EqualTo(1)); // same as before?
-            Assert.That(comp.called, Is.EqualTo(1)); // same as before?
+            // same as before?
+            Assert.That(compEx.called, Is.EqualTo(1));
+            // same as before?
+            Assert.That(comp.called, Is.EqualTo(1));
         }
 
         [Test]
@@ -963,11 +1111,44 @@ namespace Mirror.Tests
             // call OnNetworkDestroy in identity
             // one component will throw an exception, but that shouldn't stop
             // OnNetworkDestroy from being called in the second one
-            LogAssert.ignoreFailingMessages = true; // exception will log an error
-            identity.OnNetworkDestroy();
+            // exception will log an error
+            LogAssert.ignoreFailingMessages = true;
+            identity.OnStopClient();
             LogAssert.ignoreFailingMessages = false;
             Assert.That(compEx.called, Is.EqualTo(1));
             Assert.That(comp.called, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void OnStopServer()
+        {
+            // add components
+            StopServerCalledNetworkBehaviour comp = gameObject.AddComponent<StopServerCalledNetworkBehaviour>();
+
+            // make sure our test values are set to 0
+            Assert.That(comp.called, Is.EqualTo(0));
+
+            identity.OnStopServer();
+            Assert.That(comp.called, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void OnStopServerEx()
+        {
+            // add components
+            StopServerExceptionNetworkBehaviour compEx = gameObject.AddComponent<StopServerExceptionNetworkBehaviour>();
+
+            // make sure our test values are set to 0
+            Assert.That(compEx.called, Is.EqualTo(0));
+
+            // call OnNetworkDestroy in identity
+            // one component will throw an exception, but that shouldn't stop
+            // OnNetworkDestroy from being called in the second one
+            // exception will log an error
+            LogAssert.ignoreFailingMessages = true;
+            identity.OnStopServer();
+            LogAssert.ignoreFailingMessages = false;
+            Assert.That(compEx.called, Is.EqualTo(1));
         }
 
         [Test]
@@ -980,7 +1161,8 @@ namespace Mirror.Tests
             // AddObserver should return early if called before .observers was
             // created
             Assert.That(identity.observers, Is.Null);
-            LogAssert.ignoreFailingMessages = true; // error log is expected
+            // error log is expected
+            LogAssert.ignoreFailingMessages = true;
             identity.AddObserver(connection1);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(identity.observers, Is.Null);
@@ -1036,13 +1218,17 @@ namespace Mirror.Tests
             // set components dirty bits
             compA.SetDirtyBit(0x0001);
             compB.SetDirtyBit(0x1001);
-            Assert.That(compA.IsDirty(), Is.True); // dirty because interval reached and mask != 0
-            Assert.That(compB.IsDirty(), Is.False); // not dirty because syncinterval not reached
+            // dirty because interval reached and mask != 0
+            Assert.That(compA.IsDirty(), Is.True);
+            // not dirty because syncinterval not reached
+            Assert.That(compB.IsDirty(), Is.False);
 
             // call identity.ClearDirtyComponentsDirtyBits
             identity.ClearDirtyComponentsDirtyBits();
-            Assert.That(compA.IsDirty(), Is.False); // should be cleared now
-            Assert.That(compB.IsDirty(), Is.False); // should be untouched
+            // should be cleared now
+            Assert.That(compA.IsDirty(), Is.False);
+            // should be untouched
+            Assert.That(compB.IsDirty(), Is.False);
 
             // set compB syncinterval to 0 to check if the masks were untouched
             // (if they weren't, then it should be dirty now)
@@ -1064,13 +1250,17 @@ namespace Mirror.Tests
             // set components dirty bits
             compA.SetDirtyBit(0x0001);
             compB.SetDirtyBit(0x1001);
-            Assert.That(compA.IsDirty(), Is.True); // dirty because interval reached and mask != 0
-            Assert.That(compB.IsDirty(), Is.False); // not dirty because syncinterval not reached
+            // dirty because interval reached and mask != 0
+            Assert.That(compA.IsDirty(), Is.True);
+            // not dirty because syncinterval not reached
+            Assert.That(compB.IsDirty(), Is.False);
 
             // call identity.ClearAllComponentsDirtyBits
             identity.ClearAllComponentsDirtyBits();
-            Assert.That(compA.IsDirty(), Is.False); // should be cleared now
-            Assert.That(compB.IsDirty(), Is.False); // should be cleared now
+            // should be cleared now
+            Assert.That(compA.IsDirty(), Is.False);
+            // should be cleared now
+            Assert.That(compB.IsDirty(), Is.False);
 
             // set compB syncinterval to 0 to check if the masks were cleared
             // (if they weren't, then it would still be dirty now)
@@ -1083,21 +1273,14 @@ namespace Mirror.Tests
         {
             // modify it a bit
             identity.isClient = true;
-            identity.OnStartServer(); // creates .observers and generates a netId
+            // creates .observers and generates a netId
+            identity.OnStartServer();
             uint netId = identity.netId;
             identity.connectionToClient = new NetworkConnectionToClient(1);
             identity.connectionToServer = new NetworkConnectionToServer();
             identity.observers[43] = new NetworkConnectionToClient(2);
 
-            // calling reset shouldn't do anything unless it was marked for reset
-            identity.Reset();
-            Assert.That(identity.isClient, Is.True);
-            Assert.That(identity.netId, Is.EqualTo(netId));
-            Assert.That(identity.connectionToClient, !Is.Null);
-            Assert.That(identity.connectionToServer, !Is.Null);
-
             // mark for reset and reset
-            identity.MarkForReset();
             identity.Reset();
             Assert.That(identity.isClient, Is.False);
             Assert.That(identity.netId, Is.EqualTo(0));
@@ -1110,37 +1293,46 @@ namespace Mirror.Tests
         {
             // add component
             CommandTestNetworkBehaviour comp0 = gameObject.AddComponent<CommandTestNetworkBehaviour>();
+            NetworkConnectionToClient connection = new NetworkConnectionToClient(1);
             Assert.That(comp0.called, Is.EqualTo(0));
+            Assert.That(comp0.senderConnectionInCall, Is.Null);
 
             // register the command delegate, otherwise it's not found
-            NetworkBehaviour.RegisterCommandDelegate(typeof(CommandTestNetworkBehaviour), nameof(CommandTestNetworkBehaviour.CommandGenerated), CommandTestNetworkBehaviour.CommandGenerated);
+            int registeredHash = RemoteCallHelper.RegisterDelegate(typeof(CommandTestNetworkBehaviour),
+                nameof(CommandTestNetworkBehaviour.CommandGenerated),
+                MirrorInvokeType.Command,
+                CommandTestNetworkBehaviour.CommandGenerated,
+                false);
 
             // identity needs to be in spawned dict, otherwise command handler
             // won't find it
             NetworkIdentity.spawned[identity.netId] = identity;
 
             // call HandleCommand and check if the command was called in the component
-            int functionHash = NetworkBehaviour.GetMethodHash(typeof(CommandTestNetworkBehaviour), nameof(CommandTestNetworkBehaviour.CommandGenerated));
+            int functionHash = RemoteCallHelper.GetMethodHash(typeof(CommandTestNetworkBehaviour), nameof(CommandTestNetworkBehaviour.CommandGenerated));
             NetworkReader payload = new NetworkReader(new byte[0]);
-            identity.HandleCommand(0, functionHash, payload);
+            identity.HandleCommand(0, functionHash, payload, connection);
             Assert.That(comp0.called, Is.EqualTo(1));
+            Assert.That(comp0.senderConnectionInCall, Is.EqualTo(connection));
+
 
             // try wrong component index. command shouldn't be called again.
-            LogAssert.ignoreFailingMessages = true; // warning is expected
-            identity.HandleCommand(1, functionHash, payload);
+            // warning is expected
+            LogAssert.ignoreFailingMessages = true;
+            identity.HandleCommand(1, functionHash, payload, connection);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // try wrong function hash. command shouldn't be called again.
-            LogAssert.ignoreFailingMessages = true; // warning is expected
-            identity.HandleCommand(0, functionHash+1, payload);
+            // warning is expected
+            LogAssert.ignoreFailingMessages = true;
+            identity.HandleCommand(0, functionHash + 1, payload, connection);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // clean up
-            NetworkBehaviour.ClearDelegates();
             NetworkIdentity.spawned.Clear();
-            NetworkBehaviour.ClearDelegates();
+            RemoteCallHelper.RemoveDelegate(registeredHash);
         }
 
         [Test]
@@ -1151,33 +1343,38 @@ namespace Mirror.Tests
             Assert.That(comp0.called, Is.EqualTo(0));
 
             // register the command delegate, otherwise it's not found
-            NetworkBehaviour.RegisterRpcDelegate(typeof(RpcTestNetworkBehaviour), nameof(RpcTestNetworkBehaviour.RpcGenerated), RpcTestNetworkBehaviour.RpcGenerated);
+            int registeredHash = RemoteCallHelper.RegisterDelegate(typeof(RpcTestNetworkBehaviour),
+                nameof(RpcTestNetworkBehaviour.RpcGenerated),
+                MirrorInvokeType.ClientRpc,
+                RpcTestNetworkBehaviour.RpcGenerated);
 
             // identity needs to be in spawned dict, otherwise command handler
             // won't find it
             NetworkIdentity.spawned[identity.netId] = identity;
 
             // call HandleRpc and check if the rpc was called in the component
-            int functionHash = NetworkBehaviour.GetMethodHash(typeof(RpcTestNetworkBehaviour), nameof(RpcTestNetworkBehaviour.RpcGenerated));
+            int functionHash = RemoteCallHelper.GetMethodHash(typeof(RpcTestNetworkBehaviour), nameof(RpcTestNetworkBehaviour.RpcGenerated));
             NetworkReader payload = new NetworkReader(new byte[0]);
             identity.HandleRPC(0, functionHash, payload);
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // try wrong component index. rpc shouldn't be called again.
-            LogAssert.ignoreFailingMessages = true; // warning is expected
+            // warning is expected
+            LogAssert.ignoreFailingMessages = true;
             identity.HandleRPC(1, functionHash, payload);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // try wrong function hash. rpc shouldn't be called again.
-            LogAssert.ignoreFailingMessages = true; // warning is expected
-            identity.HandleRPC(0, functionHash+1, payload);
+            // warning is expected
+            LogAssert.ignoreFailingMessages = true;
+            identity.HandleRPC(0, functionHash + 1, payload);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // clean up
             NetworkIdentity.spawned.Clear();
-            NetworkBehaviour.ClearDelegates();
+            RemoteCallHelper.RemoveDelegate(registeredHash);
         }
 
         [Test]
@@ -1188,7 +1385,10 @@ namespace Mirror.Tests
             Assert.That(comp0.called, Is.EqualTo(0));
 
             // register the command delegate, otherwise it's not found
-            NetworkBehaviour.RegisterEventDelegate(typeof(SyncEventTestNetworkBehaviour), nameof(SyncEventTestNetworkBehaviour.SyncEventGenerated), SyncEventTestNetworkBehaviour.SyncEventGenerated);
+            int registeredHash = RemoteCallHelper.RegisterDelegate(typeof(SyncEventTestNetworkBehaviour),
+                nameof(SyncEventTestNetworkBehaviour.SyncEventGenerated),
+                MirrorInvokeType.SyncEvent,
+                SyncEventTestNetworkBehaviour.SyncEventGenerated);
 
             // identity needs to be in spawned dict, otherwise command handler
             // won't find it
@@ -1196,26 +1396,28 @@ namespace Mirror.Tests
 
             // call HandleSyncEvent and check if the event was called in the component
             int componentIndex = 0;
-            int functionHash = NetworkBehaviour.GetMethodHash(typeof(SyncEventTestNetworkBehaviour), nameof(SyncEventTestNetworkBehaviour.SyncEventGenerated));
+            int functionHash = RemoteCallHelper.GetMethodHash(typeof(SyncEventTestNetworkBehaviour), nameof(SyncEventTestNetworkBehaviour.SyncEventGenerated));
             NetworkReader payload = new NetworkReader(new byte[0]);
             identity.HandleSyncEvent(componentIndex, functionHash, payload);
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // try wrong component index. syncevent shouldn't be called again.
-            LogAssert.ignoreFailingMessages = true; // warning is expected
+            // warning is expected
+            LogAssert.ignoreFailingMessages = true;
             identity.HandleSyncEvent(1, functionHash, payload);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // try wrong function hash. syncevent shouldn't be called again.
-            LogAssert.ignoreFailingMessages = true; // warning is expected
-            identity.HandleSyncEvent(0, functionHash+1, payload);
+            // warning is expected
+            LogAssert.ignoreFailingMessages = true;
+            identity.HandleSyncEvent(0, functionHash + 1, payload);
             LogAssert.ignoreFailingMessages = false;
             Assert.That(comp0.called, Is.EqualTo(1));
 
             // clean up
             NetworkIdentity.spawned.Clear();
-            NetworkBehaviour.ClearDelegates();
+            RemoteCallHelper.RemoveDelegate(registeredHash);
         }
 
         [Test]
@@ -1223,13 +1425,19 @@ namespace Mirror.Tests
         {
             // add components
             SerializeTest1NetworkBehaviour compA = gameObject.AddComponent<SerializeTest1NetworkBehaviour>();
-            compA.value = 1337; // test value
-            compA.syncInterval = 0; // set syncInterval so IsDirty passes the interval check
-            compA.syncMode = SyncMode.Owner; // one needs to sync to owner
+            // test value
+            compA.value = 1337;
+            // set syncInterval so IsDirty passes the interval check
+            compA.syncInterval = 0;
+            // one needs to sync to owner
+            compA.syncMode = SyncMode.Owner;
             SerializeTest2NetworkBehaviour compB = gameObject.AddComponent<SerializeTest2NetworkBehaviour>();
-            compB.value = "test"; // test value
-            compB.syncInterval = 0; // set syncInterval so IsDirty passes the interval check
-            compB.syncMode = SyncMode.Observers; // one needs to sync to owner
+            // test value
+            compB.value = "test";
+            // set syncInterval so IsDirty passes the interval check
+            compB.syncInterval = 0;
+            // one needs to sync to owner
+            compB.syncMode = SyncMode.Observers;
 
             // call OnStartServer once so observers are created
             identity.OnStartServer();
@@ -1248,7 +1456,8 @@ namespace Mirror.Tests
 
             // add an owner connection that will receive the updates
             ULocalConnectionToClient owner = new ULocalConnectionToClient();
-            owner.isReady = true; // for syncing
+            // for syncing
+            owner.isReady = true;
             // add a client to server connection + handler to receive syncs
             owner.connectionToServer = new ULocalConnectionToServer();
             int ownerCalled = 0;
@@ -1260,7 +1469,8 @@ namespace Mirror.Tests
 
             // add an observer connection that will receive the updates
             ULocalConnectionToClient observer = new ULocalConnectionToClient();
-            observer.isReady = true; // we only sync to ready observers
+            // we only sync to ready observers
+            observer.isReady = true;
             // add a client to server connection + handler to receive syncs
             observer.connectionToServer = new ULocalConnectionToServer();
             int observerCalled = 0;
@@ -1291,18 +1501,15 @@ namespace Mirror.Tests
         public void GetNewObservers()
         {
             // add components
-            RebuildObserversNetworkBehaviour compA = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
-            compA.observer = new NetworkConnectionToClient(12);
-            RebuildObserversNetworkBehaviour compB = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
-            compB.observer = new NetworkConnectionToClient(13);
+            RebuildObserversNetworkBehaviour comp = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
+            comp.observer = new NetworkConnectionToClient(12);
 
             // get new observers
             HashSet<NetworkConnection> observers = new HashSet<NetworkConnection>();
             bool result = identity.GetNewObservers(observers, true);
             Assert.That(result, Is.True);
-            Assert.That(observers.Count, Is.EqualTo(2));
-            Assert.That(observers.Contains(compA.observer), Is.True);
-            Assert.That(observers.Contains(compB.observer), Is.True);
+            Assert.That(observers.Count, Is.EqualTo(1));
+            Assert.That(observers.Contains(comp.observer), Is.True);
         }
 
         [Test]
@@ -1333,8 +1540,8 @@ namespace Mirror.Tests
             Transport.activeTransport = new MemoryTransport();
 
             // add some server connections
-            NetworkServer.connections[12] = new NetworkConnectionToClient(12){isReady = true};
-            NetworkServer.connections[13] = new NetworkConnectionToClient(13){isReady = false};
+            NetworkServer.connections[12] = new NetworkConnectionToClient(12) { isReady = true };
+            NetworkServer.connections[13] = new NetworkConnectionToClient(13) { isReady = false };
 
             // add a host connection
             ULocalConnectionToClient localConnection = new ULocalConnectionToClient();
@@ -1403,20 +1610,16 @@ namespace Mirror.Tests
         }
 
         [Test]
-        public void RebuildObserversAddsReadyComponentConnectionsIfImplemented()
+        public void RebuildObserversAddsReadyConnectionsIfImplemented()
         {
             // AddObserver will call transport.send and validpacketsize, so we
             // actually need a transport
             Transport.activeTransport = new MemoryTransport();
 
-            // add three observers components
+            // add a proximity checker
             // one with a ready connection, one with no ready connection, one with null connection
-            RebuildObserversNetworkBehaviour compA = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
-            compA.observer = null;
-            RebuildObserversNetworkBehaviour compB = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
-            compB.observer = new NetworkConnectionToClient(42){ isReady = false };
-            RebuildObserversNetworkBehaviour compC = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
-            compC.observer = new NetworkConnectionToClient(43){ isReady = true };
+            RebuildObserversNetworkBehaviour comp = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
+            comp.observer = new NetworkConnectionToClient(42) { isReady = true };
 
             // call OnStartServer so that observers dict is created
             identity.OnStartServer();
@@ -1424,7 +1627,32 @@ namespace Mirror.Tests
             // rebuild observers should add all component's ready observers
             identity.RebuildObservers(true);
             Assert.That(identity.observers.Count, Is.EqualTo(1));
-            Assert.That(identity.observers.ContainsKey(43));
+            Assert.That(identity.observers.ContainsKey(42));
+
+            // clean up
+            NetworkServer.Shutdown();
+            Transport.activeTransport = null;
+        }
+
+
+        [Test]
+        public void RebuildObserversDoesntAddNotReadyConnectionsIfImplemented()
+        {
+            // AddObserver will call transport.send and validpacketsize, so we
+            // actually need a transport
+            Transport.activeTransport = new MemoryTransport();
+
+            // add a proximity checker
+            // one with a ready connection, one with no ready connection, one with null connection
+            RebuildObserversNetworkBehaviour comp = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
+            comp.observer = new NetworkConnectionToClient(42) { isReady = false };
+
+            // call OnStartServer so that observers dict is created
+            identity.OnStartServer();
+
+            // rebuild observers should add all component's ready observers
+            identity.RebuildObservers(true);
+            Assert.That(identity.observers.Count, Is.EqualTo(0));
 
             // clean up
             NetworkServer.Shutdown();
@@ -1439,8 +1667,8 @@ namespace Mirror.Tests
             Transport.activeTransport = new MemoryTransport();
 
             // add some server connections
-            NetworkServer.connections[12] = new NetworkConnectionToClient(12){isReady = true};
-            NetworkServer.connections[13] = new NetworkConnectionToClient(13){isReady = false};
+            NetworkServer.connections[12] = new NetworkConnectionToClient(12) { isReady = true };
+            NetworkServer.connections[13] = new NetworkConnectionToClient(13) { isReady = false };
 
             // call OnStartServer so that observers dict is created
             identity.OnStartServer();
@@ -1464,7 +1692,7 @@ namespace Mirror.Tests
             Transport.activeTransport = new MemoryTransport();
 
             // add a server connection
-            NetworkServer.connections[12] = new NetworkConnectionToClient(12){isReady = true};
+            NetworkServer.connections[12] = new NetworkConnectionToClient(12) { isReady = true };
 
             // add at least one observers component, otherwise it will just add
             // all server connections
@@ -1493,7 +1721,7 @@ namespace Mirror.Tests
 
             // add observer component with ready observer
             RebuildObserversNetworkBehaviour comp = gameObject.AddComponent<RebuildObserversNetworkBehaviour>();
-            NetworkConnectionToClient observerA = new NetworkConnectionToClient(42){ isReady = true };
+            NetworkConnectionToClient observerA = new NetworkConnectionToClient(42) { isReady = true };
             comp.observer = observerA;
 
             // call OnStartServer so that observers dict is created
@@ -1509,7 +1737,7 @@ namespace Mirror.Tests
             Assert.That(observerA.visList.Contains(identity), Is.True);
 
             // let the component find another observer
-            NetworkConnectionToClient observerB = new NetworkConnectionToClient(43){ isReady = true };
+            NetworkConnectionToClient observerB = new NetworkConnectionToClient(43) { isReady = true };
             comp.observer = observerB;
 
             // rebuild observers should remove the old observer and add the new one
@@ -1561,12 +1789,86 @@ namespace Mirror.Tests
         public void RebuildObserversReturnsIfNull()
         {
             // add a server connection
-            NetworkServer.connections[12] = new NetworkConnectionToClient(12){isReady = true};
+            NetworkServer.connections[12] = new NetworkConnectionToClient(12) { isReady = true };
 
             // call RebuildObservers without calling OnStartServer first.
             // .observers will be null and it should simply return early.
             identity.RebuildObservers(true);
             Assert.That(identity.observers, Is.Null);
+        }
+
+        [Test]
+        public void GetInitialComponentsMaskShouldReturn1BitPerNetworkBehaviour()
+        {
+            gameObject.AddComponent<MyTestComponent>();
+            gameObject.AddComponent<SerializeTest1NetworkBehaviour>();
+            gameObject.AddComponent<SerializeTest2NetworkBehaviour>();
+
+            ulong mask = identity.GetInitialComponentsMask();
+
+            // 1 + 2 + 4 = 7
+            Assert.That(mask, Is.EqualTo(7UL));
+        }
+
+        [Test]
+        public void GetInitialComponentsMaskShouldReturnZeroWhenNoNetworkBehaviours()
+        {
+            ulong mask = identity.GetInitialComponentsMask();
+
+            Assert.That(mask, Is.EqualTo(0UL));
+        }
+
+        [Test]
+        public void GetDirtyComponentsMaskShouldReturn1BitOnlyForDirtyComponents()
+        {
+            MyTestComponent comp1 = gameObject.AddComponent<MyTestComponent>();
+            SerializeTest1NetworkBehaviour comp2 = gameObject.AddComponent<SerializeTest1NetworkBehaviour>();
+            SerializeTest2NetworkBehaviour comp3 = gameObject.AddComponent<SerializeTest2NetworkBehaviour>();
+
+
+            // mark comps 1 and 3 as dirty
+
+            comp1.syncInterval = 0;
+            comp3.syncInterval = 0;
+
+            comp1.SetDirtyBit(1UL);
+            comp2.ClearAllDirtyBits();
+            comp3.SetDirtyBit(1UL);
+
+
+            ulong mask = identity.GetDirtyComponentsMask();
+
+            // 1 + 4 = 5
+            Assert.That(mask, Is.EqualTo(5UL));
+        }
+
+        [Test]
+        public void GetDirtyComponentsMaskShouldReturnZeroWhenNoDirtyComponents()
+        {
+            MyTestComponent comp1 = gameObject.AddComponent<MyTestComponent>();
+            SerializeTest1NetworkBehaviour comp2 = gameObject.AddComponent<SerializeTest1NetworkBehaviour>();
+            SerializeTest2NetworkBehaviour comp3 = gameObject.AddComponent<SerializeTest2NetworkBehaviour>();
+
+            comp1.ClearAllDirtyBits();
+            comp2.ClearAllDirtyBits();
+            comp3.ClearAllDirtyBits();
+
+            ulong mask = identity.GetDirtyComponentsMask();
+
+            Assert.That(mask, Is.EqualTo(0UL));
+        }
+
+        [Test]
+        public void OnSetHostVisibilityBaseTest()
+        {
+            SpriteRenderer renderer;
+
+            renderer = gameObject.AddComponent<SpriteRenderer>();
+            SetHostVisibilityNetworkBehaviour comp = gameObject.AddComponent<SetHostVisibilityNetworkBehaviour>();
+            comp.OnSetHostVisibility(false);
+
+            Assert.That(comp.called, Is.EqualTo(1));
+            Assert.That(renderer.enabled, Is.False);
         }
     }
 }

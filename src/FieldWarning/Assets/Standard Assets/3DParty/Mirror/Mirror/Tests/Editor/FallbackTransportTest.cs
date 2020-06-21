@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NSubstitute;
@@ -16,15 +16,21 @@ namespace Mirror.Tests
         FallbackTransport transport;
 
         [SetUp]
-        public void SetupMultipex()
+        public void Setup()
         {
             transport1 = Substitute.For<Transport>();
             transport2 = Substitute.For<Transport>();
 
-            var gameObject = new GameObject();
+            GameObject gameObject = new GameObject();
 
             transport = gameObject.AddComponent<FallbackTransport>();
             transport.transports = new[] { transport1, transport2 };
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            GameObject.DestroyImmediate(transport.gameObject);
         }
 
         #region Client tests
@@ -97,7 +103,7 @@ namespace Mirror.Tests
             transport.ClientConnect("some.server.com");
 
             byte[] data = { 1, 2, 3 };
-            var segment = new ArraySegment<byte>(data);
+            ArraySegment<byte> segment = new ArraySegment<byte>(data);
 
             transport.ClientSend(3, segment);
 
@@ -138,7 +144,7 @@ namespace Mirror.Tests
         public void TestServerConnected()
         {
             byte[] data = { 1, 2, 3 };
-            var segment = new ArraySegment<byte>(data);
+            ArraySegment<byte> segment = new ArraySegment<byte>(data);
 
             transport1.Available().Returns(true);
             transport2.Available().Returns(true);
@@ -147,7 +153,7 @@ namespace Mirror.Tests
             // on connect, send a message back
             void SendMessage(int connectionId)
             {
-                var connectionIds = new List<int>(new[] { connectionId });
+                List<int> connectionIds = new List<int>(new[] { connectionId });
                 transport.ServerSend(connectionIds, 5, segment);
             }
 

@@ -61,6 +61,11 @@ namespace Mirror
         public void Serialize(NetworkWriter writer) { }
     }
 
+    // Deprecated 5/2/2020
+    /// <summary>
+    /// Obsolete: Removed as a security risk. Use <see cref="NetworkServer.RemovePlayerForConnection(NetworkConnection, bool)">NetworkServer.RemovePlayerForConnection</see> instead.
+    /// </summary>
+    [Obsolete("Removed as a security risk. Use NetworkServer.RemovePlayerForConnection(NetworkConnection conn, bool keepAuthority = false) instead")]
     public struct RemovePlayerMessage : IMessageBase
     {
         public void Deserialize(NetworkReader reader) { }
@@ -85,7 +90,8 @@ namespace Mirror
     public struct SceneMessage : IMessageBase
     {
         public string sceneName;
-        public SceneOperation sceneOperation; // Normal = 0, LoadAdditive = 1, UnloadAdditive = 2
+        // Normal = 0, LoadAdditive = 1, UnloadAdditive = 2
+        public SceneOperation sceneOperation;
         public bool customHandling;
 
         public void Deserialize(NetworkReader reader)
@@ -126,7 +132,8 @@ namespace Mirror
         {
             netId = reader.ReadPackedUInt32();
             componentIndex = (int)reader.ReadPackedUInt32();
-            functionHash = reader.ReadInt32(); // hash is always 4 full bytes, WritePackedInt would send 1 extra byte here
+            // hash is always 4 full bytes, WritePackedInt would send 1 extra byte here
+            functionHash = reader.ReadInt32();
             payload = reader.ReadBytesAndSizeSegment();
         }
 
@@ -152,7 +159,8 @@ namespace Mirror
         {
             netId = reader.ReadPackedUInt32();
             componentIndex = (int)reader.ReadPackedUInt32();
-            functionHash = reader.ReadInt32(); // hash is always 4 full bytes, WritePackedInt would send 1 extra byte here
+            // hash is always 4 full bytes, WritePackedInt would send 1 extra byte here
+            functionHash = reader.ReadInt32();
             payload = reader.ReadBytesAndSizeSegment();
         }
 
@@ -178,7 +186,8 @@ namespace Mirror
         {
             netId = reader.ReadPackedUInt32();
             componentIndex = (int)reader.ReadPackedUInt32();
-            functionHash = reader.ReadInt32(); // hash is always 4 full bytes, WritePackedInt would send 1 extra byte here
+            // hash is always 4 full bytes, WritePackedInt would send 1 extra byte here
+            functionHash = reader.ReadInt32();
             payload = reader.ReadBytesAndSizeSegment();
         }
 

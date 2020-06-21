@@ -4,19 +4,29 @@ namespace Mirror.Examples.Additive
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(NetworkTransform))]
+    [RequireComponent(typeof(CapsuleCollider))]
+    [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : NetworkBehaviour
     {
         public CharacterController characterController;
+        public CapsuleCollider capsuleCollider;
 
         void OnValidate()
         {
             if (characterController == null)
                 characterController = GetComponent<CharacterController>();
+            if (capsuleCollider == null)
+                capsuleCollider = GetComponent<CapsuleCollider>();
+        }
+
+        void Start()
+        {
+            capsuleCollider.enabled = isServer;
         }
 
         public override void OnStartLocalPlayer()
         {
-            base.OnStartLocalPlayer();
+            characterController.enabled = true;
 
             Camera.main.orthographic = false;
             Camera.main.transform.SetParent(transform);
@@ -26,7 +36,7 @@ namespace Mirror.Examples.Additive
 
         void OnDisable()
         {
-            if (isLocalPlayer)
+            if (isLocalPlayer && Camera.main != null)
             {
                 Camera.main.orthographic = true;
                 Camera.main.transform.SetParent(null);
@@ -41,17 +51,17 @@ namespace Mirror.Examples.Additive
         public float maxTurnSpeed = 150f;
 
         [Header("Diagnostics")]
-        public float horizontal = 0f;
-        public float vertical = 0f;
-        public float turn = 0f;
-        public float jumpSpeed = 0f;
+        public float horizontal;
+        public float vertical;
+        public float turn;
+        public float jumpSpeed;
         public bool isGrounded = true;
-        public bool isFalling = false;
+        public bool isFalling;
         public Vector3 velocity;
 
         void Update()
         {
-            if (!isLocalPlayer)
+            if (!isLocalPlayer || !characterController.enabled)
                 return;
 
             horizontal = Input.GetAxis("Horizontal");
@@ -71,7 +81,9 @@ namespace Mirror.Examples.Additive
                 isFalling = false;
 
             if ((isGrounded || !isFalling) && jumpSpeed < 1f && Input.GetKey(KeyCode.Space))
+            {
                 jumpSpeed = Mathf.Lerp(jumpSpeed, 1f, 0.5f);
+            }
             else if (!isGrounded)
             {
                 isFalling = true;

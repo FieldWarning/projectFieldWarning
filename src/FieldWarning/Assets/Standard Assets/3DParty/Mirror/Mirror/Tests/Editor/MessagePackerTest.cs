@@ -23,6 +23,19 @@ namespace Mirror.Tests
         }
 
         [Test]
+        public void UnpackWrongMessage()
+        {
+            ConnectMessage message = new ConnectMessage();
+
+            byte[] data = MessagePacker.Pack(message);
+
+            Assert.Throws<FormatException>(() =>
+            {
+                DisconnectMessage unpacked = MessagePacker.Unpack<DisconnectMessage>(data);
+            });
+        }
+
+        [Test]
         public void TestUnpackIdMismatch()
         {
             // Unpack<T> has a id != msgType case that throws a FormatException.
@@ -40,16 +53,10 @@ namespace Mirror.Tests
             data[0] = 0x01;
             data[1] = 0x02;
 
-            try
+            Assert.Throws<FormatException>(() =>
             {
                 SceneMessage unpacked = MessagePacker.Unpack<SceneMessage>(data);
-                // BAD: IF WE GET HERE THEN NO EXCEPTION WAS THROWN
-                Assert.Fail();
-            }
-            catch (FormatException)
-            {
-                // GOOD
-            }
+            });
         }
 
         [Test]
@@ -68,7 +75,11 @@ namespace Mirror.Tests
             bool result = MessagePacker.UnpackMessage(reader, out int msgType);
             Assert.That(result, Is.EqualTo(true));
             Assert.That(msgType, Is.EqualTo(BitConverter.ToUInt16(data, 0)));
+        }
 
+        [Test]
+        public void UnpackInvalidMessage()
+        {
             // try an invalid message
             NetworkReader reader2 = new NetworkReader(new byte[0]);
             bool result2 = MessagePacker.UnpackMessage(reader2, out int msgType2);

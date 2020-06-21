@@ -89,7 +89,8 @@ namespace Mirror.Tests
         public void TestWritingSegmentAndReadingSegment()
         {
             byte[] data = { 1, 2, 3, 4 };
-            ArraySegment<byte> segment = new ArraySegment<byte>(data, 1, 1); // [2, 3]
+            // [2, 3]
+            ArraySegment<byte> segment = new ArraySegment<byte>(data, 1, 1);
             NetworkWriter writer = new NetworkWriter();
             writer.WriteBytesAndSizeSegment(segment);
 
@@ -101,46 +102,6 @@ namespace Mirror.Tests
         }
 
         [Test]
-        public void TestOverwritingData()
-        {
-            NetworkWriter writer = new NetworkWriter();
-            writer.WriteMatrix4x4(Matrix4x4.identity);
-            writer.WriteDecimal(1.23456789m);
-            writer.Position += 10;
-            writer.WriteVector3(Vector3.negativeInfinity);
-            writer.Position = 46;
-            // write right at the boundary before SetLength
-            writer.WriteInt64(0xfeed_babe_c0ffee);
-            // test that SetLength clears data beyond length
-            writer.SetLength(50);
-            // check that jumping leaves 0s between
-            writer.Position = 100;
-            writer.WriteString("no worries, m8");
-            writer.Position = 64;
-            writer.WriteBoolean(true);
-            // check that clipping off the end affect ToArray()'s length
-            writer.SetLength(128);
-            byte[] output = writer.ToArray();
-            //Debug.Log(BitConverter.ToString(output));
-            byte[] expected = {
-                0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0xEE, 0xFF, 0xC0, 0xBE,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x0F, 0x00, 0x6E, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x72, 0x69,
-                0x65, 0x73, 0x2C, 0x20, 0x6D, 0x38, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-            };
-            Assert.That(output, Is.EqualTo(expected));
-        }
-
-        [Test]
         public void TestSetLengthZeroes()
         {
             NetworkWriter writer = new NetworkWriter();
@@ -148,26 +109,42 @@ namespace Mirror.Tests
             writer.WriteInt64(0xA_FADED_DEAD_EEL);
             writer.WriteString("and ate it");
             int position = writer.Position;
+
             writer.SetLength(10);
-            // Setting length should set position too
-            Assert.That(writer.Position, Is.EqualTo(10));
+            Assert.That(writer.Position, Is.EqualTo(10), "Decreasing length should move position");
+
             // lets grow it back and check there's zeroes now.
             writer.SetLength(position);
             byte[] data = writer.ToArray();
-            for (int i = position; i < data.Length; i++)
+            for (int i = 10; i < data.Length; i++)
+            {
                 Assert.That(data[i], Is.EqualTo(0), $"index {i} should have value 0");
+            }
         }
 
         [Test]
         public void TestSetLengthInitialization()
         {
             NetworkWriter writer = new NetworkWriter();
+
             writer.SetLength(10);
-            // Setting length should leave position at 0
+            Assert.That(writer.Position, Is.EqualTo(0), "Increasing length should not move position");
+        }
+
+        [Test]
+        public void TestResetSetsPotionAndLength()
+        {
+            NetworkWriter writer = new NetworkWriter();
+            writer.WriteString("I saw");
+            writer.WriteInt64(0xA_FADED_DEAD_EEL);
+            writer.WriteString("and ate it");
+            writer.Reset();
+
             Assert.That(writer.Position, Is.EqualTo(0));
+            Assert.That(writer.Length, Is.EqualTo(0));
+
             byte[] data = writer.ToArray();
-            for (int i = 0; i < data.Length; i++)
-                Assert.That(data[i], Is.EqualTo(0), $"index {i} should have value 0");
+            Assert.That(data, Is.Empty);
         }
 
         [Test]
@@ -543,7 +520,7 @@ namespace Mirror.Tests
         {
             NetworkWriter writer = new NetworkWriter();
             writer.WriteString("a string longer than 10 bytes");
-            writer.SetLength(10);
+            writer.Reset();
             NetworkReader reader = new NetworkReader(writer.ToArray());
             Assert.Throws<System.IO.EndOfStreamException>(() => reader.ReadString());
         }
@@ -553,8 +530,8 @@ namespace Mirror.Tests
         {
             // write 2 bytes
             NetworkWriter writer = new NetworkWriter();
-            writer.WriteByte((byte)1);
-            writer.WriteByte((byte)2);
+            writer.WriteByte(1);
+            writer.WriteByte(2);
 
             // .ToArray() length is 2?
             Assert.That(writer.ToArray().Length, Is.EqualTo(2));
@@ -1102,26 +1079,31 @@ namespace Mirror.Tests
             // write all simple types once
             NetworkWriter writer = new NetworkWriter();
             writer.WriteChar((char)1);
-            writer.WriteByte((byte)2);
-            writer.WriteSByte((sbyte)3);
+            writer.WriteByte(2);
+            writer.WriteSByte(3);
             writer.WriteBoolean(true);
-            writer.WriteInt16((short)4);
-            writer.WriteUInt16((ushort)5);
+            writer.WriteInt16(4);
+            writer.WriteUInt16(5);
             writer.WriteInt32(6);
             writer.WriteUInt32(7U);
             writer.WriteInt64(8L);
             writer.WriteUInt64(9UL);
             writer.WriteSingle(10.0F);
             writer.WriteDouble(11.0D);
-            writer.WriteDecimal((decimal)12);
-            writer.WriteString((string)null);
+            writer.WriteDecimal(12);
+            writer.WriteString(null);
             writer.WriteString("");
             writer.WriteString("13");
-            writer.WriteBytes(new byte[] { 14, 15 }, 0, 2); // just the byte array, no size info etc.
-            writer.WriteBytesAndSize((byte[])null); // [SyncVar] struct values can have uninitialized byte arrays, null needs to be supported
-            writer.WriteBytesAndSize(new byte[] { 17, 18 }, 0, 2); // buffer, no-offset, count
-            writer.WriteBytesAndSize(new byte[] { 19, 20, 21 }, 1, 2); // buffer, offset, count
-            writer.WriteBytesAndSize(new byte[] { 22, 23 }, 0, 2); // size, buffer
+            // just the byte array, no size info etc.
+            writer.WriteBytes(new byte[] { 14, 15 }, 0, 2);
+            // [SyncVar] struct values can have uninitialized byte arrays, null needs to be supported
+            writer.WriteBytesAndSize(null);
+            // buffer, no-offset, count
+            writer.WriteBytesAndSize(new byte[] { 17, 18 }, 0, 2);
+            // buffer, offset, count
+            writer.WriteBytesAndSize(new byte[] { 19, 20, 21 }, 1, 2);
+            // size, buffer
+            writer.WriteBytesAndSize(new byte[] { 22, 23 }, 0, 2);
 
             // read them
             NetworkReader reader = new NetworkReader(writer.ToArray());
@@ -1139,7 +1121,8 @@ namespace Mirror.Tests
             Assert.That(reader.ReadSingle(), Is.EqualTo(10));
             Assert.That(reader.ReadDouble(), Is.EqualTo(11));
             Assert.That(reader.ReadDecimal(), Is.EqualTo(12));
-            Assert.That(reader.ReadString(), Is.Null); // writing null string should write null in Mirror ("" in original HLAPI)
+            // writing null string should write null in Mirror ("" in original HLAPI)
+            Assert.That(reader.ReadString(), Is.Null);
             Assert.That(reader.ReadString(), Is.EqualTo(""));
             Assert.That(reader.ReadString(), Is.EqualTo("13"));
 
