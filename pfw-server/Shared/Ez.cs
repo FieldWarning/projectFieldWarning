@@ -59,7 +59,7 @@ namespace Ez
             public static void GetLobbies()
             {
                 var pres = Post(new Dictionary<string, string>{
-                    {"jwt", JsonConvert.SerializeObject(Session.Token) },
+                    {"jwt", Session.Token.Serialize() },
                     {"filter", JsonConvert.SerializeObject(Filter) }
                 }, "servers/getall");
                 FindResult = JsonConvert.DeserializeObject<List<GameLobby>>(pres);
@@ -100,7 +100,30 @@ namespace Ez
 
         public static class WarChat
         {
-            public static List<Message>
+            public static SynchronizedCollection<WarchatMsg> Messages = new SynchronizedCollection<WarchatMsg>();
+
+            public static Task GetMessages(DateTime since)
+            {
+                var res = Post(new Dictionary<string, string>()
+                {
+                    {"time", since.ToString("O")},
+                    {"jwt", Session.Token.Serialize()}
+                }, "warchat/get");
+                //if ()
+                var msgs = JsonConvert.DeserializeObject<List<WarchatMsg>>(res);
+                Parallel.ForEach(msgs, msg => Messages.Add(msg));
+                return Task.CompletedTask;
+            }
+
+            public static Task SendMessage(WarchatMsg msg)
+            {
+                var res = Post(new Dictionary<string, string>()
+                {
+                    {"jwt", Session.Token.Serialize()},
+                    {"msg", JsonConvert.SerializeObject(msg)}
+                }, "warchat/send");
+                return Task.CompletedTask;
+            }
         }
 
         public static class LobbyChat
@@ -108,6 +131,10 @@ namespace Ez
             
         }
 
+        public static class PrivateMessages
+        {
+            
+        }
 
         /// <summary>
         /// Gets disposed on app exit
