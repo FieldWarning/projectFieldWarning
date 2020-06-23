@@ -16,6 +16,9 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Shared.Models;
+using Jwt = PFW_OfficialHub.Models.Jwt;
+
+//using Shared.Models;
 
 namespace PFW_OfficialHub.Controllers
 {
@@ -48,13 +51,13 @@ namespace PFW_OfficialHub.Controllers
             return StatusCode(200);
         }
 
-        [HttpPost("get/{since}")]
+        [HttpPost("get")]
         public ActionResult<string> Get([FromForm]string time, [FromForm]Jwt jwt)
         {
             if (!jwt.Verify()) return StatusCode(406);
-            if (!DateTime.TryParse(time, out var since)) return BadRequest("Bad date format");
-            if (since < DateTime.UtcNow - TimeSpan.FromMinutes(60))
-                since = DateTime.UtcNow - TimeSpan.FromMinutes(60);
+            if (!DateTime.TryParse(time, out var since)) return StatusCode(400);
+            if (since < DateTime.UtcNow - TimeSpan.FromMinutes(20))
+                since = DateTime.UtcNow - TimeSpan.FromMinutes(20);
 
             var msgs = Db.Warchat.Find(x => x.Time >= since);
 
@@ -62,7 +65,7 @@ namespace PFW_OfficialHub.Controllers
         }
 
         [HttpPost("pm/{playerId}")]
-        public ActionResult<string> Pm(string playerId, Jwt jwt, PrivateMessage msg)
+        public ActionResult<string> Pm(string playerId, [FromForm]Jwt jwt, [FromForm]PrivateMessage msg)
         {
             if (!jwt.Verify()) return BadRequest(412);
             msg.Time = DateTime.UtcNow;
@@ -85,6 +88,4 @@ namespace PFW_OfficialHub.Controllers
             return "";
         }
     }
-
-
 }

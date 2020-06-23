@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace Shared.Models
 {
@@ -31,8 +32,11 @@ namespace Shared.Models
         public string Token { get; set; }
         public DateTime Issued { get; set; }
 
+        public string Serialize() => JsonConvert.SerializeObject(this);
+        public static Jwt Parse(string json) => JsonConvert.DeserializeObject<Jwt>(json);
         public Task<bool> Verify()
         {
+
 
             return Task.FromResult(true);
         }
