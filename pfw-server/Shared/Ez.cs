@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection.Emit;
+using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using Shared;
+using Shared.Models;
 
 namespace Ez
 {
