@@ -1,18 +1,15 @@
-### What?
-This subdirectory is for the Nakama server handling our lobby, login and chat systems.
+This is the official server for handling P2P interactions
 
-### How?
-To start the server, install docker and run `docker-compose -f docker-compose.yml up` in this folder.
+Dependencies
+```
+.NET Core SDK 3.1 or later, .NET 5 preview (optional)
+```
 
-If using docker toolbox, you may need to set up port forwarding for the VM (by default you need port 7350): https://www.jhipster.tech/tips/020_tip_using_docker_containers_as_localhost_on_mac_and_windows.html
+Open PS or CMD, cd to `PFW_OfficialHub` project folder and execute the following command to run => `dotnet run`
 
-<<<<<<< HEAD
-More information about Nakama is available at https://heroiclabs.com/docs/install-docker-quickstart/.
-=======
 For more information on the .NET Core SDK => https://docs.microsoft.com/en-us/dotnet/core/tools/
 
 
 `API Documentation`
 
 Check Ez class in shared, everything is referenced
->>>>>>> Update README.md
