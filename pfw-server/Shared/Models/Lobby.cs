@@ -1,20 +1,15 @@
-//#define 
-
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Text;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-//using PFW_OfficialHub.Controllers
 
-
-
-
-namespace Shared
+namespace Shared.Models
 {
-    public class GameLobby  
+    public class GameLobby
     {
-        [BsonId][BsonRepresentation(BsonType.ObjectId)]
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
         public string Name { get; set; }
@@ -26,7 +21,7 @@ namespace Shared
         /// Per 30 second per player
         /// </summary>
         public int Income { get; set; }
-        
+
         /// <summary>
         /// This is not to be used unless work on game modes have started 
         /// </summary>
@@ -88,46 +83,4 @@ namespace Shared
         /// </summary>
         Brigade
     }
-
-    public class Player
-    {
-        [BsonId][BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
-        public DateTime LastSeen { get; set; }
-        public string CurrentLobbyId { get; set; }
-        public string Username { get; set; }
-        public string UserId { get; set; }
-        public string CurrentEndpoint { get; set; }
-    }
-
-    public class User
-    {
-        [BsonId][BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
-        public string Email { get; set; }
-        public string Username { get; set; }
-        public string Token { get; set; }
-    }
-
-    /// <summary>
-    /// Pass this serialized object on every request if doing custom requests
-    /// </summary>
-    public class Jwt
-    {
-        [BsonId][BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
-        public string Username { get; set; }
-        public string Token { get; set; }
-        public DateTime Issued { get; set; }
-    
-        public bool Verify()
-        {
-            return true;
-        }
-    }
-
-
 }

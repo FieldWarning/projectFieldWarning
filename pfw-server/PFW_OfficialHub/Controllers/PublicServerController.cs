@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson.IO;
 using MongoDB.Driver;
 using PFW_OfficialHub.Lib;
+using PFW_OfficialHub.Models;
 using Shared;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
 
