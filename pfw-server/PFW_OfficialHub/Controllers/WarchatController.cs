@@ -12,8 +12,10 @@ using System.Collections.Specialized;
 using System.Collections;
 using System.Net.Http;
 using Database;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using Shared.Models;
 
 namespace PFW_OfficialHub.Controllers
 {
@@ -85,29 +87,4 @@ namespace PFW_OfficialHub.Controllers
     }
 
 
-
-    [BsonNoId]
-    public class PrivateMessage
-    {
-        public string SenderId { get; set; }
-        public string TargetId { get; set; }
-        public string Content { get; set; }
-        public DateTime Time { get; set; }
-    }
-
-
-    [BsonNoId]
-    public class WarchatMsg {
-        public string Username { get; set; }
-        public DateTime Time { get; set; }
-        public string Content {
-            get {
-                return Content;
-            } 
-            set {
-                if (Content.Length > 240) Content = Content[0..240]; 
-            } 
-        }
-
-    }
 }
