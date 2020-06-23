@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using PFW_OfficialHub.Controllers;
 using Shared;
+using Shared.Models;
 
 namespace Database
 {

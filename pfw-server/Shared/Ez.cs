@@ -96,6 +96,15 @@ namespace Ez
             }
         }
 
+        public static class WarChat
+        {
+            public static List<Message>
+        }
+
+        public static class LobbyChat
+        {
+            
+        }
 
 
         /// <summary>
