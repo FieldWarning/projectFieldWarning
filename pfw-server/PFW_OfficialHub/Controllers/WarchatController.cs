@@ -13,6 +13,7 @@ using System.Collections;
 using System.Net.Http;
 using Database;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 
 namespace PFW_OfficialHub.Controllers
 {
@@ -36,7 +37,7 @@ namespace PFW_OfficialHub.Controllers
 
 
         [HttpPost("send")]
-        public ActionResult Send(WarchatMsg msg, Jwt jwt)
+        public ActionResult Send([FromForm]WarchatMsg msg, [FromForm]Jwt jwt)
         {
             if (!jwt.Verify()) return StatusCode(406);
 
@@ -46,14 +47,16 @@ namespace PFW_OfficialHub.Controllers
         }
 
         [HttpPost("get/{since}")]
-        public ActionResult<string> Get(DateTime since)
+        public ActionResult<string> Get([FromForm]string time, [FromForm]Jwt jwt)
         {
+            if (!jwt.Verify()) return StatusCode(406);
+            if (!DateTime.TryParse(time, out var since)) return BadRequest("Bad date format");
             if (since < DateTime.UtcNow - TimeSpan.FromMinutes(60))
                 since = DateTime.UtcNow - TimeSpan.FromMinutes(60);
 
             var msgs = Db.Warchat.Find(x => x.Time >= since);
 
-            return "";
+            return JsonConvert.SerializeObject(msgs);
         }
 
         [HttpPost("pm/{playerId}")]
