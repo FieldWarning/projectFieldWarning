@@ -43,6 +43,9 @@ namespace PFW_OfficialHub.Lib
         public static bool VerifyRequest(HttpContext context, TimeSpan? span, int limit = 30)
         {
             if (span is null) span = TimeSpan.FromMinutes(1);
+            var host = context.Request.Host.ToString();
+
+
 
             _callHistory.Add(new CallLog()
             {
