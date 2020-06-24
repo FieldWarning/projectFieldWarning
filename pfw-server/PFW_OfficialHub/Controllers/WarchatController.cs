@@ -48,7 +48,7 @@ namespace PFW_OfficialHub.Controllers
                 while (true)
                 {
                     Task.Delay(1000 * 60 * 5).Wait();
-                    Db.Warchat.DeleteMany(x => x.Time < DateTime.UtcNow - TimeSpan.FromMinutes(60));
+                    Db.Warchat.DeleteMany(x => x.Time < DateTime.UtcNow - TimeSpan.FromMinutes(20));
                 }
             });
         }

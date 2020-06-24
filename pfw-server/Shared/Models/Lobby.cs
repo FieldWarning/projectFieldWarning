@@ -29,10 +29,10 @@ namespace Shared.Models
         public string Description { get; set; }
 
         public string HostUserId { get; set; }
-        public int Points { get; set; }
+        public int StartingPoints { get; set; }
 
         /// <summary>
-        /// Per 30 second per player
+        /// Per 10 second per player
         /// </summary>
         public int Income { get; set; }
 
@@ -43,12 +43,11 @@ namespace Shared.Models
         ///// <summary>
         ///// Use only for deck building --experimental
         ///// </summary>
-        //public ArmyStyle ArmyStyle { get; set; }
+        public ArmyStyle ArmyStyle { get; set; }
         public string Password { get; set; }
 
         public bool IsRunning { get; set; }
         public DateTime LastHeartbeat { get; set; }
-
     }
 
     /// <summary>

@@ -62,12 +62,11 @@ namespace Ez
             static Lobbies()
             {
                 Task.Run(() => GetLobbies());
-
             }
 
             public static GameLobby CurrentLobby = new GameLobby();
             public static LobbySearchFilter Filter = new LobbySearchFilter();
-            public static List<GameLobby> FindResult = new List<GameLobby>();
+            public static SynchronizedCollection<GameLobby> FindResult = new SynchronizedCollection<GameLobby>();
 
             public static void GetLobbies()
             {
@@ -75,7 +74,8 @@ namespace Ez
                     {"jwt", Session.Token.Serialize() },
                     {"filter", JsonConvert.SerializeObject(Filter) }
                 }, "servers/getall");
-                FindResult = JsonConvert.DeserializeObject<List<GameLobby>>(pres);
+                FindResult.Clear();
+                Parallel.ForEach(JsonConvert.DeserializeObject<List<GameLobby>>(pres), i => FindResult.Add(i));
             }
             //public static bool JoinLobby(string id)
             //{
@@ -87,7 +87,9 @@ namespace Ez
 
             public static GameLobby Get(string id)
             {
-                return new GameLobby();
+                var res = Post(new Dictionary<string, string>()
+                    {{"jwt", Session.Token.Serialize()}}, $"info/{id}");
+                return JsonConvert.DeserializeObject<GameLobby>(res);
             }
         }
         public static class Auth

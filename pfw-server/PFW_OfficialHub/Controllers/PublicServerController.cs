@@ -28,33 +28,36 @@ using Jwt = PFW_OfficialHub.Models.Jwt;
 
 namespace PFW_OfficialHub.Controllers
 {
-    [Route("gameapi")]
+    [Route("game")]
     [ApiController]
     public class PublicServerController : ControllerBase
     {
         [HttpPost("serverhb")]
-        public ActionResult<dynamic> SHeartbeat([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
+        public ActionResult<short> SHeartbeat([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
         {
             var elob = Db.GameLobbies.Find(x => x.Id == lobby.Id).FirstOrDefaultAsync();
             if (!jwt.Verify()) return BadRequest("Bad token");
             if (elob.Result.HostUserId != jwt.UserId) return BadRequest("You do not own this server");
-            var upd = new UpdateDefinitionBuilder<GameLobby>().Set("LastHeartbeat", DateTime.UtcNow);
-            Db.GameLobbies.UpdateManyAsync(x => x.Id == elob.Result.Id, upd);
-            return StatusCode(200);
+            var upd = new UpdateDefinitionBuilder<GameLobby>()
+                .Set("LastHeartbeat", DateTime.UtcNow);
+            _ = Db.GameLobbies.UpdateOneAsync(x => x.Id == elob.Result.Id, upd);
+            
+            return 200;
         }
 
         [HttpPost("playerhb")]
-        public async Task<ActionResult<string>> PHeartbeat([FromForm] Jwt jwt)
+        public async Task<ActionResult<short>> PHeartbeat([FromForm] Jwt jwt)
         {
-            if (!jwt.Verify()) return BadRequest("Bad token");
             var p = await Utils.GetPlayer(jwt);
-            var upd = new UpdateDefinitionBuilder<Player>().Set("LastSeen", DateTime.UtcNow);
+            if (!jwt.Verify()) return BadRequest("Bad token");
+            var upd = new UpdateDefinitionBuilder<Player>()
+                .Set("LastSeen", DateTime.UtcNow);
             _ = Db.Players.UpdateOneAsync(x => x.Id == p.Id, upd);
 
-            return StatusCode(200);
+            return 200;
         }
 
-        [HttpPost("getall")]
+        [HttpPost("get")]
         public ActionResult<string> GetAll([FromForm]Jwt jwt, [FromForm]LobbySearchFilter filter)
         {
             //discover servers async
@@ -65,19 +68,19 @@ namespace PFW_OfficialHub.Controllers
                     ? (!string.IsNullOrWhiteSpace(x.Password) && string.IsNullOrWhiteSpace(x.Password))
                     : string.IsNullOrWhiteSpace(x.Password))
                 && filter.GameModes.Contains(x.GameMode)).ToListAsync();
-
-            //verify token sync
+            //verify
             if (!jwt.Verify()) return BadRequest(403);
 
             return JsonConvert.SerializeObject(servers.Result);
         }
 
-        [HttpPost("getinfo/{serverId}")]
+        [HttpPost("info/{serverId}")]
         public ActionResult<string> Single([FromForm]Jwt jwt, string serverId)
         {
             //verify token sync
             if (!jwt.Verify()) return BadRequest(412);
             var srv = Db.GameLobbies.Find(x => x.Id == serverId).FirstOrDefault();
+            srv.Password = String.Empty;
             return JsonConvert.SerializeObject(srv);
         }
         [HttpPost("join/{serverId}")]
@@ -88,15 +91,16 @@ namespace PFW_OfficialHub.Controllers
             var player = Db.Players.Find(x => jwt.Username == x.Username).FirstOrDefault();
             if (srv.Result == null) return BadRequest(404);
             
-            var upd = new UpdateDefinitionBuilder<Player>().Set("LastSeen", DateTime.UtcNow).Set("CurrentLobbyId", serverId);
+            var upd = new UpdateDefinitionBuilder<Player>()
+                .Set("LastSeen", DateTime.UtcNow)
+                .Set("CurrentLobbyId", serverId);
             _ = Db.Players.UpdateOneAsync(x => x.Id == player.Id, upd);
-
-
             return StatusCode(200);
         }
         [HttpPost("leave/{serverId}")]
         public ActionResult<string> Leave([FromForm]Jwt jwt, string serverId)
         {
+
 
             return "";
         }
@@ -132,11 +136,5 @@ namespace PFW_OfficialHub.Controllers
             return "";
         }
 
-        [HttpPost("heartbeat")]
-        public ActionResult<string> SendHeartBeat()
-        {
-
-            return "";
-        }
     }
 }
