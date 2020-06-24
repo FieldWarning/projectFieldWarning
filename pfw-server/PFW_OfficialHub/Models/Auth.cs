@@ -26,6 +26,8 @@ namespace PFW_OfficialHub.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UserId { get; set; }
         public string Username { get; set; }
         public string Token { get; set; }
         public DateTime Issued { get; set; }

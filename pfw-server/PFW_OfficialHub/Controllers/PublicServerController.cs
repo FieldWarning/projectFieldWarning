@@ -33,11 +33,13 @@ namespace PFW_OfficialHub.Controllers
     public class PublicServerController : ControllerBase
     {
         [HttpPost("serverhb")]
-        public ActionResult<dynamic> Hearbeat([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
+        public ActionResult<dynamic> SHeartbeat([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
         {
-            if (!jwt.Verify()) return BadRequest("Bad token");
             var elob = Db.GameLobbies.Find(x => x.Id == lobby.Id).FirstOrDefaultAsync();
-            
+            if (!jwt.Verify()) return BadRequest("Bad token");
+            if (elob.Result.HostUserId != jwt.UserId) return BadRequest("You do not own this server");
+            var upd = new UpdateDefinitionBuilder<GameLobby>().Set("LastHeartbeat", DateTime.UtcNow);
+            Db.GameLobbies.UpdateManyAsync(x => x.Id == elob.Result.Id, upd);
             return StatusCode(200);
         }
 

@@ -28,6 +28,7 @@ namespace Shared.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public string HostUserId { get; set; }
         public int Points { get; set; }
 
         /// <summary>
