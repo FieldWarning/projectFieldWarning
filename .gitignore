@@ -25,3 +25,4 @@ src/FieldWarning/Assets/Scene/MicroSplatData/MicroSplatConfig 2_normSAO_tarray.a
 src/FieldWarning/Assets/Scene/MicroSplatData/MicroSplatConfig.asset
 src/FieldWarning/Assets/Scene/MicroSplatData/MicroSplatConfig_diff_tarray.asset
 src/FieldWarning/Assets/Scene/MicroSplatData/MicroSplatConfig_normSAO_tarray.asset
+*.cache

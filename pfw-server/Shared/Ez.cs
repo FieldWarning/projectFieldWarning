@@ -47,7 +47,7 @@ namespace Ez
             public static User User = new User();
             public static Jwt Token = new Jwt();
 
-            public static void Login(string username, string password)
+            public static bool Login(string username, string password)
             {
 
             }
@@ -77,15 +77,17 @@ namespace Ez
                 FindResult.Clear();
                 Parallel.ForEach(JsonConvert.DeserializeObject<List<GameLobby>>(pres), i => FindResult.Add(i));
             }
-            //public static bool JoinLobby(string id)
-            //{
-            //    var pres = Post(new Dictionary<string, string>(), $"server/join/{id}");
-            //    if (pres == "200") CurrentLobby = GetLobbyById(id);
-            //}
 
+            public static bool JoinLobby(string id, string password = null)
+            {
+                var pres = Post(new Dictionary<string, string>(), $"server/join/{id}");
+                if (pres != "200") return false;
 
+                CurrentLobby = GetLobby(id);
+                return true;
+            }
 
-            public static GameLobby Get(string id)
+            public static GameLobby GetLobby(string id)
             {
                 var res = Post(new Dictionary<string, string>()
                     {{"jwt", Session.Token.Serialize()}}, $"info/{id}");
