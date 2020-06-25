@@ -26,3 +26,7 @@ src/FieldWarning/Assets/Scene/MicroSplatData/MicroSplatConfig.asset
 src/FieldWarning/Assets/Scene/MicroSplatData/MicroSplatConfig_diff_tarray.asset
 src/FieldWarning/Assets/Scene/MicroSplatData/MicroSplatConfig_normSAO_tarray.asset
 *.cache
+*.cache
+pfw-server/Tester/obj/Debug/netcoreapp3.1/Tester.csprojAssemblyReference.cache
+pfw-server/Telepathy/obj/Debug/net48/Telepathy.csprojAssemblyReference.cache
+pfw-server/Shared/obj/Debug/netstandard2.0/Shared.csprojAssemblyReference.cache
