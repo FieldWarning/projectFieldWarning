@@ -124,7 +124,6 @@ namespace PFW.Units.Component.Movement
             {
                 Pathfinder.Dispose();
             }
-            
         }
 
         public bool AreOrdersComplete() => _moveStrategy.AreOrdersComplete();

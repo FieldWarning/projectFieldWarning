@@ -13,14 +13,13 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
 using System;
 using System.Threading;
 using System.Collections.Concurrent;
 
 namespace PFW.Units.Component.Movement
 {
-    public class Pathfinder:IDisposable
+    public sealed class Pathfinder : IDisposable
     {
         public const float FOREVER = float.MaxValue / 2;
         public static readonly Vector3 NO_POSITION = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
@@ -113,12 +112,10 @@ namespace PFW.Units.Component.Movement
                     _PathFinderRunnerEvent.WaitOne();
                 }
 
-                PathData data;
-                if (_PathQueue.TryDequeue(out data))
+                if (_PathQueue.TryDequeue(out PathData data))
                 {
                     SetPath(data.CurrentPosition, data.DestinationPosition, data.Command);
                 }
-
             }
         }
 
@@ -127,10 +124,6 @@ namespace PFW.Units.Component.Movement
             Vector3 pos = _unit.transform.position;
             _PathQueue.Enqueue(new PathData(pos, destination, command));
             _PathFinderRunnerEvent.Set();
-
-
-
-
         }
 
         /// <summary>

@@ -66,7 +66,8 @@ namespace PFW.Units.Component.Movement
             float targetHeading = GetTargetHeading();
             float turnForward = 0f;
             float turnReverse = 0f;
-            if (targetHeading != MovementComponent.NO_HEADING) {
+            if (targetHeading != MovementComponent.NO_HEADING)
+            {
                 turnForward = (targetHeading - NextRotation.y - Mathf.PI / 2).unwrapRadian();
                 turnReverse = (targetHeading - NextRotation.y + Mathf.PI / 2).unwrapRadian();
             }
@@ -147,8 +148,9 @@ namespace PFW.Units.Component.Movement
         {
             float destinationHeading = FinalHeading;
 
-            if (Pathfinder.HasDestination()) {
-                var diff = Pathfinder.GetWaypoint() - NextPosition;
+            if (Pathfinder.HasDestination()) 
+            {
+                Vector3 diff = Pathfinder.GetWaypoint() - NextPosition;
                 if (diff.magnitude > Pathfinder.FinalCompletionDist)
                     destinationHeading = diff.getRadianAngle();
             }
@@ -197,9 +199,12 @@ namespace PFW.Units.Component.Movement
 
             float accelTime = 2 * Mathf.Abs(linVelocity) 
                               / (_data.AccelRate * (1 + DECELERATION_FACTOR));
-            if (linVelocity > 0) {
+            if (linVelocity > 0) 
+            {
                 timeReverse += accelTime;
-            } else {
+            } 
+            else 
+            {
                 timeForward += accelTime;
             }
 
@@ -249,12 +254,15 @@ namespace PFW.Units.Component.Movement
                     0f,
                     -_transform.forward);
 
-            if (terrainSpeedMultiplier <= 0f) { 
+            if (terrainSpeedMultiplier <= 0f) 
+            { 
                 // This is so the unit will "bump off" impassible terrain
                 _linVelocity = 0f;
                 Bounce();
                 //_position -= transform.forward * Data.movementSpeed * Time.deltaTime;
-            } else {
+            } 
+            else 
+            {
                 targetSpeed = terrainSpeedMultiplier * Mathf.Clamp(
                         targetSpeed, -_data.ReverseSpeed, _data.MovementSpeed);
 
@@ -262,16 +270,20 @@ namespace PFW.Units.Component.Movement
                 if (Mathf.Sign(_forwardAccel) != Mathf.Sign(_linVelocity))
                     _forwardAccel *= DECELERATION_FACTOR;
 
-                if (Mathf.Abs(_forwardAccel) > 0) {
+                if (Mathf.Abs(_forwardAccel) > 0) 
+                {
                     float accelTime = (targetSpeed - _linVelocity) / _forwardAccel;
                     if (accelTime < _data.AccelDampTime)
                         _forwardAccel *= (0.25f + 0.75f * accelTime / _data.AccelDampTime);
 
-                    if (_forwardAccel > 0) {
+                    if (_forwardAccel > 0) 
+                    {
                         _linVelocity = Mathf.Min(
                                 targetSpeed, 
                                 _linVelocity + _forwardAccel * Time.deltaTime);
-                    } else {
+                    } 
+                    else 
+                    {
                         _linVelocity = Mathf.Max(
                                 targetSpeed, 
                                 _linVelocity + _forwardAccel * Time.deltaTime);
@@ -286,9 +298,12 @@ namespace PFW.Units.Component.Movement
 
         private void DoRotationalMotion(float remainingTurn, float rotationSpeed)
         {
-            if (Mathf.Abs(remainingTurn) < HEADING_THRESHOLD) {
+            if (Mathf.Abs(remainingTurn) < HEADING_THRESHOLD) 
+            {
                 _rotVelocity = 0f;
-            } else {
+            }
+            else 
+            {
                 _rotVelocity = Mathf.Sign(remainingTurn) * rotationSpeed;
             }
 
@@ -309,7 +324,8 @@ namespace PFW.Units.Component.Movement
         private void Bounce()
         {
             Vector3 bounceDirection = Vector3.zero;
-            for (float angle = 0f; angle < 360f; angle += 30f) {
+            for (float angle = 0f; angle < 360f; angle += 30f)
+            {
                 Vector3 offset = 
                         BOUNCE_RADIUS * new Vector3(
                                 Mathf.Sin(angle * Mathf.Deg2Rad), 

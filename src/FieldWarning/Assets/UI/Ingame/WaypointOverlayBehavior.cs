@@ -79,13 +79,13 @@ namespace PFW.UI.Ingame.UnitLabel
             _platoon = platoon;
 
             _lineR = transform.Find("Line").GetComponent<LineRenderer>();
-            _lineR.startColor = Color.green;
-            _lineR.endColor = Color.green;
+            _lineR.startColor = Color.yellow;
+            _lineR.endColor = Color.yellow;
             _lineR.useWorldSpace = true;
             _lineR.sortingLayerName = "OnTop";
             _lineR.sortingOrder = 20;
 
-            _lineR.startWidth = 0.005f;
+            _lineR.startWidth = 0.10f;
             _lineR.endWidth = 0.10f;
         }
     }
