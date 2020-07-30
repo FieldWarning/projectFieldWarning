@@ -296,7 +296,8 @@ namespace PFW.UI.Ingame
             selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
 
             // Randomly choose one platoon to play a selected voiceline
-            if (selectedPlatoons.Count != 0 && !justPreviewing) {
+            if (selectedPlatoons.Count != 0 && !justPreviewing) 
+            {
                 int randInt = Random.Range(0, selectedPlatoons.Count);
                 selectedPlatoons[randInt].PlaySelectionVoiceline();
             }

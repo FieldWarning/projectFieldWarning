@@ -143,8 +143,7 @@ namespace PFW.UI.Ingame
             {
             case MouseMode.PURCHASING:
             {
-                RaycastHit hit;
-                if (Util.GetTerrainClickLocation(out hit))
+                if (Util.GetTerrainClickLocation(out RaycastHit hit))
                 {
                     ShowGhostUnitsAndMaybePurchase(hit);
                 }
@@ -185,8 +184,7 @@ namespace PFW.UI.Ingame
                 ApplyHotkeys();
 
                 // Show range and line of sight indicators
-                RaycastHit hit;
-                if (Util.GetTerrainClickLocation(out hit))
+                if (Util.GetTerrainClickLocation(out RaycastHit hit))
                 {
                     _selectionManager.ToggleTargetingPreview(true);
                     int minDistance = _selectionManager.PlaceTargetingPreview(
@@ -211,8 +209,7 @@ namespace PFW.UI.Ingame
                 ApplyHotkeys();
 
                 // Show range and line of sight indicators
-                RaycastHit hit;
-                if (Util.GetTerrainClickLocation(out hit))
+                if (Util.GetTerrainClickLocation(out RaycastHit hit))
                 {
                     _selectionManager.ToggleTargetingPreview(true);
                     int minDistance = _selectionManager.PlaceTargetingPreview(
