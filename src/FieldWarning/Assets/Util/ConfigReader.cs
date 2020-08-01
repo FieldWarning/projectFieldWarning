@@ -102,6 +102,15 @@ namespace PFW
 
                 Hotkeys = new HotkeyConfig
                 {
+                    Smoke = localConfig.Hotkeys.Smoke == null || localConfig.Hotkeys.Smoke == "" ?
+                            defaultConfig.Hotkeys.Smoke : localConfig.Hotkeys.Smoke,
+
+                    WeaponsOff = localConfig.Hotkeys.WeaponsOff == null || localConfig.Hotkeys.WeaponsOff == "" ?
+                            defaultConfig.Hotkeys.WeaponsOff : localConfig.Hotkeys.WeaponsOff,
+
+                    Stop = localConfig.Hotkeys.Stop == null || localConfig.Hotkeys.Stop == "" ?
+                            defaultConfig.Hotkeys.Stop : localConfig.Hotkeys.Stop,
+
                     Unload = localConfig.Hotkeys.Unload == null || localConfig.Hotkeys.Unload == "" ?
                             defaultConfig.Hotkeys.Unload : localConfig.Hotkeys.Unload,
 

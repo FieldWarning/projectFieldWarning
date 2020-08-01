@@ -46,6 +46,9 @@ namespace PFW.Model.Settings.JsonContents
         public string VisionTool;
         public string Load;
         public string Unload;
+        public string Stop;
+        public string Smoke;
+        public string WeaponsOff;
         public string MenuToggle;
     }
 }

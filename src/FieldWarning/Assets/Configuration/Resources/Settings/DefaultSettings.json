@@ -15,6 +15,9 @@
         "VisionTool": "R",
         "Load": "L",
         "Unload": "U",
+        "Stop": "C",
+        "Smoke": "B",
+        "WeaponsOff": "H",
         "MenuToggle": "Escape"
     }
 }
