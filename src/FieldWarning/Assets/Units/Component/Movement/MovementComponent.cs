@@ -118,6 +118,12 @@ namespace PFW.Units.Component.Movement
             _moveStrategy.FinalHeading = heading;
         }
 
+        public void CancelOrders()
+        {
+            // TODO use a non-hacky solution
+            SetDestination(transform.position);
+        }
+
         public void OnDestroy()
         {
             if (Pathfinder != null)

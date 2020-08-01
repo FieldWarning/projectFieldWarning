@@ -457,7 +457,7 @@ namespace PFW.UI.Ingame
                 if (_commands.Unload) 
                 {
                     _selectionManager.DispatchUnloadCommand();
-                } 
+                }
                 else if (_commands.Load) 
                 {
                     _selectionManager.DispatchLoadCommand();
@@ -489,6 +489,18 @@ namespace PFW.UI.Ingame
                 else if (_commands.VisionTool && !_selectionManager.Empty)
                 {
                     EnterVisionRulerMode();
+                }
+                else if (_commands.Stop)
+                {
+                    _selectionManager.DispatchStopCommand();
+                }
+                else if (_commands.WeaponsOff && !_selectionManager.Empty)
+                {
+                    _selectionManager.DispatchToggleWeaponsCommand();
+                }
+                else if (_commands.Smoke && !_selectionManager.Empty)
+                {
+                    Logger.LogWithoutSubsystem("Smoke not implemented", LogLevel.BUG);
                 }
             }
         }
@@ -657,6 +669,24 @@ namespace PFW.UI.Ingame
         public bool ToggleMenu {
             get {
                 return Input.GetKeyDown(_hotkeys.MenuToggle);
+            }
+        }
+
+        public bool Stop {
+            get {
+                return Input.GetKeyDown(_hotkeys.Stop);
+            }
+        }
+
+        public bool WeaponsOff {
+            get {
+                return Input.GetKeyDown(_hotkeys.WeaponsOff);
+            }
+        }
+
+        public bool Smoke {
+            get {
+                return Input.GetKeyDown(_hotkeys.Smoke);
             }
         }
     }

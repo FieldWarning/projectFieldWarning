@@ -34,11 +34,38 @@ namespace PFW
     /// </summary>
     public static class Logger
     {
+        /// <summary>
+        /// Logging without subsytem should be avoided,
+        /// as it can't be disabled except by disabling
+        /// all messages of that severity level.
+        /// </summary>
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        public static void LogWithoutSubsystem(
+                string logMsg,
+                LogLevel level)
+        {
+            Log(logMsg, "", level);
+        }
+
+        /// <summary>
+        /// Logging without subsytem should be avoided,
+        /// as it can't be disabled except by disabling
+        /// all messages of that severity level.
+        /// </summary>
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        public static void LogWithoutSubsystem(
+                string logMsg,
+                Object context,
+                LogLevel level)
+        {
+            Log(logMsg, context, "", level);
+        }
+
         [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_NETWORKING")]
         public static void LogNetworking(
                 string logMsg,
-                LogLevel level = LogLevel.DEBUG)
+                LogLevel level)
         {
             Log(logMsg, "Networking", level);
         }
@@ -57,7 +84,7 @@ namespace PFW
         [System.Diagnostics.Conditional("PFW_LOG_TARGETING")]
         public static void LogTargeting(
                 string logMsg,
-                LogLevel level = LogLevel.DEBUG)
+                LogLevel level)
         {
             Log(logMsg, "Targeting", level);
         }
@@ -86,7 +113,7 @@ namespace PFW
         public static void LogDamage(
                 string logMsg,
                 Object context,
-                LogLevel level = LogLevel.DEBUG)
+                LogLevel level)
         {
             Log(logMsg, context, "Damage", level);
         }
@@ -105,7 +132,7 @@ namespace PFW
         public static void LogPathfinding(
                 string logMsg,
                 Object context,
-                LogLevel level = LogLevel.DEBUG)
+                LogLevel level)
         {
             Log(logMsg, context, "Pathfinding", level);
         }
@@ -124,7 +151,7 @@ namespace PFW
         public static void LogConfig(
                 string logMsg,
                 Object context,
-                LogLevel level = LogLevel.DEBUG)
+                LogLevel level)
         {
             Log(logMsg, context, "Config", level);
         }

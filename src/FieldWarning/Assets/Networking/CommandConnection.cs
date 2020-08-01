@@ -166,5 +166,20 @@ namespace PFW.Networking
                 platoon.RpcOrderMovement(destination, heading, mode, enqueue);
             }
         }
+
+        /// <summary>
+        /// See PlatoonBehaviour::CancelOrders
+        /// </summary>
+        [Command]
+        public void CmdCancelOrders(
+                uint platoonNetId)
+        {
+            NetworkIdentity identity;
+            if (NetworkIdentity.spawned.TryGetValue(platoonNetId, out identity))
+            {
+                PlatoonBehaviour platoon = identity.gameObject.GetComponent<PlatoonBehaviour>();
+                platoon.RpcCancelOrders();
+            }
+        }
     }
 }

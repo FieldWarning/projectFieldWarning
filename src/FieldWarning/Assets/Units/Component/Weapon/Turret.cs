@@ -267,6 +267,16 @@ namespace PFW.Units.Component.Weapon
             _turret.localEulerAngles = new Vector3(verticalAngle, horizontalAngle, 0);
         }
 
+        public void ClearExplicitTarget()
+        {
+            _explicitTarget = null;
+            _target = null;
+            foreach (Turret turret in Children)
+            {
+                turret.ClearExplicitTarget();
+            }
+        }
+
         /// <summary>
         /// Sets a max-priority target for this turret.
         /// </summary>

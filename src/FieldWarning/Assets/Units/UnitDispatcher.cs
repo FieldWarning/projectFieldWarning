@@ -135,6 +135,12 @@ namespace PFW.Units
             MatchSession.Current.RegisterUnitBirth(this);
         }
 
+        public void CancelOrders()
+        {
+            _movementComponent.CancelOrders();
+            _turretSystem.CancelOrders();
+        }
+
         public void SendFirePosOrder(Vector3 position)
         {
             _turretSystem.TargetPosition(position);

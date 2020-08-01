@@ -31,6 +31,11 @@ namespace PFW.Units.Component.OrderQueue
 
         public IEnumerable<OrderData> Orders => _orders;
 
+        public void Clear()
+        {
+            _orders.Clear();
+        }
+
         public void SendOrder(OrderData orderData, bool enqueue)
         {
             if (enqueue)
@@ -39,7 +44,7 @@ namespace PFW.Units.Component.OrderQueue
             }
             else
             {
-                Clear();
+                _orders.Clear();
                 _orders.Enqueue(orderData);
                 ProcessOrder(_orders.First());
             }
@@ -97,11 +102,6 @@ namespace PFW.Units.Component.OrderQueue
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private void Clear()
-        {
-            _orders.Clear();
         }
     }
 }

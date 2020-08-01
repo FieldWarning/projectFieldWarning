@@ -39,6 +39,9 @@ namespace PFW.Model.Settings
             Split = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.Split);
             VisionTool = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.VisionTool);
             MenuToggle = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.MenuToggle);
+            Stop = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.Stop);
+            WeaponsOff = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.WeaponsOff);
+            Smoke = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.Smoke);
         }
 
         public KeyCode Unload;
@@ -50,5 +53,8 @@ namespace PFW.Model.Settings
         public KeyCode Split;
         public KeyCode VisionTool;
         public KeyCode MenuToggle;
+        public KeyCode Stop;
+        public KeyCode WeaponsOff;
+        public KeyCode Smoke;
     }
 }

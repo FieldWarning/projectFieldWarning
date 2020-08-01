@@ -438,6 +438,9 @@ namespace PFW.Units
 
         #region Movement
 
+        /// <summary>
+        /// Called on clients by the server.
+        /// </summary>
         [ClientRpc]
         public void RpcOrderMovement(
             Vector3 destination,
@@ -465,6 +468,28 @@ namespace PFW.Units
         {
             OrderData order = OrderData.MakeMoveOrder(this, destination, heading, mode);
             _orderQueue.SendOrder(order, enqueue);
+        }
+
+        #endregion
+
+        #region CancelOrders
+
+        /// <summary>
+        /// Called on clients by the server.
+        /// </summary>
+        [ClientRpc]
+        public void RpcCancelOrders()
+        {
+            CancelOrders();
+        }
+
+        /// <summary>
+        /// Tells the platoon that all orders from the player have been cancelled.
+        /// </summary>
+        public void CancelOrders()
+        {
+            _orderQueue.Clear();
+            Units.ForEach(u => u.CancelOrders());
         }
 
         #endregion
@@ -498,6 +523,7 @@ namespace PFW.Units
         /// 
         /// TODO: Cache the result instead of recalculating every time
         /// TODO: Return and preview all planned orders, not just movement.
+        /// TODO: Show real pathfinder paths
         /// </summary>
         public List<OrderData> CalculateOrderPreview()
         {

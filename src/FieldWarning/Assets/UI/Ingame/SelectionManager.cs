@@ -119,12 +119,25 @@ namespace PFW.UI.Ingame
 
         public void DispatchUnloadCommand()
         {
-            // TODO
+            Logger.LogWithoutSubsystem("Unload not implemented", LogLevel.BUG);
         }
 
         public void DispatchLoadCommand()
         {
-            // TODO
+            Logger.LogWithoutSubsystem("Load not implemented", LogLevel.BUG);
+        }
+
+        public void DispatchStopCommand()
+        {
+            _selection.ForEach(x => CommandConnection.Connection.CmdCancelOrders(
+                x.netId
+                )
+            );
+        }
+
+        public void DispatchToggleWeaponsCommand()
+        {
+            Logger.LogWithoutSubsystem("Weapon toggling not implemented", LogLevel.BUG);
         }
 
         /**

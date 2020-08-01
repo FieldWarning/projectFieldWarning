@@ -200,6 +200,18 @@ namespace PFW.Units.Component.Weapon
             }
         }
 
+        public void CancelOrders()
+        {
+            _movingTowardsTarget = false;
+            _explicitTarget = null;
+            _target = null;
+
+            foreach (Turret turret in Children)
+            {
+                turret.ClearExplicitTarget();
+            }
+        }
+
         /// <summary>
         /// Set a ground position as the shooting target.
         /// </summary>
