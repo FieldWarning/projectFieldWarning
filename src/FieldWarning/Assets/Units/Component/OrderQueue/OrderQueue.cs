@@ -18,34 +18,45 @@ using UnityEngine;
 
 namespace PFW.Units.Component.OrderQueue
 {
+    /// <summary>
+    /// The platoon's order queue holds all commands assigned by the player,
+    /// starting with the order that is being executed currently.
+    /// 
+    /// When all units of a platoon complete an order, the order is 
+    /// removed from the queue and the next one is dispatched to all units.
+    /// </summary>
     public sealed class OrderQueue
     {
         private readonly Queue<OrderData> _orders = new Queue<OrderData>();
 
         public IEnumerable<OrderData> Orders => _orders;
 
-        public OrderData ActiveOrder { get; private set; }
-
         public void SendOrder(OrderData orderData, bool enqueue)
         {
-            if (!enqueue)
+            if (enqueue)
+            {
+                _orders.Enqueue(orderData);
+            }
+            else
+            {
                 Clear();
-            _orders.Enqueue(orderData);
+                _orders.Enqueue(orderData);
+                ProcessOrder(_orders.First());
+            }
         }
 
         public void HandleUpdate()
         {
-            if (ActiveOrder != null && !OrderComplete(ActiveOrder))
-                return;
-
             if (_orders.Any())
             {
-                ActiveOrder = _orders.Dequeue();
-                ProcessOrder(ActiveOrder);
-            }
-            else
-            {
-                ActiveOrder = null;
+                if (OrderComplete(_orders.First()))
+                {
+                    _orders.Dequeue();
+                    if (_orders.Any())
+                    {
+                        ProcessOrder(_orders.First());
+                    }
+                }
             }
         }
 
@@ -71,13 +82,15 @@ namespace PFW.Units.Component.OrderQueue
                         orderData.TargetPosition, orderData.Heading, orderData.Platoon.Units.Count);
 
                     for (int i = 0; i < orderData.Platoon.Units.Count; i++)
-                        orderData.Platoon.Units[i]
-                            .SetDestination(destinations[i], orderData.Heading, orderData.MoveCommandType);
+                        orderData.Platoon.Units[i].SetDestination(
+                                destinations[i], 
+                                orderData.Heading, 
+                                orderData.MoveCommandType);
 
                     return;
                 case OrderType.FIRE_POSITION_ORDER:
-                    orderData.Platoon.Units
-                        .ForEach(u => u.SendFirePosOrder(orderData.TargetPosition));
+                    orderData.Platoon.Units.ForEach(
+                            u => u.SendFirePosOrder(orderData.TargetPosition));
                     orderData.Platoon.PlayAttackCommandVoiceline();
 
                     return;
@@ -89,7 +102,6 @@ namespace PFW.Units.Component.OrderQueue
         private void Clear()
         {
             _orders.Clear();
-            ActiveOrder = null;
         }
     }
 }

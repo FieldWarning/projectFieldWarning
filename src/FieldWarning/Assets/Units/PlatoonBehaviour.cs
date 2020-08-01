@@ -505,14 +505,6 @@ namespace PFW.Units
                 .Where(o => o.OrderType == OrderType.MOVE_ORDER)
                 .ToList();
 
-            OrderData activeOrder = _orderQueue.ActiveOrder;
-            // destination is normally dequeued so we need to get this separately from
-            // the rest of the waypoints
-            if (activeOrder?.OrderType == OrderType.MOVE_ORDER)
-            {
-                moveOrders.Insert(0, activeOrder);
-            }
-
             return moveOrders;
         }
     }
