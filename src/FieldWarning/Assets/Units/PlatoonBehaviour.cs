@@ -22,6 +22,7 @@ using PFW.UI.Ingame.UnitLabel;
 using PFW.Units.Component.OrderQueue;
 using PFW.Networking;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 namespace PFW.Units
 {
@@ -41,7 +42,7 @@ namespace PFW.Units
 
         private WaypointOverlayBehavior _waypointOverlay;
 
-        public OrderQueue OrderQueue { get; } = new OrderQueue();
+        private OrderQueue _orderQueue { get; } = new OrderQueue();
 
         private bool _pointerOnLabel = false;
         private GameObject _mainCamera;
@@ -105,7 +106,7 @@ namespace PFW.Units
             Units.ForEach(x => pos += x.Transform.position);
             transform.position = pos / Units.Count;
 
-            OrderQueue.HandleUpdate();
+            _orderQueue.HandleUpdate();
 
             if (_pointerOnLabel)
             {
@@ -422,7 +423,7 @@ namespace PFW.Units
 
         public void SendFirePosOrder(Vector3 position, bool enqueue = false)
         {
-            OrderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
+            _orderQueue.SendOrder(OrderData.MakeFirePositionOrder(this, position), enqueue);
         }
 
         /// <summary>
@@ -463,7 +464,7 @@ namespace PFW.Units
             bool enqueue = false)
         {
             OrderData order = OrderData.MakeMoveOrder(this, destination, heading, mode);
-            OrderQueue.SendOrder(order, enqueue);
+            _orderQueue.SendOrder(order, enqueue);
         }
 
         #endregion
@@ -488,5 +489,31 @@ namespace PFW.Units
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Return the points the platoon will pass through if it
+        /// executes its order queue. This is useful to show
+        /// command previews when the player selects a platoon.
+        /// 
+        /// TODO: Cache the result instead of recalculating every time
+        /// TODO: Return and preview all planned orders, not just movement.
+        /// </summary>
+        public List<OrderData> CalculateOrderPreview()
+        {
+            List<OrderData> moveOrders = _orderQueue.Orders
+                .Where(o => o.OrderType == OrderType.MOVE_ORDER)
+                .ToList();
+
+            OrderData activeOrder = _orderQueue.ActiveOrder;
+            // destination is normally dequeued so we need to get this separately from
+            // the rest of the waypoints
+            if (activeOrder?.OrderType == OrderType.MOVE_ORDER)
+            {
+                moveOrders.Insert(0, activeOrder);
+            }
+
+            return moveOrders;
+        }
     }
 }

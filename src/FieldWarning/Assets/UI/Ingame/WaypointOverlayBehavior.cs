@@ -12,7 +12,6 @@
  */
 
 using System.Collections.Generic;
-using System.Linq;
 using PFW.Units;
 using PFW.Units.Component.OrderQueue;
 using UnityEngine;
@@ -30,17 +29,9 @@ namespace PFW.UI.Ingame.UnitLabel
 
         private void Update()
         {
-            List<OrderData> moveOrders = _platoon.OrderQueue.Orders
-                .Where(o => o.OrderType == OrderType.MOVE_ORDER)
-                .ToList();
+            List<OrderData> moveOrders = _platoon.CalculateOrderPreview();
 
             int moveOrderCount = moveOrders.Count;
-
-            OrderData activeOrder = _platoon.OrderQueue.ActiveOrder;
-            if (activeOrder?.OrderType == OrderType.MOVE_ORDER)
-            {
-                moveOrderCount++;
-            }
 
             if (moveOrderCount == 0)
             {
@@ -58,13 +49,6 @@ namespace PFW.UI.Ingame.UnitLabel
             _lineR.SetPosition(0, _platoon.transform.position);
 
             int idx = 1;
-            // destination is normally dequeued so we need to get this separately from
-            // the rest of the waypoints
-            if (activeOrder?.OrderType == OrderType.MOVE_ORDER)
-            {
-                _lineR.SetPosition(1, activeOrder.TargetPosition);
-                idx++;
-            }
 
             foreach (OrderData order in moveOrders)
             {
