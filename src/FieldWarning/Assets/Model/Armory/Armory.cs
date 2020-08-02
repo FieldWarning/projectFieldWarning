@@ -43,7 +43,7 @@ namespace PFW.Model.Armory
         /// Configs that exist to be inherited from and don't turn into units themselves.
         /// </param>
         public Armory(
-                List<UnitConfig> configs, 
+                Dictionary<string, UnitConfig> configs, 
                 Dictionary<string, UnitConfig> templateConfigs)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
@@ -65,8 +65,9 @@ namespace PFW.Model.Armory
                 templateConfig.ParsingDone(templateConfigs);
             }
 
-            foreach (UnitConfig unitConfig in configs)
+            foreach (KeyValuePair<string, UnitConfig> pair in configs)
             {
+                UnitConfig unitConfig = pair.Value;
                 bool valid = unitConfig.ParsingDone(templateConfigs);
                 if (!valid)
                     continue;
@@ -99,7 +100,7 @@ namespace PFW.Model.Armory
                 };
                 Categories[i].Add(unit);
 
-                Units.Add(unitConfig.ID, unit);
+                Units.Add(pair.Key, unit);
             }
         }
 

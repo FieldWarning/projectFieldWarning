@@ -32,53 +32,62 @@ namespace PFW
             return new Deck(config, armory);
         }
 
-        public static Armory ParseArmory()
+        private static Dictionary<string, UnitConfig> ParseAllJsonFiles(
+                string directory)
         {
-            // We take all jsons in the UnitConfigs folder and subfolders
-            TextAsset[] configFiles = Resources.LoadAll<TextAsset>("UnitConfigs");
-            List<UnitConfig> configs = new List<UnitConfig>();
-
-            foreach (TextAsset configFile in configFiles)
-            {
-                Logger.LogConfig(LogLevel.DEBUG,
-                        $"Parsing unit config: {configFile.name}");
-                configs.Add(JsonConvert.DeserializeObject<UnitConfig>(configFile.text));
-            }
-
-            // Load the unit config templates, which look just like unit configs
-            // but don't turn into real units (real units inherit from them).
-            string path = Application.dataPath +
-                    "/Configuration/Resources/UnitConfigTemplates/";
-            string[] templateConfigFiles = new string[0];
+            string[] configFiles = new string[0];
             try
             {
-                templateConfigFiles = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+                configFiles = Directory.GetFiles(directory, "*.json", SearchOption.AllDirectories);
             }
             catch (System.Exception)
             {
-                Logger.LogConfig(LogLevel.ERROR, 
-                        "Could not access the template unit configs " +
+                Logger.LogConfig(LogLevel.ERROR,
+                        $"Could not access {directory} " +
                         "due to a system exception.");
             }
 
-            Dictionary<string, UnitConfig> templateConfigs = 
+            Dictionary<string, UnitConfig> result =
                 new Dictionary<string, UnitConfig>();
 
-            foreach (string configFile in templateConfigFiles)
+            foreach (string configFile in configFiles)
             {
                 // Turn 'C://UnitConfigTemplates/Tank.json' into 'Tank', which
                 // is how this will be referred to in the 'Inherits' field
-                // of the unit configs
+                // of the unit configs (or in the decks config files)
                 string shortFileName = configFile.Substring(
-                        path.Length, configFile.Length - ".json".Length - path.Length);
-                Logger.LogConfig(LogLevel.DEBUG, 
-                        $"Parsing unit template: {shortFileName} at {configFile}");
+                        directory.Length, configFile.Length - ".json".Length - directory.Length);
+                shortFileName = shortFileName.Replace('\\', '/');  // Unix directory separators
+                Logger.LogConfig(LogLevel.DEBUG,
+                        $"Parsing config file: {shortFileName} at {configFile}");
 
                 string configText = File.ReadAllText(configFile);
-                templateConfigs.Add(
-                        shortFileName, 
+                result.Add(
+                        shortFileName,
                         JsonConvert.DeserializeObject<UnitConfig>(configText));
             }
+
+            return result;
+        }
+
+        public static Armory ParseArmory()
+        {
+            // We take all jsons in the UnitConfigs folder and subfolders
+            string unitsPath = Application.dataPath +
+                    "/Configuration/Resources/UnitConfigs/";
+
+            Logger.LogConfig(LogLevel.INFO, "Parsing unit configs.");
+            Dictionary<string, UnitConfig> configs = ParseAllJsonFiles(
+                    unitsPath);
+
+            // Load the unit config templates, which look just like unit configs
+            // but don't turn into real units (real units inherit from them).
+            string templatesPath = Application.dataPath +
+                    "/Configuration/Resources/UnitConfigTemplates/";
+
+            Logger.LogConfig(LogLevel.INFO, "Parsing unit template configs.");
+            Dictionary<string, UnitConfig> templateConfigs = ParseAllJsonFiles(
+                    templatesPath);
 
             return new Armory(configs, templateConfigs);
         }

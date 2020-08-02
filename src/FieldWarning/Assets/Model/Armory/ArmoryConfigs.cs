@@ -28,7 +28,6 @@ namespace PFW.Model.Armory.JsonContents
     public class UnitConfig
     {
         public List<string> Inherits;
-        public string ID;
         public string CategoryKey;
         public string Name;
         public int Price;
@@ -86,8 +85,6 @@ namespace PFW.Model.Armory.JsonContents
 
         private void Inherit(UnitConfig templateConfig)
         {
-            if (ID == null || ID == "")
-                ID = templateConfig.ID;
             if (CategoryKey == null || CategoryKey == "")
                 CategoryKey = templateConfig.CategoryKey;
             if (Name == null || Name == "")

@@ -1,18 +1,18 @@
 {
     "UnitIds": [
-        "Unit__LOG--KAMAZ",
-        "Unit__SUP--PLZ-5",
-	"Unit__SUP--Koalitsiya",
-	"Unit__SUP--Pantsir",
-	"Unit__SUP--Nona",
-        "Unit__INF--Riflemen",
-        "Unit__INF--Marines",
-	"Unit__INF--K16",
-        "Unit__TNK--FastTank",
-        "Unit__TNK--BTR-32",
-        "Unit__TNK--M1A2",
-        "Unit__REC--ArmyRangers",
-	"Unit__VHC--Zhalo",
-        "Unit__HEL--AH-64D"
+        "RED/Kamaz Truck",
+        "RED/PLZ-5",
+        "RED/Koalitsiya",
+        "RED/Pantsir",
+        "RED/BTR-32 Nona",
+        "Riflemen",
+        "Marines",
+        "RED/Bumerang K-16",
+        "FastTank",
+        "RED/BTR-32",
+        "M1A2",
+        "ArmyRangers",
+        "RED/BTR-32 Zhalo",
+        "AH-64D"
     ]
 }

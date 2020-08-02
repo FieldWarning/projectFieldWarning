@@ -1,13 +1,13 @@
 {
     "UnitIds": [
-        "Unit__LOG--HEMTT",
-        "Unit__SUP--PLZ-5",
-        "Unit__INF--Riflemen",
-        "Unit__INF--Marines",
-        "Unit__TNK--FastTank",
-        "Unit__TNK--Bloodhound",
-        "Unit__TNK--M1A2",
-        "Unit__REC--ArmyRangers",
-        "Unit__HEL--AH-64D"
+        "HEMTT",
+        "RED/PLZ-5",
+        "Riflemen",
+        "Marines",
+        "FastTank",
+        "Bloodhound",
+        "M1A2",
+        "ArmyRangers",
+        "AH-64D"
     ]
 }
