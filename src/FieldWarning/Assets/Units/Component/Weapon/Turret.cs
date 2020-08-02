@@ -34,19 +34,19 @@ namespace PFW.Units.Component.Weapon
     public class Turret
     {
         // targetingStrategy
-        private Cannon _weapon; // weapon turret
+        private readonly Cannon _weapon; // weapon turret
 
         /// <summary>
         ///     Represents the max ranges against
         ///     each possible target type.
         /// </summary>
-        private float[] _maxRanges;
+        private readonly float[] _maxRanges;
 
         // The default here has significance because only the
         //      last turrets know the actual weapon's velocity. 
         // TODO Give toplevel turrets the ability to know 
         //      the velocity of the most important gun in their hierarchy.
-        private float _shellVelocity = 1000 * Constants.MAP_SCALE;
+        private readonly float _shellVelocity = 1000 * Constants.MAP_SCALE;
 
         /// <summary>
         /// The explicit target is one set by player input,
@@ -113,8 +113,8 @@ namespace PFW.Units.Component.Weapon
                 }
                 else
                 {
-                    Debug.LogError("Couldn't create a weapon in a turret without children. " +
-                            "No weapon specified in the config?");
+                    Logger.LogConfig("Couldn't create a weapon in a turret without children. " +
+                            "No weapon specified in the config?", LogLevel.ERROR);
                 }
             }
         }

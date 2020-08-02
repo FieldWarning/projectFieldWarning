@@ -30,7 +30,21 @@ namespace PFW.Model.Armory
         // Separate pathfinding data is generated for each of these
         public readonly List<MobilityData> UniqueMobilityTypes;
 
-        public Armory(List<UnitConfig> configs)
+        /// <summary>
+        /// Using the contents of the unit configs and their templates,
+        /// finish the interpretation of the unit configs, resolving any
+        /// references inside them including inheritance from the templates, and
+        /// create an armory from them.
+        /// </summary>
+        /// <param name="configs">
+        /// The unit configs that will go into the armory.
+        /// </param>
+        /// <param name="templateConfigs">
+        /// Configs that exist to be inherited from and don't turn into units themselves.
+        /// </param>
+        public Armory(
+                List<UnitConfig> configs, 
+                Dictionary<string, UnitConfig> templateConfigs)
         {
             Categories = new List<Unit>[(int)UnitCategory._SIZE];
             Units = new Dictionary<string, Unit>();
@@ -41,9 +55,19 @@ namespace PFW.Model.Armory
                 Categories[i] = new List<Unit>();
             }
 
+            foreach (UnitConfig templateConfig in templateConfigs.Values)
+            {
+                // TODO
+                // The template configs themselves are allowed to inherit. So, 
+                // here we need to take extra care in what order we call them (it is
+                // unsafe to call ParsingDone() on a child config if its base config
+                // has not had ParsingDone() called on it yet).
+                templateConfig.ParsingDone(templateConfigs);
+            }
+
             foreach (UnitConfig unitConfig in configs)
             {
-                bool valid = unitConfig.ParsingDone();
+                bool valid = unitConfig.ParsingDone(templateConfigs);
                 if (!valid)
                     continue;
 
@@ -68,9 +92,11 @@ namespace PFW.Model.Armory
                 int i = (int)Enum.Parse(
                         typeof(UnitCategory), unitConfig.CategoryKey);
 
-                Unit unit = new Unit(unitConfig, mobility);
-                unit.CategoryId = (byte)i;
-                unit.Id = Categories[i].Count;
+                Unit unit = new Unit(unitConfig, mobility)
+                {
+                    CategoryId = (byte)i,
+                    Id = Categories[i].Count
+                };
                 Categories[i].Add(unit);
 
                 Units.Add(unitConfig.ID, unit);

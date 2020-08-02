@@ -12,6 +12,7 @@
  */
 
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 using PFW.Model.Armory;
@@ -39,10 +40,47 @@ namespace PFW
 
             foreach (TextAsset configFile in configFiles)
             {
+                Logger.LogConfig(LogLevel.DEBUG,
+                        $"Parsing unit config: {configFile.name}");
                 configs.Add(JsonConvert.DeserializeObject<UnitConfig>(configFile.text));
             }
 
-            return new Armory(configs);
+            // Load the unit config templates, which look just like unit configs
+            // but don't turn into real units (real units inherit from them).
+            string path = Application.dataPath +
+                    "/Configuration/Resources/UnitConfigTemplates/";
+            string[] templateConfigFiles = new string[0];
+            try
+            {
+                templateConfigFiles = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+            }
+            catch (System.Exception)
+            {
+                Logger.LogConfig(LogLevel.ERROR, 
+                        "Could not access the template unit configs " +
+                        "due to a system exception.");
+            }
+
+            Dictionary<string, UnitConfig> templateConfigs = 
+                new Dictionary<string, UnitConfig>();
+
+            foreach (string configFile in templateConfigFiles)
+            {
+                // Turn 'C://UnitConfigTemplates/Tank.json' into 'Tank', which
+                // is how this will be referred to in the 'Inherits' field
+                // of the unit configs
+                string shortFileName = configFile.Substring(
+                        path.Length, configFile.Length - ".json".Length - path.Length);
+                Logger.LogConfig(LogLevel.DEBUG, 
+                        $"Parsing unit template: {shortFileName} at {configFile}");
+
+                string configText = File.ReadAllText(configFile);
+                templateConfigs.Add(
+                        shortFileName, 
+                        JsonConvert.DeserializeObject<UnitConfig>(configText));
+            }
+
+            return new Armory(configs, templateConfigs);
         }
 
         public static SettingsConfig ParseDefaultSettingsRaw()
@@ -65,13 +103,13 @@ namespace PFW
             // its contents can be changed during runtime.
             string path = Application.dataPath +
                     "/Configuration/Resources/Settings/LocalSettings.json";
-            if (!System.IO.File.Exists(path))
+            if (!File.Exists(path))
             {
                 return config;
             }
             else
             {
-                string localSettingsText = System.IO.File.ReadAllText(path);
+                string localSettingsText = File.ReadAllText(path);
                 SettingsConfig config2 =
                         JsonConvert.DeserializeObject<SettingsConfig>(localSettingsText);
 
@@ -151,7 +189,7 @@ namespace PFW
             string contents = JsonConvert.SerializeObject(localConfig, Formatting.Indented);
 
             // Overwrite the file if it exists
-            using (System.IO.FileStream fs = System.IO.File.Create(path))
+            using (FileStream fs = File.Create(path))
             {
                 foreach (char c in contents)
                 {

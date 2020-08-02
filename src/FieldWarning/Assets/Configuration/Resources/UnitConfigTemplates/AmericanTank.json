@@ -1,0 +1,17 @@
+{
+    "Inherits": ["Tank"],
+    "VoiceLineFolders": {
+        "Movement" : [
+            "Voices/US/CommonMovement",
+            "Voices/US/TankMovement"
+        ],
+        "Aggressive" : [
+            "Voices/US/CommonAggressive",
+            "Voices/US/TankAggressive"
+        ],
+        "Selection" : [
+            "Voices/US/CommonSelection",
+            "Voices/US/TankSelection"
+        ]
+    },
+}

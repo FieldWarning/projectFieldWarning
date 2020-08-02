@@ -27,6 +27,7 @@ namespace PFW.Model.Armory.JsonContents
 
     public class UnitConfig
     {
+        public List<string> Inherits;
         public string ID;
         public string CategoryKey;
         public string Name;
@@ -49,7 +50,7 @@ namespace PFW.Model.Armory.JsonContents
         ///     Do consistency checks and final post-parse
         ///     adjustments to the config contents.
         /// </summary>
-        public bool ParsingDone()
+        public bool ParsingDone(Dictionary<string, UnitConfig> templateConfigs)
         {
             bool result = true;
             if (Turrets != null)
@@ -59,7 +60,66 @@ namespace PFW.Model.Armory.JsonContents
                     result &= turret.ParsingDone(Name);
                 }
             }
+
+            if (Inherits != null)
+            {
+                foreach (string templateConfig in Inherits)
+                {
+                    if (templateConfigs.ContainsKey(templateConfig))
+                    {
+                        Inherit(templateConfigs[templateConfig]);
+                    }
+                    else
+                    {
+                        Logger.LogConfig(
+                            LogLevel.ERROR,
+                            $"The unit config for {Name} declares inheritance" +
+                            $" from {templateConfig}, but no such template config" +
+                            $" exists. The unit will be dropped" +
+                            $" as a consequence of this error.");
+                        result = false;
+                    }
+                }
+            }
             return result;
+        }
+
+        private void Inherit(UnitConfig templateConfig)
+        {
+            if (ID == null || ID == "")
+                ID = templateConfig.ID;
+            if (CategoryKey == null || CategoryKey == "")
+                CategoryKey = templateConfig.CategoryKey;
+            if (Name == null || Name == "")
+                Name = templateConfig.Name;
+            if (Price == 0)
+                Price = templateConfig.Price;
+            if (PrefabPath == null || PrefabPath == "")
+                PrefabPath = templateConfig.PrefabPath;
+            if (ArtPrefabPath == null || ArtPrefabPath == "")
+                ArtPrefabPath = templateConfig.ArtPrefabPath;
+            if (ArmoryImage == null || ArmoryImage == "")
+                ArmoryImage = templateConfig.ArmoryImage;
+            if (ArmoryBackgroundImage == null || ArmoryBackgroundImage == "")
+                ArmoryBackgroundImage = templateConfig.ArmoryBackgroundImage;
+            if (MinimapIcon == null || MinimapIcon == "")
+                MinimapIcon = templateConfig.MinimapIcon;
+            if (MinimapIconSize == 0)
+                MinimapIconSize = templateConfig.MinimapIconSize;
+            if (LeavesExplodingWreck == false)
+                LeavesExplodingWreck = templateConfig.LeavesExplodingWreck;
+            if (VoiceLineFolders == null)
+                VoiceLineFolders = templateConfig.VoiceLineFolders;
+            if (Data == null)
+                Data = templateConfig.Data;
+            if (Armor == null)
+                Armor = templateConfig.Armor;
+            if (Mobility == null)
+                Mobility = templateConfig.Mobility;
+            if (Turrets == null)
+                Turrets = templateConfig.Turrets;
+            if (Recon == null)
+                Recon = templateConfig.Recon;
         }
     }
 
