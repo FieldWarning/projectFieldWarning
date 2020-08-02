@@ -1,7 +1,6 @@
 {
-    "$schema": "../UnitConfigSchema.json",
-
-    "ID": "Unit__TNK--BTR-32",
+    "Inherits": ["GenericTransporter", "AmericanGenericVoice", "DefaultMobility", "DefaultTruckArmor", "DefaultGroundVision"],
+    
     "CategoryKey": "TNK",
     "Name": "BTR-32",
     "Price": 15,
@@ -9,58 +8,8 @@
     "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 APC",
 	"ArmoryImage": "Armory Images/BTR-32 APC",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
-    "MinimapIcon": "MinimapIcon/Square",
-    "MinimapIconSize": 10,
-    
-    "LeavesExplodingWreck": true,
-    "VoiceLineFolders": {
-        "Movement" : [
-            "Voices/US/CommonMovement",
-            "Voices/US/TankMovement"
-        ],
-        "Aggressive" : [
-            "Voices/US/CommonAggressive",
-            "Voices/US/TankAggressive"
-        ],
-        "Selection" : [
-            "Voices/US/CommonSelection",
-            "Voices/US/TankSelection"
-        ]
-    },
-
-    "Data": {
-        "MovementSpeed": 40,
-        "ReverseSpeed": 12.5,
-        "AccelRate": 11.5,
-        "MaxRotationSpeed": 40,
-        "MinTurnRadius": 0,
-        "MaxLateralAccel": 15,
-        "Suspension": 0.01,
-        "MaxHealth": 7.5,
-        "Length": 12,
-        "Width": 7
-    },
-	
-	"Recon": {
-		"MaxSpottingRange": 3000,
-		"StealthPenetration": 1,
-		"Stealth": 1
-	},
-    
-    "Armor": {
-        "FrontArmor": 0,
-        "SideArmor": 0,
-        "RearArmor": 0,
-        "TopArmor": 0
-    },
-
-    "Mobility": {
-        "SlopeSensitivity": 2,
-        "DirectionalSlopeSensitivity": 0.6,
-        "PlainSpeed": 0.4,
-        "ForestSpeed": 0.2,
-        "WaterSpeed": 0
-    },
+    "CanCaptureZones": false,
+    "Availability": 20,
     
     "Turrets": [{
         "TurretRef": "APC",

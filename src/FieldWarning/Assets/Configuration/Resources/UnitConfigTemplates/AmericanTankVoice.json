@@ -1,5 +1,4 @@
 {
-    "Inherits": ["Tank"],
     "VoiceLineFolders": {
         "Movement" : [
             "Voices/US/CommonMovement",

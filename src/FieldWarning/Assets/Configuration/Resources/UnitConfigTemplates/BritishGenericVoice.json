@@ -1,0 +1,13 @@
+{
+    "VoiceLineFolders": {
+        "Movement" : [
+            "Voices/UK/CommonMovement",
+        ],
+        "Aggressive" : [
+            "Voices/UK/CommonAggressive",
+        ],
+        "Selection" : [
+            "Voices/UK/CommonSelection",
+        ]
+    },
+}

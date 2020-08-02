@@ -50,10 +50,10 @@ namespace PFW.Units.Component.Armor
         /// Calculate the total damage dealt within a successful hit, then update health.
         /// </summary>
         public void HandleHit(
-            DamageType damageType,
-            float firepower,
-            Vector3 displacementToThis,
-            float distance)
+                DamageType damageType,
+                float firepower,
+                Vector3 displacementToThis,
+                float distance)
         {
             float receivedDamage = EstimateDamage(
                     damageType, firepower, displacementToThis, distance);

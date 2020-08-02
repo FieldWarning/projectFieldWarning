@@ -1,7 +1,6 @@
 {
-	"$schema": "../UnitConfigSchema.json",
-
-	"ID": "Unit__LOG--HEMTT",
+    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultTruckArmor", "DefaultGroundVision"],
+    
 	"CategoryKey": "LOG",
 	"Name": "HEMTT",
 	"Price": 20,
@@ -9,56 +8,6 @@
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
-    "MinimapIcon": "MinimapIcon/Square",
-    "MinimapIconSize": 10,
-    
-    "LeavesExplodingWreck": true,
-    "VoiceLineFolders": {
-        "Movement" : [
-            "Voices/US/CommonMovement",
-            "Voices/US/TankMovement"
-        ],
-        "Aggressive" : [
-            "Voices/US/CommonAggressive",
-            "Voices/US/TankAggressive"
-        ],
-        "Selection" : [
-            "Voices/US/CommonSelection",
-            "Voices/US/TankSelection"
-        ]
-    },
-
-	"Data": {
-			"MovementSpeed": 500,
-			"ReverseSpeed": 15,
-			"AccelRate": 13,
-			"MaxRotationSpeed": 50,
-			"MinTurnRadius": 0,
-			"MaxLateralAccel": 15,
-			"Suspension": 0.01,
-			"MaxHealth": 10,
-			"Length": 12,
-			"Width": 7
-	},
-	
-	"Recon": {
-		"MaxSpottingRange": 3000,
-		"StealthPenetration": 1,
-		"Stealth": 1
-	},
-    
-    "Armor": {
-        "FrontArmor": 0,
-        "SideArmor": 0,
-        "RearArmor": 0,
-        "TopArmor": 0
-    },
-
-    "Mobility": {
-        "SlopeSensitivity": 2,
-        "DirectionalSlopeSensitivity": 0.6,
-        "PlainSpeed": 0.4,
-        "ForestSpeed": 0.2,
-        "WaterSpeed": 0
-    }
+    "CanCaptureZones": false,
+    "Availability": 20,
 }

@@ -1,19 +1,7 @@
-{
-    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultTruckArmor", "DefaultGroundVision"],
-
-	"CategoryKey": "SUP",
-	"Name": "Koalitsiya",
-	"Price": 20,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
-    "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Kamaz Koalitsiya Prefab",
-	"ArmoryImage": "Armory Images/Koalitsiya",
-	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
-    "CanCaptureZones": false,
-    "Availability": 20,
-    
+{    
     "Turrets": [{
-        "TurretRef": "Turret",
-        "MountRef": "Koalitsiya",
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -27,7 +15,6 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "DamageValue": 4,
                     "GroundRange" : 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
@@ -41,40 +28,47 @@
                     "Ammo": 
                     [
                         {
-                            "DamageType" : "HE"
-                        },
-                        {
-                            "DamageType" : "KE"
+                            "DamageType" : "HEAVY_ARMS",
+                            "DamageValue": 0.75,
                         }
                     ]
                 }
             },
             {
                 "Priority": 2,
-                "TurretRef": "Cannon",
+                "TurretRef": "Autocannon",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
                     "DamageValue": 4,
-                    "GroundRange" : 30000,
+                    "GroundRange" : 2000,
                     "Accuracy": 30,
-                    "ShotReload": 8,
+                    "ShotReload": 4,
                     "SalvoLength": 1,
-                    "SalvoReload": 8,
+                    "SalvoReload": 4,
                     "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "Cannon",
+                    "BarrelTipRef": "Autocannon",
                     "Ammo": 
                     [
                         {
-                            "DamageType" : "HE"
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
                         },
                         {
-                            "DamageType" : "KE"
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
                         }
                     ]
                 }

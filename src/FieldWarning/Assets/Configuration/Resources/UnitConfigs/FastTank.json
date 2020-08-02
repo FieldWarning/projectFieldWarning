@@ -1,6 +1,5 @@
 {
-    "Inherits": ["AmericanTank"],
-    "ID": "Unit__TNK--FastTank",
+    "Inherits": ["Tank", "AmericanTankVoice", "DefaultMobility", "TurretBloodhound"],
     "Name": "FastTank",
     "Price": 20,
     "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
@@ -8,18 +7,9 @@
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleTankBackground",
 
-    "Data": {
-        "MovementSpeed": 250,
-        "ReverseSpeed": 50,
-        "AccelRate": 40,
-        "MaxRotationSpeed": 50,
-        "MinTurnRadius": 0,
-        "MaxLateralAccel": 50,
-        "Suspension": 0.01,
-        "MaxHealth": 10,
-        "Length": 12,
-        "Width": 7
-    },
+    "MovementSpeed": 250,
+    "CanCaptureZones": false,
+    "Availability": 20,
 	
 	"Recon": {
 		"MaxSpottingRange": 20000,
@@ -33,89 +23,4 @@
         "RearArmor": 0,
         "TopArmor": 0
     },
-
-    "Mobility": {
-        "SlopeSensitivity": 2,
-        "DirectionalSlopeSensitivity": 0.6,
-        "PlainSpeed": 0.4,
-        "ForestSpeed": 0.2,
-        "WaterSpeed": 0
-    },
-    
-    "Turrets": [{
-        "TurretRef": "IFV",
-        "MountRef": "Bloodhound",
-        "ArcHorizontal": 180,
-        "ArcUp": 0,
-        "ArcDown": 0,
-        "RotationRate": 40,
-        "Children": [
-            {
-                "Priority": 1,
-                "TurretRef": "MG",
-                "ArcHorizontal": 3,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
-                "Cannon": {
-                    "GroundRange" : 20,
-                    "Accuracy": 40,
-                    "ShotReload": 0.5,
-                    "SalvoLength": 10,
-                    "SalvoReload": 8,
-                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
-                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
-                    "Velocity": 1000,
-                    "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "MG",
-                    "Ammo": 
-                    [
-                        {
-                            "DamageType" : "HEAVY_ARMS",
-                            "DamageValue": 0.75,
-                        }
-                    ]
-                }
-            },
-            {
-                "Priority": 2,
-                "TurretRef": "Autocannon",
-                "ArcHorizontal": 0,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
-                "Cannon": {
-                    "DamageValue": 4,
-                    "GroundRange" : 2000,
-                    "Accuracy": 30,
-                    "ShotReload": 4,
-                    "SalvoLength": 1,
-                    "SalvoReload": 4,
-                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
-                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
-                    "Velocity": 1000,
-                    "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "Autocannon",
-                    "Ammo": 
-                    [
-                        {
-                            "DamageType" : "HE",
-                            "Velocity" : 200,
-                            "Shell": "Projectiles/Prefab/REDFOR Shell",
-                        },
-                        {
-                            "DamageType" : "KE",
-                            "DamageValue": 8,
-                        },
-                        {
-                            "DamageType" : "HEAT",
-                            "DamageValue": 12,
-                            "GroundRange" : 1500,
-                            "Accuracy": 60,
-                        }
-                    ]
-                }
-            }
-        ]
-    }]
 }

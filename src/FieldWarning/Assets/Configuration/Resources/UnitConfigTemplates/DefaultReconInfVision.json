@@ -1,0 +1,7 @@
+{
+	"Recon": {
+		"MaxSpottingRange": 3000,
+		"StealthPenetration": 2,
+		"Stealth": 3
+	},
+}

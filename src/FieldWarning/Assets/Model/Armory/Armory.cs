@@ -62,13 +62,13 @@ namespace PFW.Model.Armory
                 // here we need to take extra care in what order we call them (it is
                 // unsafe to call ParsingDone() on a child config if its base config
                 // has not had ParsingDone() called on it yet).
-                templateConfig.ParsingDone(templateConfigs);
+                templateConfig.ParsingDone(templateConfigs, true);
             }
 
             foreach (KeyValuePair<string, UnitConfig> pair in configs)
             {
                 UnitConfig unitConfig = pair.Value;
-                bool valid = unitConfig.ParsingDone(templateConfigs);
+                bool valid = unitConfig.ParsingDone(templateConfigs, false);
                 if (!valid)
                     continue;
 

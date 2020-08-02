@@ -31,6 +31,10 @@ namespace PFW.Model.Armory.JsonContents
         public string CategoryKey;
         public string Name;
         public int? Price;
+        public int? Availability;
+        public int? ModelCount;
+        public int? TransportableSize;
+        public int? TransporterCapacity;
         public string PrefabPath;
         public string ArtPrefabPath;
         public string ArmoryImage;
@@ -38,18 +42,32 @@ namespace PFW.Model.Armory.JsonContents
         public string MinimapIcon;
         public float? MinimapIconSize;
         public bool? LeavesExplodingWreck;
+        public bool? CanCaptureZones;
         public VoiceLineConfig VoiceLineFolders;
-        public UnitDataConfig Data;
         public ArmorConfig Armor;
         public MobilityConfig Mobility;
         public List<TurretConfig> Turrets;
         public ReconConfig Recon;
 
+        public float? MovementSpeed;
+        public float? ReverseSpeed;
+        public float? AccelRate;
+        public float? MaxRotationSpeed;
+        public float? MinTurnRadius;
+        public float? MaxLateralAccel;
+        public float? Suspension;
+        public float? MaxHealth;
+        public float? Length;
+        public float? Width;
+        public int MobilityTypeIndex;
+
         /// <summary>
         ///     Do consistency checks and final post-parse
         ///     adjustments to the config contents.
         /// </summary>
-        public bool ParsingDone(Dictionary<string, UnitConfig> templateConfigs)
+        public bool ParsingDone(
+                Dictionary<string, UnitConfig> templateConfigs, 
+                bool isTemplate)
         {
             bool result = true;
             if (Turrets != null)
@@ -81,6 +99,10 @@ namespace PFW.Model.Armory.JsonContents
                 }
             }
 
+            if (isTemplate)
+                return result;
+
+            #region CheckThatValuesAreAllPresent
             if (!Price.HasValue)
             {
                 Logger.LogConfig(
@@ -111,6 +133,154 @@ namespace PFW.Model.Armory.JsonContents
                 result = false;
             }
 
+            if (!ModelCount.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.WARNING,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'ModelCount' A default value will be used instead.");
+                ModelCount = 1;
+            }
+
+            if (!CanCaptureZones.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'CanCaptureZones' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!Availability.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'Availability' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!TransportableSize.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.WARNING,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'TransportableSize' A default value will be used.");
+                TransportableSize = 999;
+            }
+
+            if (!TransporterCapacity.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.WARNING,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'TransporterCapacity'. A default value will be used.");
+                TransporterCapacity = 0;
+            }
+
+            if (!MovementSpeed.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'MovementSpeed' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!ReverseSpeed.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'ReverseSpeed' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!AccelRate.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'AccelRate' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!MaxRotationSpeed.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'MaxRotationSpeed' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!MinTurnRadius.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'MinTurnRadius' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!MaxLateralAccel.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'MaxLateralAccel' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!Suspension.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'Suspension' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!MaxHealth.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'MaxHealth' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!Length.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'Length' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!Width.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'Width' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+            #endregion
+
             return result;
         }
 
@@ -138,8 +308,6 @@ namespace PFW.Model.Armory.JsonContents
                 LeavesExplodingWreck = templateConfig.LeavesExplodingWreck;
             if (VoiceLineFolders == null)
                 VoiceLineFolders = templateConfig.VoiceLineFolders;
-            if (Data == null)
-                Data = templateConfig.Data;
             if (Armor == null)
                 Armor = templateConfig.Armor;
             if (Mobility == null)
@@ -148,6 +316,36 @@ namespace PFW.Model.Armory.JsonContents
                 Turrets = templateConfig.Turrets;
             if (Recon == null)
                 Recon = templateConfig.Recon;
+            if (ModelCount == null)
+                ModelCount = templateConfig.ModelCount;
+            if (CanCaptureZones == null)
+                CanCaptureZones = templateConfig.CanCaptureZones;
+            if (Availability == null)
+                Availability = templateConfig.Availability;
+            if (TransportableSize == null)
+                TransportableSize = templateConfig.TransportableSize;
+            if (TransporterCapacity == null)
+                TransporterCapacity = templateConfig.TransporterCapacity;
+            if (MovementSpeed == null)
+                MovementSpeed = templateConfig.MovementSpeed;
+            if (ReverseSpeed == null)
+                ReverseSpeed = templateConfig.ReverseSpeed;
+            if (AccelRate == null)
+                AccelRate = templateConfig.AccelRate;
+            if (MaxRotationSpeed == null)
+                MaxRotationSpeed = templateConfig.MaxRotationSpeed;
+            if (MinTurnRadius == null)
+                MinTurnRadius = templateConfig.MinTurnRadius;
+            if (MaxLateralAccel == null)
+                MaxLateralAccel = templateConfig.MaxLateralAccel;
+            if (Suspension == null)
+                Suspension = templateConfig.Suspension;
+            if (MaxHealth == null)
+                MaxHealth = templateConfig.MaxHealth;
+            if (Length == null)
+                Length = templateConfig.Length;
+            if (Width == null)
+                Width = templateConfig.Width;
         }
     }
 
@@ -175,21 +373,6 @@ namespace PFW.Model.Armory.JsonContents
         public int SideArmor;
         public int RearArmor;
         public int TopArmor;
-    }
-
-    public class UnitDataConfig
-    {
-        public float MovementSpeed;
-        public float ReverseSpeed;
-        public float AccelRate;
-        public float MaxRotationSpeed;
-        public float MinTurnRadius;
-        public float MaxLateralAccel;
-        public float Suspension;
-        public float MaxHealth;
-        public float Length;
-        public float Width;
-        public int MobilityTypeIndex;
     }
 
     public class MobilityConfig

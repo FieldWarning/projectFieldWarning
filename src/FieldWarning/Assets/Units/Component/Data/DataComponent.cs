@@ -53,23 +53,22 @@ namespace PFW.Units.Component.Data
                 UnitConfig config,
                 MobilityData mobilityData)
         {
-            UnitDataConfig unitConfig = config.Data;
             MobilityConfig mobilityConfig = config.Mobility;
             ArmorConfig armorConfig = config.Armor;
 
             parent.AddComponent<DataComponent>();
             DataComponent c = parent.GetComponent<DataComponent>();
 
-            c.MovementSpeed =    unitConfig.MovementSpeed      * Constants.MAP_SCALE;
-            c.ReverseSpeed =     unitConfig.ReverseSpeed       * Constants.MAP_SCALE;
-            c.AccelRate =        unitConfig.AccelRate          * Constants.MAP_SCALE;
-            c.MaxRotationSpeed = unitConfig.MaxRotationSpeed;
-            c.MinTurnRadius =    unitConfig.MinTurnRadius      * Constants.MAP_SCALE;
-            c.MaxLateralAccel =  unitConfig.MaxLateralAccel    * Constants.MAP_SCALE;
-            c.Suspension =       unitConfig.Suspension         / Constants.MAP_SCALE;
-            c.MaxHealth =        unitConfig.MaxHealth;
-            c.Length =           unitConfig.Length             * Constants.MAP_SCALE;
-            c.Width =            unitConfig.Width              * Constants.MAP_SCALE;
+            c.MovementSpeed =    config.MovementSpeed.Value * Constants.MAP_SCALE;
+            c.ReverseSpeed =     config.ReverseSpeed.Value * Constants.MAP_SCALE;
+            c.AccelRate =        config.AccelRate.Value * Constants.MAP_SCALE;
+            c.MaxRotationSpeed = config.MaxRotationSpeed.Value;
+            c.MinTurnRadius =    config.MinTurnRadius.Value * Constants.MAP_SCALE;
+            c.MaxLateralAccel =  config.MaxLateralAccel.Value * Constants.MAP_SCALE;
+            c.Suspension =       config.Suspension.Value / Constants.MAP_SCALE;
+            c.MaxHealth =        config.MaxHealth.Value;
+            c.Length =           config.Length.Value * Constants.MAP_SCALE;
+            c.Width =            config.Width.Value * Constants.MAP_SCALE;
 
             c.MobilityData = mobilityData;
 

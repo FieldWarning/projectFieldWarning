@@ -1,10 +1,9 @@
 {
-    "CategoryKey": "TNK",
     "MinimapIcon": "MinimapIcon/Square",
     "MinimapIconSize": 10,
     
     "LeavesExplodingWreck": true,
     "ModelCount": 1,
     "TransportableSize": 999,
-    "TransporterCapacity": 0,
+    "TransporterCapacity": 10,
 }

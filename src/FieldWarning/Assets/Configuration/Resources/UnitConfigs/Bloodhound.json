@@ -1,7 +1,6 @@
 {
-    "$schema": "../UnitConfigSchema.json",
-
-    "ID": "Unit__TNK--Bloodhound",
+    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultApcArmor", "DefaultGroundVision", "TurretBloodhound"],
+    
     "CategoryKey": "TNK",
     "Name": "Bloodhound",
     "Price": 15,
@@ -9,127 +8,11 @@
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
-    "MinimapIcon": "MinimapIcon/Square",
-    "MinimapIconSize": 10,
+    "CanCaptureZones": false,
+    "Availability": 20,
     
-    "LeavesExplodingWreck": true,
-    "VoiceLineFolders": {
-        "Movement" : [
-            "Voices/UK/CommonMovement",
-            "Voices/UK/TankMovement"
-        ],
-        "Aggressive" : [
-            "Voices/UK/CommonAggressive",
-            "Voices/UK/TankAggressive"
-        ],
-        "Selection" : [
-            "Voices/UK/CommonSelection",
-            "Voices/UK/TankSelection"
-        ]
-    },
-
-    "Data": {
-        "MovementSpeed": 40,
-        "ReverseSpeed": 12.5,
-        "AccelRate": 11.5,
-        "MaxRotationSpeed": 40,
-        "MinTurnRadius": 0,
-        "MaxLateralAccel": 15,
-        "Suspension": 0.01,
-        "MaxHealth": 7.5,
-        "Length": 12,
-        "Width": 7
-    },
-	
-	"Recon": {
-		"MaxSpottingRange": 3000,
-		"StealthPenetration": 1,
-		"Stealth": 1
-	},
-    
-    "Armor": {
-        "FrontArmor": 0,
-        "SideArmor": 0,
-        "RearArmor": 0,
-        "TopArmor": 0
-    },
-
-    "Mobility": {
-        "SlopeSensitivity": 2,
-        "DirectionalSlopeSensitivity": 0.6,
-        "PlainSpeed": 0.4,
-        "ForestSpeed": 0.2,
-        "WaterSpeed": 0
-    },
-    
-    "Turrets": [{
-        "TurretRef": "IFV",
-        "MountRef": "Bloodhound",
-        "ArcHorizontal": 180,
-        "ArcUp": 0,
-        "ArcDown": 0,
-        "RotationRate": 40,
-        "Children": [
-            {
-                "Priority": 1,
-                "TurretRef": "MG",
-                "ArcHorizontal": 3,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
-                "Cannon": {
-                    "DamageValue": 4,
-                    "GroundRange" : 20,
-                    "Accuracy": 40,
-                    "ShotReload": 0.5,
-                    "SalvoLength": 10,
-                    "SalvoReload": 8,
-                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
-                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
-                    "Velocity": 1000,
-                    "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "MG",
-                    "Ammo": 
-                    [
-                        {
-                            "DamageType" : "HE"
-                        },
-                        {
-                            "DamageType" : "KE"
-                        }
-                    ]
-                }
-            },
-            {
-                "Priority": 2,
-                "TurretRef": "Autocannon",
-                "ArcHorizontal": 0,
-                "ArcUp": 40,
-                "ArcDown": 20,
-                "RotationRate": 40,
-                "Cannon": {
-                    "DamageValue": 4,
-                    "GroundRange" : 200,
-                    "Accuracy": 30,
-                    "ShotReload": 8,
-                    "SalvoLength": 1,
-                    "SalvoReload": 8,
-                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
-                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
-                    "Velocity": 1000,
-                    "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "Autocannon",
-                    "Ammo": 
-                    [
-                        {
-                            "DamageType" : "HE"
-                        },
-                        {
-                            "DamageType" : "KE"
-                        }
-                    ]
-                }
-            }
-        ]
-    }]
+    "MovementSpeed": 40,
+    "ReverseSpeed": 12.5,
+    "AccelRate": 11.5,
+    "MaxRotationSpeed": 40,
 }
