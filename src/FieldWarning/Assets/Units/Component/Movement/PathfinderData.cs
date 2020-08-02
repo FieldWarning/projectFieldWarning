@@ -178,7 +178,7 @@ namespace PFW.Units.Component.Movement
 
         private IEnumerator BuildRoadNodes()
         {
-            Logger.LogPathfinding($"PathfinderData::BuildRoadNodes()", LogLevel.DEBUG);
+            Logger.LogPathfinding(LogLevel.DEBUG, $"PathfinderData::BuildRoadNodes()");
             _graphFastMove.Clear();
             // Add nodes for roads
             ERModularRoad[] roads = (ERModularRoad[])GameObject.FindObjectsOfType(typeof(ERModularRoad));
@@ -187,8 +187,8 @@ namespace PFW.Units.Component.Movement
             foreach (ERModularRoad road in roads)
             {
                 Logger.LogPathfinding(
-                        $"Building nodes for road {road.roadName}", 
-                        LogLevel.DEBUG);
+                        LogLevel.DEBUG,
+                        $"Building nodes for road {road.roadName}");
                 for (int i = 0; i < road.middleIndentVecs.Count; i++)
                 {
                     Vector3 roadVert = road.middleIndentVecs[i];
@@ -265,8 +265,8 @@ namespace PFW.Units.Component.Movement
         private void BuildGraph()
         {
             Logger.LogPathfinding(
-                    $"PathfinderData.BuildGraph()",
-                    LogLevel.DEBUG);
+                    LogLevel.DEBUG,
+                    $"PathfinderData.BuildGraph()");
             // TODO: Add nodes for terrain features
 
 
@@ -620,8 +620,8 @@ namespace PFW.Units.Component.Movement
         public PathNode(Vector3 position, bool isRoad)
         {
             Logger.LogPathfinding(
-                    $"new PathNode(pos = {position}, isRoad = {isRoad})",
-                    LogLevel.DUMP);
+                    LogLevel.DUMP,
+                    $"new PathNode(pos = {position}, isRoad = {isRoad})");
             //this.position = position;
             x = position.x;
             y = position.y;

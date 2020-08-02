@@ -54,8 +54,8 @@ namespace PFW.Units.Component.Movement
         public void PlanMovement()
         {
             Logger.LogPathfinding(
-                    $"PlanMovement(): waypoint = {Pathfinder.GetWaypoint()}",
-                    LogLevel.DUMP);
+                    LogLevel.DUMP,
+                    $"PlanMovement(): waypoint = {Pathfinder.GetWaypoint()}");
             float distanceToWaypoint = 
                     Pathfinder.HasDestination() ? 
                             (Pathfinder.GetWaypoint() - NextPosition).magnitude : 0f;

@@ -103,9 +103,9 @@ namespace PFW.Units.Component.Weapon
                 if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted)
                 {
                     Logger.LogTargeting(
-                            "Dropping a target because it is no longer spotted.", 
+                            LogLevel.DEBUG,
                             gameObject,
-                            LogLevel.DEBUG);
+                            "Dropping a target because it is no longer spotted.");
                     _target = null;
                 }
             }
@@ -143,14 +143,14 @@ namespace PFW.Units.Component.Weapon
             Unit.SetDestination(Unit.transform.position);
 
             Logger.LogTargeting(
-                    "Stopped moving because a targeted enemy unit is in range.", 
+                    LogLevel.DEBUG, 
                     gameObject,
-                    LogLevel.DEBUG);
+                    "Stopped moving because a targeted enemy unit is in range.");
         }
 
         private void FindAndTargetClosestEnemy()
         {
-            Logger.LogTargeting("Scanning for a target.", gameObject, LogLevel.DEBUG);
+            Logger.LogTargeting(LogLevel.DEBUG, gameObject, "Scanning for a target.");
 
             // TODO utilize precomputed distance lists from session
             // Maybe add Sphere shaped collider with the radius of the range and then 
@@ -170,9 +170,9 @@ namespace PFW.Units.Component.Weapon
                 if (distance < MaxRange(enemy.TargetTuple))
                 {
                     Logger.LogTargeting(
-                            "Target found and selected after scanning.", 
-                            gameObject, 
-                            LogLevel.DEBUG);
+                            LogLevel.DEBUG,
+                            gameObject,
+                            "Target found and selected after scanning.");
                     SetTarget(enemy.TargetTuple, false);
                     break;
                 }
@@ -194,9 +194,9 @@ namespace PFW.Units.Component.Weapon
             {
                 _target = null;
                 Logger.LogTargeting(
-                        "Dropping a target because it is out of range.", 
+                        LogLevel.DEBUG,
                         gameObject,
-                        LogLevel.DEBUG);
+                        "Dropping a target because it is out of range.");
             }
         }
 
@@ -226,9 +226,9 @@ namespace PFW.Units.Component.Weapon
         private void SetTarget(TargetTuple target, bool autoApproach)
         {
             Logger.LogTargeting(
-                    "Received target from the outside.", 
+                    LogLevel.DEBUG,
                     gameObject,
-                    LogLevel.DEBUG);
+                    "Received target from the outside.");
             float distance = Vector3.Distance(Unit.transform.position, target.Position);
 
             _explicitTarget = target;

@@ -100,7 +100,10 @@ namespace PFW.Networking
                 Vector3 destinationCenter,
                 float destinationHeading)
         {
-            Logger.LogNetworking($"Spawning platoon at {spawnPos}", this);
+            Logger.LogNetworking(
+                    LogLevel.DEBUG,
+                    this,
+                    $"Spawning platoon at {spawnPos}");
             if (MatchSession.Current.Players.Count > playerId 
                 && unitCount >= MIN_PLATOON_SIZE
                 && unitCount <= MAX_PLATOON_SIZE)

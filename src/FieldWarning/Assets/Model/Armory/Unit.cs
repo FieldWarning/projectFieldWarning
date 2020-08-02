@@ -55,7 +55,7 @@ namespace PFW.Model.Armory
 
         public Unit(UnitConfig config, MobilityData mobility)
         {
-            Logger.LogConfig($"Creating unit object for {config.Name}.", LogLevel.DEBUG);
+            Logger.LogConfig(LogLevel.DEBUG, $"Creating unit object for {config.Name}.");
             MobilityData = mobility;
             Name = config.Name;
             Price = config.Price;

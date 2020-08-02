@@ -96,7 +96,9 @@ namespace PFW.Units
         public override void OnStartClient()
         {
             Logger.LogNetworking(
-                $"Spawned a ghost platoon of {_unit.Name} with netId {netId}", this);
+                    LogLevel.DEBUG, 
+                    this,
+                    $"Spawned a ghost platoon of {_unit.Name} with netId {netId}");
             transform.position = 100 * Vector3.down;
 
             _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);

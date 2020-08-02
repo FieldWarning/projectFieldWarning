@@ -113,8 +113,10 @@ namespace PFW.Units.Component.Weapon
                 }
                 else
                 {
-                    Logger.LogConfig("Couldn't create a weapon in a turret without children. " +
-                            "No weapon specified in the config?", LogLevel.ERROR);
+                    Logger.LogConfig(
+                            LogLevel.ERROR,
+                            "Couldn't create a weapon in a turret without children. " +
+                            "No weapon specified in the config?");
                 }
             }
         }

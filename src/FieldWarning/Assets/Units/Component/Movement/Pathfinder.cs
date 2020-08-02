@@ -138,8 +138,8 @@ namespace PFW.Units.Component.Movement
         public float SetPath(Vector3 current, Vector3 destination, MoveCommandType command)
         {
             Logger.LogPathfinding(
-                    $"Pathfinder::SetPath() called, destination = {destination}, command = {command}",
-                    LogLevel.DEBUG);
+                    LogLevel.DEBUG,
+                    $"Pathfinder::SetPath() called, destination = {destination}, command = {command}");
 
             _previousNode = null;
             _nextUpdateTime = 0f;
@@ -147,9 +147,9 @@ namespace PFW.Units.Component.Movement
             if (destination == NO_POSITION)
             {
                 Logger.LogPathfinding(
+                        LogLevel.DEBUG,
                         $"Pathfinder::SetPath() for destination {destination} " +
-                        $"got no viable path.",
-                        LogLevel.DEBUG);
+                        $"got no viable path.");
                 _path.Clear();
                 return FOREVER;
             }
@@ -164,10 +164,10 @@ namespace PFW.Units.Component.Movement
             UpdateWaypointAngle(current);
 
             Logger.LogPathfinding(
+                    LogLevel.DEBUG,
                     $"Pathfinder::SetPath() for destination {destination}, " +
                     $"command = {command} chose path with {_path.Count} " +
-                    $"waypoints and {pathTime} travel time.",
-                    LogLevel.DEBUG);
+                    $"waypoints and {pathTime} travel time.");
             return pathTime;
         }
 

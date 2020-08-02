@@ -500,7 +500,7 @@ namespace PFW.UI.Ingame
                 }
                 else if (_commands.Smoke && !_selectionManager.Empty)
                 {
-                    Logger.LogWithoutSubsystem("Smoke not implemented", LogLevel.BUG);
+                    Logger.LogWithoutSubsystem(LogLevel.BUG, "Smoke not implemented");
                 }
             }
         }

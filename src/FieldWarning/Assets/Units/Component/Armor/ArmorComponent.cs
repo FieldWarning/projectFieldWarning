@@ -58,8 +58,10 @@ namespace PFW.Units.Component.Armor
             float receivedDamage = EstimateDamage(
                     damageType, firepower, displacementToThis, distance);
 
-            Logger.LogDamage($"Received {receivedDamage} damage with type {damageType}," +
-                $"pre-calculation firepower was {firepower}", LogLevel.INFO);
+            Logger.LogDamage(
+                    LogLevel.INFO,
+                    $"Received {receivedDamage} damage with type {damageType}," +
+                    $"pre-calculation firepower was {firepower}");
 
             if (receivedDamage > 0)
             {

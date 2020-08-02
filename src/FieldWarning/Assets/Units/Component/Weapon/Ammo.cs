@@ -77,8 +77,9 @@ namespace PFW.Units.Component.Weapon
         {
             if (!Enum.TryParse(config.DamageType.ToUpper(), out DamageType))
             {
-                Logger.LogConfig($"Could not parse damage type value '{config.DamageType}'" +
-                    $" in a weapon's ammo entry. Defaulting to KE.", LogLevel.ERROR);
+                Logger.LogConfig(LogLevel.ERROR,
+                    $"Could not parse damage type value '{config.DamageType}'" +
+                    $" in a weapon's ammo entry. Defaulting to KE.");
             }
             
             DamageValue = config.DamageValue;
@@ -102,8 +103,9 @@ namespace PFW.Units.Component.Weapon
             }
             else
             {
-                Logger.LogConfig($"Could not find the muzzle flash prefab '{config.MuzzleFlash}'" +
-                    $" specified in a weapon's ammo entry.", LogLevel.ERROR);
+                Logger.LogConfig(LogLevel.ERROR,
+                    $"Could not find the muzzle flash prefab '{config.MuzzleFlash}'" +
+                    $" specified in a weapon's ammo entry.");
             }
             ShellArtPrefab = Resources.Load<GameObject>(config.Shell);
             ShotSound = Resources.Load<AudioClip>(config.Sound);
@@ -188,9 +190,9 @@ namespace PFW.Units.Component.Weapon
                 }
             }
             Logger.LogDamage(
+                    LogLevel.DUMP,
                     $"Estimating {result} damage with dmg type {DamageType}," +
-                    $" firepower {DamageValue} at range {distance}", 
-                    LogLevel.DUMP);
+                    $" firepower {DamageValue} at range {distance}");
 
             return result;
         }
