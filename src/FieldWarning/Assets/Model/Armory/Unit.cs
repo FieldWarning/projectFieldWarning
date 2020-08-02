@@ -58,11 +58,11 @@ namespace PFW.Model.Armory
             Logger.LogConfig(LogLevel.DEBUG, $"Creating unit object for {config.Name}.");
             MobilityData = mobility;
             Name = config.Name;
-            Price = config.Price;
+            Price = config.Price.Value;
             Prefab = Resources.Load<GameObject>(config.PrefabPath);
             ArtPrefab = Resources.Load<GameObject>(config.ArtPrefabPath);
 
-            LeavesExplodingWreck = config.LeavesExplodingWreck;
+            LeavesExplodingWreck = config.LeavesExplodingWreck.Value;
 
             ArmoryImage = Resources.Load<Sprite>(config.ArmoryImage);
             ArmoryBackgroundImage = Resources.Load<Sprite>(config.ArmoryBackgroundImage);

@@ -30,14 +30,14 @@ namespace PFW.Model.Armory.JsonContents
         public List<string> Inherits;
         public string CategoryKey;
         public string Name;
-        public int Price;
+        public int? Price;
         public string PrefabPath;
         public string ArtPrefabPath;
         public string ArmoryImage;
         public string ArmoryBackgroundImage;
         public string MinimapIcon;
-        public float MinimapIconSize;
-        public bool LeavesExplodingWreck;
+        public float? MinimapIconSize;
+        public bool? LeavesExplodingWreck;
         public VoiceLineConfig VoiceLineFolders;
         public UnitDataConfig Data;
         public ArmorConfig Armor;
@@ -71,15 +71,46 @@ namespace PFW.Model.Armory.JsonContents
                     else
                     {
                         Logger.LogConfig(
-                            LogLevel.ERROR,
-                            $"The unit config for {Name} declares inheritance" +
-                            $" from {templateConfig}, but no such template config" +
-                            $" exists. The unit will be dropped" +
-                            $" as a consequence of this error.");
+                                LogLevel.ERROR,
+                                $"The unit config for {Name} declares inheritance" +
+                                $" from {templateConfig}, but no such template config" +
+                                $" exists. The unit will be dropped" +
+                                $" as a consequence of this error.");
                         result = false;
                     }
                 }
             }
+
+            if (!Price.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'Price' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!MinimapIconSize.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'MinimapIconSize' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
+            if (!LeavesExplodingWreck.HasValue)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"The unit config for {Name} is missing the mandatory field" +
+                        $" 'LeavesExplodingWreck' The unit will be dropped" +
+                        $" as a consequence of this error.");
+                result = false;
+            }
+
             return result;
         }
 
@@ -89,7 +120,7 @@ namespace PFW.Model.Armory.JsonContents
                 CategoryKey = templateConfig.CategoryKey;
             if (Name == null || Name == "")
                 Name = templateConfig.Name;
-            if (Price == 0)
+            if (Price == null)
                 Price = templateConfig.Price;
             if (PrefabPath == null || PrefabPath == "")
                 PrefabPath = templateConfig.PrefabPath;
@@ -101,9 +132,9 @@ namespace PFW.Model.Armory.JsonContents
                 ArmoryBackgroundImage = templateConfig.ArmoryBackgroundImage;
             if (MinimapIcon == null || MinimapIcon == "")
                 MinimapIcon = templateConfig.MinimapIcon;
-            if (MinimapIconSize == 0)
+            if (MinimapIconSize == null)
                 MinimapIconSize = templateConfig.MinimapIconSize;
-            if (LeavesExplodingWreck == false)
+            if (LeavesExplodingWreck == null)
                 LeavesExplodingWreck = templateConfig.LeavesExplodingWreck;
             if (VoiceLineFolders == null)
                 VoiceLineFolders = templateConfig.VoiceLineFolders;
