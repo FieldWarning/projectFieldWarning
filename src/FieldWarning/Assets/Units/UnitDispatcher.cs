@@ -237,5 +237,9 @@ namespace PFW.Units
         }
 
         public float MaxRange() => _turretSystem.MaxRange();
+
+        public bool CanCaptureZones => _unitData.CanCaptureZones;
+
+        public bool IsMoving() => !_movementComponent.AreOrdersComplete();
     }
 }

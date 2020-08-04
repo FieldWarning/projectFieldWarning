@@ -11,11 +11,8 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
-using UnityEngine;
 using PFW.Model.Armory.JsonContents;
 
 namespace PFW.Model.Armory
@@ -35,11 +32,10 @@ namespace PFW.Model.Armory
 
             foreach (string unitId in deckConfig.UnitIds)
             {
-                Unit unit;
-                bool exists = armory.Units.TryGetValue(unitId, out unit);
+                bool exists = armory.Units.TryGetValue(unitId, out Unit unit);
                 if (!exists)
                 {
-                    Debug.LogError($"deck refers to non-existent unit {unitId}");
+                    Logger.LogConfig(LogLevel.ERROR, $"deck refers to non-existent unit {unitId}");
                 }
 
                 Categories[unit.CategoryId].Add(unit);

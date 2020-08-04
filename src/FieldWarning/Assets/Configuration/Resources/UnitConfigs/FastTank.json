@@ -8,7 +8,7 @@
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleTankBackground",
 
     "MovementSpeed": 250,
-    "CanCaptureZones": false,
+    "CanCaptureZones": true,
     "Availability": 20,
 	
 	"Recon": {

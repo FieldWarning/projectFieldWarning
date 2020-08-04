@@ -48,6 +48,11 @@ namespace PFW.Units.Component.Data
         public float SuspensionForward, SuspensionSide;
         public float AccelDampTime;
 
+        public bool CanCaptureZones;
+        public int ModelCount;
+        public int TransportableSize;
+        public int TransporterCapacity;
+
         public static DataComponent CreateDataComponent(
                 GameObject parent,
                 UnitConfig config,
@@ -90,6 +95,11 @@ namespace PFW.Units.Component.Data
             c.MaxSpottingRange = reconConfig.MaxSpottingRange;
             c.Stealth = reconConfig.Stealth;
             c.StealthPenetration = reconConfig.StealthPenetration;
+
+            c.CanCaptureZones = config.CanCaptureZones.Value;
+            c.ModelCount = config.ModelCount.Value;
+            c.TransportableSize = config.TransportableSize.Value;
+            c.TransporterCapacity = config.TransporterCapacity.Value;
 
             return c;
         }

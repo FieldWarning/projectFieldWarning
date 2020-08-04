@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -35,40 +35,56 @@ namespace PFW.UI.Ingame
         // an int or otherwise shorten the code
         private PlayerData _owner;
 
-        // Units currently in the zone
-        // (Maybe exclude all non-commander units)
-        private List<UnitDispatcher> _units =
-            new List<UnitDispatcher>();
+        // Command units currently in the zone
+        private List<UnitDispatcher> _units = new List<UnitDispatcher>();
 
         // Update is called once per frame
         private void Update()
         {
+            // Pop any units that have been killed since the last update:
+            _units.RemoveAll(x => x == null);
+
             // Check if Blue Red None or Both occupy the zone
             bool redIncluded = false;
             bool blueIncluded = false;
             PlayerData newOwner = null;
-            for (int i = 0; i < _units.Count; i++) {
+            for (int i = 0; i < _units.Count; i++)
+            {
                 UnitDispatcher unit = _units.ToArray()[i];
-                if (unit.AreOrdersComplete()) {
+
+                if (!unit.IsMoving())
+                {
                     newOwner = unit.Platoon.Owner;
                     // Names are USSR and NATO
-                    if (newOwner.Team.Name == "USSR") {
+                    if (newOwner.Team.Name == "USSR") 
+                    {
                         redIncluded = true;
-                    } else {
+                    }
+                    else
+                    {
                         blueIncluded = true;
                     }
                 }
             }
-            if (redIncluded && blueIncluded || (!redIncluded && !blueIncluded)) {
-                if (_owner != null) {
+
+            if (redIncluded && blueIncluded || (!redIncluded && !blueIncluded))
+            {
+                if (_owner != null) 
+                {
                     ChangeOwner(null);
                 }
-            } else if (redIncluded) {
-                if (_owner != newOwner) {
+            } 
+            else if (redIncluded)
+            {
+                if (_owner != newOwner)
+                {
                     ChangeOwner(newOwner);
                 }
-            } else {
-                if (_owner != newOwner) {
+            }
+            else
+            {
+                if (_owner != newOwner)
+                {
                     ChangeOwner(newOwner);
                 }
             }
@@ -77,21 +93,29 @@ namespace PFW.UI.Ingame
         // Needs to play sound
         private void ChangeOwner(PlayerData newOwner)
         {
-            if (_owner != null) {
+            if (_owner != null)
+            {
                 _owner.IncomeTick -= Worth;
             }
-            if (newOwner != null) {
+            if (newOwner != null)
+            {
                 newOwner.IncomeTick += Worth;
             }
             _owner = newOwner;
-            if (_owner != null) {
-                if (_owner.Team.Name == "USSR") {
-                    this.GetComponent<MeshRenderer>().material = Red;
-                } else {
-                    this.GetComponent<MeshRenderer>().material = Blue;
+            if (_owner != null)
+            {
+                if (_owner.Team.Name == "USSR")
+                {
+                    GetComponent<MeshRenderer>().material = Red;
                 }
-            } else {
-                this.GetComponent<MeshRenderer>().material = Neutral;
+                else
+                {
+                    GetComponent<MeshRenderer>().material = Blue;
+                }
+            }
+            else
+            {
+                GetComponent<MeshRenderer>().material = Neutral;
             }
         }
 
@@ -100,20 +124,29 @@ namespace PFW.UI.Ingame
             if (other.transform.parent == null)
                 return;
 
-            UnitDispatcher component =
-                    other.transform.parent.GetComponent<UnitDispatcher>();
-            if (component != null && component.isActiveAndEnabled)
-                _units.Add(component);
+            UnitDispatcher unit =
+                    other.transform.root.GetComponent<UnitDispatcher>();
+            if (unit != null && unit.isActiveAndEnabled && unit.CanCaptureZones)
+            {
+                Logger.LogWithoutSubsystem(
+                        LogLevel.DEBUG, 
+                        $"Command unit {unit} has entered capture zone {this}.");
+                _units.Add(unit);
+            }
         }
 
-        // TODO: If the unit is killed, it will never be removed from the zone:
         private void OnTriggerExit(Collider other)
         {
-            UnitDispatcher component =
-                    other.transform.parent.GetComponent<UnitDispatcher>();
+            UnitDispatcher unit =
+                    other.transform.root.GetComponent<UnitDispatcher>();
 
-            if (component != null)
-                _units.Remove(component);
+            if (unit != null && unit.isActiveAndEnabled && unit.CanCaptureZones)
+            {
+                Logger.LogWithoutSubsystem(
+                        LogLevel.DEBUG,
+                        $"Command unit {unit} has left capture zone {this}.");
+                _units.Remove(unit);
+            }
         }
     }
 }
