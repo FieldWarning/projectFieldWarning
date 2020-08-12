@@ -55,20 +55,56 @@ namespace PFW.Model.Armory
                 Categories[i] = new List<Unit>();
             }
 
-            foreach (UnitConfig templateConfig in templateConfigs.Values)
+            // The template configs themselves are allowed to inherit. So, 
+            // here we need to take extra care in what order we call them (it is
+            // unsafe to call ParsingDone() on a child config if its base config
+            // has not had ParsingDone() called on it yet).
+            // TODO code a neat dependency tree here instead of brute forcing..
+            int retries = 10;
+            var finalizedTemplateConfigs = new Dictionary<string, UnitConfig>();
+            while (templateConfigs.Count > 0)
             {
-                // TODO
-                // The template configs themselves are allowed to inherit. So, 
-                // here we need to take extra care in what order we call them (it is
-                // unsafe to call ParsingDone() on a child config if its base config
-                // has not had ParsingDone() called on it yet).
-                templateConfig.ParsingDone(templateConfigs, true);
+                List<string> keysToRemove = new List<string>();
+
+                foreach (KeyValuePair<string, UnitConfig> pair in templateConfigs)
+                {
+                    UnitConfig templateConfig = pair.Value;
+                    bool result = templateConfig.ParsingDone(templateConfigs, true);
+                    if (result)
+                    {
+                        finalizedTemplateConfigs.Add(pair.Key, pair.Value);
+                        keysToRemove.Add(pair.Key);
+                    }
+                }
+
+                // TODO With .net core 3.0 we will be able 
+                // to remove from a dictionary while iterating it
+                foreach (string key in keysToRemove)
+                {
+                    templateConfigs.Remove(key);
+                }
+
+                retries--;
+                if (retries == 0 && templateConfigs.Count > 0)
+                {
+                    Logger.LogConfig(
+                            LogLevel.ERROR, 
+                            "Could not resolve all template config dependencies. " +
+                            "It is possible that there is a circular dependency somewhere. " +
+                            "List of unresolved configs: ");
+                    foreach (KeyValuePair<string, UnitConfig> pair in templateConfigs)
+                    {
+                        Logger.LogConfig(
+                                LogLevel.ERROR, 
+                                $"{pair.Key}, with dependencies to {pair.Value.Inherits}");
+                    }
+                }
             }
 
             foreach (KeyValuePair<string, UnitConfig> pair in configs)
             {
                 UnitConfig unitConfig = pair.Value;
-                bool valid = unitConfig.ParsingDone(templateConfigs, false);
+                bool valid = unitConfig.ParsingDone(finalizedTemplateConfigs, false);
                 if (!valid)
                     continue;
 
