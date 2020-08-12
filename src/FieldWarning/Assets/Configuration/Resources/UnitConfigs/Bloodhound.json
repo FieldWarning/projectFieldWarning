@@ -4,7 +4,6 @@
     "CategoryKey": "TNK",
     "Name": "Bloodhound",
     "Price": 15,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",

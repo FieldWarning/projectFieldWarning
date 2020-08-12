@@ -1,10 +1,18 @@
 {
     "Inherits": ["Infantry", "AmericanGenericVoice", "DefaultMobility", "TurretInfantry", "DefaultGroundVision"],
-	"Name": "Riflemen",
+	"Name": "FastInfantry",
 	"Price": 20,
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryImage": "Armory Images/Anime",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
-    "CanCaptureZones": false,
+
+    "MovementSpeed": 250,
+    "CanCaptureZones": true,
     "Availability": 20,
+	
+	"Recon": {
+		"MaxSpottingRange": 20000,
+		"StealthPenetration": 5,
+		"Stealth": 10
+	},
 }

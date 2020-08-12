@@ -2,7 +2,6 @@
     "Inherits": ["Tank", "AmericanTankVoice", "DefaultMobility", "DefaultApcArmor", "DefaultGroundVision", "TurretBloodhound"],
     "Name": "M1A2 Abrams",
     "Price": 20,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleTankBackground",

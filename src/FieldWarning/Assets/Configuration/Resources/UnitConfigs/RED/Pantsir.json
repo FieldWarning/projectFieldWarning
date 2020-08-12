@@ -3,7 +3,6 @@
 	"CategoryKey": "SUP",
 	"Name": "Pantsir",
 	"Price": 20,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Pantsir Prefab",
 	"ArmoryImage": "Armory Images/Pantsir",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
