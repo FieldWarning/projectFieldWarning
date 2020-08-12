@@ -113,7 +113,7 @@ namespace PFW.Model.Armory
                 foreach (KeyValuePair<string, UnitConfig> pair in templateConfigs)
                 {
                     UnitConfig templateConfig = pair.Value;
-                    bool result = templateConfig.ParsingDone(templateConfigs, true);
+                    bool result = templateConfig.ParsingDone(finalizedTemplateConfigs, true);
                     if (result)
                     {
                         finalizedTemplateConfigs.Add(pair.Key, pair.Value);
