@@ -1,5 +1,6 @@
 {
     "Inherits": ["Unit"],
+    "LabelIcon": "F",
     
     "LeavesExplodingWreck": true,
     "ModelCount": 1,

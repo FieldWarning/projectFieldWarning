@@ -39,8 +39,10 @@ namespace PFW.Model.Armory.JsonContents
         public string ArtPrefabPath;
         public string ArmoryImage;
         public string ArmoryBackgroundImage;
+        public string LabelIcon;
         public string MinimapIcon;
         public float? MinimapIconSize;
+
         public bool? LeavesExplodingWreck;
         public bool? CanCaptureZones;
         public VoiceLineConfig VoiceLineFolders;
@@ -303,6 +305,8 @@ namespace PFW.Model.Armory.JsonContents
                 ArmoryImage = templateConfig.ArmoryImage;
             if (ArmoryBackgroundImage == null || ArmoryBackgroundImage == "")
                 ArmoryBackgroundImage = templateConfig.ArmoryBackgroundImage;
+            if (LabelIcon == null || LabelIcon == "")
+                LabelIcon = templateConfig.LabelIcon;
             if (MinimapIcon == null || MinimapIcon == "")
                 MinimapIcon = templateConfig.MinimapIcon;
             if (MinimapIconSize == null)
