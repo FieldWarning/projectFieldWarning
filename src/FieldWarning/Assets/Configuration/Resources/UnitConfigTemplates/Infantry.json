@@ -1,7 +1,6 @@
 {
     "Inherits": ["Unit"],
     "CategoryKey": "INF",
-    "MinimapIcon": "MinimapIcon/Square",
     
     "LeavesExplodingWreck": false,
     "ModelCount": 10,
