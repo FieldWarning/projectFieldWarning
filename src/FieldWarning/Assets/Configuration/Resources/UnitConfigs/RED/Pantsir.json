@@ -36,6 +36,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Gun",
+                    "WeaponIcon": "WeaponIcons/RPG-7v",
                     "Ammo": 
                     [
                         {
@@ -66,6 +67,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Missile",
+                    "WeaponIcon": "WeaponIcons/RPG-7v",
                     "Ammo": 
                     [
                         {

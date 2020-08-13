@@ -38,6 +38,8 @@ namespace PFW.Units.Component.Weapon
 
         private Ammo[] _ammo;
 
+        private Sprite _hudIcon;
+
         public Cannon(
                 CannonConfig data,
                 AudioSource source,
@@ -59,6 +61,8 @@ namespace PFW.Units.Component.Weapon
             {
                 _ammo[i] = new Ammo(data.Ammo[i], _barrelTip);
             }
+
+            _hudIcon = data.WeaponSprite;
         }
 
         private void FireWeapon(
