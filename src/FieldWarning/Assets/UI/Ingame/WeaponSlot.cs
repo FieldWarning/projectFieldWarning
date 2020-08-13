@@ -33,6 +33,7 @@ namespace PFW.UI.Ingame
         public void DisplayWeapon(Cannon weapon)
         {
             _weaponIcon.sprite = weapon.HudIcon;
+            _traits.text = "";
             foreach (Ammo ammo in weapon.Ammo)
             {
                 string trait;
@@ -48,7 +49,7 @@ namespace PFW.UI.Ingame
                         trait = ammo.DamageType.ToString();
                         break;
                 }
-                _traits.text = trait + ", ";
+                _traits.text += trait + ", ";
             }
             _traits.text = _traits.text.Substring(0, _traits.text.Length - 2);
         }
