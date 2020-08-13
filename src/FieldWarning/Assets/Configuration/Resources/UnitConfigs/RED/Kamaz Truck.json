@@ -3,7 +3,6 @@
 	"CategoryKey": "LOG",
 	"Name": "Kamaz",
 	"Price": 20,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Kamaz Truck Prefab",
 	"ArmoryImage": "Armory Images/Kamaz Truck",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",

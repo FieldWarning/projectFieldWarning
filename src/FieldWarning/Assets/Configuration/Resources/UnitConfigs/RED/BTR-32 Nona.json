@@ -3,7 +3,6 @@
     "CategoryKey": "SUP",
     "Name": "Nona",
     "Price": 15,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 Nona",
 	"ArmoryImage": "Armory Images/Nona",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",

@@ -1,0 +1,5 @@
+{
+    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
+    "MinimapIconSize": 10,
+    "MinimapIcon": "MinimapIcon/Square",
+}

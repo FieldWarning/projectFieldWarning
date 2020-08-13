@@ -1,6 +1,5 @@
 {
-    "MinimapIcon": "MinimapIcon/Square",
-    "MinimapIconSize": 10,
+    "Inherits": ["Unit"],
     
     "LeavesExplodingWreck": true,
     "ModelCount": 1,

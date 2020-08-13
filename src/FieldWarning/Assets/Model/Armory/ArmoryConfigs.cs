@@ -88,12 +88,15 @@ namespace PFW.Model.Armory.JsonContents
                     }
                     else
                     {
-                        Logger.LogConfig(
-                                LogLevel.ERROR,
-                                $"The unit config for {Name} declares inheritance" +
-                                $" from {templateConfig}, but no such template config" +
-                                $" exists. The unit will be dropped" +
-                                $" as a consequence of this error.");
+                        if (!isTemplate)
+                        {
+                            Logger.LogConfig(
+                                    LogLevel.ERROR,
+                                    $"The unit config for {Name} declares inheritance" +
+                                    $" from {templateConfig}, but no such template config" +
+                                    $" exists. The unit will be dropped" +
+                                    $" as a consequence of this error.");
+                        }
                         result = false;
                     }
                 }

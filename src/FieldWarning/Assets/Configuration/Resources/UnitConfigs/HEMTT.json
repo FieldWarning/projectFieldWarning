@@ -4,7 +4,6 @@
 	"CategoryKey": "LOG",
 	"Name": "HEMTT",
 	"Price": 20,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",

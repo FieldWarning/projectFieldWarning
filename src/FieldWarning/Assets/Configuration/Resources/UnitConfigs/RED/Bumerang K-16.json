@@ -3,7 +3,6 @@
     "CategoryKey": "INF",
     "Name": "Bumerang K-16",
     "Price": 15,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/Bumerang/Bumerang_K16",
 	"ArmoryImage": "Armory Images/K16",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",

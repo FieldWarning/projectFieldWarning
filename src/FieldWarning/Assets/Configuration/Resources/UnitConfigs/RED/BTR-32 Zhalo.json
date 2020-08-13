@@ -4,7 +4,6 @@
 	"CategoryKey": "VHC",
 	"Name": "BTR-32 Zhalo",
 	"Price": 20,
-    "PrefabPath": "UnitTemplatePrefabs/GroundUnit",
     "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 Zhalo",
 	"ArmoryImage": "Armory Images/Zhalo",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
