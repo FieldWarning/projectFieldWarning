@@ -68,7 +68,7 @@ namespace PFW.Units.Component.Weapon
 
         public bool IsFacingTarget { get; private set; } = false;
 
-        public Turret(GameObject unit, TurretConfig turretConfig)
+        public Turret(GameObject unit, TurretConfig turretConfig, List<Cannon> AllWeapons)
         {
             _maxRanges = new float[(int)TargetType._SIZE];
             _arcHorizontal = turretConfig.ArcHorizontal;
@@ -83,7 +83,7 @@ namespace PFW.Units.Component.Weapon
             {
                 foreach (TurretConfig childTurretConfig in turretConfig.Children)
                 {
-                    Children.Add(new Turret(unit, childTurretConfig));
+                    Children.Add(new Turret(unit, childTurretConfig, AllWeapons));
                 }
             }
             else
@@ -110,6 +110,8 @@ namespace PFW.Units.Component.Weapon
 
                     _maxRanges = _weapon.CalculateMaxRanges();
                     _shellVelocity = turretConfig.Cannon.Velocity * Constants.MAP_SCALE;
+
+                    AllWeapons.Add(_weapon);
                 }
                 else
                 {

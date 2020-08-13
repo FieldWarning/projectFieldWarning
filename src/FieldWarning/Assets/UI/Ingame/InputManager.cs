@@ -88,8 +88,10 @@ namespace PFW.UI.Ingame
 
         private void Awake()
         {
-            _selectionManager = new SelectionManager();
-            _selectionManager.Awake();
+            SelectionPane selectionPane = FindObjectOfType<SelectionPane>();
+            if (selectionPane == null)
+                throw new Exception("No SelectionPane found in the scene!");
+            _selectionManager = new SelectionManager(selectionPane);
 
             _commands = new Commands(GameSession.Singleton.Settings.Hotkeys);
         }

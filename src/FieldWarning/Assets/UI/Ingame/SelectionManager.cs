@@ -70,8 +70,11 @@ namespace PFW.UI.Ingame
         public ICollection<PlatoonBehaviour> AllPlatoons { get; }
             = new List<PlatoonBehaviour>();
 
-        public void Awake()
+        private SelectionPane _selectionPane;
+
+        public SelectionManager(SelectionPane selectionPane)
         {
+            _selectionPane = selectionPane;
             _selection = new List<PlatoonBehaviour>();
             _clickManager = new ClickManager(
                     0, 
@@ -301,6 +304,7 @@ namespace PFW.UI.Ingame
             selectedPlatoons.ForEach(x => x.SetSelected(false, justPreviewing));
 
             selectedPlatoons.Clear();
+            _selectionPane.OnSelectionCleared();
         }
 
         private void SetSelected(
@@ -308,11 +312,13 @@ namespace PFW.UI.Ingame
         {
             selectedPlatoons.ForEach(x => x.SetSelected(true, justPreviewing));
 
-            // Randomly choose one platoon to play a selected voiceline
-            if (selectedPlatoons.Count != 0 && !justPreviewing) 
+            if (selectedPlatoons.Count != 0 && !justPreviewing)
             {
+                // Randomly choose one platoon to play a selected voiceline
                 int randInt = Random.Range(0, selectedPlatoons.Count);
                 selectedPlatoons[randInt].PlaySelectionVoiceline();
+
+                _selectionPane.OnSelectionChanged(selectedPlatoons);
             }
         }
 
