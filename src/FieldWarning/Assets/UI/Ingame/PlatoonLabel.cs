@@ -104,6 +104,7 @@ namespace PFW.UI.Ingame
         {
             _unitName.text = unit.Name;
             _color = colorScheme;
+            _unitTypeIcon.text = unit.Config.LabelIcon;
             SetColor(colorScheme.BaseColor);
 
             // When the label is clicked, notify the selection manager:
