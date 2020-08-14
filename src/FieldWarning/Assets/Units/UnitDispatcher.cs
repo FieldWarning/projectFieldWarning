@@ -12,8 +12,8 @@
  */
 
 using UnityEngine;
-using UnityEngine.VFX;
 using Mirror;
+using System.Collections.Generic;
 
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Death;
@@ -38,6 +38,7 @@ namespace PFW.Units
 
         // Contains weapon components which contain audio components etc:
         private TurretSystem _turretSystem;
+        public List<Cannon> AllWeapons => _turretSystem.AllWeapons;
 
         private HealthComponent _healthComponent;
 

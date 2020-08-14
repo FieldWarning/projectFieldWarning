@@ -28,6 +28,8 @@ namespace PFW.Units.Component.Weapon
         private bool _movingTowardsTarget = false;
         private TargetTuple _explicitTarget;
         private TargetTuple __targetBackingField;
+        public List<Cannon> AllWeapons { get; private set; }
+
         private TargetTuple _target 
         { 
             get 
@@ -64,11 +66,12 @@ namespace PFW.Units.Component.Weapon
         public void Initialize(GameObject unit, Unit armoryUnit)
         {
             Children = new List<Turret>();
+            AllWeapons = new List<Cannon>();
             if (armoryUnit.Config.Turrets != null)
             {
                 foreach (TurretConfig turretConfig in armoryUnit.Config.Turrets)
                 {
-                    Children.Add(new Turret(unit, turretConfig));
+                    Children.Add(new Turret(unit, turretConfig, AllWeapons));
                 }
             }
             Unit = GetComponent<UnitDispatcher>();

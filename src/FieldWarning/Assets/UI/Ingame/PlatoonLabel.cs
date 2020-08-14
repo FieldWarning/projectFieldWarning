@@ -40,6 +40,9 @@ namespace PFW.UI.Ingame
         private Image _borderSprite = null;
 
         [SerializeField]
+        private TextMeshProUGUI _unitTypeIcon = null;
+
+        [SerializeField]
         private TextMeshProUGUI _unitName = null;
 
         private void SetColor(Color color)
@@ -85,6 +88,7 @@ namespace PFW.UI.Ingame
         {
             _unitName.text = unit.Name;
             _color = colorScheme;
+            _unitTypeIcon.text = unit.Config.LabelIcon;
             SetColor(_color.GhostColor);
         }
 
@@ -100,6 +104,7 @@ namespace PFW.UI.Ingame
         {
             _unitName.text = unit.Name;
             _color = colorScheme;
+            _unitTypeIcon.text = unit.Config.LabelIcon;
             SetColor(colorScheme.BaseColor);
 
             // When the label is clicked, notify the selection manager:

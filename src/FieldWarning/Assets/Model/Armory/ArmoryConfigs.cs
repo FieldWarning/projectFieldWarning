@@ -13,6 +13,7 @@
 
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine;
 
 /// <summary>
 /// The classes here represent purely what we write
@@ -39,8 +40,10 @@ namespace PFW.Model.Armory.JsonContents
         public string ArtPrefabPath;
         public string ArmoryImage;
         public string ArmoryBackgroundImage;
+        public string LabelIcon;
         public string MinimapIcon;
         public float? MinimapIconSize;
+
         public bool? LeavesExplodingWreck;
         public bool? CanCaptureZones;
         public VoiceLineConfig VoiceLineFolders;
@@ -303,6 +306,8 @@ namespace PFW.Model.Armory.JsonContents
                 ArmoryImage = templateConfig.ArmoryImage;
             if (ArmoryBackgroundImage == null || ArmoryBackgroundImage == "")
                 ArmoryBackgroundImage = templateConfig.ArmoryBackgroundImage;
+            if (LabelIcon == null || LabelIcon == "")
+                LabelIcon = templateConfig.LabelIcon;
             if (MinimapIcon == null || MinimapIcon == "")
                 MinimapIcon = templateConfig.MinimapIcon;
             if (MinimapIconSize == null)
@@ -442,6 +447,9 @@ namespace PFW.Model.Armory.JsonContents
         public string Shell;
         public string Sound;
         public string BarrelTipRef;
+        public string WeaponIcon;
+        [JsonIgnore]
+        public Sprite WeaponSprite;
         public List<AmmoConfig> Ammo;
 
         public bool ParsingDone(string unitName) 
@@ -452,9 +460,18 @@ namespace PFW.Model.Armory.JsonContents
 
             if (Ammo == null || Ammo.Count == 0)
             {
-                UnityEngine.Debug.LogError(
+                Logger.LogConfig(
+                        LogLevel.ERROR,
                         $"Unit {unitName} has a cannon with no ammo config!");
                 return false;
+            }
+
+            WeaponSprite = Resources.Load<Sprite>(WeaponIcon);
+            if (WeaponSprite == null)
+            {
+                Logger.LogConfig(
+                        LogLevel.WARNING,
+                        $"Unit {unitName} has a missing weapon sprite!");
             }
 
             foreach (AmmoConfig ammo in Ammo)

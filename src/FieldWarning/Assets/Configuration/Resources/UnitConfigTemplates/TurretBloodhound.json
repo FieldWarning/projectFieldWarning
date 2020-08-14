@@ -25,6 +25,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "MG",
+                    "WeaponIcon": "WeaponIcons/RPG-7v",
                     "Ammo": 
                     [
                         {
@@ -53,6 +54,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Autocannon",
+                    "WeaponIcon": "WeaponIcons/US_TNK_M1A2",
                     "Ammo": 
                     [
                         {

@@ -1,6 +1,7 @@
 {
     "Inherits": ["Unit"],
     "CategoryKey": "TNK",
+    "LabelIcon": "A",
     
     "LeavesExplodingWreck": true,
     "ModelCount": 1,

@@ -36,7 +36,9 @@ namespace PFW.Units.Component.Weapon
 
         private readonly GameObject _shellPrefab;
 
-        private Ammo[] _ammo;
+        public Ammo[] Ammo { get; }
+
+        public Sprite HudIcon { get; }
 
         public Cannon(
                 CannonConfig data,
@@ -54,11 +56,13 @@ namespace PFW.Units.Component.Weapon
             _random = new System.Random(Environment.TickCount);
             _shellPrefab = Resources.Load<GameObject>("Shell");
 
-            _ammo = new Ammo[data.Ammo.Count];
+            Ammo = new Ammo[data.Ammo.Count];
             for (int i = 0; i < data.Ammo.Count; i++)
             {
-                _ammo[i] = new Ammo(data.Ammo[i], _barrelTip);
+                Ammo[i] = new Ammo(data.Ammo[i], _barrelTip);
             }
+
+            HudIcon = data.WeaponSprite;
         }
 
         private void FireWeapon(
@@ -176,17 +180,17 @@ namespace PFW.Units.Component.Weapon
                 Vector3 displacement,
                 float distance)
         {
-            Ammo result = _ammo[0];
+            Ammo result = Ammo[0];
             float bestDamage = result.EstimateDamageAgainstTarget(
                         target, displacement, distance);
 
-            for (int i = 1; i < _ammo.Length; i++)
+            for (int i = 1; i < Ammo.Length; i++)
             {
-                float damage = _ammo[i].EstimateDamageAgainstTarget(
+                float damage = Ammo[i].EstimateDamageAgainstTarget(
                         target, displacement, distance);
                 if (damage > bestDamage)
                 {
-                    result = _ammo[i];
+                    result = Ammo[i];
                     bestDamage = damage;
                 }
             }
@@ -202,7 +206,7 @@ namespace PFW.Units.Component.Weapon
         {
             float[] result = new float[(int)TargetType._SIZE];
 
-            foreach (Ammo ammo in _ammo)
+            foreach (Ammo ammo in Ammo)
             {
                 for (int i = 0; i < (int)TargetType._SIZE; i++)
                 {

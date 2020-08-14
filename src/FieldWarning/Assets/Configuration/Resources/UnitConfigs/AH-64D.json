@@ -1,5 +1,6 @@
 {
     "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultHeloArmor", "DefaultHeloVision", "TurretBloodhound"],
+    "LabelIcon": "D",
     
 	"CategoryKey": "HEL",
 	"Name": "AH64D Apache",

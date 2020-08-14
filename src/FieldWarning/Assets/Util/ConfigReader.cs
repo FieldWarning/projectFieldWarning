@@ -47,9 +47,8 @@ namespace PFW
                         "due to a system exception.");
             }
 
-            Dictionary<string, UnitConfig> result =
-                new Dictionary<string, UnitConfig>();
-
+            var result = new Dictionary<string, UnitConfig>();
+            
             foreach (string configFile in configFiles)
             {
                 // Turn 'C://UnitConfigTemplates/Tank.json' into 'Tank', which
