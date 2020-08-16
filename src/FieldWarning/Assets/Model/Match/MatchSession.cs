@@ -202,6 +202,7 @@ namespace PFW.Model.Match
             Team newTeam = LocalPlayer.Data.Team;
             _unitRegistry.UpdateTeamBelonging(newTeam);
             _visibilityManager.UpdateTeamBelonging();
+            _deploymentMenu.UpdateTeamBelonging();
         }
 
         /// <summary>

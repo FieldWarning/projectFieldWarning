@@ -70,8 +70,15 @@ namespace PFW.UI.Ingame
             }
         }
 
+        private UnitCategory _lastCategory;
+        public void UpdateTeamBelonging()
+        {
+            CategorySelected(_lastCategory);
+        }
+
         private void CategorySelected(UnitCategory cat)
         {
+            _lastCategory = cat;
             Button[] allUnitCards = _unitCardsPanel.GetComponentsInChildren<Button>();
 
             foreach (Button c in allUnitCards)
