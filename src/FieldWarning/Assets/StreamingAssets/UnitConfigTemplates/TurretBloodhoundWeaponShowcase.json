@@ -1,0 +1,200 @@
+{    
+    "Turrets": [{
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "MG",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "GroundRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "MG",
+                    "WeaponIcon": "WeaponIcons/M2_Browning_US_HMG",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HEAVY_ARMS",
+                            "DamageValue": 0.75,
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Autocannon",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 2000,
+                    "Accuracy": 30,
+                    "ShotReload": 4,
+                    "SalvoLength": 1,
+                    "SalvoReload": 4,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Autocannon",
+                    "WeaponIcon": "WeaponIcons/Tank_weapon5",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
+                        },
+                        {
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Autocannon",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 2000,
+                    "Accuracy": 30,
+                    "ShotReload": 4,
+                    "SalvoLength": 1,
+                    "SalvoReload": 4,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Autocannon",
+                    "WeaponIcon": "WeaponIcons/CG",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
+                        },
+                        {
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Autocannon",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 2000,
+                    "Accuracy": 30,
+                    "ShotReload": 4,
+                    "SalvoLength": 1,
+                    "SalvoReload": 4,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Autocannon",
+                    "WeaponIcon": "WeaponIcons/AT-4_Launcher",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
+                        },
+                        {
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Autocannon",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 2000,
+                    "Accuracy": 30,
+                    "ShotReload": 4,
+                    "SalvoLength": 1,
+                    "SalvoReload": 4,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Autocannon",
+                    "WeaponIcon": "WeaponIcons/US_M240_LMG",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
+                        },
+                        {
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
+                        }
+                    ]
+                }
+            }
+        ]
+    }]
+}
