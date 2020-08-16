@@ -201,8 +201,6 @@ namespace PFW
 
         public static void WriteLocalConfig(SettingsConfig localConfig)
         {
-            // TODO use an asset bundle or Application.persistentDataPath outside editor
-            //      The current implementation wont work in the built version!
             string path = Application.streamingAssetsPath + 
                     "/Settings/LocalSettings.json";
 
