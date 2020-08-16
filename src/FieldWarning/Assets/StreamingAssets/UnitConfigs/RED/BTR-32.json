@@ -37,7 +37,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "HMG",
-                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "WeaponIcon": "WeaponIcons/RUS_LMG_RPD_7.62",
                     "Ammo": 
                     [
                         {
