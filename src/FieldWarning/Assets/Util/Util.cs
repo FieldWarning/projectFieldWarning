@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using System.IO;
 using UnityEngine;
 
 namespace PFW
@@ -71,6 +72,66 @@ namespace PFW
             return f > 0 ?
                     (float)System.Math.Floor(f)
                     : (float)System.Math.Ceiling(f);
+        }
+
+        /// <summary>
+        /// Loads a sprite that is not packaged into the game but rather sits
+        /// somewhere on the file system.
+        /// 
+        /// TODO for some reason this loads much blurrier images than the manual
+        /// sprite import through unity. Until this is fixed we can't
+        /// use it as our main method.
+        /// </summary>
+        /// <returns></returns>
+        static public Sprite LoadSpriteFromFile(
+                string filename, 
+                float PixelsPerUnit = 100.0f,
+                SpriteMeshType type = SpriteMeshType.Tight)
+        {
+            // Load a PNG or JPG image from disk to a Texture2D, assign this texture to a new sprite and return its reference
+            Texture2D SpriteTexture = LoadTexture(filename);
+            if (SpriteTexture == null)
+            {
+                Logger.LogConfig(LogLevel.WARNING, 
+                    $"Could not load sprite {filename}, " +
+                    $"file does not exist or is not an image.");
+                return null;
+            }
+
+            Sprite NewSprite = Sprite.Create(
+                    SpriteTexture, 
+                    new Rect(0, 
+                            0, 
+                            SpriteTexture.width, 
+                            SpriteTexture.height), 
+                    new Vector2(0, 0),
+                    PixelsPerUnit, 
+                    0,
+                    type,
+                    new Vector4(0, 0, 0, 0));
+
+            return NewSprite;
+        }
+
+        static private Texture2D LoadTexture(string FilePath)
+        {
+            // Load a PNG or JPG file from disk to a Texture2D
+            // Returns null if load fails
+
+            Texture2D Tex2D;
+            byte[] FileData;
+
+            if (File.Exists(FilePath))
+            {
+                FileData = File.ReadAllBytes(FilePath);
+                Tex2D = new Texture2D(2, 2);
+                // Load the imagedata into the texture (size is set automatically)
+                if (Tex2D.LoadImage(FileData))
+                {
+                    return Tex2D;  // If data = readable -> return texture
+                }
+            }
+            return null;
         }
     }
 }

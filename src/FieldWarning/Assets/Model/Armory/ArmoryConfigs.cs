@@ -469,9 +469,14 @@ namespace PFW.Model.Armory.JsonContents
             WeaponSprite = Resources.Load<Sprite>(WeaponIcon);
             if (WeaponSprite == null)
             {
-                Logger.LogConfig(
-                        LogLevel.WARNING,
-                        $"Unit {unitName} has a missing weapon sprite!");
+                WeaponSprite = Util.LoadSpriteFromFile(
+                        Application.streamingAssetsPath + "/" + WeaponIcon);
+                if (WeaponSprite == null)
+                {
+                    Logger.LogConfig(
+                            LogLevel.WARNING,
+                            $"Unit {unitName} has a missing weapon sprite!");
+                }
             }
 
             foreach (AmmoConfig ammo in Ammo)
