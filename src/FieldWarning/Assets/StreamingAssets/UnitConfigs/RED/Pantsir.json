@@ -67,7 +67,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Missile",
-                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "WeaponIcon": "WeaponIcons/RUS_AR_AN94_7.62",
                     "Ammo": 
                     [
                         {
