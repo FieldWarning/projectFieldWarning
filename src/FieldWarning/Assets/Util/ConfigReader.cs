@@ -72,8 +72,8 @@ namespace PFW
         public static Armory ParseArmory()
         {
             // We take all jsons in the UnitConfigs folder and subfolders
-            string unitsPath = Application.dataPath +
-                    "/Configuration/Resources/UnitConfigs/";
+            string unitsPath = Application.streamingAssetsPath +
+                    "/UnitConfigs/";
 
             Logger.LogConfig(LogLevel.INFO, "Parsing unit configs.");
             Dictionary<string, UnitConfig> configs = ParseAllJsonFiles(
@@ -81,8 +81,8 @@ namespace PFW
 
             // Load the unit config templates, which look just like unit configs
             // but don't turn into real units (real units inherit from them).
-            string templatesPath = Application.dataPath +
-                    "/Configuration/Resources/UnitConfigTemplates/";
+            string templatesPath = Application.streamingAssetsPath +
+                    "/UnitConfigTemplates/";
 
             Logger.LogConfig(LogLevel.INFO, "Parsing unit template configs.");
             Dictionary<string, UnitConfig> templateConfigs = ParseAllJsonFiles(
@@ -93,11 +93,23 @@ namespace PFW
 
         public static SettingsConfig ParseDefaultSettingsRaw()
         {
-            TextAsset configFile = Resources.Load<TextAsset>("Settings/DefaultSettings");
-            SettingsConfig config = 
-                    JsonConvert.DeserializeObject<SettingsConfig>(configFile.text);
+            string path = Application.streamingAssetsPath +
+                    "/Settings/DefaultSettings.json";
+            if (!File.Exists(path))
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"Corrupted installation: Default settings file not found at {path}");
+                return null;
+            }
+            else
+            {
+                string configText = File.ReadAllText(path);
+                SettingsConfig config =
+                    JsonConvert.DeserializeObject<SettingsConfig>(configText);
 
-            return config;
+                return config;
+            }
         }
 
         public static SettingsConfig ParseSettingsRaw()
@@ -109,8 +121,8 @@ namespace PFW
             // at all.
             // We need to load it like this and not as an asset, because
             // its contents can be changed during runtime.
-            string path = Application.dataPath +
-                    "/Configuration/Resources/Settings/LocalSettings.json";
+            string path = Application.streamingAssetsPath +
+                    "/Settings/LocalSettings.json";
             if (!File.Exists(path))
             {
                 return config;
@@ -191,8 +203,8 @@ namespace PFW
         {
             // TODO use an asset bundle or Application.persistentDataPath outside editor
             //      The current implementation wont work in the built version!
-            string path = Application.dataPath + 
-                    "/Configuration/Resources/Settings/LocalSettings.json";
+            string path = Application.streamingAssetsPath + 
+                    "/Settings/LocalSettings.json";
 
             string contents = JsonConvert.SerializeObject(localConfig, Formatting.Indented);
 
