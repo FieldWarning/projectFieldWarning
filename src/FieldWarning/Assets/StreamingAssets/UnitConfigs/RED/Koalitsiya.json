@@ -37,7 +37,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "MG",
-                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "WeaponIcon": "WeaponIcons/AK74",
                     "Ammo": 
                     [
                         {
@@ -68,7 +68,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Cannon",
-                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "WeaponIcon": "WeaponIcons/US_AR_M4A1",
                     "Ammo": 
                     [
                         {
