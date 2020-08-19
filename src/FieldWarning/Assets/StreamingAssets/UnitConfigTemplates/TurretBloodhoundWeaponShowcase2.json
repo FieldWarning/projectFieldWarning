@@ -94,7 +94,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Autocannon",
-                    "WeaponIcon": "WeaponIcons/FIM-92",
+                    "WeaponIcon": "WeaponIcons/RPG-7v_Col",
                     "Ammo": 
                     [
                         {
@@ -134,7 +134,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Autocannon",
-                    "WeaponIcon": "WeaponIcons/AT-4_Launcher",
+                    "WeaponIcon": "WeaponIcons/AK74_Col",
                     "Ammo": 
                     [
                         {
@@ -174,7 +174,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Autocannon",
-                    "WeaponIcon": "WeaponIcons/US_M240_LMG",
+                    "WeaponIcon": "WeaponIcons/FR_AR_FAMAS_Col",
                     "Ammo": 
                     [
                         {
