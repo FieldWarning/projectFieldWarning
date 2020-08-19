@@ -25,7 +25,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "MG",
-                    "WeaponIcon": "WeaponIcons/M2_Browning_US_HMG",
+                    "WeaponIcon": "WeaponIcons/RPG-30_c",
                     "Ammo": 
                     [
                         {
@@ -54,7 +54,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Autocannon",
-                    "WeaponIcon": "WeaponIcons/Tank_weapon5",
+                    "WeaponIcon": "WeaponIcons/RPG-30",
                     "Ammo": 
                     [
                         {
