@@ -1,7 +1,7 @@
 {
     "Turrets": [{
-        "TurretRef": "IFV",
-        "MountRef": "Bloodhound",
+        "TurretRef": "Root",
+        "MountRef": "RussianSoldier",
         "ArcHorizontal": 180,
         "ArcUp": 0,
         "ArcDown": 0,
@@ -9,7 +9,7 @@
         "Children": [
             {
                 "Priority": 1,
-                "TurretRef": "MG",
+                "TurretRef": "GunIK",
                 "ArcHorizontal": 3,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -24,7 +24,7 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "MG",
+                    "BarrelTipRef": "GunIK",
                     "WeaponIcon": "WeaponIcons/US_AR_M4A1",
                     "Ammo": 
                     [
@@ -37,7 +37,7 @@
             },
             {
                 "Priority": 2,
-                "TurretRef": "Autocannon",
+                "TurretRef": "RPGIK",
                 "ArcHorizontal": 0,
                 "ArcUp": 40,
                 "ArcDown": 20,
@@ -52,7 +52,7 @@
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
-                    "BarrelTipRef": "IFV",
+                    "BarrelTipRef": "RPGIK",
                     "WeaponIcon": "WeaponIcons/M72_LAW",
                     "Ammo": 
                     [

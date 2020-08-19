@@ -3,7 +3,6 @@
 	"CategoryKey": "REC",
 	"Name": "U.S. Army Rangers",
 	"Price": 20,
-    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
     "CanCaptureZones": false,

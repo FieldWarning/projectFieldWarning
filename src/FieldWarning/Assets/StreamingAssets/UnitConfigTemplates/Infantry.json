@@ -2,6 +2,7 @@
     "Inherits": ["Unit"],
     "CategoryKey": "INF",
     "LabelIcon": "C",
+    "ArtPrefabPath": "UnitModels/Soldier/RussianSoldier",
     
     "LeavesExplodingWreck": false,
     "ModelCount": 10,
