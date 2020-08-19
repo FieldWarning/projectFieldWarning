@@ -25,7 +25,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "MG",
-                    "WeaponIcon": "WeaponIcons/FGM-148",
+                    "WeaponIcon": "WeaponIcons/AK-12",
                     "Ammo": 
                     [
                         {
