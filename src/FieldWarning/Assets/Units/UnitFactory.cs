@@ -16,7 +16,6 @@ using PFW.Model.Armory;
 using PFW.Units;
 using PFW.Units.Component.Data;
 using PFW.Units.Component.Weapon;
-using static PFW.Util;
 
 namespace PFW.UI.Prototype
 {

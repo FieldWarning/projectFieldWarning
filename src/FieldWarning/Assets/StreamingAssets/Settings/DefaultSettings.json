@@ -18,6 +18,7 @@
         "Stop": "C",
         "Smoke": "B",
         "WeaponsOff": "H",
-        "MenuToggle": "Escape"
+        "MenuToggle": "Escape",
+        "UnitInfo": "I"
     }
 }

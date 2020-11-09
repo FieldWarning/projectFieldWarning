@@ -133,70 +133,8 @@ namespace PFW
                 SettingsConfig config2 =
                         JsonConvert.DeserializeObject<SettingsConfig>(localSettingsText);
 
-                return MergeSettings(config, config2);
+                return SettingsConfig.MergeSettings(config, config2);
             }
-        }
-
-        /// <summary>
-        /// Values that are set in the local config always
-        /// override the values from the default config.
-        /// </summary>
-        private static SettingsConfig MergeSettings(
-                SettingsConfig defaultConfig, SettingsConfig localConfig)
-        {
-            return new SettingsConfig
-            {
-                Camera = new CameraConfig()
-                {
-                    ZoomSpeed = localConfig.Camera.ZoomSpeed == 0 ?
-                            defaultConfig.Camera.ZoomSpeed : localConfig.Camera.ZoomSpeed,
-                    
-                    RotationSpeed = localConfig.Camera.RotationSpeed == 0 ?
-                            defaultConfig.Camera.RotationSpeed : localConfig.Camera.RotationSpeed,
-                    
-                    PanSpeed = localConfig.Camera.PanSpeed == 0 ?
-                            defaultConfig.Camera.PanSpeed : localConfig.Camera.PanSpeed
-                },
-
-                Hotkeys = new HotkeyConfig
-                {
-                    Smoke = localConfig.Hotkeys.Smoke == null || localConfig.Hotkeys.Smoke == "" ?
-                            defaultConfig.Hotkeys.Smoke : localConfig.Hotkeys.Smoke,
-
-                    WeaponsOff = localConfig.Hotkeys.WeaponsOff == null || localConfig.Hotkeys.WeaponsOff == "" ?
-                            defaultConfig.Hotkeys.WeaponsOff : localConfig.Hotkeys.WeaponsOff,
-
-                    Stop = localConfig.Hotkeys.Stop == null || localConfig.Hotkeys.Stop == "" ?
-                            defaultConfig.Hotkeys.Stop : localConfig.Hotkeys.Stop,
-
-                    Unload = localConfig.Hotkeys.Unload == null || localConfig.Hotkeys.Unload == "" ?
-                            defaultConfig.Hotkeys.Unload : localConfig.Hotkeys.Unload,
-
-                    Load = localConfig.Hotkeys.Load == null || localConfig.Hotkeys.Load == "" ?
-                            defaultConfig.Hotkeys.Load : localConfig.Hotkeys.Load,
-
-                    FirePosition = localConfig.Hotkeys.FirePosition == null || localConfig.Hotkeys.FirePosition == "" ?
-                            defaultConfig.Hotkeys.FirePosition : localConfig.Hotkeys.FirePosition,
-
-                    AttackMove = localConfig.Hotkeys.AttackMove == null || localConfig.Hotkeys.AttackMove == "" ?
-                            defaultConfig.Hotkeys.AttackMove : localConfig.Hotkeys.AttackMove,
-
-                    ReverseMove = localConfig.Hotkeys.ReverseMove == null || localConfig.Hotkeys.ReverseMove == "" ?
-                            defaultConfig.Hotkeys.ReverseMove : localConfig.Hotkeys.ReverseMove,
-
-                    FastMove = localConfig.Hotkeys.FastMove == null || localConfig.Hotkeys.FastMove == "" ?
-                            defaultConfig.Hotkeys.FastMove : localConfig.Hotkeys.FastMove,
-
-                    Split = localConfig.Hotkeys.Split == null || localConfig.Hotkeys.Split == "" ?
-                            defaultConfig.Hotkeys.Split : localConfig.Hotkeys.Split,
-
-                    VisionTool = localConfig.Hotkeys.VisionTool == null || localConfig.Hotkeys.VisionTool == "" ?
-                            defaultConfig.Hotkeys.VisionTool : localConfig.Hotkeys.VisionTool,
-
-                    MenuToggle = localConfig.Hotkeys.MenuToggle == null || localConfig.Hotkeys.MenuToggle == "" ?
-                            defaultConfig.Hotkeys.MenuToggle : localConfig.Hotkeys.MenuToggle
-                }
-            };
         }
 
         public static void WriteLocalConfig(SettingsConfig localConfig)

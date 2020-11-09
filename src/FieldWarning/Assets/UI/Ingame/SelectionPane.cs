@@ -19,11 +19,15 @@ using UnityEngine;
 
 namespace PFW.UI.Ingame
 {
+    /// <summary>
+    /// Drives the UI section that shows information about the
+    /// currently selected unit(s).
+    /// </summary>
     public sealed class SelectionPane : MonoBehaviour
     {
         private WeaponSlot[] _weaponSlots;
 
-        public void Start()
+        private void Start()
         {
             _weaponSlots = GetComponentsInChildren<WeaponSlot>();
             foreach (WeaponSlot slot in _weaponSlots)
