@@ -42,6 +42,7 @@ namespace PFW.Model.Settings
             Stop = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.Stop);
             WeaponsOff = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.WeaponsOff);
             Smoke = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.Smoke);
+            UnitInfo = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.UnitInfo);
         }
 
         public KeyCode Unload;
@@ -56,5 +57,6 @@ namespace PFW.Model.Settings
         public KeyCode Stop;
         public KeyCode WeaponsOff;
         public KeyCode Smoke;
+        public KeyCode UnitInfo;
     }
 }
