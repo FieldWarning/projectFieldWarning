@@ -13,7 +13,9 @@
 
 using PFW.Model.Armory;
 using PFW.Units;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PFW.UI.Ingame
 {
@@ -26,14 +28,27 @@ namespace PFW.UI.Ingame
     {
         private Unit _currentlyShownUnit;
 
-        private void Start()
-        {
-        }
+        [SerializeField]
+        private GameObject _unitCardDeploymentPanel;
+        [SerializeField]
+        private TMP_Text _speedField;
+        [SerializeField]
+        private TMP_Text _opticsField;
+        [SerializeField]
+        private TMP_Text _stealthField;
+        [SerializeField]
+        private TMP_Text _frontArmorField;
+        [SerializeField]
+        private TMP_Text _sideArmorField;
+        [SerializeField]
+        private TMP_Text _rearArmorField;
+        [SerializeField]
+        private TMP_Text _topArmorField;
 
         public void ShowUnitInfo(Unit unit)
         {
             // Limited toggle behavior (prob belongs in InputManager):
-            if (_currentlyShownUnit != null && _currentlyShownUnit.Id == unit.Id)
+            if (_currentlyShownUnit != null && _currentlyShownUnit.Name == unit.Name)
             {
                 _currentlyShownUnit = null;
                 gameObject.SetActive(false);
@@ -41,7 +56,29 @@ namespace PFW.UI.Ingame
             }
 
             _currentlyShownUnit = unit;
-            // TODO
+
+            // Unit card:
+            _unitCardDeploymentPanel.GetComponentInChildren<Text>().text = unit.Name;
+            Util.RecursiveFindChild(_unitCardDeploymentPanel.transform, "Price")
+                    .GetComponent<TMP_Text>()
+                    .text = unit.Price.ToString();
+
+            _unitCardDeploymentPanel.transform.Find("Image").GetComponent<Image>().sprite =
+                    unit.ArmoryImage;
+            _unitCardDeploymentPanel.transform.Find("BackgroundImage").GetComponent<Image>().sprite =
+                    unit.ArmoryBackgroundImage;
+
+            // Stats:
+
+            _speedField.text = unit.Config.MovementSpeed.ToString() + "kmh";
+            _opticsField.text = unit.Config.Recon.MaxSpottingRange.ToString() 
+                + "/" + unit.Config.Recon.StealthPenetration.ToString();
+            _stealthField.text = unit.Config.Recon.Stealth.ToString();
+            _frontArmorField.text = unit.Config.Armor.FrontArmor.ToString();
+            _sideArmorField.text = unit.Config.Armor.SideArmor.ToString();
+            _rearArmorField.text = unit.Config.Armor.RearArmor.ToString();
+            _topArmorField.text = unit.Config.Armor.TopArmor.ToString();
+
             gameObject.SetActive(true);
         }
 

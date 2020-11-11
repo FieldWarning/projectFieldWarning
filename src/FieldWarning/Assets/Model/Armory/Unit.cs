@@ -25,7 +25,7 @@ namespace PFW.Model.Armory
     {
         // Identifies which category the unit is in.
         public byte CategoryId;
-        // Unique for an category, 
+        // Unique within a category, 
         // should match the index in the unit list.
         public int Id;
 
