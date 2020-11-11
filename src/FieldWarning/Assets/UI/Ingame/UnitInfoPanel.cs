@@ -29,7 +29,13 @@ namespace PFW.UI.Ingame
         private Unit _currentlyShownUnit;
 
         [SerializeField]
-        private GameObject _unitCardDeploymentPanel;
+        private Image _image;
+        [SerializeField]
+        private Image _backgroundImage;
+        [SerializeField]
+        private TMP_Text _nameField;
+        [SerializeField]
+        private TMP_Text _priceField;
         [SerializeField]
         private TMP_Text _speedField;
         [SerializeField]
@@ -58,15 +64,11 @@ namespace PFW.UI.Ingame
             _currentlyShownUnit = unit;
 
             // Unit card:
-            _unitCardDeploymentPanel.GetComponentInChildren<Text>().text = unit.Name;
-            Util.RecursiveFindChild(_unitCardDeploymentPanel.transform, "Price")
-                    .GetComponent<TMP_Text>()
-                    .text = unit.Price.ToString();
+            _nameField.text = unit.Name;
+            _priceField.text = unit.Price.ToString() + "pts";
 
-            _unitCardDeploymentPanel.transform.Find("Image").GetComponent<Image>().sprite =
-                    unit.ArmoryImage;
-            _unitCardDeploymentPanel.transform.Find("BackgroundImage").GetComponent<Image>().sprite =
-                    unit.ArmoryBackgroundImage;
+            _image.sprite = unit.ArmoryImage;
+            _backgroundImage.sprite = unit.ArmoryBackgroundImage;
 
             // Stats:
 
