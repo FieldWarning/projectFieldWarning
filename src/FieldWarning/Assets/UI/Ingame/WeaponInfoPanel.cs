@@ -63,7 +63,7 @@ namespace PFW.UI.Ingame
                 }
                 _tagsField.text += trait + "\n";
 
-                _accuracyField.text += ammo.Accuracy * 100 + "\n";
+                _accuracyField.text += ammo.Accuracy + "%\n";
                 _damageField.text += ammo.DamageValue + "\n";
                 _rangeField.text += ammo.RangeForUI() + "\n";
             }
@@ -71,6 +71,8 @@ namespace PFW.UI.Ingame
             _accuracyField.text = _accuracyField.text.Substring(0, _accuracyField.text.Length - 1);
             _damageField.text = _damageField.text.Substring(0, _damageField.text.Length - 1);
             _rangeField.text = _rangeField.text.Substring(0, _rangeField.text.Length - 1);
+
+            gameObject.SetActive(true);
         }
 
         public void HideWeaponInfo()
