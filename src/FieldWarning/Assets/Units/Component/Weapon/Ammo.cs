@@ -196,6 +196,11 @@ namespace PFW.Units.Component.Weapon
 
             return result;
         }
+
+        public string RangeForUI() 
+        {
+            return _groundRange / Constants.MAP_SCALE + "m |" + _heloRange / Constants.MAP_SCALE +"m";
+        }
     }
 
     public enum DamageType

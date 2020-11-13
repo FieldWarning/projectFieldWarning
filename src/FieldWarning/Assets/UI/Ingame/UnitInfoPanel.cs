@@ -13,6 +13,8 @@
 
 using PFW.Model.Armory;
 using PFW.Units;
+using PFW.Units.Component.Weapon;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,29 +31,37 @@ namespace PFW.UI.Ingame
         private Unit _currentlyShownUnit;
 
         [SerializeField]
-        private Image _image;
+        private Image _image = null;
         [SerializeField]
-        private Image _backgroundImage;
+        private Image _backgroundImage = null;
         [SerializeField]
-        private TMP_Text _nameField;
+        private TMP_Text _nameField = null;
         [SerializeField]
-        private TMP_Text _priceField;
+        private TMP_Text _priceField = null;
         [SerializeField]
-        private TMP_Text _speedField;
+        private TMP_Text _speedField = null;
         [SerializeField]
-        private TMP_Text _opticsField;
+        private TMP_Text _opticsField = null;
         [SerializeField]
-        private TMP_Text _stealthField;
+        private TMP_Text _stealthField = null;
         [SerializeField]
-        private TMP_Text _frontArmorField;
+        private TMP_Text _frontArmorField = null;
         [SerializeField]
-        private TMP_Text _sideArmorField;
+        private TMP_Text _sideArmorField = null;
         [SerializeField]
-        private TMP_Text _rearArmorField;
+        private TMP_Text _rearArmorField = null;
         [SerializeField]
-        private TMP_Text _topArmorField;
+        private TMP_Text _topArmorField = null;
 
-        public void ShowUnitInfo(Unit unit)
+        [SerializeField]
+        private List<WeaponInfoPanel> _weaponPanels = null;
+
+        /// <summary>
+        /// TODO the cannon argument here is a hack because
+        /// it only exists on live units. We need to extract weapon data
+        /// from the turret config itself, otherwise it wont work for the armory.
+        /// </summary>
+        public void ShowUnitInfo(Unit unit, List<Cannon> weapons)
         {
             // Limited toggle behavior (prob belongs in InputManager):
             if (_currentlyShownUnit != null && _currentlyShownUnit.Name == unit.Name)
@@ -80,6 +90,18 @@ namespace PFW.UI.Ingame
             _sideArmorField.text = unit.Config.Armor.SideArmor.ToString();
             _rearArmorField.text = unit.Config.Armor.RearArmor.ToString();
             _topArmorField.text = unit.Config.Armor.TopArmor.ToString();
+
+            for (int i = 0; i < _weaponPanels.Count; i++)
+            {
+                if (i < weapons.Count)
+                {
+                    _weaponPanels[i].ShowWeaponInfo(weapons[i]);
+                }
+                else 
+                {
+                    _weaponPanels[i].HideWeaponInfo();
+                }
+            }
 
             gameObject.SetActive(true);
         }

@@ -19,16 +19,21 @@ using PFW.Units.Component.Weapon;
 
 namespace PFW.UI.Ingame
 {
+    /// <summary>
+    /// When a unit is selected, this class is used to show
+    /// the weapons of the unit at the bottom of the screen
+    /// (one instance of this class per weapon)
+    /// </summary>
     public sealed class WeaponSlot : MonoBehaviour
     {
         [SerializeField]
-        private Image _weaponIcon;
+        private Image _weaponIcon = null;
         [SerializeField]
-        private TextMeshProUGUI _traits;
+        private TextMeshProUGUI _traits = null;
         [SerializeField]
-        private TextMeshProUGUI _shotsLeft;
+        private TextMeshProUGUI _shotsLeft = null;
         [SerializeField]
-        private TextMeshProUGUI _reload;
+        private TextMeshProUGUI _reload = null;
 
         public void DisplayWeapon(Cannon weapon)
         {

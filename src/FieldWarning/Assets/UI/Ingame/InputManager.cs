@@ -517,7 +517,7 @@ namespace PFW.UI.Ingame
                     PlatoonBehaviour platoon = _selectionManager.FindPlatoonAtCursor();
                     if (platoon)
                     {
-                        _unitInfoPanel.ShowUnitInfo(platoon.Unit);
+                        _unitInfoPanel.ShowUnitInfo(platoon.Unit, platoon.Units[0].AllWeapons);
                     }
                     else 
                     {
