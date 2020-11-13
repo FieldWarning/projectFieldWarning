@@ -84,6 +84,8 @@ namespace PFW.UI.Ingame
         private TMPro.TextMeshProUGUI _rangeTooltipText;
         private GameObject _settingsMenu;
 
+        private UnitInfoPanel _unitInfoPanel;
+
         private Commands _commands;
 
         private void Awake()
@@ -94,6 +96,12 @@ namespace PFW.UI.Ingame
             _selectionManager = new SelectionManager(selectionPane);
 
             _commands = new Commands(GameSession.Singleton.Settings.Hotkeys);
+
+            _unitInfoPanel = FindObjectOfType<UnitInfoPanel>();
+            if (_unitInfoPanel == null)
+                throw new Exception("No UnitInfoPanel found in the scene!");
+            else
+                _unitInfoPanel.HideUnitInfo();
         }
 
         private void Start()
@@ -504,6 +512,18 @@ namespace PFW.UI.Ingame
                 {
                     Logger.LogWithoutSubsystem(LogLevel.BUG, "Smoke not implemented");
                 }
+                else if (_commands.ShowUnitInfo)
+                {
+                    PlatoonBehaviour platoon = _selectionManager.FindPlatoonAtCursor();
+                    if (platoon)
+                    {
+                        _unitInfoPanel.ShowUnitInfo(platoon.Unit, platoon.Units[0].AllWeapons);
+                    }
+                    else 
+                    {
+                        _unitInfoPanel.HideUnitInfo();
+                    }
+                }
             }
         }
 
@@ -689,6 +709,12 @@ namespace PFW.UI.Ingame
         public bool Smoke {
             get {
                 return Input.GetKeyDown(_hotkeys.Smoke);
+            }
+        }
+
+        public bool ShowUnitInfo {
+            get {
+                return Input.GetKeyDown(_hotkeys.UnitInfo);
             }
         }
     }

@@ -57,6 +57,8 @@ namespace PFW.Model.Settings
         private TMPro.TMP_InputField _weaponsOff = null;
         [SerializeField]
         private TMPro.TMP_InputField _smoke = null;
+        [SerializeField]
+        private TMPro.TMP_InputField _unitInfo = null;
 
         private void Start()
         {
@@ -75,6 +77,7 @@ namespace PFW.Model.Settings
             _stop.scrollSensitivity = 0;
             _weaponsOff.scrollSensitivity = 0;
             _smoke.scrollSensitivity = 0;
+            _unitInfo.scrollSensitivity = 0;
         }
 
         public void OnApply()
@@ -124,6 +127,7 @@ namespace PFW.Model.Settings
             _stop.text = config.Hotkeys.Stop;
             _weaponsOff.text = config.Hotkeys.WeaponsOff;
             _smoke.text = config.Hotkeys.Smoke;
+            _unitInfo.text = config.Hotkeys.UnitInfo;
         }
 
         private SettingsConfig GetFields()
@@ -149,7 +153,8 @@ namespace PFW.Model.Settings
                     MenuToggle = _menuToggle.text,
                     Stop = _stop.text.ToUpper(),
                     WeaponsOff = _weaponsOff.text.ToUpper(),
-                    Smoke = _smoke.text.ToUpper()
+                    Smoke = _smoke.text.ToUpper(),
+                    UnitInfo = _unitInfo.text.ToUpper()
                 }
             };
         }

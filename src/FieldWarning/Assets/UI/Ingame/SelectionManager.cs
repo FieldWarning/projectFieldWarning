@@ -298,6 +298,23 @@ namespace PFW.UI.Ingame
             return inside;
         }
 
+        public PlatoonBehaviour FindPlatoonAtCursor()
+        {
+            foreach (PlatoonBehaviour platoon in AllPlatoons)
+            {
+                // This checks if the icon is under the cursor:
+                Rect platoonLabel = platoon.SelectableRect.rect;
+                // To screen coordinates:
+                platoonLabel.center = platoon.SelectableRect.TransformPoint(
+                        platoonLabel.center);
+                platoonLabel.size = platoon.SelectableRect.TransformVector(
+                        platoonLabel.size);
+                if (platoonLabel.Contains(Input.mousePosition))
+                    return platoon;
+            }
+            return null;
+        }
+
         private void UnselectAll(
                 List<PlatoonBehaviour> selectedPlatoons, bool justPreviewing)
         {
