@@ -43,6 +43,9 @@ namespace PFW.Model.Settings
             WeaponsOff = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.WeaponsOff);
             Smoke = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.Smoke);
             UnitInfo = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.UnitInfo);
+            FlareAttack = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.FlareAttack);
+            FlareStop = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.FlareStop);
+            FlareCustom = (KeyCode)System.Enum.Parse(typeof(KeyCode), config.FlareCustom);
         }
 
         public KeyCode Unload;
@@ -58,5 +61,8 @@ namespace PFW.Model.Settings
         public KeyCode WeaponsOff;
         public KeyCode Smoke;
         public KeyCode UnitInfo;
+        public KeyCode FlareAttack;
+        public KeyCode FlareStop;
+        public KeyCode FlareCustom;
     }
 }

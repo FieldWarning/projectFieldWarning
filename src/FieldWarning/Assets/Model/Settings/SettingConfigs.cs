@@ -89,7 +89,16 @@ namespace PFW.Model.Settings.JsonContents
                             defaultConfig.Hotkeys.MenuToggle : localConfig.Hotkeys.MenuToggle,
 
                     UnitInfo = localConfig.Hotkeys.UnitInfo == null || localConfig.Hotkeys.UnitInfo == "" ?
-                            defaultConfig.Hotkeys.UnitInfo : localConfig.Hotkeys.UnitInfo
+                            defaultConfig.Hotkeys.UnitInfo : localConfig.Hotkeys.UnitInfo,
+
+                    FlareAttack = localConfig.Hotkeys.FlareAttack == null || localConfig.Hotkeys.FlareAttack == "" ?
+                            defaultConfig.Hotkeys.FlareAttack : localConfig.Hotkeys.FlareAttack,
+
+                    FlareStop = localConfig.Hotkeys.FlareStop == null || localConfig.Hotkeys.FlareStop == "" ?
+                            defaultConfig.Hotkeys.FlareStop : localConfig.Hotkeys.FlareStop,
+
+                    FlareCustom = localConfig.Hotkeys.FlareCustom == null || localConfig.Hotkeys.FlareCustom == "" ?
+                            defaultConfig.Hotkeys.FlareCustom : localConfig.Hotkeys.FlareCustom
                 }
             };
         }
@@ -117,5 +126,8 @@ namespace PFW.Model.Settings.JsonContents
         public string WeaponsOff;
         public string MenuToggle;
         public string UnitInfo;
+        public string FlareAttack;
+        public string FlareStop;
+        public string FlareCustom;
     }
 }

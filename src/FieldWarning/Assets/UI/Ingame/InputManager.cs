@@ -51,6 +51,7 @@ namespace PFW.UI.Ingame
             FAST_MOVE,    //< Left click fast moves to cursor, right click cancels.
             SPLIT,        //< Left click splits the platoon, right click cancels.
             VISION_RULER, //< Left click selects and cancels, right click cancels.
+            FLARE,        //< Left click places flare, right click cancels
             IN_MENU       //< Escape (or another hotkey) cancels, clicks do nothing
         };
 
@@ -524,6 +525,18 @@ namespace PFW.UI.Ingame
                         _unitInfoPanel.HideUnitInfo();
                     }
                 }
+                else if (_commands.PlaceAttackFlare)
+                {
+                    Logger.LogWithoutSubsystem(LogLevel.BUG, "Flare not implemented");
+                }
+                else if (_commands.PlaceStopFlare)
+                {
+                    Logger.LogWithoutSubsystem(LogLevel.BUG, "Flare not implemented");
+                }
+                else if (_commands.PlaceCustomFlare)
+                {
+                    Logger.LogWithoutSubsystem(LogLevel.BUG, "Flare not implemented");
+                }
             }
         }
 
@@ -715,6 +728,24 @@ namespace PFW.UI.Ingame
         public bool ShowUnitInfo {
             get {
                 return Input.GetKeyDown(_hotkeys.UnitInfo);
+            }
+        }
+
+        public bool PlaceAttackFlare {
+            get {
+                return Input.GetKeyDown(_hotkeys.FlareAttack);
+            }
+        }
+
+        public bool PlaceStopFlare {
+            get {
+                return Input.GetKeyDown(_hotkeys.FlareStop);
+            }
+        }
+
+        public bool PlaceCustomFlare {
+            get {
+                return Input.GetKeyDown(_hotkeys.FlareCustom);
             }
         }
     }
