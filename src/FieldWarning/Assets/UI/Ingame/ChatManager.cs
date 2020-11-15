@@ -46,7 +46,7 @@ namespace PFW.UI.Ingame
         private MatchSession _session = null;
 
         // Contains all sent messages, synched across all clients.
-        private SyncListString _sentMessages = new SyncListString();
+        private SyncList<string> _sentMessages = new SyncList<string>();
 
         private CommandConnection _connection { get { return CommandConnection.Connection; } }
 
@@ -61,7 +61,7 @@ namespace PFW.UI.Ingame
 
         // Called when we receive a new message from the server (or ourselves)
         private void OnChatUpdate(
-                SyncListString.Operation op, int index, string oldItem, string newItem)
+                SyncList<string>.Operation op, int index, string oldItem, string newItem)
         {
             // Update the UI element
             _messagesText.text += newItem;

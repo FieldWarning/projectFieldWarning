@@ -205,12 +205,17 @@ namespace PFW.Units
         /// <summary>
         /// Destroy this unit.
         /// </summary>
+        [Server]
         public void Destroy()
         {
             NetworkServer.Destroy(gameObject);
         }
-        
-        public override void OnNetworkDestroy()
+
+        public override void OnStopServer() => OnDestroyShared();
+
+        public override void OnStopClient() => OnDestroyShared();
+
+        private void OnDestroyShared()
         {
             // Model lingers as a wreck for 30s
             if (_deathEffect != null)
@@ -219,9 +224,9 @@ namespace PFW.Units
             }
 
             TargetTuple.Reset();
-                
+
             MatchSession.Current.RegisterUnitDeath(this);
-                
+
             Platoon.RemoveUnit(this);
         }
 
