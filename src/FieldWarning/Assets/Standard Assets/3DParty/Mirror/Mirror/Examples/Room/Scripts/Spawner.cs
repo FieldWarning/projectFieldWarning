@@ -1,26 +1,27 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Mirror.Examples.NetworkRoom
 {
-    public class Spawner : NetworkBehaviour
+    internal class Spawner: MonoBehaviour
     {
-        public NetworkIdentity prizePrefab;
+        [FormerlySerializedAs("prizePrefab")]
+        internal static GameObject rewardPrefab;
 
-        public override void OnStartServer()
+        internal static void InitialSpawn()
         {
+            if (!NetworkServer.active) return;
+
             for (int i = 0; i < 10; i++)
-                SpawnPrize();
+                SpawnReward();
         }
 
-        public void SpawnPrize()
+        internal static void SpawnReward()
         {
+            if (!NetworkServer.active) return;
+
             Vector3 spawnPosition = new Vector3(Random.Range(-19, 20), 1, Random.Range(-19, 20));
-
-            GameObject newPrize = Instantiate(prizePrefab.gameObject, spawnPosition, Quaternion.identity);
-            Reward reward = newPrize.gameObject.GetComponent<Reward>();
-            reward.spawner = this;
-
-            NetworkServer.Spawn(newPrize);
+            NetworkServer.Spawn(Instantiate(rewardPrefab, spawnPosition, Quaternion.identity));
         }
     }
 }

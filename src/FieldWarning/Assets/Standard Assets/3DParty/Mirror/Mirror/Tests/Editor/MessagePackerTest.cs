@@ -5,6 +5,17 @@ namespace Mirror.Tests
     [TestFixture]
     public class MessagePackerTest
     {
+        // helper function to pack message into a simple byte[]
+        public static byte[] PackToByteArray<T>(T message)
+            where T : struct, NetworkMessage
+        {
+            using (PooledNetworkWriter writer = NetworkWriterPool.GetWriter())
+            {
+                MessagePacker.Pack(message, writer);
+                return writer.ToArray();
+            }
+        }
+
         [Test]
         public void TestPacking()
         {
@@ -14,7 +25,7 @@ namespace Mirror.Tests
                 sceneOperation = SceneOperation.LoadAdditive
             };
 
-            byte[] data = MessagePacker.Pack(message);
+            byte[] data = PackToByteArray(message);
 
             SceneMessage unpacked = MessagePacker.Unpack<SceneMessage>(data);
 
@@ -27,7 +38,7 @@ namespace Mirror.Tests
         {
             ConnectMessage message = new ConnectMessage();
 
-            byte[] data = MessagePacker.Pack(message);
+            byte[] data = PackToByteArray(message);
 
             Assert.Throws<FormatException>(() =>
             {
@@ -47,7 +58,7 @@ namespace Mirror.Tests
                 sceneOperation = SceneOperation.LoadAdditive
             };
 
-            byte[] data = MessagePacker.Pack(message);
+            byte[] data = PackToByteArray(message);
 
             // overwrite the id
             data[0] = 0x01;
@@ -69,7 +80,7 @@ namespace Mirror.Tests
                 sceneOperation = SceneOperation.LoadAdditive
             };
 
-            byte[] data = MessagePacker.Pack(message);
+            byte[] data = PackToByteArray(message);
             NetworkReader reader = new NetworkReader(data);
 
             bool result = MessagePacker.UnpackMessage(reader, out int msgType);
