@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using kcp2k;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
-using kcp2k;
 
 namespace Mirror
 {
@@ -20,7 +20,7 @@ namespace Mirror
 
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkManager")]
-    [HelpURL("https://mirror-networking.com/docs/Components/NetworkManager.html")]
+    [HelpURL("https://mirror-networking.com/docs/Articles/Components/NetworkManager.html")]
     public class NetworkManager : MonoBehaviour
     {
         static readonly ILogger logger = LogFactory.GetLogger<NetworkManager>();
@@ -614,7 +614,10 @@ namespace Mirror
                 return;
 
             if (authenticator != null)
+            {
                 authenticator.OnServerAuthenticated.RemoveListener(OnServerAuthenticated);
+                authenticator.OnStopServer();
+            }
 
             OnStopServer();
 
@@ -642,7 +645,10 @@ namespace Mirror
         public void StopClient()
         {
             if (authenticator != null)
+            {
                 authenticator.OnClientAuthenticated.RemoveListener(OnClientAuthenticated);
+                authenticator.OnStopClient();
+            }
 
             OnStopClient();
 
@@ -817,7 +823,7 @@ namespace Mirror
 
         /// <summary>
         /// This causes the server to switch scenes and sets the networkSceneName.
-        /// <para>Clients that connect to this server will automatically switch to this scene. This is called autmatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready. The clients must call NetworkClient.Ready() again to participate in the new scene.</para>
+        /// <para>Clients that connect to this server will automatically switch to this scene. This is called autmatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready during the change and ready again to participate in the new scene.</para>
         /// </summary>
         /// <param name="newSceneName"></param>
         public virtual void ServerChangeScene(string newSceneName)

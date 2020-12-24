@@ -67,7 +67,7 @@ namespace Mirror
 
             RegisterSystemHandlers(false);
             Transport.activeTransport.enabled = true;
-            InitializeTransportHandlers();
+            AddTransportHandlers();
 
             connectState = ConnectState.Connecting;
             Transport.activeTransport.ClientConnect(address);
@@ -88,7 +88,7 @@ namespace Mirror
 
             RegisterSystemHandlers(false);
             Transport.activeTransport.enabled = true;
-            InitializeTransportHandlers();
+            AddTransportHandlers();
 
             connectState = ConnectState.Connecting;
             Transport.activeTransport.ClientConnect(uri);
@@ -145,12 +145,12 @@ namespace Mirror
             }
         }
 
-        static void InitializeTransportHandlers()
+        static void AddTransportHandlers()
         {
-            Transport.activeTransport.OnClientConnected.AddListener(OnConnected);
-            Transport.activeTransport.OnClientDataReceived.AddListener(OnDataReceived);
-            Transport.activeTransport.OnClientDisconnected.AddListener(OnDisconnected);
-            Transport.activeTransport.OnClientError.AddListener(OnError);
+            Transport.activeTransport.OnClientConnected = OnConnected;
+            Transport.activeTransport.OnClientDataReceived = OnDataReceived;
+            Transport.activeTransport.OnClientDisconnected = OnDisconnected;
+            Transport.activeTransport.OnClientError = OnError;
         }
 
         static void OnError(Exception exception)
@@ -216,18 +216,8 @@ namespace Mirror
                 {
                     connection.Disconnect();
                     connection = null;
-                    RemoveTransportHandlers();
                 }
             }
-        }
-
-        static void RemoveTransportHandlers()
-        {
-            // so that we don't register them more than once
-            Transport.activeTransport.OnClientConnected.RemoveListener(OnConnected);
-            Transport.activeTransport.OnClientDataReceived.RemoveListener(OnDataReceived);
-            Transport.activeTransport.OnClientDisconnected.RemoveListener(OnDisconnected);
-            Transport.activeTransport.OnClientError.RemoveListener(OnError);
         }
 
         /// <summary>
@@ -315,7 +305,7 @@ namespace Mirror
             {
                 logger.LogWarning($"NetworkClient.RegisterHandler replacing handler for {typeof(T).FullName}, id={msgType}. If replacement is intentional, use ReplaceHandler instead to avoid this warning.");
             }
-            handlers[msgType] = MessagePacker.MessageHandler(handler, requireAuthentication);
+            handlers[msgType] = MessagePacker.WrapHandler(handler, requireAuthentication);
         }
 
         /// <summary>
@@ -342,7 +332,7 @@ namespace Mirror
             where T : struct, NetworkMessage
         {
             int msgType = MessagePacker.GetId<T>();
-            handlers[msgType] = MessagePacker.MessageHandler(handler, requireAuthentication);
+            handlers[msgType] = MessagePacker.WrapHandler(handler, requireAuthentication);
         }
 
         /// <summary>

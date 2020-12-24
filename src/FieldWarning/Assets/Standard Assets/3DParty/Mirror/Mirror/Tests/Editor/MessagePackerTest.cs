@@ -5,6 +5,8 @@ namespace Mirror.Tests
     [TestFixture]
     public class MessagePackerTest
     {
+        public struct EmptyMessage : NetworkMessage { }
+
         // helper function to pack message into a simple byte[]
         public static byte[] PackToByteArray<T>(T message)
             where T : struct, NetworkMessage
@@ -13,6 +15,22 @@ namespace Mirror.Tests
             {
                 MessagePacker.Pack(message, writer);
                 return writer.ToArray();
+            }
+        }
+
+        // unpack a message we received
+        public static T UnpackFromByteArray<T>(byte[] data)
+            where T : struct, NetworkMessage
+        {
+            using (PooledNetworkReader networkReader = NetworkReaderPool.GetReader(data))
+            {
+                int msgType = MessagePacker.GetId<T>();
+
+                int id = networkReader.ReadUInt16();
+                if (id != msgType)
+                    throw new FormatException("Invalid message,  could not unpack " + typeof(T).FullName);
+
+                return networkReader.Read<T>();
             }
         }
 
@@ -27,7 +45,7 @@ namespace Mirror.Tests
 
             byte[] data = PackToByteArray(message);
 
-            SceneMessage unpacked = MessagePacker.Unpack<SceneMessage>(data);
+            SceneMessage unpacked = UnpackFromByteArray<SceneMessage>(data);
 
             Assert.That(unpacked.sceneName, Is.EqualTo("Hello world"));
             Assert.That(unpacked.sceneOperation, Is.EqualTo(SceneOperation.LoadAdditive));
@@ -42,7 +60,7 @@ namespace Mirror.Tests
 
             Assert.Throws<FormatException>(() =>
             {
-                DisconnectMessage unpacked = MessagePacker.Unpack<DisconnectMessage>(data);
+                DisconnectMessage unpacked = UnpackFromByteArray<DisconnectMessage>(data);
             });
         }
 
@@ -66,7 +84,7 @@ namespace Mirror.Tests
 
             Assert.Throws<FormatException>(() =>
             {
-                SceneMessage unpacked = MessagePacker.Unpack<SceneMessage>(data);
+                SceneMessage unpacked = UnpackFromByteArray<SceneMessage>(data);
             });
         }
 
@@ -83,7 +101,7 @@ namespace Mirror.Tests
             byte[] data = PackToByteArray(message);
             NetworkReader reader = new NetworkReader(data);
 
-            bool result = MessagePacker.UnpackMessage(reader, out int msgType);
+            bool result = MessagePacker.Unpack(reader, out int msgType);
             Assert.That(result, Is.EqualTo(true));
             Assert.That(msgType, Is.EqualTo(BitConverter.ToUInt16(data, 0)));
         }
@@ -93,9 +111,20 @@ namespace Mirror.Tests
         {
             // try an invalid message
             NetworkReader reader2 = new NetworkReader(new byte[0]);
-            bool result2 = MessagePacker.UnpackMessage(reader2, out int msgType2);
+            bool result2 = MessagePacker.Unpack(reader2, out int msgType2);
             Assert.That(result2, Is.EqualTo(false));
             Assert.That(msgType2, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void MessageIdIsCorrectLength()
+        {
+            NetworkWriter writer = new NetworkWriter();
+            MessagePacker.Pack(new EmptyMessage(), writer);
+
+            ArraySegment<byte> segment = writer.ToArraySegment();
+
+            Assert.That(segment.Count, Is.EqualTo(MessagePacker.HeaderSize), "Empty message should have same size as HeaderSize");
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Mirror
         static readonly ILogger logger = LogFactory.GetLogger(typeof(NetworkServer));
 
         static bool initialized;
-        static int maxConnections;
+        public static int maxConnections;
 
         /// <summary>
         /// The connection to the host mode client (if any).
@@ -90,11 +90,6 @@ namespace Mirror
                     Transport.activeTransport.ServerStop();
                 }
 
-                Transport.activeTransport.OnServerDisconnected.RemoveListener(OnDisconnected);
-                Transport.activeTransport.OnServerConnected.RemoveListener(OnConnected);
-                Transport.activeTransport.OnServerDataReceived.RemoveListener(OnDataReceived);
-                Transport.activeTransport.OnServerError.RemoveListener(OnError);
-
                 initialized = false;
             }
             dontListen = false;
@@ -138,10 +133,7 @@ namespace Mirror
             connections.Clear();
 
             logger.Assert(Transport.activeTransport != null, "There was no active transport when calling NetworkServer.Listen, If you are calling Listen manually then make sure to set 'Transport.activeTransport' first");
-            Transport.activeTransport.OnServerDisconnected.AddListener(OnDisconnected);
-            Transport.activeTransport.OnServerConnected.AddListener(OnConnected);
-            Transport.activeTransport.OnServerDataReceived.AddListener(OnDataReceived);
-            Transport.activeTransport.OnServerError.AddListener(OnError);
+            AddTransportHandlers();
         }
 
         internal static void RegisterMessageHandlers()
@@ -495,6 +487,14 @@ namespace Mirror
             }
         }
 
+        static void AddTransportHandlers()
+        {
+            Transport.activeTransport.OnServerConnected = OnConnected;
+            Transport.activeTransport.OnServerDataReceived = OnDataReceived;
+            Transport.activeTransport.OnServerDisconnected = OnDisconnected;
+            Transport.activeTransport.OnServerError = OnError;
+        }
+
         static void OnConnected(int connectionId)
         {
             if (logger.LogEnabled()) logger.Log("Server accepted client:" + connectionId);
@@ -596,7 +596,7 @@ namespace Mirror
             {
                 logger.LogWarning($"NetworkServer.RegisterHandler replacing handler for {typeof(T).FullName}, id={msgType}. If replacement is intentional, use ReplaceHandler instead to avoid this warning.");
             }
-            handlers[msgType] = MessagePacker.MessageHandler(handler, requireAuthentication);
+            handlers[msgType] = MessagePacker.WrapHandler(handler, requireAuthentication);
         }
 
         /// <summary>
@@ -623,7 +623,7 @@ namespace Mirror
             where T : struct, NetworkMessage
         {
             int msgType = MessagePacker.GetId<T>();
-            handlers[msgType] = MessagePacker.MessageHandler(handler, requireAuthentication);
+            handlers[msgType] = MessagePacker.WrapHandler(handler, requireAuthentication);
         }
 
         /// <summary>

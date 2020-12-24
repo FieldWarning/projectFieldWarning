@@ -18,6 +18,11 @@ namespace Mirror
     {
         static readonly ILogger logger = LogFactory.GetLogger(typeof(MessagePacker));
 
+        /// <summary>
+        /// this is the minimum size of a message that mirror will accept
+        /// </summary>
+        internal const int HeaderSize = sizeof(ushort);
+
         public static int GetId<T>() where T : struct, NetworkMessage
         {
             // paul: 16 bits is enough to avoid collisions
@@ -39,27 +44,11 @@ namespace Mirror
             writer.Write(message);
         }
 
-        // unpack a message we received
-        public static T Unpack<T>(byte[] data)
-            where T : struct, NetworkMessage
-        {
-            using (PooledNetworkReader networkReader = NetworkReaderPool.GetReader(data))
-            {
-                int msgType = GetId<T>();
-
-                int id = networkReader.ReadUInt16();
-                if (id != msgType)
-                    throw new FormatException("Invalid message,  could not unpack " + typeof(T).FullName);
-
-                return networkReader.Read<T>();
-            }
-        }
-
         // unpack message after receiving
         // -> pass NetworkReader so it's less strange if we create it in here
         //    and pass it upwards.
         // -> NetworkReader will point at content afterwards!
-        public static bool UnpackMessage(NetworkReader messageReader, out int msgType)
+        public static bool Unpack(NetworkReader messageReader, out int msgType)
         {
             // read message type (varint)
             try
@@ -74,7 +63,11 @@ namespace Mirror
             }
         }
 
-        internal static NetworkMessageDelegate MessageHandler<T, C>(Action<C, T> handler, bool requireAuthenication)
+        [Obsolete("MessagePacker.UnpackMessage was renamed to Unpack for consistency with Pack.")]
+        public static bool UnpackMessage(NetworkReader messageReader, out int msgType) =>
+            Unpack(messageReader, out msgType);
+
+        internal static NetworkMessageDelegate WrapHandler<T, C>(Action<C, T> handler, bool requireAuthentication)
             where T : struct, NetworkMessage
             where C : NetworkConnection
             => (conn, reader, channelId) =>
@@ -94,7 +87,7 @@ namespace Mirror
             T message = default;
             try
             {
-                if (requireAuthenication && !conn.isAuthenticated)
+                if (requireAuthentication && !conn.isAuthenticated)
                 {
                     // message requires authentication, but the connection was not authenticated
                     logger.LogWarning($"Closing connection: {conn}. Received message {typeof(T)} that required authentication, but the user has not authenticated yet");
@@ -102,13 +95,15 @@ namespace Mirror
                     return;
                 }
 
+                if (logger.LogEnabled()) logger.Log($"ConnectionRecv {conn} msgType:{typeof(T)} content:{BitConverter.ToString(reader.buffer.Array, reader.buffer.Offset, reader.buffer.Count)}");
+
                 // if it is a value type, just use defult(T)
                 // otherwise allocate a new instance
                 message = reader.Read<T>();
             }
             catch (Exception exception)
             {
-                logger.LogError("Closed connection: " + conn + ". This can happen if the other side accidentally (or an attacker intentionally) sent invalid data. Reason: " + exception);
+                logger.LogError($"Closed connection: {conn}. This can happen if the other side accidentally (or an attacker intentionally) sent invalid data. Reason: {exception}");
                 conn.Disconnect();
                 return;
             }
@@ -118,7 +113,17 @@ namespace Mirror
                 NetworkDiagnostics.OnReceive(message, channelId, reader.Length);
             }
 
-            handler((C)conn, message);
+            // user handler exception should not stop the whole server
+            try
+            {
+                // user implemented handler
+                handler((C)conn, message);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Exception in MessageHandler: {e.GetType().Name} {e.Message} {e.StackTrace}");
+                conn.Disconnect();
+            }
         };
     }
 }

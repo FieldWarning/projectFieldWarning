@@ -233,25 +233,25 @@ namespace Mirror
         /// <param name="buffer">The data received.</param>
         internal void TransportReceive(ArraySegment<byte> buffer, int channelId)
         {
-            if (buffer.Count == 0)
+            if (buffer.Count < MessagePacker.HeaderSize)
             {
-                logger.LogError($"ConnectionRecv {this} Message was empty");
+                logger.LogError($"ConnectionRecv {this} Message was too short (messages should start with message id)");
+                Disconnect();
                 return;
             }
 
             // unpack message
-            using (PooledNetworkReader networkReader = NetworkReaderPool.GetReader(buffer))
+            using (PooledNetworkReader reader = NetworkReaderPool.GetReader(buffer))
             {
-                if (MessagePacker.UnpackMessage(networkReader, out int msgType))
+                if (MessagePacker.Unpack(reader, out int msgType))
                 {
-                    // logging
-                    if (logger.LogEnabled()) logger.Log("ConnectionRecv " + this + " msgType:" + msgType + " content:" + BitConverter.ToString(buffer.Array, buffer.Offset, buffer.Count));
-
                     // try to invoke the handler for that message
-                    if (InvokeHandler(msgType, networkReader, channelId))
+                    if (messageHandlers.TryGetValue(msgType, out NetworkMessageDelegate msgDelegate))
                     {
+                        msgDelegate.Invoke(this, reader, channelId);
                         lastMessageTime = Time.time;
                     }
+                    else if (logger.LogEnabled()) logger.Log("Unknown message ID " + msgType + " " + this + ". May be due to no existing RegisterHandler for this message.");
                 }
                 else
                 {

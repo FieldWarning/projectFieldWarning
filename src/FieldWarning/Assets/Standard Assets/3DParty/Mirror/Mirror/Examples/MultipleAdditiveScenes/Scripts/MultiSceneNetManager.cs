@@ -33,9 +33,6 @@ namespace Mirror.Examples.MultipleAdditiveScenes
         /// <param name="conn">Connection from client.</param>
         public override void OnServerAddPlayer(NetworkConnection conn)
         {
-            // increment the index before adding the player, so first player starts at 1
-            clientIndex++;
-
             StartCoroutine(OnServerAddPlayerDelayed(conn));
         }
 
@@ -56,6 +53,8 @@ namespace Mirror.Examples.MultipleAdditiveScenes
             playerScore.scoreIndex = clientIndex / subScenes.Count;
             playerScore.matchIndex = clientIndex % subScenes.Count;
 
+            clientIndex++;
+
             if (subScenes.Count > 0)
                 SceneManager.MoveGameObjectToScene(conn.identity.gameObject, subScenes[clientIndex % subScenes.Count]);
         }
@@ -70,7 +69,6 @@ namespace Mirror.Examples.MultipleAdditiveScenes
         /// </summary>
         public override void OnStartServer()
         {
-            Spawner.rewardPrefab = rewardPrefab;
             StartCoroutine(ServerLoadSubScenes());
         }
 
@@ -98,6 +96,7 @@ namespace Mirror.Examples.MultipleAdditiveScenes
         {
             NetworkServer.SendToAll(new SceneMessage { sceneName = gameScene, sceneOperation = SceneOperation.UnloadAdditive });
             StartCoroutine(ServerUnloadSubScenes());
+            clientIndex = 0;
         }
 
         // Unload the subScenes and unused assets and clear the subScenes list.
@@ -107,6 +106,7 @@ namespace Mirror.Examples.MultipleAdditiveScenes
                 yield return SceneManager.UnloadSceneAsync(subScenes[index]);
 
             subScenes.Clear();
+            subscenesLoaded = false;
 
             yield return Resources.UnloadUnusedAssets();
         }
