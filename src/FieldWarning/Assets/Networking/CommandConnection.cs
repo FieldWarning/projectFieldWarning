@@ -202,7 +202,10 @@ namespace PFW.Networking
 
             if (MatchSession.Current.Players.Count > playerId)
             {
-                UI.Ingame.Flare flare = UI.Ingame.Flare.Create(flareMessage, flarePos);
+                UI.Ingame.Flare flare = UI.Ingame.Flare.Create(
+                        flareMessage, 
+                        flarePos,
+                        MatchSession.Current.Players[playerId].Team);
                 NetworkServer.Spawn(flare.gameObject);
             }
             else

@@ -590,7 +590,10 @@ namespace PFW.UI.Ingame
             if (Util.GetTerrainClickLocation(out RaycastHit hit))
             {
                 CurMouseMode = MouseMode.FLARE;
-                _flare = Flare.Create(flareMessage, hit.point);
+                _flare = Flare.Create(
+                        flareMessage, 
+                        hit.point, 
+                        MatchSession.Current.LocalPlayer.Data.Team);
             }
         }
 

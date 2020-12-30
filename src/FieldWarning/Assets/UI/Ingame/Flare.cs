@@ -12,6 +12,7 @@
  */
 
 
+using PFW.Model.Match;
 using UnityEngine;
 
 namespace PFW.UI.Ingame
@@ -24,15 +25,29 @@ namespace PFW.UI.Ingame
     {
         [SerializeField]
         private TMPro.TextMeshProUGUI _text = null;
+        [SerializeField]
+        private GameObject _green = null;
+        [SerializeField]
+        private GameObject _red = null;
 
         public string Text { get { return _text.text; } }
 
-        public static Flare Create(string text, Vector3 position)
+        public static Flare Create(string text, Vector3 position, Team team)
         {
             GameObject go = Instantiate(Resources.Load<GameObject>("Flare"));
             Flare flare = go.GetComponent<Flare>();
             flare._text.text = text;
             go.transform.position = position;
+
+            if (team.Name == "USSR")
+            {
+                flare._red.SetActive(true);
+            }
+            else
+            {
+                flare._green.SetActive(true);
+            }
+
             return flare;
         }
     }
