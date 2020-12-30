@@ -11,7 +11,6 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-
 using PFW.Model.Match;
 using UnityEngine;
 
@@ -49,6 +48,15 @@ namespace PFW.UI.Ingame
             }
 
             return flare;
+        }
+
+        /// <summary>
+        /// Called when the flare label is right clicked.
+        /// Tells the server to destroy the flare.
+        /// </summary>
+        public void Destroy()
+        {
+            Destroy(gameObject);
         }
     }
 }
