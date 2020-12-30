@@ -147,7 +147,7 @@ namespace PFW.Networking
             {
                 // Got an invalid player id, server is trying to crash us?
                 Debug.LogError(
-                    "Client asked to create a platoon with an invalid player id.");
+                        "Client asked to create a platoon with an invalid player id.");
             }
         }
 
@@ -182,6 +182,35 @@ namespace PFW.Networking
             {
                 PlatoonBehaviour platoon = identity.gameObject.GetComponent<PlatoonBehaviour>();
                 platoon.RpcCancelOrders();
+            }
+        }
+
+        /// <summary>
+        /// Spawn a flare, which is a way for players to draw on the map.
+        /// </summary>
+        [Command]
+        public void CmdSpawnFlare(
+                string flareMessage,
+                byte playerId,
+                Vector3 flarePos)
+        {
+            Logger.LogNetworking(
+                    LogLevel.DEBUG,
+                    this,
+                    $"Spawning flare '{flareMessage}' at {flarePos}, " +
+                    $"requested by player {playerId}.");
+
+            if (MatchSession.Current.Players.Count > playerId)
+            {
+                UI.Ingame.Flare flare = UI.Ingame.Flare.Create(flareMessage, flarePos);
+                NetworkServer.Spawn(flare.gameObject);
+            }
+            else
+            {
+                // Got an invalid player id, client is trying to crash us?
+                Debug.LogError(
+                        $"Client asked to create a flare " +
+                        $"with an invalid player id ({playerId}).");
             }
         }
     }
