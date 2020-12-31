@@ -11,7 +11,9 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using Mirror;
 using PFW.Model.Match;
+using PFW.Networking;
 using UnityEngine;
 
 namespace PFW.UI.Ingame
@@ -20,7 +22,7 @@ namespace PFW.UI.Ingame
     /// Players can press F1 to place a flare on the map,
     /// which is a graphic indicator visible to their own team only.
     /// </summary>
-    public sealed class Flare : MonoBehaviour
+    public sealed class Flare : NetworkBehaviour
     {
         [SerializeField]
         private TMPro.TextMeshProUGUI _text = null;
@@ -31,23 +33,61 @@ namespace PFW.UI.Ingame
 
         public string Text { get { return _text.text; } }
 
+        public override bool OnSerialize(NetworkWriter writer, bool initialState)
+        {
+            bool canSend = false;
+            if (initialState)
+            {
+                writer.WriteBoolean(_red.activeSelf ? true : false);
+                writer.WriteString(Text);
+                canSend = true;
+            }
+            else
+            {
+                // Not supported
+            }
+
+            return canSend;
+        }
+
+        public override void OnDeserialize(NetworkReader reader, bool initialState)
+        {
+            if (initialState)
+            {
+                bool isRed = reader.ReadBoolean();
+                string text = reader.ReadString();
+
+                Initialize(text, isRed);
+            }
+            else
+            {
+                // Not supported
+            }
+        }
+
         public static Flare Create(string text, Vector3 position, Team team)
         {
             GameObject go = Instantiate(Resources.Load<GameObject>("Flare"));
             Flare flare = go.GetComponent<Flare>();
-            flare._text.text = text;
             go.transform.position = position;
 
-            if (team.Name == "USSR")
+            flare.Initialize(text, team.Name == "USSR");
+
+            return flare;
+        }
+
+        private void Initialize(string text, bool isRed)
+        {
+            _text.text = text;
+
+            if (isRed)
             {
-                flare._red.SetActive(true);
+                _red.SetActive(true);
             }
             else
             {
-                flare._green.SetActive(true);
+                _green.SetActive(true);
             }
-
-            return flare;
         }
 
         /// <summary>
@@ -56,7 +96,7 @@ namespace PFW.UI.Ingame
         /// </summary>
         public void Destroy()
         {
-            Destroy(gameObject);
+            CommandConnection.Connection.CmdDestroyFlare(netId);
         }
     }
 }

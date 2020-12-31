@@ -216,5 +216,18 @@ namespace PFW.Networking
                         $"with an invalid player id ({playerId}).");
             }
         }
+
+        /// <summary>
+        /// Called when any player right-clicks a flare
+        /// </summary>
+        [Command]
+        public void CmdDestroyFlare(uint flareNetId)
+        {
+            NetworkIdentity identity;
+            if (NetworkIdentity.spawned.TryGetValue(flareNetId, out identity))
+            {
+                Destroy(identity.gameObject);
+            }
+        }
     }
 }
