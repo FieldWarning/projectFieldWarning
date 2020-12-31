@@ -59,6 +59,12 @@ namespace PFW.Model.Settings
         private TMPro.TMP_InputField _smoke = null;
         [SerializeField]
         private TMPro.TMP_InputField _unitInfo = null;
+        [SerializeField]
+        private TMPro.TMP_InputField _flareAttack = null;
+        [SerializeField]
+        private TMPro.TMP_InputField _flareStop = null;
+        [SerializeField]
+        private TMPro.TMP_InputField _flareCustom = null;
 
         private void Start()
         {
@@ -78,6 +84,9 @@ namespace PFW.Model.Settings
             _weaponsOff.scrollSensitivity = 0;
             _smoke.scrollSensitivity = 0;
             _unitInfo.scrollSensitivity = 0;
+            _flareAttack.scrollSensitivity = 0;
+            _flareStop.scrollSensitivity = 0;
+            _flareCustom.scrollSensitivity = 0;
         }
 
         public void OnApply()
@@ -128,6 +137,9 @@ namespace PFW.Model.Settings
             _weaponsOff.text = config.Hotkeys.WeaponsOff;
             _smoke.text = config.Hotkeys.Smoke;
             _unitInfo.text = config.Hotkeys.UnitInfo;
+            _flareAttack.text = config.Hotkeys.FlareAttack;
+            _flareStop.text = config.Hotkeys.FlareStop;
+            _flareCustom.text = config.Hotkeys.FlareCustom;
         }
 
         private SettingsConfig GetFields()
@@ -154,7 +166,10 @@ namespace PFW.Model.Settings
                     Stop = _stop.text.ToUpper(),
                     WeaponsOff = _weaponsOff.text.ToUpper(),
                     Smoke = _smoke.text.ToUpper(),
-                    UnitInfo = _unitInfo.text.ToUpper()
+                    UnitInfo = _unitInfo.text.ToUpper(),
+                    FlareAttack = _flareAttack.text.ToUpper(),
+                    FlareStop = _flareStop.text.ToUpper(),
+                    FlareCustom = _flareCustom.text.ToUpper()
                 }
             };
         }

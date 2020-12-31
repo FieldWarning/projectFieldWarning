@@ -9,7 +9,7 @@ namespace Mirror
     /// </summary>
     [AddComponentMenu("Network/NetworkProximityChecker")]
     [RequireComponent(typeof(NetworkIdentity))]
-    [HelpURL("https://mirror-networking.com/docs/Components/NetworkProximityChecker.html")]
+    [HelpURL("https://mirror-networking.com/docs/Articles/Components/NetworkProximityChecker.html")]
     public class NetworkProximityChecker : NetworkVisibility
     {
         /// <summary>
@@ -31,18 +31,19 @@ namespace Mirror
         [Tooltip("Enable to force this object to be hidden from players.")]
         public bool forceHidden;
 
-        float lastUpdateTime;
 
-        void Update()
+        public override void OnStartServer()
         {
-            if (!NetworkServer.active)
-                return;
+            InvokeRepeating(nameof(RebuildObservers), 0, visUpdateInterval);
+        }
+        public override void OnStopServer()
+        {
+            CancelInvoke(nameof(RebuildObservers));
+        }
 
-            if (Time.time - lastUpdateTime > visUpdateInterval)
-            {
-                netIdentity.RebuildObservers(false);
-                lastUpdateTime = Time.time;
-            }
+        void RebuildObservers()
+        {
+            netIdentity.RebuildObservers(false);
         }
 
         /// <summary>

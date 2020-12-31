@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -10,7 +11,7 @@ namespace Mirror.Tests.RemoteAttrributeTest
         public event Action<int> onSendInt;
 
         [Command]
-        public void CmdSendInt(int someInt)
+        public void SendInt(int someInt)
         {
             onSendInt?.Invoke(someInt);
         }
@@ -49,6 +50,17 @@ namespace Mirror.Tests.RemoteAttrributeTest
         }
     }
 
+    class ThrowBehaviour : NetworkBehaviour
+    {
+        public const string ErrorMessage = "Bad things happened";
+
+        [Command]
+        public void SendThrow(int someInt)
+        {
+            throw new Exception(ErrorMessage);
+        }
+    }
+
     public class CommandTest : RemoteTestBase
     {
         [Test]
@@ -64,7 +76,7 @@ namespace Mirror.Tests.RemoteAttrributeTest
                 callCount++;
                 Assert.That(incomingInt, Is.EqualTo(someInt));
             };
-            hostBehaviour.CmdSendInt(someInt);
+            hostBehaviour.SendInt(someInt);
             ProcessMessages();
             Assert.That(callCount, Is.EqualTo(1));
         }
@@ -81,8 +93,8 @@ namespace Mirror.Tests.RemoteAttrributeTest
             {
                 callCount++;
             };
-            LogAssert.Expect(LogType.Warning, $"Trying to send command for object without authority. {typeof(AuthorityBehaviour).ToString()}.{nameof(AuthorityBehaviour.CmdSendInt)}");
-            hostBehaviour.CmdSendInt(someInt);
+            LogAssert.Expect(LogType.Warning, $"Trying to send command for object without authority. {typeof(AuthorityBehaviour).ToString()}.{nameof(AuthorityBehaviour.SendInt)}");
+            hostBehaviour.SendInt(someInt);
             ProcessMessages();
             Assert.That(callCount, Is.Zero);
         }
@@ -165,6 +177,23 @@ namespace Mirror.Tests.RemoteAttrributeTest
             hostBehaviour.CmdSendInt(someInt);
             ProcessMessages();
             Assert.That(callCount, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void CommandThatThrowsShouldBeCaught()
+        {
+            ThrowBehaviour hostBehaviour = CreateHostObject<ThrowBehaviour>(true);
+
+            const int someInt = 20;
+            NetworkConnectionToClient connectionToClient = NetworkServer.connections[0];
+            Debug.Assert(connectionToClient != null, $"connectionToClient was null, This means that the test is broken and will give the wrong results");
+
+            LogAssert.Expect(LogType.Error, new Regex($".*{ThrowBehaviour.ErrorMessage}.*"));
+            Assert.DoesNotThrow(() =>
+            {
+                hostBehaviour.SendThrow(someInt);
+                ProcessMessages();
+            }, "Processing new message should not throw, the execption from SendThrow should be caught");
         }
     }
 }

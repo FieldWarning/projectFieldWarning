@@ -19,6 +19,9 @@
         "Smoke": "B",
         "WeaponsOff": "H",
         "MenuToggle": "Escape",
-        "UnitInfo": "I"
+        "UnitInfo": "I",
+        "FlareAttack": "F1",
+        "FlareStop": "F2",
+        "FlareCustom": "F3"
     }
 }

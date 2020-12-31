@@ -23,6 +23,7 @@ using PFW.Model.Match;
 using PFW.Model.Settings;
 using PFW.Units;
 using PFW.Units.Component.Movement;
+using PFW.Networking;
 
 namespace PFW.UI.Ingame
 {
@@ -42,6 +43,10 @@ namespace PFW.UI.Ingame
         private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
+        // When a flare is being previewed (has not been placed yet),
+        // it is stored in this variable
+        private Flare _flare;
+
         public enum MouseMode {
             NORMAL,       //< Left click selects, right click orders normal movement or attack.
             NORMAL_COVER, //< Same as above, cursor over forest
@@ -51,6 +56,7 @@ namespace PFW.UI.Ingame
             FAST_MOVE,    //< Left click fast moves to cursor, right click cancels.
             SPLIT,        //< Left click splits the platoon, right click cancels.
             VISION_RULER, //< Left click selects and cancels, right click cancels.
+            FLARE,        //< Left click places flare, right click cancels
             IN_MENU       //< Escape (or another hotkey) cancels, clicks do nothing
         };
 
@@ -163,6 +169,44 @@ namespace PFW.UI.Ingame
                 }
 
                 MaybeExitPurchasingModeAndRefund();
+                break;
+            }
+            case MouseMode.FLARE:
+            {
+                if (Input.GetMouseButton(1))
+                {
+                    ExitFlareMode();
+                }
+                else if (Util.GetTerrainClickLocation(out RaycastHit hit))
+                {
+                    if (Input.GetMouseButton(0))
+                    {
+                        CommandConnection.Connection.CmdSpawnFlare(
+                            _flare.Text,
+                            MatchSession.Current.LocalPlayer.Data.Id,
+                            hit.point);
+
+                        ExitFlareMode();
+                    }
+                    else
+                    {
+                        _flare.transform.position = hit.point;
+                        _flare.gameObject.SetActive(true);
+                    }
+                }
+                else
+                {
+                    if (Input.GetMouseButton(0))
+                    {
+                        ExitFlareMode();
+                    }
+                    else
+                    {
+                        // We only hide the flare if the cursor is hovering somewhere bad
+                        _flare.gameObject.SetActive(false);
+                    }
+                }
+
                 break;
             }
             case MouseMode.NORMAL:
@@ -524,7 +568,40 @@ namespace PFW.UI.Ingame
                         _unitInfoPanel.HideUnitInfo();
                     }
                 }
+                else if (_commands.PlaceAttackFlare)
+                {
+                    EnterFlareMode("Attack!");
+                }
+                else if (_commands.PlaceStopFlare)
+                {
+                    EnterFlareMode("Stop!");
+                }
+                else if (_commands.PlaceCustomFlare)
+                {
+                    // TODO the behavior here should be - use whatever the user types
+                    //      before clicking to place the flare as the message
+                    EnterFlareMode("Help!");
+                }
             }
+        }
+
+        private void EnterFlareMode(string flareMessage)
+        {
+            if (Util.GetTerrainClickLocation(out RaycastHit hit))
+            {
+                CurMouseMode = MouseMode.FLARE;
+                _flare = Flare.Create(
+                        flareMessage, 
+                        hit.point, 
+                        MatchSession.Current.LocalPlayer.Data.Team);
+            }
+        }
+
+        private void ExitFlareMode()
+        {
+            Destroy(_flare.gameObject);
+            _flare = null;
+            EnterNormalModeNaive();
         }
 
         private void EnterFirePosMode()
@@ -715,6 +792,24 @@ namespace PFW.UI.Ingame
         public bool ShowUnitInfo {
             get {
                 return Input.GetKeyDown(_hotkeys.UnitInfo);
+            }
+        }
+
+        public bool PlaceAttackFlare {
+            get {
+                return Input.GetKeyDown(_hotkeys.FlareAttack);
+            }
+        }
+
+        public bool PlaceStopFlare {
+            get {
+                return Input.GetKeyDown(_hotkeys.FlareStop);
+            }
+        }
+
+        public bool PlaceCustomFlare {
+            get {
+                return Input.GetKeyDown(_hotkeys.FlareCustom);
             }
         }
     }

@@ -19,20 +19,40 @@ namespace Mirror.Authenticators
 
         public void Awake()
         {
-            authenticator.OnClientAuthenticated.AddListener(connection => OnClientAuthenticated.Invoke(connection));
             authenticator.OnServerAuthenticated.AddListener(connection => OnServerAuthenticated.Invoke(connection));
+            authenticator.OnClientAuthenticated.AddListener(connection => OnClientAuthenticated.Invoke(connection));
         }
 
-        public override void OnClientAuthenticate(NetworkConnection conn)
+        public override void OnStartServer()
         {
-            authenticator.OnClientAuthenticate(conn);
-            if (timeout > 0)
-                StartCoroutine(BeginAuthentication(conn));
+            authenticator.OnStartServer();
+        }
+
+        public override void OnStopServer()
+        {
+            authenticator.OnStopServer();
+        }
+
+        public override void OnStartClient()
+        {
+            authenticator.OnStartClient();
+        }
+
+        public override void OnStopClient()
+        {
+            authenticator.OnStopClient();
         }
 
         public override void OnServerAuthenticate(NetworkConnection conn)
         {
             authenticator.OnServerAuthenticate(conn);
+            if (timeout > 0)
+                StartCoroutine(BeginAuthentication(conn));
+        }
+
+        public override void OnClientAuthenticate(NetworkConnection conn)
+        {
+            authenticator.OnClientAuthenticate(conn);
             if (timeout > 0)
                 StartCoroutine(BeginAuthentication(conn));
         }
