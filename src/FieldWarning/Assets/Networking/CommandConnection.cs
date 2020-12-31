@@ -185,6 +185,7 @@ namespace PFW.Networking
             }
         }
 
+        #region flares
         /// <summary>
         /// Spawn a flare, which is a way for players to draw on the map.
         /// </summary>
@@ -229,5 +230,6 @@ namespace PFW.Networking
                 Destroy(identity.gameObject);
             }
         }
+        #endregion flares
     }
 }
