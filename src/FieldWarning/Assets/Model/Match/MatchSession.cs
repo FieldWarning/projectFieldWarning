@@ -169,6 +169,15 @@ namespace PFW.Model.Match
                 if (!NetworkClient.isConnected)
                     _networkManager.StartHost();
 #endif
+
+                // Mirror requires us to register prefabs that will be spawned on the network.
+                // Normally this is done by adding them to the network manager prefab,
+                // but that list can get wiped when upgrading mirror, so it's
+                // more maintainable to do it here:
+                _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("Flare"));
+                _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("Platoon"));
+                _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("GhostPlatoon"));
+                _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("UnitTemplatePrefabs/GroundUnit"));
             }
         }
 
