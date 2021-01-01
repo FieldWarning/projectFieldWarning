@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 2264341349980225376}
   - component: {fileID: 6167598275412541434}
   - component: {fileID: 1096006565048501549}
+  - component: {fileID: 4860011121460885141}
   m_Layer: 0
   m_Name: Flare
   m_TagString: Untagged
@@ -157,6 +158,20 @@ MonoBehaviour:
   _text: {fileID: 8934546085944091700}
   _green: {fileID: 7360785623303390548}
   _red: {fileID: 8639602041365192456}
+--- !u!114 &4860011121460885141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4691674939778689666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cc1e24d71fa2bb4a86df08f6a5ec1c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!1 &5360934832922354089
 GameObject:
   m_ObjectHideFlags: 0

@@ -71,7 +71,7 @@ namespace PFW.UI.Ingame
             Flare flare = go.GetComponent<Flare>();
             go.transform.position = position;
 
-            flare.Initialize(text, team.Name == "USSR");
+            flare.Initialize(text, team.Name == Team.TeamName.USSR);
 
             return flare;
         }
@@ -88,6 +88,9 @@ namespace PFW.UI.Ingame
             {
                 _green.SetActive(true);
             }
+
+            GetComponent<NetworkTeamVisibility>().Initialize(
+                    isRed ? Team.TeamName.USSR : Team.TeamName.NATO);
         }
 
         /// <summary>

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1868425650533144290}
   - component: {fileID: 764372465986960222}
   - component: {fileID: 2394355769171181390}
+  - component: {fileID: 2463988897190948223}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -44,9 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneId: 0
   serverOnly: 0
   m_AssetId: 
-  m_SceneId: 3544203059
+  hasSpawned: 0
 --- !u!114 &2394355769171181390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,3 +64,19 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   ChatManager: {fileID: 0}
+--- !u!114 &2463988897190948223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2471436283047679579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4a69537f67e8f46a3bf337d6d9ebe7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  Team: 0
+  MatchPlayerId: 0

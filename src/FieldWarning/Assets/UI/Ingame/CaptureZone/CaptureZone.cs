@@ -56,7 +56,7 @@ namespace PFW.UI.Ingame
                 {
                     newOwner = unit.Platoon.Owner;
                     // Names are USSR and NATO
-                    if (newOwner.Team.Name == "USSR") 
+                    if (newOwner.Team.Name == Team.TeamName.USSR) 
                     {
                         redIncluded = true;
                     }
@@ -104,7 +104,7 @@ namespace PFW.UI.Ingame
             _owner = newOwner;
             if (_owner != null)
             {
-                if (_owner.Team.Name == "USSR")
+                if (_owner.Team.Name == Team.TeamName.USSR)
                 {
                     GetComponent<MeshRenderer>().material = Red;
                 }

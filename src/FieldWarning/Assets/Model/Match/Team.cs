@@ -19,7 +19,8 @@ namespace PFW.Model.Match
 {
     public class Team : MonoBehaviour
     {
-        public string Name;
+        public enum TeamName { UNDEFINED, USSR, NATO };
+        public TeamName Name;
         public TeamColorScheme ColorScheme;
 
         public List<PlayerData> Players { get; } = new List<PlayerData>();

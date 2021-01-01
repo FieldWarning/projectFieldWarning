@@ -104,7 +104,7 @@ namespace PFW.Networking
                     LogLevel.DEBUG,
                     this,
                     $"Spawning platoon at {spawnPos}");
-            if (MatchSession.Current.Players.Count > playerId 
+            if (MatchSession.Current.Players.Count > playerId
                 && unitCount >= MIN_PLATOON_SIZE
                 && unitCount <= MAX_PLATOON_SIZE)
             {
@@ -204,7 +204,7 @@ namespace PFW.Networking
             if (MatchSession.Current.Players.Count > playerId)
             {
                 UI.Ingame.Flare flare = UI.Ingame.Flare.Create(
-                        flareMessage, 
+                        flareMessage,
                         flarePos,
                         MatchSession.Current.Players[playerId].Team);
                 NetworkServer.Spawn(flare.gameObject);
@@ -231,5 +231,25 @@ namespace PFW.Networking
             }
         }
         #endregion flares
+
+        #region cheats
+        /// <summary>
+        /// Change a player's team.
+        /// </summary>
+        [Command]
+        public void CmdChangeTeam(
+                Team.TeamName newTeam)
+        {
+            GetComponent<NetworkedPlayerData>().Team = newTeam;
+
+            // Recalculate visibility for objects whose visibility is managed by mirror:
+            // (example: flares)
+            NetworkTeamVisibility[] vis = FindObjectsOfType<NetworkTeamVisibility>();
+            foreach (NetworkTeamVisibility v in vis)
+            {
+                v.netIdentity.RebuildObservers(false);
+            }
+        }
+        #endregion
     }
 }

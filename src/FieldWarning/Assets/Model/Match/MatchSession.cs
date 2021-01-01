@@ -24,6 +24,7 @@ using PFW.Units.Component.Movement;
 
 using Mirror;
 using UnityEngine.SceneManagement;
+using PFW.Networking;
 
 namespace PFW.Model.Match
 {
@@ -212,6 +213,7 @@ namespace PFW.Model.Match
             _unitRegistry.UpdateTeamBelonging(newTeam);
             _visibilityManager.UpdateTeamBelonging();
             _deploymentMenu.UpdateTeamBelonging();
+            CommandConnection.Connection.CmdChangeTeam(newTeam.Name);
         }
 
         /// <summary>
