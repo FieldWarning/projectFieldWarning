@@ -1,0 +1,12 @@
+{
+    "name": "sc.vegetationspawner",
+    "displayName": "Vegetation Spawner",
+    "version": "1.0.3",
+    "unity": "2018.4",
+    "description": "Procedural vegetation spawner for the Unity terrain system",
+    "author": {
+        "name": "Staggart Creations",
+        "email": "contact@staggart.xyz",
+        "url": "http://staggart.xyz/"
+    }
+}

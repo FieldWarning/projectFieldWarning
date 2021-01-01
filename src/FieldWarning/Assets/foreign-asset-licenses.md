@@ -14,3 +14,4 @@
 |Free HDR Sky|Assets/Skybox|yes| FREE (store)| https://assetstore.unity.com/packages/2d/textures-materials/sky/free-hdr-sky-61217|
 | Mobile Tree Package | laxer tree pkg | yes | FREE (store) | https://assetstore.unity.com/packages/3d/vegetation/trees/mobile-tree-package-18866|
 | Foliage Pack Free | Foliage Free | yes | FREE (store) | https://assetstore.unity.com/packages/3d/vegetation/foliage-pack-free-66155 |
+| Vegetation Spawner| 3rd Party/Vegetation Spawner | YES | FREE (store) | https://assetstore.unity.com/packages/tools/terrain/vegetation-spawner-177192|
