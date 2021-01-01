@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d40356c24708a499f1be9fd13bc0db, type: 3}
+  m_Name: TerrainPreset
+  m_EditorClassIdentifier: 
+  TerrainWidth: 166
+  TerrainLength: 166
+  TerrainHeight: 500
+  StartPosition: {x: 0, y: 0, z: 0}
+  TilesX: 1
+  TilesZ: 1
+  GroupID: 0
+  AutoConnect: 1
+  DrawInstanced: 1
+  PixelError: 0
+  BaseMapDistance: 1024
+  BaseTextureResolution: 1000
+  ControlTextureResolution: 512
+  DetailResolution: 1024
+  DetailResolutionPerPatch: 32
+  MaterialOverride: {fileID: 0}
+  HeightmapResolution: 512
+  EnableHeightmapImport: 0
+  UseGlobalHeightmap: 0
+  HeightmapMode: 0
+  HeightmapWidth: 0
+  HeightmapHeight: 0
+  HeightmapRemapMax: 500
+  HeightmapRemapMin: 0
+  HeightmapDepth: 2
+  FlipMode: 0
+  BatchHeightmapFolder: 
+  GlobalHeightmapPath: 
+  TileHeightmapPaths: []
+  EnableGizmo: 0
+  GizmoCubeColor: {r: 0, g: 0.5, b: 1, a: 0.2}
+  GizmoWireColor: {r: 0, g: 0.9, b: 1, a: 0.5}
+  TerrainAssetDirectory: Assets/Terrain/
+  EnableGuid: 1
+  EnableClearExistingData: 0
+  EnableLightingAutoBake: 0
+  PresetPath: 
+  ShowGroupSettings: 1
+  ShowHeightmapSettings: 0
+  ShowGizmoSettings: 0
+  ShowOptions: 1
