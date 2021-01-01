@@ -150,6 +150,13 @@ namespace PFW.Units.Component.Weapon
         {
             _weapon?.HandleUpdate();
 
+            // Do not return from this method before we've called into each child's
+            // update handler!
+            foreach (Turret turret in Children)
+            {
+                turret.HandleUpdate();
+            }
+
             if (_target == null || !_target.Exists)
             {
                 TurnTurretBackToDefaultPosition();
@@ -226,11 +233,6 @@ namespace PFW.Units.Component.Weapon
             _turret.localEulerAngles = new Vector3(verticalAngle, horizontalAngle, 0);
 
             IsFacingTarget = aimed;
-
-            foreach (Turret turret in Children)
-            {
-                turret.HandleUpdate();
-            }
         }
 
         private void TurnTurretBackToDefaultPosition()
