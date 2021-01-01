@@ -27,6 +27,8 @@ namespace PFW.Units.Component.Weapon
         private float _salvoReload;
 
         private float _reloadTimeLeft { get; set; }
+        public float ReloadAsFraction { get { return 1 - _reloadTimeLeft / _shotReload; } }
+
         private AudioSource _audioSource { get; }
 
         private Transform _barrelTip;

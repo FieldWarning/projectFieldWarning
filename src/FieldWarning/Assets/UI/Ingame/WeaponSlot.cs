@@ -35,8 +35,11 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private TextMeshProUGUI _reload = null;
 
+        private Cannon _weapon = null;
+
         public void DisplayWeapon(Cannon weapon)
         {
+            _weapon = weapon;
             _weaponIcon.sprite = weapon.HudIcon;
             _traits.text = "";
             foreach (Ammo ammo in weapon.Ammo)
@@ -57,6 +60,15 @@ namespace PFW.UI.Ingame
                 _traits.text += trait + ", ";
             }
             _traits.text = _traits.text.Substring(0, _traits.text.Length - 2);
+        }
+
+        private void Update()
+        {
+            if (_weapon != null)
+            {
+                _reload.text = Mathf.Round(_weapon.ReloadAsFraction * 100) + "%";
+                _shotsLeft.text = "20 / 20";
+            }
         }
     }
 }
