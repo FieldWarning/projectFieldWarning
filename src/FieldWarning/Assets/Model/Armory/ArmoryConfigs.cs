@@ -466,17 +466,13 @@ namespace PFW.Model.Armory.JsonContents
                 return false;
             }
 
-            WeaponSprite = Resources.Load<Sprite>(WeaponIcon);
+            WeaponSprite = Util.LoadSpriteFromFile(
+                    Application.streamingAssetsPath + "/" + WeaponIcon + ".png");
             if (WeaponSprite == null)
             {
-                WeaponSprite = Util.LoadSpriteFromFile(
-                        Application.streamingAssetsPath + "/" + WeaponIcon);
-                if (WeaponSprite == null)
-                {
-                    Logger.LogConfig(
-                            LogLevel.WARNING,
-                            $"Unit {unitName} has a missing weapon sprite!");
-                }
+                Logger.LogConfig(
+                        LogLevel.WARNING,
+                        $"Unit {unitName} has a missing weapon sprite!");
             }
 
             foreach (AmmoConfig ammo in Ammo)

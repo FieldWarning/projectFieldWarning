@@ -78,19 +78,18 @@ namespace PFW
         /// Loads a sprite that is not packaged into the game but rather sits
         /// somewhere on the file system.
         /// 
-        /// TODO for some reason this loads much blurrier images than the manual
-        /// sprite import through unity. Until this is fixed we can't
-        /// use it as our main method.
+        /// There are still some differences in how sprites appear when loaded by
+        /// this code as opposed to using the inspector, would be nice to find out why.
         /// </summary>
         /// <returns></returns>
         static public Sprite LoadSpriteFromFile(
                 string filename, 
-                float PixelsPerUnit = 100.0f,
-                SpriteMeshType type = SpriteMeshType.Tight)
+                float pixelsPerUnit = 100.0f,
+                SpriteMeshType type = SpriteMeshType.FullRect)
         {
             // Load a PNG or JPG image from disk to a Texture2D, assign this texture to a new sprite and return its reference
-            Texture2D SpriteTexture = LoadTexture(filename);
-            if (SpriteTexture == null)
+            Texture2D spriteTexture = LoadTexture(filename);
+            if (spriteTexture == null)
             {
                 Logger.LogConfig(LogLevel.WARNING, 
                     $"Could not load sprite {filename}, " +
@@ -98,19 +97,19 @@ namespace PFW
                 return null;
             }
 
-            Sprite NewSprite = Sprite.Create(
-                    SpriteTexture, 
+            Sprite newSprite = Sprite.Create(
+                    spriteTexture, 
                     new Rect(0, 
-                            0, 
-                            SpriteTexture.width, 
-                            SpriteTexture.height), 
+                            0,
+                            spriteTexture.width,
+                            spriteTexture.height), 
                     new Vector2(0, 0),
-                    PixelsPerUnit, 
+                    pixelsPerUnit, 
                     0,
                     type,
                     new Vector4(0, 0, 0, 0));
 
-            return NewSprite;
+            return newSprite;
         }
 
         static private Texture2D LoadTexture(string FilePath)
@@ -118,17 +117,21 @@ namespace PFW
             // Load a PNG or JPG file from disk to a Texture2D
             // Returns null if load fails
 
-            Texture2D Tex2D;
-            byte[] FileData;
+            Texture2D tex2D;
+            byte[] fileData;
 
             if (File.Exists(FilePath))
             {
-                FileData = File.ReadAllBytes(FilePath);
-                Tex2D = new Texture2D(2, 2);
-                // Load the imagedata into the texture (size is set automatically)
-                if (Tex2D.LoadImage(FileData))
+                fileData = File.ReadAllBytes(FilePath);
+                tex2D = new Texture2D(0, 0)
                 {
-                    return Tex2D;  // If data = readable -> return texture
+                    filterMode = FilterMode.Trilinear,
+                    wrapMode = TextureWrapMode.Clamp
+                };
+                // Load the imagedata into the texture (size is set automatically)
+                if (tex2D.LoadImage(fileData))
+                {
+                    return tex2D;  // If data = readable -> return texture
                 }
             }
             return null;
