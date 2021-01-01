@@ -34,6 +34,8 @@ namespace PFW.Units.Component.Weapon
         public readonly AudioClip ShotSound;
         public readonly VisualEffect MuzzleFlashEffect;
         public readonly GameObject ShellArtPrefab;
+        public readonly int ShellCount;
+        public int ShellCountRemaining;
 
         public bool IsAoe {
             get {
@@ -109,6 +111,8 @@ namespace PFW.Units.Component.Weapon
             }
             ShellArtPrefab = Resources.Load<GameObject>(config.Shell);
             ShotSound = Resources.Load<AudioClip>(config.Sound);
+            ShellCount = config.ShellCount;
+            ShellCountRemaining = ShellCount;
         }
 
         /// <summary>

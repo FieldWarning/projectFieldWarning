@@ -68,13 +68,17 @@ namespace PFW.Units.Component.Weapon
             HudIcon = data.WeaponSprite;
         }
 
-        private void FireWeapon(
+        private bool FireWeapon(
                 TargetTuple target,
                 Vector3 displacement,
                 float distance,
                 bool isServer)
         {
             Ammo ammo = PickBestAmmo(target, displacement, distance);
+            if (ammo == null)
+                return false;
+
+            ammo.ShellCountRemaining--;
 
             // sound
             _audioSource.PlayOneShot(ammo.ShotSound, _shotVolume);
@@ -143,6 +147,8 @@ namespace PFW.Units.Component.Weapon
                     // HE damage is applied by the shellBehavior when it explodes
                 }
             }
+
+            return true;
         }
 
         /// <summary>
@@ -173,9 +179,13 @@ namespace PFW.Units.Component.Weapon
                 return false;
 
             // TODO implement salvo + shot reload
-            _reloadTimeLeft = _salvoReload;
-            FireWeapon(target, displacement, distance, isServer);
-            return true;
+            if (FireWeapon(target, displacement, distance, isServer))
+            {
+                _reloadTimeLeft = _salvoReload;
+                return true;
+            }
+
+            return false;
         }
 
         private Ammo PickBestAmmo(
@@ -183,12 +193,14 @@ namespace PFW.Units.Component.Weapon
                 Vector3 displacement,
                 float distance)
         {
-            Ammo result = Ammo[0];
-            float bestDamage = result.EstimateDamageAgainstTarget(
-                        target, displacement, distance);
+            Ammo result = null;
+            float bestDamage = 0;
 
-            for (int i = 1; i < Ammo.Length; i++)
+            for (int i = 0; i < Ammo.Length; i++)
             {
+                if (Ammo[i].ShellCountRemaining == 0)
+                    continue;
+
                 float damage = Ammo[i].EstimateDamageAgainstTarget(
                         target, displacement, distance);
                 if (damage > bestDamage)
@@ -211,11 +223,14 @@ namespace PFW.Units.Component.Weapon
 
             foreach (Ammo ammo in Ammo)
             {
-                for (int i = 0; i < (int)TargetType._SIZE; i++)
+                if (ammo.ShellCountRemaining > 0)
                 {
-                    float range = ammo.GetRangeAgainstTargetType((TargetType)i);
-                    if (range > result[i])
-                        result[i] = range;
+                    for (int i = 0; i < (int)TargetType._SIZE; i++)
+                    {
+                        float range = ammo.GetRangeAgainstTargetType((TargetType)i);
+                        if (range > result[i])
+                            result[i] = range;
+                    }
                 }
             }
 

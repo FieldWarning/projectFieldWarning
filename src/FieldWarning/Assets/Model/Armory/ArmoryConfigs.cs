@@ -446,6 +446,9 @@ namespace PFW.Model.Armory.JsonContents
         public string MuzzleFlash;
         public string Shell;
         public string Sound;
+        [System.ComponentModel.DefaultValue(10)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int ShellCount;  // If there are multiple ammo types, each will get this many
         public string BarrelTipRef;
         public string WeaponIcon;
         [JsonIgnore]
@@ -495,6 +498,8 @@ namespace PFW.Model.Armory.JsonContents
                     ammo.Shell = Shell;
                 if (ammo.Sound == "" || ammo.Sound == null)
                     ammo.Sound = Sound;
+                if (ammo.ShellCount == 0)
+                    ammo.ShellCount = ShellCount;
             }
             return true;
         }
@@ -517,5 +522,6 @@ namespace PFW.Model.Armory.JsonContents
         public string MuzzleFlash;
         public string Shell;
         public string Sound;
+        public int ShellCount;
     }
 }

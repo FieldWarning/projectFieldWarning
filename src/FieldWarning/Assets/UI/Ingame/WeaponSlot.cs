@@ -67,7 +67,12 @@ namespace PFW.UI.Ingame
             if (_weapon != null)
             {
                 _reload.text = Mathf.Round(_weapon.ReloadAsFraction * 100) + "%";
-                _shotsLeft.text = "20 / 20";
+                _shotsLeft.text = "";
+                foreach (Ammo a in _weapon.Ammo)
+                {
+                    _shotsLeft.text += a.ShellCountRemaining + "/" + a.ShellCount + ", ";
+                }
+                _shotsLeft.text = _shotsLeft.text.Substring(0, _shotsLeft.text.Length - 2);
             }
         }
     }

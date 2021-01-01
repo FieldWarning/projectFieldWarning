@@ -31,6 +31,7 @@
                         {
                             "DamageType" : "HEAVY_ARMS",
                             "DamageValue": 0.75,
+                            "ShellCount" : 200,
                         }
                     ]
                 }
@@ -61,16 +62,19 @@
                             "DamageType" : "HE",
                             "Velocity" : 200,
                             "Shell": "Projectiles/Prefab/REDFOR Shell",
+                            "ShellCount" : 10,
                         },
                         {
                             "DamageType" : "KE",
                             "DamageValue": 8,
+                            "ShellCount" : 10,
                         },
                         {
                             "DamageType" : "HEAT",
                             "DamageValue": 12,
                             "GroundRange" : 1500,
                             "Accuracy": 60,
+                            "ShellCount" : 4,
                         }
                     ]
                 }
