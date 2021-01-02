@@ -154,6 +154,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: OpenTop
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 825e86e55b1ac624c82f7ed25a46aabe,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.0065614367
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 825e86e55b1ac624c82f7ed25a46aabe,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.101501204
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 825e86e55b1ac624c82f7ed25a46aabe, type: 3}
 --- !u!4 &5909630149275422526 stripped
@@ -229,6 +239,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Arty
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 51ce3f88254a71145b5636f75efa1b4c,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.032057855
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 51ce3f88254a71145b5636f75efa1b4c,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.101501204
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51ce3f88254a71145b5636f75efa1b4c, type: 3}
 --- !u!4 &7108489906327365753 stripped
@@ -303,6 +323,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Bloodhound
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 2d16c843bc4452e46b1b1d0a33f4eb52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.038057007
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 2d16c843bc4452e46b1b1d0a33f4eb52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.10404774
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d16c843bc4452e46b1b1d0a33f4eb52, type: 3}

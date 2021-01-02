@@ -154,6 +154,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: FSV
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 41c64db3dfdd7c948a00d243bb0f15a9,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.033510774
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 41c64db3dfdd7c948a00d243bb0f15a9,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.10404774
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41c64db3dfdd7c948a00d243bb0f15a9, type: 3}
 --- !u!4 &8040714340497816548 stripped
@@ -229,6 +239,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Module
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 68a4070df9829c243b91b28e62d49b52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.032057855
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 68a4070df9829c243b91b28e62d49b52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.101501204
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68a4070df9829c243b91b28e62d49b52, type: 3}
 --- !u!4 &7627833139870230477 stripped
@@ -303,6 +323,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Bloodhound
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 2d16c843bc4452e46b1b1d0a33f4eb52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.029245747
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 2d16c843bc4452e46b1b1d0a33f4eb52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.10404774
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d16c843bc4452e46b1b1d0a33f4eb52, type: 3}

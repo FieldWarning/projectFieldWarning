@@ -154,6 +154,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: AA
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: db9ed98ea81955148b9071b19509a8e4,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.029245747
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: db9ed98ea81955148b9071b19509a8e4,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.101501204
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db9ed98ea81955148b9071b19509a8e4, type: 3}
 --- !u!4 &5583773625277403450 stripped
@@ -229,6 +239,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bloodhound
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 2d16c843bc4452e46b1b1d0a33f4eb52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.034994937
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 2d16c843bc4452e46b1b1d0a33f4eb52,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.10404774
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d16c843bc4452e46b1b1d0a33f4eb52, type: 3}
 --- !u!4 &7594144536913784885 stripped
@@ -303,6 +323,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: OpenTop
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: 825e86e55b1ac624c82f7ed25a46aabe,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.09162759
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 825e86e55b1ac624c82f7ed25a46aabe, type: 3}

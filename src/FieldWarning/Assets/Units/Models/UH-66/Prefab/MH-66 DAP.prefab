@@ -140,6 +140,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 20500000, guid: 74b71464ab153734382b1f054773b712, type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.032057855
+      objectReference: {fileID: 0}
+    - target: {fileID: 20500000, guid: 74b71464ab153734382b1f054773b712, type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.117249005
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74b71464ab153734382b1f054773b712, type: 3}
 --- !u!4 &5906348987384893625 stripped
