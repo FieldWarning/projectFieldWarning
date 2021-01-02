@@ -104,6 +104,12 @@ namespace PFW
             MapMax = new Vector3(-99999f, 0f, -99999f);
             foreach (Terrain terrain in terrains1D)
             {
+                if (terrain.gameObject.layer != 8)
+                {
+                    Debug.LogWarning($"The terrain at {terrain.gameObject} does not have " +
+                        $"the 'terrain' layer, instead it has layer {terrain.gameObject.layer}. " +
+                        $"This is very likely to make it impossible to buy units.");
+                }
                 Vector3 pos = terrain.transform.position;
                 Vector3 size = terrain.terrainData.size;
                 MapMin.Set(Mathf.Min(MapMin.x, pos.x), 0.0f, Mathf.Min(MapMin.z, pos.z));
