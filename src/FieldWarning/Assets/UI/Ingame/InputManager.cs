@@ -64,15 +64,8 @@ namespace PFW.UI.Ingame
 
         private BuyTransaction _currentBuyTransaction;
 
-        private MatchSession _session;
-        public MatchSession Session {
-            set {
-                if (_session == null)
-                {
-                    _session = value;
-                }
-            }
-        }
+        [SerializeField]
+        private MatchSession _session = null;
 
         private SelectionManager _selectionManager;
         public void PlatoonLabelClicked(PlatoonBehaviour platoon) =>
@@ -82,15 +75,20 @@ namespace PFW.UI.Ingame
         public PlayerData LocalPlayer {
             set {
                 _localPlayer = value;
-                _selectionManager.LocalPlayer = value;
+                if (_selectionManager != null)
+                    _selectionManager.LocalPlayer = value;
             }
         }
 
-        private GameObject _rangeTooltip;
+        [SerializeField]
+        private GameObject _rangeTooltip = null;
         private TMPro.TextMeshProUGUI _rangeTooltipText;
-        private GameObject _settingsMenu;
 
-        private UnitInfoPanel _unitInfoPanel;
+        [SerializeField]
+        private GameObject _menu = null;
+
+        [SerializeField]
+        private UnitInfoPanel _unitInfoPanel = null;
 
         private Commands _commands;
 
@@ -99,15 +97,9 @@ namespace PFW.UI.Ingame
             SelectionPane selectionPane = FindObjectOfType<SelectionPane>();
             if (selectionPane == null)
                 throw new Exception("No SelectionPane found in the scene!");
-            _selectionManager = new SelectionManager(selectionPane);
+            _selectionManager = new SelectionManager(selectionPane, _localPlayer);
 
             _commands = new Commands(GameSession.Singleton.Settings.Hotkeys);
-
-            _unitInfoPanel = FindObjectOfType<UnitInfoPanel>();
-            if (_unitInfoPanel == null)
-                throw new Exception("No UnitInfoPanel found in the scene!");
-            else
-                _unitInfoPanel.HideUnitInfo();
         }
 
         private void Start()
@@ -132,7 +124,6 @@ namespace PFW.UI.Ingame
 
             _rightClickManager = new ClickManager(1, MoveGhostsToMouse, OnOrderShortClick, OnOrderLongClick, OnOrderHold);
 
-            _rangeTooltip = GameObject.Find("RangeTooltip");
             _rangeTooltipText = 
                     _rangeTooltip.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             if (_rangeTooltipText == null)
@@ -140,15 +131,12 @@ namespace PFW.UI.Ingame
                 throw new Exception(
                     "There should be a range tooltip in the HUD hierarchy!");
             }
-            _rangeTooltip.SetActive(false);
 
-            _settingsMenu = GameObject.Find("Settings");
-            if (_settingsMenu == null)
+            if (_menu == null)
             {
                 throw new Exception(
-                    "There should be a settings menu object in the HUD hierarchy!");
+                    "There should be a settings menu object in the MatchPrefab hierarchy!");
             }
-            _settingsMenu.SetActive(false);
         }
 
         private void Update()
@@ -328,7 +316,7 @@ namespace PFW.UI.Ingame
             {
                 if (_commands.ToggleMenu)
                 {
-                    _settingsMenu.SetActive(false);
+                    _menu.SetActive(false);
                     EnterNormalModeNaive();
                 }
                 break;
@@ -695,7 +683,7 @@ namespace PFW.UI.Ingame
         {
             CurMouseMode = MouseMode.IN_MENU;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            _settingsMenu.SetActive(true);
+            _menu.SetActive(true);
         }
 
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)

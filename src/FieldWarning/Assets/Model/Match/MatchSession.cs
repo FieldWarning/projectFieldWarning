@@ -41,7 +41,8 @@ namespace PFW.Model.Match
         // is intended to be a singleton.
         public static MatchSession Current { get; private set; }
 
-        private InputManager _inputManager;
+        [SerializeField]
+        private InputManager _inputManager = null;
         private VisibilityManager _visibilityManager;
         private UnitRegistry _unitRegistry;
         [SerializeField]
@@ -133,11 +134,6 @@ namespace PFW.Model.Match
 
                 _unitRegistry = new UnitRegistry(LocalPlayer.Data.Team, Teams);
 
-                _inputManager = FindObjectOfType<InputManager>();
-
-                if (!_inputManager)
-                    _inputManager = gameObject.AddComponent<InputManager>();
-                _inputManager.Session = this;
                 _inputManager.LocalPlayer = LocalPlayer.Data;
 
                 _visibilityManager = FindObjectOfType<VisibilityManager>();

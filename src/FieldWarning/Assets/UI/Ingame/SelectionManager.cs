@@ -72,8 +72,9 @@ namespace PFW.UI.Ingame
 
         private SelectionPane _selectionPane;
 
-        public SelectionManager(SelectionPane selectionPane)
+        public SelectionManager(SelectionPane selectionPane, PlayerData localPlayer)
         {
+            _localPlayer = localPlayer;
             _selectionPane = selectionPane;
             _selection = new List<PlatoonBehaviour>();
             _clickManager = new ClickManager(
