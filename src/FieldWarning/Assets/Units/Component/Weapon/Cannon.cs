@@ -24,11 +24,30 @@ namespace PFW.Units.Component.Weapon
     {
         private float _shotReload;
         private int _salvoLength;
+        private int _salvoRemaining;
         private float _salvoReload;
+        private float _lastShotTimestamp;
 
-        private float _reloadTimeLeft { get; set; }
-        public float ReloadAsFraction { 
-                get { return 1 - Mathf.Max(_reloadTimeLeft, 0) / _shotReload; } }
+        /// <summary>
+        /// 1 = can shoot, 0.5 = 50% time elapsed to next shot
+        /// </summary>
+        public float PercentageReloaded { 
+                get {
+                return 
+                    Mathf.Clamp(
+                        _salvoRemaining > 0 ?
+                                (Time.time - _lastShotTimestamp) / _shotReload :
+                                (Time.time - _lastShotTimestamp) / _salvoReload, 
+                        0, 
+                        1); 
+            }
+        }
+
+        private bool CanReloadSalvo {
+            get {
+                return _salvoReload < (Time.time - _lastShotTimestamp);
+            }
+        }
 
         private AudioSource _audioSource { get; }
 
@@ -51,6 +70,7 @@ namespace PFW.Units.Component.Weapon
         {
             _shotReload = data.ShotReload;
             _salvoLength = data.SalvoLength;
+            _salvoRemaining = _salvoLength;
             _salvoReload = data.SalvoReload;
 
             _audioSource = source;
@@ -152,16 +172,6 @@ namespace PFW.Units.Component.Weapon
         }
 
         /// <summary>
-        ///     Same as the update method on a MonoBehavior.
-        ///     Used, for example, to update reload timers.
-        /// </summary>
-        public void HandleUpdate()
-        {
-            if (_reloadTimeLeft > 0)
-                _reloadTimeLeft -= Time.deltaTime;
-        }
-
-        /// <summary>
         ///     Fire on the provided target if the weapon is not reloading etc.
         /// </summary>
         /// <param name="target"></param>
@@ -175,13 +185,18 @@ namespace PFW.Units.Component.Weapon
                 float distance,
                 bool isServer)
         {
-            if (_reloadTimeLeft > 0)
+            if (PercentageReloaded < 1)
                 return false;
+
+            if (CanReloadSalvo)
+                _salvoRemaining = _salvoLength;
 
             // TODO implement salvo + shot reload
             if (FireWeapon(target, displacement, distance, isServer))
             {
-                _reloadTimeLeft = _salvoReload;
+                _lastShotTimestamp = Time.time;
+
+                _salvoRemaining--;
                 return true;
             }
 

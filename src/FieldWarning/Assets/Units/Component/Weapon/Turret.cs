@@ -148,8 +148,6 @@ namespace PFW.Units.Component.Weapon
 
         public void HandleUpdate()
         {
-            _weapon?.HandleUpdate();
-
             // Do not return from this method before we've called into each child's
             // update handler!
             foreach (Turret turret in Children)

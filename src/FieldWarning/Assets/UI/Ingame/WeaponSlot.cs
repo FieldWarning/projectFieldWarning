@@ -66,7 +66,7 @@ namespace PFW.UI.Ingame
         {
             if (_weapon != null)
             {
-                _reload.text = Mathf.Round(_weapon.ReloadAsFraction * 100) + "%";
+                _reload.text = Mathf.Round(_weapon.PercentageReloaded * 100) + "%";
                 _shotsLeft.text = "";
                 foreach (Ammo a in _weapon.Ammo)
                 {
