@@ -108,7 +108,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1777541880606081477}
-  - {fileID: 9029438535854517132}
   - {fileID: 6451646888845537098}
   - {fileID: 7152047455413369880}
   m_Father: {fileID: 228541969544752665}
@@ -128,22 +127,18 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.25
+  - screenRelativeHeight: 0.19848756
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 5722125988080388741}
-  - screenRelativeHeight: 0.125
+  - screenRelativeHeight: 0.036510352
     fadeTransitionWidth: 0
     renderers:
-    - renderer: {fileID: 1850287487295982232}
-  - screenRelativeHeight: 0.0625
+    - renderer: {fileID: 0}
+  - screenRelativeHeight: 0.008764251
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 9001714792470166785}
-  - screenRelativeHeight: 0.01
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6154917196954028189}
   m_Enabled: 1
 --- !u!1 &3346736181043133785
 GameObject:
@@ -157,7 +152,7 @@ GameObject:
   - component: {fileID: 6936272144186626215}
   - component: {fileID: 9001714792470166785}
   m_Layer: 0
-  m_Name: large_haus_LOD2
+  m_Name: large_haus_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -175,7 +170,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5417097037718543011}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6936272144186626215
 MeshFilter:
@@ -429,85 +424,6 @@ LODGroup:
     renderers:
     - renderer: {fileID: 5818538532802188879}
   m_Enabled: 1
---- !u!1 &6730898963227729330
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9029438535854517132}
-  - component: {fileID: 4035608287498191012}
-  - component: {fileID: 1850287487295982232}
-  m_Layer: 0
-  m_Name: large_haus_LOD1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9029438535854517132
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6730898963227729330}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00000008773803, y: 0.16563548, z: 0.031665243}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 5417097037718543011}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4035608287498191012
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6730898963227729330}
-  m_Mesh: {fileID: 4300002, guid: 9b0dd2919e04f2a4a8fc8dddf6b416ee, type: 3}
---- !u!23 &1850287487295982232
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6730898963227729330}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RenderingLayerMask: 4294967295
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: d8df75815cfb22946a3a0ac2d6e5ef9e, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!1 &7267481623514799090
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +515,7 @@ GameObject:
   - component: {fileID: 1475618985787230504}
   - component: {fileID: 6154917196954028189}
   m_Layer: 0
-  m_Name: large_haus_LOD3
+  m_Name: large_haus_LOD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -617,7 +533,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5417097037718543011}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1475618985787230504
 MeshFilter:

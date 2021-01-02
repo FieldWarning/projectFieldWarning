@@ -168,6 +168,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Warehouse_Large
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: d75f1ad79fd15444f86dfd96cdb69a5b,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.033510774
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: d75f1ad79fd15444f86dfd96cdb69a5b,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.17453782
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d75f1ad79fd15444f86dfd96cdb69a5b, type: 3}
 --- !u!1 &7632594375489760061 stripped

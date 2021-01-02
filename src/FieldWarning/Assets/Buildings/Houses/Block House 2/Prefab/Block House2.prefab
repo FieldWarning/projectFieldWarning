@@ -254,6 +254,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Block_House2
       objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: d1395eecc095a294fac413c0a1c4d5e8,
+        type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.036510352
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551014577142218206, guid: d1395eecc095a294fac413c0a1c4d5e8,
+        type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.19848756
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1395eecc095a294fac413c0a1c4d5e8, type: 3}
 --- !u!1 &3161512723435603748 stripped
