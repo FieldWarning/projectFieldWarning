@@ -18891,7 +18891,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 379935937}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.092, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1343278939}
@@ -45199,21 +45199,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!114 &1032966082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 561528938, guid: f56d46228aee4734f9114056c53bb57e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roadScr: {fileID: 1041385460}
-  prefabScr: {fileID: 0}
-  markers: 0000000001000000
 --- !u!114 &1034825797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46159,7 +46144,7 @@ MonoBehaviour:
   sideObjectNames: []
   selectedSO: 0
   rebuildSos: 0
-  sosCleared: 1
+  sosCleared: 0
   isSideObject: 0
   startOffsetActiveMarker: -1
   endOffsetActiveMarker: -1
@@ -87448,6 +87433,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1808616882}
+  - component: {fileID: 1808616884}
+  - component: {fileID: 1808616883}
   m_Layer: 0
   m_Name: map
   m_TagString: Untagged
@@ -87473,6 +87460,33 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1808616883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808616881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2efcec55813961846bf86dd8581feaa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Version: 1
+  Name: Tank Rush Valley
+--- !u!114 &1808616884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808616881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10e4727354ca29a4baf2cad16bbad92e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _keepOlder: 1
 --- !u!114 &1812510891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91494,7 +91508,7 @@ MonoBehaviour:
   selectedRoadRightInnerOffset: 0
   selectedCrossingMaterial: 0
   crossingTextureInfoIndex: 0
-  handleSelection: -1
+  handleSelection: 1
   positionHandleSelection: 1
   markerDirXZ: 0
   defaultCrossing: {fileID: 0}
@@ -91550,7 +91564,7 @@ MonoBehaviour:
   - Splat 6 - Farm2_BaseColor
   - Splat 7 - Farm3_BaseColor
   - Splat 8 - Farm4_BaseColor
-  activeTerrain: {fileID: 864806658}
+  activeTerrain: {fileID: 0}
   activeTerrainY: 0
   selectedTerrain: 0
   selectedRoadsOnly: 0
@@ -91703,16 +91717,15 @@ MonoBehaviour:
   ODDCQCCQDQScript: {fileID: 0}
   OQCOODCOCQElement: -1
   OCOODDODOQ: -1
-  OCCQDDCDOD: {fileID: 1041385460}
-  OCCCODDQOC: {fileID: 1041385460}
-  OQQCDOODQD: 1
+  OCCQDDCDOD: {fileID: 0}
+  OCCCODDQOC: {fileID: 0}
+  OQQCDOODQD: -1
   selectedRoadSOMarker: -1
   selectedMarkerNode: -1
   selectedMarkerNodes: 
   selectedMarkerSONode: -1
   selectedMarkerSONodes: 
-  selectedObjects:
-  - {fileID: 1032966082}
+  selectedObjects: []
   newRoadFlag: 0
   roadTypeUpdateFlag: 1
   roadScripts: []
