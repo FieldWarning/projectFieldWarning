@@ -548,7 +548,7 @@ namespace PFW
 
         // This is needed because if we were ever disabled we need to smoothly start
         // where the target is currently and not jump back to a previously saved state
-        void OnEnable()
+        private void OnEnable()
         {
             _targetPosition = transform.position;
             _rotateX = transform.eulerAngles.x;

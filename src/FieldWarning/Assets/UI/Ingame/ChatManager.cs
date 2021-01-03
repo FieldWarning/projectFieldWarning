@@ -31,6 +31,8 @@ namespace PFW.UI.Ingame
     {
         private const int MAX_MESSAGES = 20;
 
+        public bool IsChatOpen { get; private set; } = false;
+
         [SerializeField]
         private GameObject _chat = null;
         [SerializeField]
@@ -82,12 +84,9 @@ namespace PFW.UI.Ingame
         /// <summary>
         /// Called by the input manager when the user presses the
         /// open/close chat hotkey.
-        /// Returns true if this method left the chat window open, false otherwise.
         /// </summary>
-        public bool OnToggleChat()
+        public void OnToggleChat()
         {
-            bool isChatOpen = false;
-
             // If chat is being closed handle the typed message
             if (_chat.activeSelf == true)
             {
@@ -98,11 +97,12 @@ namespace PFW.UI.Ingame
                     string newMessage = user + _inputField.text + "\n";
                     _connection.CmdUpdateChat(newMessage);
                 }
+                IsChatOpen = false;
             }
             else
             {
                 // activated chat
-                isChatOpen = true;
+                IsChatOpen = true;
                 _messagesText.gameObject.SetActive(true);
                 _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
             }
@@ -111,8 +111,6 @@ namespace PFW.UI.Ingame
             _inputField.Select();
             _inputField.ActivateInputField();
             _inputField.text = string.Empty;
-
-            return isChatOpen;
         }
 
         private void Update()
