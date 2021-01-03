@@ -62,6 +62,25 @@ namespace PFW
         }
 
         [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        [System.Diagnostics.Conditional("PFW_LOG_LOADING")]
+        public static void LogLoading(
+                LogLevel level,
+                string logMsg)
+        {
+            Log(logMsg, "Loading", level);
+        }
+
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        [System.Diagnostics.Conditional("PFW_LOG_LOADING")]
+        public static void LogLoading(
+                LogLevel level,
+                Object context,
+                string logMsg)
+        {
+            Log(logMsg, context, "Loading", level);
+        }
+
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_NETWORKING")]
         public static void LogNetworking(
                 LogLevel level,
