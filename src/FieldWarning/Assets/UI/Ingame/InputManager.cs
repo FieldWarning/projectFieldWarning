@@ -97,6 +97,18 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private MiniMap _minimap = null;
 
+        /// <summary>
+        /// When the menu is open, we have to disable the cameras to prevent them from moving.
+        /// Eventually we should refactor the camera code to take input from here,
+        /// and not directly from Unity (maybe have a CameraInput entity created here and
+        /// consumed by the cameras). Then this hack won't be necessary.
+        /// </summary>
+        [SerializeField]
+        private SlidingCameraBehaviour _slidingCamera = null;
+        [SerializeField]
+        private OrbitCameraBehaviour _orbitCamera = null;
+        private bool _lastCameraWasSliding = true;
+
         ChatManager _chatManager;
 
         private Commands _commands;
@@ -332,6 +344,14 @@ namespace PFW.UI.Ingame
                 if (_commands.ToggleMenu)
                 {
                     _minimap.enabled = true;
+                    if (_lastCameraWasSliding)
+                    {
+                        _slidingCamera.enabled = true;
+                    }
+                    else
+                    {
+                        _orbitCamera.enabled = true;
+                    }
                     _menu.SetActive(false);
                     EnterNormalModeNaive();
                 }
@@ -709,6 +729,9 @@ namespace PFW.UI.Ingame
         private void EnterMenuMode()
         {
             _minimap.enabled = false;
+            _lastCameraWasSliding = _slidingCamera.enabled;
+            _slidingCamera.enabled = false;
+            _orbitCamera.enabled = false;
             CurMouseMode = MouseMode.IN_MENU;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             _menu.SetActive(true);
