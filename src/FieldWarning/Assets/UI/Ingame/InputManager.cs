@@ -94,7 +94,7 @@ namespace PFW.UI.Ingame
 
         private Commands _commands;
 
-        public bool IsChatOpen = false;
+        public bool IsChatOpen => _chatManager.IsChatOpen;
 
         private void Awake()
         {
@@ -506,7 +506,7 @@ namespace PFW.UI.Ingame
             {
                 if (Input.GetButtonDown("Chat"))  //< TODO convert this to command-style
                 {
-                    IsChatOpen = _chatManager.OnToggleChat();
+                    _chatManager.OnToggleChat();
                 }
             }
             else
@@ -587,7 +587,7 @@ namespace PFW.UI.Ingame
                 }
                 else if (Input.GetButtonDown("Chat"))  //< TODO convert this to command-style
                 {
-                    IsChatOpen = _chatManager.OnToggleChat();
+                    _chatManager.OnToggleChat();
                 }
             }
         }
