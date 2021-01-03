@@ -148,7 +148,7 @@ Material:
     - _CullMode: 2
     - _CullModeForward: 2
     - _Cutoff: 0.5
-    - _DecalBlend: 0.5
+    - _DecalBlend: 1
     - _DecalMaskMapBlueScale: 1
     - _DecalMeshDepthBias: 0
     - _DecalStencilRef: 16
