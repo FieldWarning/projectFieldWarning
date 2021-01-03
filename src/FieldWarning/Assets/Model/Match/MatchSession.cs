@@ -158,7 +158,7 @@ namespace PFW.Model.Match
             {
                 LoadingScreen.SceneBuildId = SceneManager.GetActiveScene().buildIndex;
                 SceneManager.LoadScene("loading-scene", LoadSceneMode.Single);
-            } 
+            }
             else
             {
 #if UNITY_EDITOR
@@ -177,7 +177,7 @@ namespace PFW.Model.Match
                 _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("UnitTemplatePrefabs/GroundUnit"));
 
                 // Ready to play:
-                _inputManager.gameObject.SetActive(true);
+                _inputManager.enabled = true;
             }
         }
 
