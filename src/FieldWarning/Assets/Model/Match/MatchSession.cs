@@ -56,7 +56,7 @@ namespace PFW.Model.Match
         public Dictionary<Team, List<UnitDispatcher>> EnemiesByTeam =>
                 _unitRegistry.EnemiesByTeam;
 
-        public bool IsChatFocused = false;
+        public bool IsChatFocused => _inputManager.IsChatOpen;
 
         public List<UnitDispatcher> AllyUnits =>
                 _unitRegistry.AllyUnits;

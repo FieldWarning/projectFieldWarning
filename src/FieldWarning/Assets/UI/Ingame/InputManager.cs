@@ -90,7 +90,11 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private UnitInfoPanel _unitInfoPanel = null;
 
+        ChatManager _chatManager;
+
         private Commands _commands;
+
+        public bool IsChatOpen = false;
 
         private void Awake()
         {
@@ -98,6 +102,10 @@ namespace PFW.UI.Ingame
             if (selectionPane == null)
                 throw new Exception("No SelectionPane found in the scene!");
             _selectionManager = new SelectionManager(selectionPane, _localPlayer);
+
+            _chatManager = FindObjectOfType<ChatManager>();
+            if (selectionPane == null)
+                throw new Exception("No ChatManager found in the scene!");
 
             _commands = new Commands(GameSession.Singleton.Settings.Hotkeys);
         }
@@ -494,13 +502,20 @@ namespace PFW.UI.Ingame
 
         public void ApplyHotkeys()
         {
-            if (!_session.IsChatFocused) 
+            if (IsChatOpen)
             {
-                if (_commands.Unload) 
+                if (Input.GetButtonDown("Chat"))  //< TODO convert this to command-style
+                {
+                    IsChatOpen = _chatManager.OnToggleChat();
+                }
+            }
+            else
+            {
+                if (_commands.Unload)
                 {
                     _selectionManager.DispatchUnloadCommand();
                 }
-                else if (_commands.Load) 
+                else if (_commands.Load)
                 {
                     _selectionManager.DispatchLoadCommand();
                 }
@@ -508,7 +523,7 @@ namespace PFW.UI.Ingame
                 {
                     EnterMenuMode();
                 }
-                else if (_commands.FirePos && !_selectionManager.Empty) 
+                else if (_commands.FirePos && !_selectionManager.Empty)
                 {
                     EnterFirePosMode();
                 }
@@ -516,14 +531,14 @@ namespace PFW.UI.Ingame
                 {
                     Debug.LogWarning("Attack move is not implemented.");
                 }
-                else if (_commands.ReverseMove && !_selectionManager.Empty) 
+                else if (_commands.ReverseMove && !_selectionManager.Empty)
                 {
                     EnterReverseMoveMode();
-                } 
+                }
                 else if (_commands.FastMove && !_selectionManager.Empty)
                 {
                     EnterFastMoveMode();
-                } 
+                }
                 else if (_commands.Split && !_selectionManager.Empty)
                 {
                     EnterSplitMode();
@@ -551,7 +566,7 @@ namespace PFW.UI.Ingame
                     {
                         _unitInfoPanel.ShowUnitInfo(platoon.Unit, platoon.Units[0].AllWeapons);
                     }
-                    else 
+                    else
                     {
                         _unitInfoPanel.HideUnitInfo();
                     }
@@ -569,6 +584,10 @@ namespace PFW.UI.Ingame
                     // TODO the behavior here should be - use whatever the user types
                     //      before clicking to place the flare as the message
                     EnterFlareMode("Help!");
+                }
+                else if (Input.GetButtonDown("Chat"))  //< TODO convert this to command-style
+                {
+                    IsChatOpen = _chatManager.OnToggleChat();
                 }
             }
         }

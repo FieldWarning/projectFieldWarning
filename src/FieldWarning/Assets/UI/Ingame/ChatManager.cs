@@ -79,6 +79,42 @@ namespace PFW.UI.Ingame
             _sentMessages.Add(msg);
         }
 
+        /// <summary>
+        /// Called by the input manager when the user presses the
+        /// open/close chat hotkey.
+        /// Returns true if this method left the chat window open, false otherwise.
+        /// </summary>
+        public bool OnToggleChat()
+        {
+            bool isChatOpen = false;
+
+            // If chat is being closed handle the typed message
+            if (_chat.activeSelf == true)
+            {
+                if (!string.IsNullOrWhiteSpace(_inputField.text))
+                {
+                    // TODO Replace with the player name once we get accounts working
+                    string user = "[" + (_connection.isClientOnly ? "guest" : "host") + "]:";
+                    string newMessage = user + _inputField.text + "\n";
+                    _connection.CmdUpdateChat(newMessage);
+                }
+            }
+            else
+            {
+                // activated chat
+                isChatOpen = true;
+                _messagesText.gameObject.SetActive(true);
+                _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
+            }
+
+            _chat.SetActive(!_chat.activeSelf);
+            _inputField.Select();
+            _inputField.ActivateInputField();
+            _inputField.text = string.Empty;
+
+            return isChatOpen;
+        }
+
         private void Update()
         {
             if (_messagesVisibleRemaining <= 0) 
@@ -89,31 +125,6 @@ namespace PFW.UI.Ingame
             else if (!_session.IsChatFocused) 
             {
                 _messagesVisibleRemaining -= Time.deltaTime;
-            }
-
-            // Open/Close chat
-            if (Input.GetButtonDown("Chat")) {
-                // If chat is being closed handle the typed message
-                if (_chat.activeSelf == true) {
-                    if (!string.IsNullOrWhiteSpace(_inputField.text))
-                    {
-                        // TODO Replace with the player name once we get accounts working
-                        string user = "[" + (_connection.isClientOnly ? "guest" : "host") + "]:";
-                        string newMessage = user + _inputField.text + "\n";
-                        _connection.CmdUpdateChat(newMessage);
-                    }
-                    _session.IsChatFocused = false;
-                } else {
-                    // activated chat
-                    _session.IsChatFocused = true;
-                    _messagesText.gameObject.SetActive(true);
-                    _messagesVisibleRemaining = MESSAGES_VISIBLE_MAX;
-                }
-
-                _chat.SetActive(!_chat.activeSelf);
-                _inputField.Select();
-                _inputField.ActivateInputField();
-                _inputField.text = string.Empty;
             }
         }
     }
