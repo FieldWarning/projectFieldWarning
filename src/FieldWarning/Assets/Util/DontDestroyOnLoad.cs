@@ -55,8 +55,17 @@ namespace PFW.Loading
                 {
                     if (_id < c._id)
                     {
-                        Debug.Log("Destroying duplicate. Id: " + _id);
+                        Logger.LogLoading(LogLevel.DEBUG, "Destroying duplicate. Id: " + _id);
+                        SceneManager.sceneLoaded -= OnSceneLoaded;
                         DestroyImmediate(this.gameObject);
+
+                        // This script exists to support a trampoline where we go
+                        // from scene A, to loading scene, to scene A again.
+                        // If we find a duplicate, it means we're at the end of the process
+                        // so this object no longer needs to persist with scene changes.
+                        Util.RevertDontDestroyOnLoad(c.gameObject);
+                        SceneManager.sceneLoaded -= c.OnSceneLoaded;
+                        Destroy(c);
                         return;
                     }
                 }
@@ -64,8 +73,17 @@ namespace PFW.Loading
                 {
                     if (_id > c._id)
                     {
-                        Debug.Log("Destroying duplicate. Id: " + _id);
+                        Logger.LogLoading(LogLevel.DEBUG, "Destroying duplicate. Id: " + _id);
+                        SceneManager.sceneLoaded -= OnSceneLoaded;
                         DestroyImmediate(this.gameObject);
+
+                        // This script exists to support a trampoline where we go
+                        // from scene A, to loading scene, to scene A again.
+                        // If we find a duplicate, it means we're at the end of the process
+                        // so this object no longer needs to persist with scene changes.
+                        Util.RevertDontDestroyOnLoad(c.gameObject);
+                        SceneManager.sceneLoaded -= c.OnSceneLoaded;
+                        Destroy(c);
                         return;
                     }
                 }

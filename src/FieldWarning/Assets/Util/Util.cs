@@ -13,6 +13,7 @@
 
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PFW
 {
@@ -135,6 +136,16 @@ namespace PFW
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// The inverse of DontDestroyOnLoad(), returns objects to their default behavior
+        /// of being destroyed if the scene changes.
+        /// https://answers.unity.com/questions/1491238/undo-dontdestroyonload.html
+        /// </summary>
+        static public void RevertDontDestroyOnLoad(GameObject go)
+        {
+            SceneManager.MoveGameObjectToScene(go, SceneManager.GetActiveScene());
         }
     }
 }

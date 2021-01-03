@@ -14,6 +14,7 @@
 using PFW.Model.Armory;
 using PFW.Units.Component.Movement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PFW.Loading
 {
@@ -30,6 +31,7 @@ namespace PFW.Loading
         private void Start()
         {
             DontDestroyOnLoad(this.gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
 
             Armory = ConfigReader.ParseArmory();
 
@@ -39,6 +41,13 @@ namespace PFW.Loading
 
             PathFinderData = new PathfinderData(
                     TerrainData, Armory.UniqueMobilityTypes, SceneBuildId);
+        }
+
+        private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
+        {
+            // Loading is done so the data object should not persist across scenes anymore:
+            Util.RevertDontDestroyOnLoad(this.gameObject);
+            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
     }
 }
