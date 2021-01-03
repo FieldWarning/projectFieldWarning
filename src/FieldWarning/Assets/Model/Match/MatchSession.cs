@@ -175,6 +175,9 @@ namespace PFW.Model.Match
                 _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("Platoon"));
                 _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("GhostPlatoon"));
                 _networkManager.spawnPrefabs.Add(Resources.Load<GameObject>("UnitTemplatePrefabs/GroundUnit"));
+
+                // Ready to play:
+                _inputManager.gameObject.SetActive(true);
             }
         }
 

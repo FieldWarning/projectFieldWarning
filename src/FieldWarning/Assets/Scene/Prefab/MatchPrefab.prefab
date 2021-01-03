@@ -48,7 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputManager: {fileID: 2010589794897682467}
   _deploymentMenu: {fileID: 6970436139226477054}
-  IsChatFocused: 0
 --- !u!114 &2010589794897682467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56,7 +55,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1854712587296906308}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4da69dbd1d5c4dc45ac7c9f78982f24f, type: 3}
   m_Name: 
@@ -65,6 +64,7 @@ MonoBehaviour:
   _rangeTooltip: {fileID: 933985022417239941}
   _menu: {fileID: 4694312340583887109}
   _unitInfoPanel: {fileID: 7022300726008719632}
+  IsChatOpen: 0
 --- !u!114 &8236830637148248794
 MonoBehaviour:
   m_ObjectHideFlags: 0
