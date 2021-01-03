@@ -90,6 +90,13 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private UnitInfoPanel _unitInfoPanel = null;
 
+        /// <summary>
+        /// When the menu is open, we have to disable the minimap to prevent it drawing over it.
+        /// This wont be necessary when the minimap is rewritten to use a canvas like it should.
+        /// </summary>
+        [SerializeField]
+        private MiniMap _minimap = null;
+
         ChatManager _chatManager;
 
         private Commands _commands;
@@ -324,6 +331,7 @@ namespace PFW.UI.Ingame
             {
                 if (_commands.ToggleMenu)
                 {
+                    _minimap.enabled = true;
                     _menu.SetActive(false);
                     EnterNormalModeNaive();
                 }
@@ -700,6 +708,7 @@ namespace PFW.UI.Ingame
 
         private void EnterMenuMode()
         {
+            _minimap.enabled = false;
             CurMouseMode = MouseMode.IN_MENU;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             _menu.SetActive(true);

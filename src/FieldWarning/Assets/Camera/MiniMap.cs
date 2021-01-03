@@ -21,6 +21,12 @@ using PFW.Units;
 
 namespace PFW
 {
+    /// <summary>
+    /// Draws the minimap and its contents.
+    /// TODO this script should be totally reworked. It uses GUI.DrawTexture() etc calls,
+    /// while most of our UI uses canvasses. The two approaches are not supposed to be mixed.
+    /// This should be rewritten to use sprites and a canvas instead of directly drawing.
+    /// </summary>
     public class MiniMap : MonoBehaviour, IPointerClickHandler
     {
         //[SerializeField]
@@ -120,31 +126,32 @@ namespace PFW
             _screenSize = new Vector2(Screen.width, Screen.height);
         }
 
-        //Converts a position of an ingame Object to its position on the minimap
+        // Converts a position of an ingame Object to its position on the minimap
         private Vector2 GetMapPos(Vector3 pos)
         {
             float scale = _screenSize.x / _targetedScreenSize;
-            //adjust the position to fit on the terrain
-            pos = pos - _terrainPos;
-            //Scale the pos to fit the pixel size of the minimap
-            pos = pos * (_minimapSize / _terrainSize.x);
+            // Adjust the position to fit on the terrain
+            pos -= _terrainPos;
+            // Scale the pos to fit the pixel size of the minimap
+            pos *= (_minimapSize / _terrainSize.x);
             pos = new Vector2(Screen.width - _minimapSize * scale - _offsetFromRightSide * scale + pos.x * scale, _minimapSize * scale - pos.z * scale);
 
             return new Vector2(pos.x, pos.y);
         }
 
-        //Maybe make it so that the camera doesnt move directly to the position, but instead moves so that it looks at the position
-        //Move Camera to position on the minimap, basicly a reverse calculation of GetMapPos
+        // Maybe make it so that the camera doesnt move directly to the position,
+        // but instead moves so that it looks at the position
+        // Move Camera to position on the minimap, basicly a reverse calculation of GetMapPos
         public void OnPointerClick(PointerEventData eventData)
         {
             float scale = _screenSize.x / _targetedScreenSize;
             Vector2 pos = eventData.position;
             pos.y = _screenSize.y - pos.y;
             pos = new Vector2(-(Screen.width - pos.x - _offsetFromRightSide * scale) + _minimapSize * scale, pos.y - _offsetFromRightSide * scale);
-            pos = pos / scale;
+            pos /= scale;
             pos.y = _minimapSize - pos.y;
-            pos = pos / (_minimapSize / _terrainSize.x);
-            pos = pos + new Vector2(_terrainPos.x, _terrainPos.z);
+            pos /= (_minimapSize / _terrainSize.x);
+            pos += new Vector2(_terrainPos.x, _terrainPos.z);
 
             _mainCamera.SetTargetPosition(
                     new Vector3(pos.x, _mainCamera.transform.position.y, pos.y));
