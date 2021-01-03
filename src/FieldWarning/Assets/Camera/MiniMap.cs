@@ -63,6 +63,7 @@ namespace PFW
             {
                 // Hack: When loading a map, the camera is moved to the loading scene,
                 // where the terrain map is not yet loaded. Don't throw errors in that case.
+                this.enabled = false;
                 return;
             }
 
