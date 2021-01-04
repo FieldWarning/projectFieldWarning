@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scene/MainMenu/menu.unity
     guid: 096292c2712abeb49a26aa98ba505b63
   - enabled: 0
-    path: Assets/Scene/full-feature-scene/full-feature-scene.unity
+    path: 
     guid: e9f8553270121e44baac8827d3baca78
   - enabled: 1
     path: Assets/Scene/full-feature-scene-2/full-feature-scene2.unity
@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/loading-scene/loading-scene.unity
     guid: de2c79bbcdabb47489c3f6ce0054d752
+  - enabled: 1
+    path: Assets/Scene/Maps/1v1 Map/1v1Map.unity
+    guid: 1974b57219d905a4f94ff43027b3a101
   m_configObjects: {}
