@@ -83,7 +83,7 @@ namespace PFW
         /// this code as opposed to using the inspector, would be nice to find out why.
         /// </summary>
         /// <returns></returns>
-        static public Sprite LoadSpriteFromFile(
+        public static Sprite LoadSpriteFromFile(
                 string filename, 
                 float pixelsPerUnit = 100.0f,
                 SpriteMeshType type = SpriteMeshType.FullRect)
@@ -113,7 +113,7 @@ namespace PFW
             return newSprite;
         }
 
-        static private Texture2D LoadTexture(string FilePath)
+        private static Texture2D LoadTexture(string FilePath)
         {
             // Load a PNG or JPG file from disk to a Texture2D
             // Returns null if load fails
@@ -143,7 +143,7 @@ namespace PFW
         /// of being destroyed if the scene changes.
         /// https://answers.unity.com/questions/1491238/undo-dontdestroyonload.html
         /// </summary>
-        static public void RevertDontDestroyOnLoad(GameObject go)
+        public static void RevertDontDestroyOnLoad(GameObject go)
         {
             SceneManager.MoveGameObjectToScene(go, SceneManager.GetActiveScene());
         }
@@ -153,7 +153,7 @@ namespace PFW
         /// Can also find inactive objects.
         /// </summary>
         /// <param name="name"></param>
-        static public GameObject FindRootObjectByName(string name)
+        public static GameObject FindRootObjectByName(string name)
         {
             GameObject[] roots = SceneManager.GetActiveScene().GetRootGameObjects();
             foreach (GameObject go in roots)
@@ -165,6 +165,40 @@ namespace PFW
             }
             Logger.LogLoading(LogLevel.WARNING, $"Could not find toplevel object {name}.");
             return null;
+        }
+
+        /// <summary>
+        /// Given two ranges and a point from the first range, find its equivalent
+        /// on the second range.
+        /// </summary>
+        /// 
+        /// Example: We want our camera to move with 10kmh on ground level, 50kmh if high up.
+        /// Calling foo(current altitude, min altitude, max altitude, 10, 50, 1)
+        /// would give us a speed that the camera should use, linearly interpolated
+        /// from its current altitude.
+        /// 
+        /// <param name="sourceVal"></param>
+        /// <param name="sourceMin"></param>
+        /// <param name="sourceMax"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="interpolationExponent">
+        /// Use 1 for linear interpolation.
+        /// Use <1 for exponential interpolation, where results change faster near sourceMin.
+        /// Use >1 for exponential interpolation, where results change faster near sourceMax.
+        /// </param>
+        /// <returns></returns>
+        public static float InterpolateBetweenTwoRanges(
+                float sourceVal, 
+                float sourceMin, 
+                float sourceMax, 
+                float min, 
+                float max,
+                float interpolationExponent)
+        { 
+            float interpolation = (Mathf.Max(sourceVal - sourceMin, 0)) / (sourceMax - sourceMin);
+            interpolation = Mathf.Pow(interpolation, interpolationExponent);
+            return interpolation * (max - min) + min;
         }
     }
 }
