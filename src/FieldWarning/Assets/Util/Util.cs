@@ -186,7 +186,7 @@ namespace PFW
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <param name="interpolationExponent">
-        /// Use 1 for linear interpolation.yeah
+        /// Use 1 for linear interpolation.
         /// Use <1 for exponential interpolation, where results change faster near sourceMin.
         /// Use >1 for exponential interpolation, where results change faster near sourceMax.
         /// </param>
