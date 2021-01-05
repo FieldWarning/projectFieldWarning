@@ -69,9 +69,13 @@ namespace PFW
         {
             // TODO this assumes that the map is at y = 0; robust enough?
             float altitude = _mainCamera.transform.position.y;
+            altitude = Mathf.Clamp(
+                    altitude / Constants.MAP_SCALE,
+                    _minFadeAltitude,
+                    _maxFadeAltitude);
 
             _target.fadeFactor = Util.InterpolateBetweenTwoRanges(
-                    altitude / Constants.MAP_SCALE,
+                    altitude,
                     _minFadeAltitude,
                     _maxFadeAltitude,
                     _minFade,

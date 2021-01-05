@@ -177,13 +177,16 @@ namespace PFW
         /// would give us a speed that the camera should use, linearly interpolated
         /// from its current altitude.
         /// 
+        /// Warning: The max/min values define the ranges, but you have to clamp the source
+        /// value yourself if you want the return value to always be between them.
+        /// 
         /// <param name="sourceVal"></param>
         /// <param name="sourceMin"></param>
         /// <param name="sourceMax"></param>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <param name="interpolationExponent">
-        /// Use 1 for linear interpolation.
+        /// Use 1 for linear interpolation.yeah
         /// Use <1 for exponential interpolation, where results change faster near sourceMin.
         /// Use >1 for exponential interpolation, where results change faster near sourceMax.
         /// </param>
