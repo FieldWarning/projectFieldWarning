@@ -109,7 +109,7 @@ namespace PFW.UI.Ingame
         private OrbitCameraBehaviour _orbitCamera = null;
         private bool _lastCameraWasSliding = true;
 
-        ChatManager _chatManager;
+        private ChatManager _chatManager;
 
         private Commands _commands;
 
@@ -117,13 +117,15 @@ namespace PFW.UI.Ingame
 
         private void Awake()
         {
+            // FindObjectOfType on Awake is dangerous - the script being searched for may
+            // not have been activated yet (e.g. its Awake() method is called after this one)
             SelectionPane selectionPane = FindObjectOfType<SelectionPane>();
             if (selectionPane == null)
                 throw new Exception("No SelectionPane found in the scene!");
             _selectionManager = new SelectionManager(selectionPane, _localPlayer);
 
-            _chatManager = FindObjectOfType<ChatManager>();
-            if (selectionPane == null)
+            _chatManager = Util.FindRootObjectByName("ChatManager").GetComponent<ChatManager>();
+            if (_chatManager == null)
                 throw new Exception("No ChatManager found in the scene!");
 
             _commands = new Commands(GameSession.Singleton.Settings.Hotkeys);

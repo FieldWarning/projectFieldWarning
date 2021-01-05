@@ -147,5 +147,24 @@ namespace PFW
         {
             SceneManager.MoveGameObjectToScene(go, SceneManager.GetActiveScene());
         }
+
+        /// <summary>
+        /// Searches the scene for a toplevel object by its name.
+        /// Can also find inactive objects.
+        /// </summary>
+        /// <param name="name"></param>
+        static public GameObject FindRootObjectByName(string name)
+        {
+            GameObject[] roots = SceneManager.GetActiveScene().GetRootGameObjects();
+            foreach (GameObject go in roots)
+            {
+                if (go.name == name)
+                {
+                    return go;
+                }
+            }
+            Logger.LogLoading(LogLevel.WARNING, $"Could not find toplevel object {name}.");
+            return null;
+        }
     }
 }
