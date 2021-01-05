@@ -35,7 +35,7 @@ namespace PFW
         [SerializeField]
         private float _maxFade = 0.65f;
         [SerializeField]
-        private float _scalingExponent = 1f;
+        private float _interpolationExponent = 1f;
 
         private GameObject _mainCamera;
         private DecalProjector _target;
@@ -76,7 +76,7 @@ namespace PFW
                     _maxFadeAltitude,
                     _minFade,
                     _maxFade,
-                    _scalingExponent);
+                    _interpolationExponent);
         }
     }
 }
