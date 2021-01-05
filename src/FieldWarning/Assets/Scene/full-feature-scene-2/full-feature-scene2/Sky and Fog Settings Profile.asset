@@ -90,13 +90,13 @@ MonoBehaviour:
   m_AdvancedMode: 0
   lift:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: -0.09442797}
+    m_Value: {x: 1, y: 1, z: 1, w: -0.026974287}
   gamma:
     m_OverrideState: 0
     m_Value: {x: 1, y: 1, z: 1, w: 0}
   gain:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 0.4169928}
+    m_Value: {x: 1, y: 1, z: 1, w: 0.07972461}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Name: AmbientOcclusion
   m_EditorClassIdentifier: 
   active: 1
-  m_AdvancedMode: 0
+  m_AdvancedMode: 1
   quality:
     m_OverrideState: 1
     m_Value: 3
@@ -483,17 +483,17 @@ MonoBehaviour:
     m_Value: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.18
     min: 0
     max: 4
   directLightingStrength:
     m_OverrideState: 1
-    m_Value: 0.15
+    m_Value: 0.06
     min: 0
     max: 1
   radius:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 5
     min: 0.25
     max: 5
   temporalAccumulation:
@@ -814,7 +814,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 0.30735412}
+    m_Value: {x: 1, y: 1, z: 1, w: 0.037539635}
   midtones:
     m_OverrideState: 1
     m_Value: {x: 1, y: 1, z: 1, w: -0.01838236}
