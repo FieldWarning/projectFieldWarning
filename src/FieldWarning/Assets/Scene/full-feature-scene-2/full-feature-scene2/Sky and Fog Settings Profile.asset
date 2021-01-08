@@ -376,7 +376,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   rotation:
     m_OverrideState: 1
-    m_Value: 62
+    m_Value: 111
     min: 0
     max: 360
   skyIntensityMode:
@@ -391,11 +391,11 @@ MonoBehaviour:
     min: 0
   upperHemisphereLuxValue:
     m_OverrideState: 0
-    m_Value: 0.46831524
+    m_Value: 0.8174698
     min: 0
   upperHemisphereLuxColor:
     m_OverrideState: 0
-    m_Value: {x: 0.5, y: 0.4898386, z: 0.47258532}
+    m_Value: {x: 0.27889717, y: 0.35756263, z: 0.5}
   desiredLuxValue:
     m_OverrideState: 0
     m_Value: 20000
@@ -411,7 +411,7 @@ MonoBehaviour:
     m_Value: 0
   hdriSky:
     m_OverrideState: 1
-    m_Value: {fileID: 8900000, guid: c8f21f62fdb3e43c5b32917c84683698, type: 3}
+    m_Value: {fileID: 8900000, guid: 6fa3f446deee84c52aec507bd0aca28c, type: 3}
   enableBackplate:
     m_OverrideState: 0
     m_Value: 0
@@ -604,7 +604,7 @@ MonoBehaviour:
     min: 0
   baseHeight:
     m_OverrideState: 1
-    m_Value: -40
+    m_Value: -30
   maximumHeight:
     m_OverrideState: 1
     m_Value: 20
@@ -623,7 +623,7 @@ MonoBehaviour:
     m_Value: 1
   anisotropy:
     m_OverrideState: 1
-    m_Value: 0.9
+    m_Value: 0.95
     min: -1
     max: 1
   globalLightProbeDimmer:
@@ -659,7 +659,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   indirectSpecularIntensity:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 3
     min: 0
   indirectDiffuseIntensity:
     m_OverrideState: 1
