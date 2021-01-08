@@ -181,6 +181,23 @@ namespace PFW.Model.Match
             }
         }
 
+        /// <summary>
+        /// Called when one team wins.
+        /// </summary>
+        public void OnWinner(bool winnerIsBlue)
+        {
+            // TODO show score and go to main menu
+            Logger.LogWithoutSubsystem(
+                LogLevel.WARNING,
+                "MATCH ENDED, WINNER = " + (winnerIsBlue ? "blue" : "red") + " team.");
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
         public void RegisterPlatoonBirth(PlatoonBehaviour platoon)
         {
             Platoons.Add(platoon);

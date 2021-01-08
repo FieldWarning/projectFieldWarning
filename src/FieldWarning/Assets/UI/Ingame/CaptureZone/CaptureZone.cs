@@ -30,6 +30,14 @@ namespace PFW.UI.Ingame
         public Material Neutral;
         // How many points per tick this zone gives
         public int Worth = 3;
+        public Team.TeamName OwningTeam { 
+            get {
+                if (_owner == null)
+                    return Team.TeamName.UNDEFINED;
+                else
+                    return _owner.Team.Name;
+            }
+        }
 
         // Maybe take out all that owner stuff and simply use
         // an int or otherwise shorten the code
