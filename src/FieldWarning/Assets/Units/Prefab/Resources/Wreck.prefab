@@ -49,6 +49,9 @@ MonoBehaviour:
   _deathEffect: {fileID: 11658466471007456}
   _smokePrefab: {fileID: 6387150310333042033}
   _explosionAudio: {fileID: 5209752714453607693}
+  _smokeDuration: 40
+  _explosionDuration: 10
+  _wreckLifetime: 60
 --- !u!82 &5209752714453607693
 AudioSource:
   m_ObjectHideFlags: 0
@@ -331,17 +334,17 @@ PrefabInstance:
     - target: {fileID: 6695658504268714500, guid: e0f9d5780777e014e8a32eef27f949cb,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6695658504268714500, guid: e0f9d5780777e014e8a32eef27f949cb,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6695658504268714500, guid: e0f9d5780777e014e8a32eef27f949cb,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8027812026574367194, guid: e0f9d5780777e014e8a32eef27f949cb,
         type: 3}

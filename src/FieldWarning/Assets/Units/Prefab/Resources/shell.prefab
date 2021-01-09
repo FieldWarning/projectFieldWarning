@@ -60,8 +60,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030d98c8e037e60409b9b6a83ecd8376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _explosionPrefab: {fileID: 0}
+  _explosionPrefab: {fileID: 621103549616672339, guid: e0f9d5780777e014e8a32eef27f949cb,
+    type: 3}
   _trailEmitter: {fileID: 6421460044981772412}
+  _explosionSize: {x: 0.2, y: 0.2, z: 0.2}
+  _explosionTimeout: 10
 --- !u!54 &54854243726031328
 Rigidbody:
   m_ObjectHideFlags: 0
