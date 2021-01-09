@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 114877143042695842}
   - component: {fileID: 54854243726031328}
   m_Layer: 0
-  m_Name: Shell
+  m_Name: shell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,8 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030d98c8e037e60409b9b6a83ecd8376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _explosionPrefab: {fileID: 621103549616672339, guid: e0f9d5780777e014e8a32eef27f949cb,
-    type: 3}
+  _explosionPrefab: {fileID: 0}
   _trailEmitter: {fileID: 6421460044981772412}
 --- !u!54 &54854243726031328
 Rigidbody:
