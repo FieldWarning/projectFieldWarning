@@ -38,7 +38,7 @@ namespace PFW.UI.Ingame
             bool canSend = false;
             if (initialState)
             {
-                writer.WriteBoolean(_red.activeSelf ? true : false);
+                writer.WriteBoolean(_red.activeSelf);
                 writer.WriteString(Text);
                 canSend = true;
             }
