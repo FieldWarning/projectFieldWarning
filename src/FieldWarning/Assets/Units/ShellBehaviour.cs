@@ -27,6 +27,8 @@ namespace PFW.Units.Component.Weapon
         [Header("Trail emitter of this shell prefab - to be disabled on hit")]
         [SerializeField]
         private GameObject _trailEmitter = null;
+        [SerializeField]
+        private float _explosionTimeout = 3F;
 
         private static readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
         private float _forwardSpeed => _ammo.Velocity;
@@ -145,8 +147,7 @@ namespace PFW.Units.Component.Weapon
                 // instantiate explosion
                 GameObject explosion = Instantiate(
                         _explosionPrefab, transform.position, transform.rotation);
-                explosion.transform.localScale = new Vector3(10, 10, 10);
-                Destroy(explosion, 3F);
+                Destroy(explosion, _explosionTimeout);
             }
 
             if (_trailEmitter != null)
