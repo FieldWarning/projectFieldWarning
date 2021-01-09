@@ -94,7 +94,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_6E8FAB12: 40
-    - Vector1_EE9338B7: 0.67
+    - Vector1_EE9338B7: 0.76
     - _AddPrecomputedVelocity: 0
     - _AlbedoAffectEmissive: 0
     - _AlphaCutoff: 0.5
@@ -164,7 +164,7 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 0
     m_Colors:
-    - Color_B189F441: {r: 0, g: 0.4392157, b: 2.9960785, a: 0}
+    - Color_B189F441: {r: 0, g: 1.7568628, b: 11.984314, a: 0}
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
