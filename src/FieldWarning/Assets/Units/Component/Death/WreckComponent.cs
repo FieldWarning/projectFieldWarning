@@ -12,7 +12,6 @@
  */
 
 
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -32,9 +31,12 @@ namespace PFW.Units.Component.Death
         private GameObject _smokePrefab = null;
         [SerializeField]
         private AudioSource _explosionAudio = null;
-        private const float SMOKE_DURATION = 40f;
-        private const float SMOKE_DELAY = 1f;
-        private const float WRECK_DURATION = 60f;
+        [SerializeField]
+        private float _smokeDuration = 40f;
+        [SerializeField]
+        private float _explosionDuration = 1f;
+        [SerializeField]
+        private float _wreckLifetime = 60f;
 
         private GameObject _art;
         private float elapsedTime = 0f;
@@ -52,21 +54,21 @@ namespace PFW.Units.Component.Death
             gameObject.SetActive(true);
             _deathEffect.Play();
             _explosionAudio.Play();
-            Destroy(_art, WRECK_DURATION);
+            Destroy(_art, _wreckLifetime);
 
             _smokePrefab.SetActive(true);
             _smokePrefab.transform.parent = null;
-            Destroy(_smokePrefab, SMOKE_DURATION);
+            Destroy(_smokePrefab, _smokeDuration);
         }
 
         private void Update()
         {
             elapsedTime += Time.deltaTime;
-            if (elapsedTime > SMOKE_DELAY)
+            if (elapsedTime > _explosionDuration)
             {
                 _smokePrefab.SetActive(true);
                 _smokePrefab.transform.parent = null;
-                float maxDuration = SMOKE_DURATION - SMOKE_DELAY;
+                float maxDuration = _smokeDuration - _explosionDuration;
                 Destroy(_smokePrefab, Random.Range(maxDuration / 2, maxDuration));
                 Destroy(gameObject);
             }

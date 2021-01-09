@@ -28,6 +28,8 @@ namespace PFW.Units.Component.Weapon
         [SerializeField]
         private GameObject _trailEmitter = null;
         [SerializeField]
+        private Vector3 _explosionSize = new Vector3(1, 1, 1);
+        [SerializeField]
         private float _explosionTimeout = 3F;
 
         private static readonly float GRAVITY = 9.8F * Constants.MAP_SCALE;
@@ -147,6 +149,7 @@ namespace PFW.Units.Component.Weapon
                 // instantiate explosion
                 GameObject explosion = Instantiate(
                         _explosionPrefab, transform.position, transform.rotation);
+                explosion.transform.localScale = _explosionSize;
                 Destroy(explosion, _explosionTimeout);
             }
 
