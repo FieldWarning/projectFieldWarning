@@ -73,7 +73,7 @@ public class ScoreDisplay : MonoBehaviour
         }
 
         _redPts += redTick * Time.deltaTime;
-        _bluePts += _bluePts * Time.deltaTime;
+        _bluePts += bluePts * Time.deltaTime;
 
         UpdateScore((int)_redPts, redTick, (int)_bluePts, blueTick, POINTS_TO_WIN);
 
