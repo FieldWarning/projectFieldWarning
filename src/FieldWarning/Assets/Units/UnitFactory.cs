@@ -65,8 +65,8 @@ namespace PFW.UI.Prototype
             unit.SetActive(true);
             unit.name = "Ghost" + unit.name;
 
-            Shader shader = Resources.Load<Shader>("Ghost");
-            unit.ApplyShaderRecursively(shader);
+            Material mat = Resources.Load<Material>("GhostMaterial");
+            unit.ApplyMaterialRecursively(mat);
             unit.transform.position = 100 * Vector3.down;
         }
 

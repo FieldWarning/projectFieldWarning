@@ -116,16 +116,15 @@ public static class Extensions
         }
         return favorite;
     }
-    public static void ApplyShaderRecursively(this GameObject obj, Shader s)
+    public static void ApplyMaterialRecursively(this GameObject obj, Material mat)
     {
-        foreach (Renderer renderer in obj.GetComponents<Renderer>()) {
-            Material mat = new Material(renderer.material);
-            mat.shader = s;
-            mat.color -= Color.black / 2;
+        foreach (Renderer renderer in obj.GetComponents<Renderer>())
+        {
             renderer.material = mat;
         }
-        for (int i = 0; i < obj.transform.childCount; i++) {
-            obj.transform.GetChild(i).gameObject.ApplyShaderRecursively(s);
+        for (int i = 0; i < obj.transform.childCount; i++) 
+        {
+            obj.transform.GetChild(i).gameObject.ApplyMaterialRecursively(mat);
         }
     }
     public static void BlackenRecursively(this GameObject obj)
