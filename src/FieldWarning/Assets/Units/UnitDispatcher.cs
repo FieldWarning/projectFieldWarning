@@ -211,7 +211,17 @@ namespace PFW.Units
             NetworkServer.Destroy(gameObject);
         }
 
-        public override void OnStopServer() => OnDestroyShared();
+        public override void OnStopServer()
+        {
+            if (!isClient)
+            {
+                OnDestroyShared();
+            }
+            else
+            {
+                // Do nothing, since OnStopClient() will also be called.
+            }
+        }
 
         public override void OnStopClient() => OnDestroyShared();
 
@@ -227,6 +237,7 @@ namespace PFW.Units
 
             MatchSession.Current.RegisterUnitDeath(this);
 
+            Debug.Log($"hi {this} {this.netId}");
             Platoon.RemoveUnit(this);
         }
 
