@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using PFW.Model.Match;
+using PFW.UI.Ingame;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -138,7 +139,10 @@ namespace PFW.Units.Component.Weapon
 
         private void OnTriggerEnter(Collider other)
         {
-            Explode();
+            if (other.GetComponent<CaptureZone>() == null)
+            {
+                Explode();
+            }
         }
 
         private void Explode()

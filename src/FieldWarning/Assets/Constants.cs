@@ -42,7 +42,7 @@ namespace PFW
         /// When a shot misses, the projectile lands away from the target.
         /// Larger value = projectiles miss by more.
         /// </summary>
-        public const float MISS_FACTOR_MIN = 0.02f;
-        public const float MISS_FACTOR_MAX = 0.05f;
+        public const float MISS_FACTOR_MIN = 1f * MAP_SCALE;
+        public const float MISS_FACTOR_MAX = 2.5f * MAP_SCALE;
     }
 }

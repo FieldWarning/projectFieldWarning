@@ -88,6 +88,8 @@ namespace PFW.Networking
                 rend.enabled = visible;
             foreach (Canvas canv in GetComponentsInChildren<Canvas>())
                 canv.enabled = visible;
+            foreach (Light light in GetComponentsInChildren<Light>())
+                light.enabled = visible;
         }
     }
 }
