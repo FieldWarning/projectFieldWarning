@@ -237,7 +237,6 @@ namespace PFW.Units
 
             MatchSession.Current.RegisterUnitDeath(this);
 
-            Debug.Log($"hi {this} {this.netId}");
             Platoon.RemoveUnit(this);
         }
 

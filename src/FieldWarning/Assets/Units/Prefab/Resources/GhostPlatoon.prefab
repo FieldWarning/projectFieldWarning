@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7898419012835846289}
   - component: {fileID: 1432715717470403230}
   - component: {fileID: 7363683588281876064}
+  - component: {fileID: 5857065480741120413}
   m_Layer: 0
   m_Name: GhostPlatoon
   m_TagString: Untagged
@@ -49,6 +50,7 @@ MonoBehaviour:
   syncInterval: 0.1
   FinalHeading: 0
   _platoonLabel: {fileID: 5580470395918046853}
+  _visibility: {fileID: 5857065480741120413}
 --- !u!114 &7363683588281876064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,6 +66,21 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
+  hasSpawned: 0
+--- !u!114 &5857065480741120413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7734195526837719855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cc1e24d71fa2bb4a86df08f6a5ec1c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!1001 &8650406657805972629
 PrefabInstance:
   m_ObjectHideFlags: 0

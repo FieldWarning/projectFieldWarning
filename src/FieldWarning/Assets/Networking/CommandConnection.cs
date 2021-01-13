@@ -90,10 +90,85 @@ namespace PFW.Networking
             }
         }
 
+        /// <summary>
+        /// Enqueues some units to be bought from the nearest spawn point.
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="unitCategoryId"></param>
+        /// <param name="unitId"></param>
+        /// <param name="unitCount"></param>
+        /// <param name="spawnPos"></param>
+        /// <param name="destinationCenter"></param>
+        /// <param name="destinationHeading"></param>
+        [Command]
+        public void CmdEnqueuePlatoonPurchase(
+                byte playerId,
+                byte unitCategoryId,
+                int unitId,
+                int unitCount,
+                byte spawnPointId,
+                Vector3 destinationCenter,
+                float destinationHeading)
+        {
+            Logger.LogNetworking(
+                    LogLevel.DEBUG,
+                    this,
+                    $"Enqueueing platoon purchase at spawn pt = {spawnPointId}.");
+            if (MatchSession.Current.Players.Count > playerId
+                && unitCount >= MIN_PLATOON_SIZE
+                && unitCount <= MAX_PLATOON_SIZE)
+            {
+                if (MatchSession.Current.SpawnPoints.Length > spawnPointId)
+                {
+                    PlayerData owner = MatchSession.Current.Players[playerId];
+                    SpawnPointBehaviour spawn = MatchSession.Current.SpawnPoints[spawnPointId];
+
+                    if (unitCategoryId < owner.Deck.Categories.Length
+                        && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
+                    {
+                        Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
+
+                        GhostPlatoonBehaviour g = 
+                            GhostPlatoonBehaviour.CreatePreviewMode(unit, owner, unitCount);
+                        g.SetPositionAndOrientation(destinationCenter, destinationHeading);
+                        NetworkServer.Spawn(g.gameObject);
+                        spawn.BuyPlatoon(g);
+                    }
+                    else
+                    {
+                        if (unitCategoryId < MatchSession.Current.Armory.Categories.Length)
+                        {
+                            Logger.LogNetworking(LogLevel.ERROR,
+                                $"Got bad unit id = {unitId} from " +
+                                $"the server. Total units = {MatchSession.Current.Armory.Categories[unitCategoryId].Count} " +
+                                $"(category = {unitCategoryId}).");
+                        }
+                        else
+                        {
+                            Logger.LogNetworking(LogLevel.ERROR,
+                                $"Got bad category id = {unitCategoryId} from " +
+                                $"the server. Total categories = {MatchSession.Current.Armory.Categories.Length}");
+                        }
+                    }
+                }
+                else
+                {
+                    Logger.LogNetworking(LogLevel.ERROR,
+                        $"Client asked to create a platoon with an invalid spawn id {spawnPointId}.");
+                }
+            }
+            else
+            {
+                // Got an invalid player id, client is trying to crash us?
+                Logger.LogNetworking(LogLevel.ERROR,
+                    $"Client asked to create a platoon with an invalid player id {playerId}.");
+            }
+        }
+
         [Command]
         public void CmdSpawnPlatoon(
                 byte playerId,
-                byte categoryId,
+                byte unitCategoryId,
                 int unitId,
                 int unitCount,
                 Vector3 spawnPos,
@@ -109,13 +184,17 @@ namespace PFW.Networking
                 && unitCount <= MAX_PLATOON_SIZE)
             {
                 PlayerData owner = MatchSession.Current.Players[playerId];
-                if (categoryId < owner.Deck.Categories.Length
-                    && unitId < MatchSession.Current.Armory.Categories[categoryId].Count)
+                if (unitCategoryId < owner.Deck.Categories.Length
+                    && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
                 {
-                    Unit unit = MatchSession.Current.Armory.Categories[categoryId][unitId];
+                    Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
+                    Logger.LogNetworking(LogLevel.INFO, 
+                        $"Spawning a platoon with category = {unitCategoryId}, unit id = {unitId}.");
 
                     PlatoonBehaviour newPlatoon = PlatoonBehaviour.CreateGhostMode(unit, owner);
                     GhostPlatoonBehaviour ghostPlatoon = newPlatoon.GhostPlatoon;
+                    ghostPlatoon.transform.position = spawnPos;
+                    ghostPlatoon.FinalHeading = destinationHeading;
 
                     NetworkServer.Spawn(ghostPlatoon.gameObject);
                     NetworkServer.Spawn(newPlatoon.gameObject);
@@ -134,20 +213,30 @@ namespace PFW.Networking
                     newPlatoon.RpcEstablishReferences(ghostPlatoon.netId, unitIds);
                     newPlatoon.RpcInitializeUnits();
 
-                    ghostPlatoon.RpcSetOrientation(destinationCenter, destinationHeading);
-
                     newPlatoon.RpcActivate(spawnPos);
                 }
                 else
                 {
-                    Debug.LogError("Got bad unit id from a client.");
+                    if (unitCategoryId < MatchSession.Current.Armory.Categories.Length)
+                    {
+                        Logger.LogNetworking(LogLevel.ERROR,
+                            $"Got bad unit id = {unitId} from " +
+                            $"the server. Total units = {MatchSession.Current.Armory.Categories[unitCategoryId].Count} " +
+                            $"(category = {unitCategoryId}).");
+                    }
+                    else
+                    {
+                        Logger.LogNetworking(LogLevel.ERROR,
+                            $"Got bad category id = {unitCategoryId} from " +
+                            $"the server. Total categories = {MatchSession.Current.Armory.Categories.Length}");
+                    }
                 }
             }
             else
             {
-                // Got an invalid player id, server is trying to crash us?
-                Debug.LogError(
-                        "Client asked to create a platoon with an invalid player id.");
+                // Got an invalid player id, client is trying to crash us?
+                Logger.LogNetworking(LogLevel.ERROR,
+                    $"Client asked to create a platoon with an invalid player id {playerId}.");
             }
         }
 

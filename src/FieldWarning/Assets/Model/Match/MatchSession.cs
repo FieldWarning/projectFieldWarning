@@ -85,6 +85,9 @@ namespace PFW.Model.Match
         private NetworkManager _networkManager;
 
         private LoadedData _loadedData;
+
+        public SpawnPointBehaviour[] SpawnPoints;
+
         public Armory.Armory Armory => _loadedData.Armory;
 
         private void Awake()
@@ -143,11 +146,10 @@ namespace PFW.Model.Match
 
                 _deploymentMenu.Initialize(_inputManager, LocalPlayer);
 
-                SpawnPointBehaviour[] spawns = 
-                        FindObjectsOfType<SpawnPointBehaviour>();
-                foreach (SpawnPointBehaviour spawn in spawns)
+                SpawnPoints = FindObjectsOfType<SpawnPointBehaviour>();
+                for (int i = 0; i < SpawnPoints.Length; i++)
                 {
-                    _inputManager.RegisterSpawnPoint(spawn);
+                    SpawnPoints[i].Id = (byte)i;
                 }
             }
         }

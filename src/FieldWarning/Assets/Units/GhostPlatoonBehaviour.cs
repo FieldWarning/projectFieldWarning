@@ -19,7 +19,7 @@ using PFW.Model.Armory;
 using PFW.Model.Match;
 using PFW.UI.Ingame;
 using PFW.Units.Component.Movement;
-using PFW.Units.Component.Vision;
+using PFW.Networking;
 
 namespace PFW.Units
 {
@@ -30,31 +30,59 @@ namespace PFW.Units
      */
     public class GhostPlatoonBehaviour : NetworkBehaviour
     {
+        private Vector3 INERT_POSITION = new Vector3(0, -100, 0);
+        private const ulong UNITS_DIRTY_BIT   = 0b01;
+        private const ulong HEADING_DIRTY_BIT = 0b10;
+
         public float FinalHeading;
 
         [SerializeField]
         private PlatoonLabel _platoonLabel = null;
+        [SerializeField]
+        private NetworkTeamVisibility _visibility = null;
         private Unit _unit;
         private PlayerData _owner;
-        private List<GameObject> _units = new List<GameObject>();
+        private readonly List<GameObject> _units = new List<GameObject>();
+        public int UnitCount => _units.Count;
+
+        /// <summary>
+        /// Create a ghost platoon without a corresponding real platoon, to be used
+        /// for buy previews.
+        /// </summary>
+        public static GhostPlatoonBehaviour CreatePreviewMode(
+            Unit unit, PlayerData owner, int unitCount)
+        {
+            GhostPlatoonBehaviour ghost = Instantiate(
+                      Resources.Load<GameObject>(
+                              "GhostPlatoon")).GetComponent<GhostPlatoonBehaviour>();
+            ghost.Initialize(unit, owner);
+            while (unitCount > 0)
+            {
+                ghost.AddSingleUnit();
+                unitCount--;
+            }
+            return ghost;
+        }
+        public static GhostPlatoonBehaviour CreatePreviewMode(Unit unit, PlayerData owner)
+            => CreatePreviewMode(unit, owner, Constants.MIN_PLATOON_SIZE);
 
         public override bool OnSerialize(NetworkWriter writer, bool initialState)
         {
-            bool canSend = false;
             if (initialState)
             {
                 writer.WriteByte(_owner.Id);
                 writer.WriteByte(_unit.CategoryId);
                 writer.WriteInt32(_unit.Id);
                 writer.WriteSingle(FinalHeading);
-                canSend = true;
+                writer.WriteVector3(transform.position);
             }
-            else 
+            else
             {
-                // TODO
+                writer.WriteSingle(FinalHeading);
+                writer.WriteByte((byte)_units.Count);
             }
 
-            return canSend;
+            return true;
         }
 
         public override void OnDeserialize(NetworkReader reader, bool initialState)
@@ -62,34 +90,68 @@ namespace PFW.Units
             if (initialState)
             {
                 int playerId = reader.ReadByte();
+
                 if (MatchSession.Current.Players.Count > playerId)
                 {
-                    PlayerData owner = MatchSession.Current.Players[playerId];
                     byte unitCategoryId = reader.ReadByte();
                     int unitId = reader.ReadInt32();
-                    if (unitCategoryId < owner.Deck.Categories.Length
-                        && unitId < owner.Deck.Categories[unitCategoryId].Count)
-                    {
-                        Unit unit = owner.Deck.Categories[unitCategoryId][unitId];
-                        Initialize(unit, owner);
 
+                    PlayerData owner = MatchSession.Current.Players[playerId];
+                    if (unitCategoryId < MatchSession.Current.Armory.Categories.Length
+                        && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
+                    {
                         FinalHeading = reader.ReadSingle();
+                        transform.position = reader.ReadVector3();
+
+                        Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
+                        Initialize(unit, owner);
+                        UpdateGhostLocations();
                     }
                     else 
                     {
-                        Debug.LogError("Got bad unit id from the server.");
+                        if (unitCategoryId < MatchSession.Current.Armory.Categories.Length)
+                        {
+                            Logger.LogNetworking(LogLevel.ERROR,
+                                $"Got bad unit id = {unitId} from " +
+                                $"the server. Total units = {MatchSession.Current.Armory.Categories[unitCategoryId].Count} " +
+                                $"(category = {unitCategoryId}).");
+                        }
+                        else
+                        {
+                            Logger.LogNetworking(LogLevel.ERROR,
+                                $"Got bad category id = {unitCategoryId} from " +
+                                $"the server. Total categories = {MatchSession.Current.Armory.Categories.Length}");
+                        }
                     }
                 }
                 else
                 {
                     // Got an invalid player id, server is trying to crash us?
-                    Debug.LogError(
-                        "Network tried to create a ghostplatoon with an invalid player id.");
+                    Logger.LogNetworking(LogLevel.ERROR,
+                        $"Network tried to create a ghostplatoon with an invalid player id {playerId}.");
                 }
             }
             else
             {
-                // TODO
+                float heading = reader.ReadSingle();
+                if (heading != FinalHeading)
+                {
+                    FinalHeading = heading;
+                    UpdateGhostLocations();
+                }
+
+                int unitCount = reader.ReadByte();
+                while (unitCount != _units.Count && unitCount != 0)
+                {
+                    if (unitCount > _units.Count)
+                    {
+                        AddSingleUnit();
+                    }
+                    else if (unitCount < _units.Count)
+                    {
+                        RemoveOneGhostUnit();
+                    }
+                }
             }
         }
 
@@ -99,8 +161,9 @@ namespace PFW.Units
                     LogLevel.DEBUG, 
                     this,
                     $"Spawned a ghost platoon of {_unit.Name} with netId {netId}");
-            transform.position = 100 * Vector3.down;
+            //transform.position = INERT_POSITION;
 
+            _visibility.Initialize(_owner.Team.Name);
             _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
         }
 
@@ -114,8 +177,9 @@ namespace PFW.Units
         {
             _owner = owner;
             _unit = unit;
-            transform.position = 100 * Vector3.down;
+            //transform.position = INERT_POSITION;
 
+            _visibility.Initialize(_owner.Team.Name);
             _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
         }
 
@@ -126,27 +190,30 @@ namespace PFW.Units
             unit.GetComponent<MovementComponent>().InitializeGhost(
                     MatchSession.Current.TerrainMap);
             _units.Add(unit);
-        }
-
-        // TODO remove. Currently this is needed because spawned platoons 
-        // infer their destination from the positions of the ghosts, which are not
-        // synchronized. Once those are synchronized (so allies can see buy orders),
-        // this will no longer need to be called as an RPC.
-        [ClientRpc]
-        public void RpcSetOrientation(Vector3 center, float heading)
-        {
-            SetPositionAndOrientation(center, heading);
+            if (transform.position != INERT_POSITION)
+            {
+                UpdateGhostLocations();
+            }
+            SetDirtyBit(UNITS_DIRTY_BIT);
         }
 
         public void SetPositionAndOrientation(Vector3 center, float heading)
         {
             FinalHeading = heading;
+            SetDirtyBit(HEADING_DIRTY_BIT);
             transform.position = center;
 
-            List<Vector3> positions = Formations.GetLineFormation(center, heading, _units.Count);
-            for (int i = 0; i < _units.Count; i++) {
+            UpdateGhostLocations();
+        }
+
+        private void UpdateGhostLocations()
+        {
+            List<Vector3> positions = Formations.GetLineFormation(
+                    transform.position, FinalHeading, _units.Count);
+            for (int i = 0; i < _units.Count; i++)
+            {
                 _units[i].GetComponent<MovementComponent>()
-                        .Teleport(positions[i], Mathf.PI / 2 - heading);
+                        .Teleport(positions[i], Mathf.PI / 2 - FinalHeading);
             }
         }
 
@@ -177,6 +244,26 @@ namespace PFW.Units
             Destroy(u);
             if (_units.Count == 0)
                 Destroy();
+            else
+                SetDirtyBit(UNITS_DIRTY_BIT);
+        }
+
+        /// <summary>
+        ///     Spawn a platoon from this buy preview.
+        /// </summary>
+        /// <param name="spawnPos"></param>
+        public void Spawn(Vector3 spawnPos)
+        {
+            CommandConnection.Connection.CmdSpawnPlatoon(
+                    _owner.Id,
+                    _unit.CategoryId,
+                    _unit.Id,
+                    _units.Count,
+                    spawnPos,
+                    transform.position,
+                    FinalHeading);
+
+            Destroy();
         }
     }
 }

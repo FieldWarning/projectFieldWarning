@@ -75,22 +75,34 @@ namespace PFW.Units
                     PlayerData owner = MatchSession.Current.Players[playerId];
                     byte unitCategoryId = reader.ReadByte();
                     int unitId = reader.ReadInt32();
-                    if (unitCategoryId < owner.Deck.Categories.Length
-                        && unitId < owner.Deck.Categories[unitCategoryId].Count)
+                    if (unitCategoryId < MatchSession.Current.Armory.Categories.Length
+                        && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
                     {
-                        Unit unit = owner.Deck.Categories[unitCategoryId][unitId];
+                        Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
                         Initialize(unit, owner);
                     }
                     else
                     {
-                        Debug.LogError("Got bad unit id from the server.");
+                        if (unitCategoryId < MatchSession.Current.Armory.Categories.Length)
+                        {
+                            Logger.LogNetworking(LogLevel.ERROR,
+                                $"Got bad unit id = {unitId} from " +
+                                $"the server. Total units = {MatchSession.Current.Armory.Categories[unitCategoryId].Count} " +
+                                $"(category = {unitCategoryId}).");
+                        }
+                        else
+                        {
+                            Logger.LogNetworking(LogLevel.ERROR,
+                                $"Got bad category id = {unitCategoryId} from " +
+                                $"the server. Total categories = {MatchSession.Current.Armory.Categories.Length}");
+                        }
                     }
                 }
                 else
                 {
                     // Got an invalid player id, server is trying to crash us?
-                    Debug.LogError(
-                        "Network tried to create a platoon with an invalid player id.");
+                    Logger.LogNetworking(LogLevel.ERROR,
+                        $"Network tried to create a ghostplatoon with an invalid player id {playerId}.");
                 }
             }
             else
@@ -143,24 +155,6 @@ namespace PFW.Units
             realPlatoon.Initialize(unit, owner);
 
             return realPlatoon;
-        }
-
-        /// <summary>
-        ///     Create the preview on the other clients and immediately activate it (see RpcSpawn)
-        /// </summary>
-        /// <param name="spawnPos"></param>
-        public void Spawn(Vector3 spawnPos)
-        {
-            CommandConnection.Connection.CmdSpawnPlatoon(
-                    Owner.Id,
-                    Unit.CategoryId,
-                    Unit.Id,
-                    Units.Count,
-                    spawnPos,
-                    GhostPlatoon.transform.position,
-                    GhostPlatoon.FinalHeading);
-
-            DestroyPreview();
         }
 
         /// <summary>
@@ -354,16 +348,6 @@ namespace PFW.Units
                 Destroy(u.GameObject);
 
             DestroyWithoutUnits();
-        }
-
-        /// <summary>
-        ///     Destroy a platoon that is a buy preview.
-        ///     TODO simplify, this method can probably be merged with another.
-        /// </summary>
-        public void DestroyPreview()
-        {
-            Destroy();
-            GhostPlatoon.Destroy();
         }
 
         #endregion

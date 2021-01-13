@@ -23,13 +23,13 @@ namespace PFW.UI.Ingame
 {
     public class BuyTransaction
     {
-        private PlatoonBehaviour _newestPlatoon;
+        private GhostPlatoonBehaviour _newestPlatoon;
 
         private int _smallestPlatoonSize;
 
         public Unit Unit { get; }
         public PlayerData Owner { get; }
-        public List<PlatoonBehaviour> PreviewPlatoons { get; }
+        public List<GhostPlatoonBehaviour> PreviewPlatoons { get; }
 
         public int UnitCount {
             get {
@@ -42,7 +42,7 @@ namespace PFW.UI.Ingame
             Unit = unit;
             Owner = owner;
 
-            PreviewPlatoons = new List<PlatoonBehaviour>();
+            PreviewPlatoons = new List<GhostPlatoonBehaviour>();
             StartNewPlatoon();
         }
 
@@ -65,9 +65,7 @@ namespace PFW.UI.Ingame
         private void StartNewPlatoon()
         {
             _smallestPlatoonSize = MIN_PLATOON_SIZE;
-            _newestPlatoon = PlatoonBehaviour.CreateGhostMode(Unit, Owner);
-            for (int i = 0; i < MIN_PLATOON_SIZE; i++)
-                _newestPlatoon.AddSingleUnit();
+            _newestPlatoon = GhostPlatoonBehaviour.CreatePreviewMode(Unit, Owner, MIN_PLATOON_SIZE);
 
             PreviewPlatoons.Add(_newestPlatoon);
         }
@@ -98,15 +96,15 @@ namespace PFW.UI.Ingame
                     center, heading + Mathf.PI / 2, PreviewPlatoons.Count);
             for (int i = 0; i < PreviewPlatoons.Count; i++)
             {
-                PreviewPlatoons[i].SetGhostOrientation(positions[i], heading);
-                PreviewPlatoons[i].ToggleGhostVisibility(true);
+                PreviewPlatoons[i].SetPositionAndOrientation(positions[i], heading);
+                PreviewPlatoons[i].SetVisible(true);
             }
         }
 
         public void HidePreview()
         {
             for (int i = 0; i < PreviewPlatoons.Count; i++)
-                PreviewPlatoons[i].ToggleGhostVisibility(false);
+                PreviewPlatoons[i].SetVisible(false);
         }
     }
 }

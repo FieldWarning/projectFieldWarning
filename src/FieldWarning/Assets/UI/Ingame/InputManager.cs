@@ -40,7 +40,6 @@ namespace PFW.UI.Ingame
         private Texture2D _visionRulerReticle;
         private Texture2D _forestReticle;
 
-        private List<SpawnPointBehaviour> _spawnPointList = new List<SpawnPointBehaviour>();
         private ClickManager _rightClickManager;
 
         // When a flare is being previewed (has not been placed yet),
@@ -396,7 +395,18 @@ namespace PFW.UI.Ingame
                 if (_currentBuyTransaction == null)
                     return;
 
-                closestSpawn.BuyPlatoons(_currentBuyTransaction.PreviewPlatoons);
+                foreach (GhostPlatoonBehaviour ghost in _currentBuyTransaction.PreviewPlatoons)
+                {
+                    CommandConnection.Connection.CmdEnqueuePlatoonPurchase(
+                        _currentBuyTransaction.Owner.Id,
+                        _currentBuyTransaction.Unit.CategoryId,
+                        _currentBuyTransaction.Unit.Id,
+                        ghost.UnitCount,
+                        closestSpawn.Id,
+                        ghost.transform.position,
+                        ghost.FinalHeading);
+                    ghost.Destroy();
+                }
 
                 if (Input.GetKey(KeyCode.LeftShift)) 
                 {
@@ -414,9 +424,9 @@ namespace PFW.UI.Ingame
         {
             if (Input.GetMouseButton(1)) 
             {
-                foreach (PlatoonBehaviour p in _currentBuyTransaction.PreviewPlatoons) 
+                foreach (GhostPlatoonBehaviour ghost in _currentBuyTransaction.PreviewPlatoons) 
                 {
-                    p.DestroyPreview();
+                    ghost.Destroy();
                 }
 
                 int unitPrice = _currentBuyTransaction.Unit.Price;
@@ -509,7 +519,7 @@ namespace PFW.UI.Ingame
 
         private SpawnPointBehaviour GetClosestSpawn(Vector3 p)
         {
-            var pointList = _spawnPointList.Where(
+            List<SpawnPointBehaviour> pointList = MatchSession.Current.SpawnPoints.Where(
                 x => x.Team == _localPlayer.Team).ToList();
 
             SpawnPointBehaviour go = pointList.First();
@@ -522,12 +532,6 @@ namespace PFW.UI.Ingame
                 }
             }
             return go;
-        }
-
-        public void RegisterSpawnPoint(SpawnPointBehaviour s)
-        {
-            if (!_spawnPointList.Contains(s))
-                _spawnPointList.Add(s);
         }
 
         public void ApplyHotkeys()
