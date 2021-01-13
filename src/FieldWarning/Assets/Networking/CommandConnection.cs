@@ -193,7 +193,7 @@ namespace PFW.Networking
 
                     PlatoonBehaviour newPlatoon = PlatoonBehaviour.CreateGhostMode(unit, owner);
                     GhostPlatoonBehaviour ghostPlatoon = newPlatoon.GhostPlatoon;
-                    ghostPlatoon.transform.position = spawnPos;
+                    ghostPlatoon.transform.position = destinationCenter;
                     ghostPlatoon.FinalHeading = destinationHeading;
 
                     NetworkServer.Spawn(ghostPlatoon.gameObject);

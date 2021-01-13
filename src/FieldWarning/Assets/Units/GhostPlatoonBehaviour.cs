@@ -74,7 +74,6 @@ namespace PFW.Units
                 writer.WriteByte(_unit.CategoryId);
                 writer.WriteInt32(_unit.Id);
                 writer.WriteSingle(FinalHeading);
-                writer.WriteVector3(transform.position);
             }
             else
             {
@@ -101,7 +100,6 @@ namespace PFW.Units
                         && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
                     {
                         FinalHeading = reader.ReadSingle();
-                        transform.position = reader.ReadVector3();
 
                         Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
                         Initialize(unit, owner);
@@ -153,18 +151,6 @@ namespace PFW.Units
                     }
                 }
             }
-        }
-
-        public override void OnStartClient()
-        {
-            Logger.LogNetworking(
-                    LogLevel.DEBUG, 
-                    this,
-                    $"Spawned a ghost platoon of {_unit.Name} with netId {netId}");
-            //transform.position = INERT_POSITION;
-
-            _visibility.Initialize(_owner.Team.Name);
-            _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
         }
 
         /// <summary>
