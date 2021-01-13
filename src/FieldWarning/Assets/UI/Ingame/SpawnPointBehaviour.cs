@@ -18,7 +18,7 @@ using System.Linq;
 using PFW.Model.Match;
 using PFW.Units;
 
-namespace PFW
+namespace PFW.UI.Ingame
 {
     public class SpawnPointBehaviour : MonoBehaviour
     {

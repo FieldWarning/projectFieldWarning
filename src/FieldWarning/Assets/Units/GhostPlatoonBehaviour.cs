@@ -163,7 +163,6 @@ namespace PFW.Units
         {
             _owner = owner;
             _unit = unit;
-            //transform.position = INERT_POSITION;
 
             _visibility.Initialize(_owner.Team.Name);
             _platoonLabel.InitializeAsGhost(_unit, _owner.Team.ColorScheme);
