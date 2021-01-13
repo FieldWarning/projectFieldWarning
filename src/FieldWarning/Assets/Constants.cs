@@ -44,5 +44,8 @@ namespace PFW
         /// </summary>
         public const float MISS_FACTOR_MIN = 1f * MAP_SCALE;
         public const float MISS_FACTOR_MAX = 2.5f * MAP_SCALE;
+
+        public const float SPAWNPOINT_MIN_SPAWN_INTERVAL = 5f;
+        public const float SPAWNPOINT_QUEUE_DELAY = 1f;
     }
 }

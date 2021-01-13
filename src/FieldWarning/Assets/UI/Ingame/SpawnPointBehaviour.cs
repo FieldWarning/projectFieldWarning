@@ -18,44 +18,45 @@ using System.Linq;
 using PFW.Model.Match;
 using PFW.Units;
 
-public class SpawnPointBehaviour : MonoBehaviour
+namespace PFW
 {
-    public Team Team;
-
-    public const float MIN_SPAWN_INTERVAL = 2f;
-    public const float QUEUE_DELAY = 1f;
-    public byte Id = 0b11111111;
-
-    private Queue<GhostPlatoonBehaviour> _spawnQueue = new Queue<GhostPlatoonBehaviour>();
-    private float _spawnTime = MIN_SPAWN_INTERVAL;
-
-    private void Start()
+    public class SpawnPointBehaviour : MonoBehaviour
     {
-        GetComponentInChildren<Renderer>().material.color = 
-                Team.ColorScheme.BaseColor;
-    }
+        public Team Team;
 
-    private void Update()
-    {
-        if (!_spawnQueue.Any())
-            return;
+        public byte Id = 0b11111111;
 
-        _spawnTime -= Time.deltaTime;
-        if (_spawnTime > 0)
-            return;
+        private Queue<GhostPlatoonBehaviour> _spawnQueue = new Queue<GhostPlatoonBehaviour>();
+        private float _spawnTime = Constants.SPAWNPOINT_QUEUE_DELAY;
+
+        private void Start()
+        {
+            GetComponentInChildren<Renderer>().material.color =
+                    Team.ColorScheme.BaseColor;
+        }
+
+        private void Update()
+        {
+            if (!_spawnQueue.Any())
+                return;
+
+            _spawnTime -= Time.deltaTime;
+            if (_spawnTime > 0)
+                return;
 
 
-        GhostPlatoonBehaviour previewPlatoon = _spawnQueue.Dequeue();
-        previewPlatoon.Spawn(transform.position);
+            GhostPlatoonBehaviour previewPlatoon = _spawnQueue.Dequeue();
+            previewPlatoon.Spawn(transform.position);
 
-        if (_spawnQueue.Count > 0)
-            _spawnTime += MIN_SPAWN_INTERVAL;
-        else
-            _spawnTime = QUEUE_DELAY;
-    }
+            if (_spawnQueue.Count > 0)
+                _spawnTime += Constants.SPAWNPOINT_MIN_SPAWN_INTERVAL;
+            else
+                _spawnTime = Constants.SPAWNPOINT_QUEUE_DELAY;
+        }
 
-    public void BuyPlatoon(GhostPlatoonBehaviour previewPlatoon)
-    {
-        _spawnQueue.Enqueue(previewPlatoon);
+        public void BuyPlatoon(GhostPlatoonBehaviour previewPlatoon)
+        {
+            _spawnQueue.Enqueue(previewPlatoon);
+        }
     }
 }
