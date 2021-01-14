@@ -1,0 +1,84 @@
+{    
+    "Turrets": [{
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "MG",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "GroundRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "MG",
+                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HEAVY_ARMS",
+                            "DamageValue": 0.75,
+                            "ShellCount" : 200,
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Autocannon",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 2000,
+                    "Accuracy": 30,
+                    "ShotReload": 1,
+                    "SalvoLength": 2,
+                    "SalvoReload": 4,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Autocannon",
+                    "WeaponIcon": "WeaponIcons/US_TNK_M1A2",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE",
+                            "Velocity" : 200,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
+                            "ShellCount" : 10,
+                        },
+                        {
+                            "DamageType" : "KE",
+                            "DamageValue": 8,
+                            "ShellCount" : 10,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+                            "DamageValue": 12,
+                            "GroundRange" : 1500,
+                            "Accuracy": 60,
+                            "ShellCount" : 4,
+                        }
+                    ]
+                }
+            }
+        ]
+    }]
+}
