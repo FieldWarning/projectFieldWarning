@@ -441,8 +441,8 @@ namespace PFW.Model.Armory.JsonContents
         public int SalvoLength;
         public float SalvoReload;
         public int Velocity;  // meters per second
-        public bool Indirect;
-        public bool Guided;
+        public bool IsIndirect;
+        public bool IsGuided;
         public string MuzzleFlash;
         public string Shell;
         public string Sound;

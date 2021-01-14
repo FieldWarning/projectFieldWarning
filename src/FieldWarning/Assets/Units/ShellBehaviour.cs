@@ -79,6 +79,8 @@ namespace PFW.Units.Component.Weapon
         /// that would be divided between horizontal and vertical.
         /// For simplicity we don't do this and instead assume horizontal always
         /// moves at max speed and vertical can be infinite.
+        /// TODO remove the simplification
+        /// TODO take IsIndirect as an argument, have indirect shells use a steeper angle
         public static Quaternion CalculateBarrelAngle(
                 float horizontalSpeed, 
                 Vector3 start, 

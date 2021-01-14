@@ -29,7 +29,7 @@ namespace PFW.Units.Component.Weapon
         private readonly float _heloRange;
         public readonly float Accuracy;
         public readonly float Velocity;  // unity units per second
-        private readonly bool _isIndirect;
+        public readonly bool IsIndirect;
         private readonly bool _isGuided;
         public readonly AudioClip ShotSound;
         public readonly VisualEffect MuzzleFlashEffect;
@@ -94,7 +94,7 @@ namespace PFW.Units.Component.Weapon
             _heloRange = config.HeloRange * Constants.MAP_SCALE;
             Accuracy = config.Accuracy;
             Velocity = config.Velocity * Constants.MAP_SCALE;
-            _isIndirect = config.Indirect;
+            IsIndirect = config.Indirect;
             _isGuided = config.Guided;
             GameObject muzzleFlash = Resources.Load<GameObject>(config.MuzzleFlash);
             if (muzzleFlash != null)
