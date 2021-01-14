@@ -58,6 +58,13 @@ namespace PFW.Units.Component.Weapon
 
         private readonly GameObject _shellPrefab;
 
+        /// <summary>
+        /// If this weapon has HEAT or KE ammo, it will not use HE ammo against vehicles.
+        /// 
+        /// In unity units.
+        /// </summary>
+        private readonly float _apRange = 0;
+
         public Ammo[] Ammo { get; }
 
         public Sprite HudIcon { get; }
@@ -83,6 +90,11 @@ namespace PFW.Units.Component.Weapon
             for (int i = 0; i < data.Ammo.Count; i++)
             {
                 Ammo[i] = new Ammo(data.Ammo[i], _barrelTip);
+
+                if (Ammo[i].DamageType == DamageType.KE || Ammo[i].DamageType == DamageType.HEAT)
+                {
+                    _apRange = _apRange > Ammo[i].GroundRange ? _apRange : Ammo[i].GroundRange;
+                }
             }
 
             HudIcon = data.WeaponSprite;
@@ -210,6 +222,7 @@ namespace PFW.Units.Component.Weapon
         {
             Ammo result = null;
             float bestDamage = 0;
+            bool mustUseAp = _apRange > distance && target.Type == TargetType.VEHICLE;
 
             for (int i = 0; i < Ammo.Length; i++)
             {
@@ -218,6 +231,16 @@ namespace PFW.Units.Component.Weapon
 
                 float damage = Ammo[i].EstimateDamageAgainstTarget(
                         target, displacement, distance);
+
+                // Tanks and autocannons dont shoot other vehicles with HE:
+                if (mustUseAp)
+                {
+                    if (Ammo[i].DamageType != DamageType.KE && Ammo[i].DamageType != DamageType.HEAT)
+                    {
+                        damage = 0;
+                    }
+                }
+
                 if (damage > bestDamage)
                 {
                     result = Ammo[i];

@@ -25,7 +25,7 @@ namespace PFW.Units.Component.Weapon
     {
         public readonly DamageType DamageType;
         public readonly float DamageValue;
-        private readonly float _groundRange;
+        public readonly float GroundRange;
         private readonly float _heloRange;
         public readonly float Accuracy;
         public readonly float Velocity;  // unity units per second
@@ -85,10 +85,10 @@ namespace PFW.Units.Component.Weapon
             }
             
             DamageValue = config.DamageValue;
-            _groundRange = config.GroundRange * Constants.MAP_SCALE;
+            GroundRange = config.GroundRange * Constants.MAP_SCALE;
             if (DamageType == DamageType.KE)
             {
-                DamageValue += (int)(_groundRange / Constants.KE_FALLOFF);
+                DamageValue += (int)(GroundRange / Constants.KE_FALLOFF);
             }
 
             _heloRange = config.HeloRange * Constants.MAP_SCALE;
@@ -130,7 +130,7 @@ namespace PFW.Units.Component.Weapon
                     if (DamageType == DamageType.HE 
                         || DamageType == DamageType.SMALL_ARMS
                         || DamageType == DamageType.HEAVY_ARMS)
-                        result = _groundRange;
+                        result = GroundRange;
                     break;
                 case TargetType.VEHICLE:
                     // TODO this is wrong. Small arms can also shoot at vehicles (<2AV).
@@ -140,7 +140,7 @@ namespace PFW.Units.Component.Weapon
                     if (DamageType == DamageType.KE 
                         || DamageType == DamageType.HEAT
                         || DamageType == DamageType.HE)
-                        result = _groundRange;
+                        result = GroundRange;
                     break;
                 case TargetType.HELO:
                     if (DamageType == DamageType.HE
@@ -191,19 +191,27 @@ namespace PFW.Units.Component.Weapon
                         result = target.Enemy.EstimateDamage(
                                 DamageType, DamageValue, displacement, distance);
                         break;
+                    case DamageType.SMALL_ARMS:
+                        result = target.Enemy.EstimateDamage(
+                                DamageType, DamageValue, displacement, distance);
+                        break;
+                    case DamageType.HEAVY_ARMS:
+                        result = target.Enemy.EstimateDamage(
+                                DamageType, DamageValue, displacement, distance);
+                        break;
                 }
             }
             Logger.LogDamage(
                     LogLevel.DUMP,
                     $"Estimating {result} damage with dmg type {DamageType}," +
-                    $" firepower {DamageValue} at range {distance}");
+                    $" firepower {DamageValue} at range {distance / Constants.MAP_SCALE}");
 
             return result;
         }
 
         public string RangeForUI() 
         {
-            return _groundRange / Constants.MAP_SCALE + "m |" + _heloRange / Constants.MAP_SCALE +"m";
+            return GroundRange / Constants.MAP_SCALE + "m |" + _heloRange / Constants.MAP_SCALE +"m";
         }
     }
 
