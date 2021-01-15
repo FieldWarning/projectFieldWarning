@@ -46,7 +46,7 @@ namespace PFW.UI.Ingame
                 if (i < weapons.Count)
                 {
                     slot.gameObject.SetActive(true);
-                    slot.DisplayWeapon(weapons[i]);
+                    slot.DisplayWeapon(selectedPlatoons[0], i);
                 }
                 else 
                 {

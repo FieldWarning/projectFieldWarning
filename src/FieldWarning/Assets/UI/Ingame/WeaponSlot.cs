@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using PFW.Units.Component.Weapon;
+using PFW.Units;
 
 namespace PFW.UI.Ingame
 {
@@ -35,11 +36,14 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private TextMeshProUGUI _reload = null;
 
-        private Cannon _weapon = null;
+        private PlatoonBehaviour _platoon = null;
+        private int _weaponId = -1;
 
-        public void DisplayWeapon(Cannon weapon)
+        public void DisplayWeapon(PlatoonBehaviour platoon, int weaponId)
         {
-            _weapon = weapon;
+            _platoon = platoon;
+            _weaponId = weaponId;
+            Cannon weapon = _platoon.Units[0].AllWeapons[_weaponId];
             _weaponIcon.sprite = weapon.HudIcon;
             _traits.text = "";
             foreach (Ammo ammo in weapon.Ammo)
@@ -64,14 +68,25 @@ namespace PFW.UI.Ingame
 
         private void Update()
         {
-            if (_weapon != null)
+            if (_platoon != null)
             {
-                _reload.text = Mathf.Round(_weapon.PercentageReloaded * 100) + "%";
+                Cannon weapon = _platoon.Units[0].AllWeapons[_weaponId];
+                _reload.text = Mathf.Round(weapon.PercentageReloaded * 100) + "%";
                 _shotsLeft.text = "";
-                foreach (Ammo a in _weapon.Ammo)
+                for (int i = 0; i < weapon.Ammo.Length; i++)
                 {
-                    _shotsLeft.text += a.ShellCountRemaining + "/" + a.ShellCount + ", ";
+                    int platoonShellsRemaining = 0;
+                    for (int j = 0; j < _platoon.Units.Count; j++)
+                    {
+                        platoonShellsRemaining += 
+                            _platoon.Units[j].AllWeapons[_weaponId].Ammo[i].ShellCountRemaining;
+                    }
+
+                    _shotsLeft.text += 
+                        platoonShellsRemaining + "/" + 
+                        weapon.Ammo[i].ShellCount * _platoon.Units.Count + ", ";
                 }
+
                 _shotsLeft.text = _shotsLeft.text.Substring(0, _shotsLeft.text.Length - 2);
             }
         }

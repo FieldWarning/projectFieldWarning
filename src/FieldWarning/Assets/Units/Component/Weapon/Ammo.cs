@@ -135,7 +135,7 @@ namespace PFW.Units.Component.Weapon
                 case TargetType.VEHICLE:
                     // TODO this is wrong. Small arms can also shoot at vehicles (<2AV).
                     // If we add small arms here we should be careful to make sure
-                    // that the turret system doesn't forever lock on a vehicle target 
+                    // that the turret system doesn't forever lock onto a vehicle target 
                     // that we can only shoot from behind
                     if (DamageType == DamageType.KE 
                         || DamageType == DamageType.HEAT
@@ -167,7 +167,7 @@ namespace PFW.Units.Component.Weapon
             float result = 0;
 
             float range = GetRangeAgainstTargetType(target.Type);
-            if (distance <= range)
+            if (range > distance)
             {
                 switch (DamageType)
                 {
