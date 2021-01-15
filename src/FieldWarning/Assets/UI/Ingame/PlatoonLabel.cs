@@ -45,6 +45,15 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private TextMeshProUGUI _unitName = null;
 
+        public bool Visible { 
+            get { 
+                return gameObject.activeSelf;  
+            }
+            set {
+                gameObject.SetActive(value);
+            }
+        }
+
         private void SetColor(Color color)
         {
             _colorSprite.color = color;
@@ -61,11 +70,6 @@ namespace PFW.UI.Ingame
         public void AssociateToRealUnits(List<UnitDispatcher> list)
         {
             //_billboard.GetComponentInChildren<CompoundHealthbarBehaviour>().AssociateToRealUnits(list);
-        }
-
-        public void SetVisible(bool vis)
-        {
-            gameObject.SetActive(vis);
         }
 
         public void SetSelected(bool selected)

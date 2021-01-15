@@ -382,7 +382,7 @@ namespace PFW.Units
         public void SetEnabled(bool enabled)
         {
             this.enabled = enabled;
-            _platoonLabel.SetVisible(enabled);
+            _platoonLabel.Visible = enabled;
             _waypointOverlay.gameObject.SetActive(enabled);
         }
 

@@ -30,7 +30,6 @@ namespace PFW.Units
      */
     public class GhostPlatoonBehaviour : NetworkBehaviour
     {
-        private Vector3 INERT_POSITION = new Vector3(0, -100, 0);
         private const ulong UNITS_DIRTY_BIT   = 0b01;
         private const ulong HEADING_DIRTY_BIT = 0b10;
 
@@ -175,7 +174,7 @@ namespace PFW.Units
             unit.GetComponent<MovementComponent>().InitializeGhost(
                     MatchSession.Current.TerrainMap);
             _units.Add(unit);
-            if (transform.position != INERT_POSITION)
+            if (_platoonLabel.Visible == true)
             {
                 UpdateGhostLocations();
             }
@@ -204,7 +203,7 @@ namespace PFW.Units
 
         public void SetVisible(bool vis)
         {
-            _platoonLabel.SetVisible(vis);
+            _platoonLabel.Visible = vis;
             _units.ForEach(unit =>
             {
                 foreach (Renderer renderer in unit.GetComponentsInChildren<Renderer>())
