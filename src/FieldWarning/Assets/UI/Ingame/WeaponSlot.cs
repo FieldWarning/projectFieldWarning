@@ -71,7 +71,14 @@ namespace PFW.UI.Ingame
             if (_platoon != null)
             {
                 Cannon weapon = _platoon.Units[0].AllWeapons[_weaponId];
-                _reload.text = Mathf.Round(weapon.PercentageReloaded * 100) + "%";
+                if (weapon.PercentageAimed < 1)
+                {
+                    _reload.text = Mathf.Round(weapon.PercentageAimed * 100) + "% aim";
+                }
+                else
+                {
+                    _reload.text = Mathf.Round(weapon.PercentageReloaded * 100) + "% rld";
+                }
                 _shotsLeft.text = "";
                 for (int i = 0; i < weapon.Ammo.Length; i++)
                 {

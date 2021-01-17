@@ -22,11 +22,28 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public sealed class Cannon
     {
-        private float _shotReload;
-        private int _salvoLength;
+        private readonly float _aimTime;
+        private float _aimStartedTimestamp;
+        private readonly float _shotReload;
+        private readonly int _salvoLength;
         private int _salvoRemaining;
-        private float _salvoReload;
+        private readonly float _salvoReload;
         private float _lastShotTimestamp;
+
+        /// <summary>
+        /// 1 = aimed, 0.5 = 50% time elapsed until aimed
+        /// </summary>
+        public float PercentageAimed {
+            get {
+                return
+                    Mathf.Clamp(
+                        _salvoRemaining > 0 ?
+                                (Time.time - _aimStartedTimestamp) / _aimTime :
+                                (Time.time - _aimStartedTimestamp) / _aimTime,
+                        0,
+                        1);
+            }
+        }
 
         /// <summary>
         /// 1 = can shoot, 0.5 = 50% time elapsed to next shot
@@ -58,6 +75,8 @@ namespace PFW.Units.Component.Weapon
 
         private readonly GameObject _shellPrefab;
 
+        private TargetTuple _lastTarget;
+
         /// <summary>
         /// If this weapon has HEAT or KE ammo, it will not use HE ammo against vehicles.
         /// 
@@ -75,6 +94,7 @@ namespace PFW.Units.Component.Weapon
                 Transform barrelTip,
                 float shotVolume = 1.0f)
         {
+            _aimTime = data.AimTime;
             _shotReload = data.ShotReload;
             _salvoLength = data.SalvoLength;
             _salvoRemaining = _salvoLength;
@@ -197,6 +217,18 @@ namespace PFW.Units.Component.Weapon
                 float distance,
                 bool isServer)
         {
+            if (_lastTarget != target)
+            {
+                _lastTarget = target;
+                _aimStartedTimestamp = Time.time;
+                return false;
+            }
+
+            if (PercentageAimed < 1)
+            {
+                return false;
+            }
+
             if (PercentageReloaded < 1)
                 return false;
 

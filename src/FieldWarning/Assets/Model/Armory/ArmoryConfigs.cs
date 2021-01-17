@@ -436,6 +436,9 @@ namespace PFW.Model.Armory.JsonContents
         // Beware: This is in meters, NOT unity units!
         public int GroundRange;
         public int HeloRange;
+        [System.ComponentModel.DefaultValue(1.5f)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public float AimTime;
         public float Accuracy;
         public float ShotReload;
         public int SalvoLength;
