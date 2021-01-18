@@ -56,6 +56,7 @@ namespace PFW.Units.Component.Weapon
                 }
             }
         }
+
         public bool HasTargetingOrder 
         {
             get 
@@ -104,14 +105,12 @@ namespace PFW.Units.Component.Weapon
                         Unit.transform.position, _target.Position);
                 if (_fireRange > distanceToTarget && _movingTowardsTarget)
                 {
-                    StopMoving();
+                    StopChasingTarget();
                 }
                 else if (distanceToTarget >= _fireRange && !_movingTowardsTarget)
                 {
-                    // todo start chasing target again..
+                    StartChasingTarget();
                 }
-
-                MaybeDropOutOfRangeTarget(distanceToTarget);
 
                 if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted)
                 {
@@ -119,7 +118,25 @@ namespace PFW.Units.Component.Weapon
                             LogLevel.DEBUG,
                             gameObject,
                             "Dropping a target because it is no longer spotted.");
+                    if (_target == _explicitTarget)
+                    {
+                        _explicitTarget = null;
+                    }
                     _target = null;
+                }
+
+                if (!HasTargetingOrder && _target != null)
+                {
+                    if (!_vision.IsInHardLineOfSightFast(_target.Position)
+                        || !_vision.IsInSoftLineOfSight(_target.Position, 0)
+                        || distanceToTarget > _fireRange)
+                    {
+                        _target = null;
+                        Logger.LogTargeting(
+                                LogLevel.DEBUG,
+                                gameObject,
+                                "Dropping a target because it is out of range or LoS.");
+                    }
                 }
             }
 
@@ -146,7 +163,18 @@ namespace PFW.Units.Component.Weapon
             }
         }
 
-        private void StopMoving()
+        private void StartChasingTarget()
+        {
+            _movingTowardsTarget = true;
+            Unit.SetDestination(_target.Position);
+
+            Logger.LogTargeting(
+                    LogLevel.DEBUG,
+                    gameObject,
+                    "Starting to chase a target that has moved out of range.");
+        }
+
+        private void StopChasingTarget()
         {
             _movingTowardsTarget = false;
             Unit.SetDestination(Unit.transform.position);
@@ -172,11 +200,13 @@ namespace PFW.Units.Component.Weapon
                     continue;
                 }
 
-                // See if they are in range of weapon:
+                // See if they are shootable:
                 float distance = Vector3.Distance(
                         Unit.transform.position, 
                         enemy.Transform.position);
-                if (distance < MaxRange(enemy.TargetTuple))
+                if (distance < MaxRange(enemy.TargetTuple) 
+                    && _vision.IsInHardLineOfSightFast(enemy.TargetTuple.Position)
+                    && _vision.IsInSoftLineOfSight(enemy.TargetTuple.Position, 0))
                 {
                     Logger.LogTargeting(
                             LogLevel.DEBUG,
@@ -185,26 +215,6 @@ namespace PFW.Units.Component.Weapon
                     SetTarget(enemy.TargetTuple, false);
                     break;
                 }
-            }
-        }
-
-        /// <summary>
-        /// If the target is an enemy unit and it is out of range,
-        /// forget about it.
-        /// </summary>
-        private void MaybeDropOutOfRangeTarget(float distanceToTarget)
-        {
-            // We only drop unit targets, not positions:
-            if (_target.Enemy == null)
-                return;
-
-            if (distanceToTarget > _fireRange)
-            {
-                _target = null;
-                Logger.LogTargeting(
-                        LogLevel.DEBUG,
-                        gameObject,
-                        "Dropping a target because it is out of range.");
             }
         }
 
