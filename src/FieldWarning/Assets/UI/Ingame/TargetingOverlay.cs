@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PFW.Units;
 using PFW.Units.Component.OrderQueue;
+using PFW.Units.Component.Vision;
 using UnityEngine;
 
 namespace PFW.UI.Ingame.UnitLabel
@@ -91,8 +92,10 @@ namespace PFW.UI.Ingame.UnitLabel
         /// </summary>
         private Vector3 FindFarthestVisiblePosition(Vector3 targetPosition)
         {
-            _unit.VisionComponent.IsInHardLineOfSight(
-                    targetPosition, out Vector3 farthestVisiblePointHard);
+            VisionComponent.IsInHardLineOfSightFast(
+                    _unit.gameObject.transform.position, 
+                    targetPosition, 
+                    out Vector3 farthestVisiblePointHard);
             IsInSoftLineOfSightIterative(
                     targetPosition, out Vector3 farthestVisiblePointSoft);
 

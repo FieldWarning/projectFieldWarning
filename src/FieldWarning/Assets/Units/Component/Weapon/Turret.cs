@@ -14,7 +14,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.VFX;
 
 using PFW.Model.Armory.JsonContents;
 using static PFW.Util;
@@ -48,14 +47,6 @@ namespace PFW.Units.Component.Weapon
         //      the velocity of the most important gun in their hierarchy.
         private readonly float _shellVelocity = 1000 * Constants.MAP_SCALE;
 
-        /// <summary>
-        /// The explicit target is one set by player input,
-        /// while the real target can either be that or something
-        /// picked automatically (for example, something that is in range
-        /// while the explicit target is not).
-        /// </summary>
-        private TargetTuple _explicitTarget;  // weapon turret, sync
-        private TargetTuple _target;  // weapon turret, sync
         private int _priority;  // weapon turret, higher is better
         public List<Turret> Children; // parent turret, sync
 
@@ -123,39 +114,43 @@ namespace PFW.Units.Component.Weapon
             }
         }
 
+        private bool TargetInRange(TargetTuple target, float distanceToTarget)
+        {
+            return _maxRanges[(int)target.Type] > distanceToTarget;
+        }
+
         /// <summary>
         /// Shoot at the current target if in range.
         /// </summary>
         /// <returns>True if a shot was produced.</returns>
-        public bool MaybeShoot(float distanceToTarget, bool isServer)
+        public bool MaybeShoot(TargetTuple target, float distanceToTarget, bool isServer)
         {
             bool shotFired = false;
-            bool targetInRange = _maxRanges[(int)_target.Type] > distanceToTarget;
-            if (IsFacingTarget && targetInRange)
+            if (IsFacingTarget && TargetInRange(target, distanceToTarget))
             {
-                Vector3 vectorToTarget = _target.Position - _turret.transform.position;
+                Vector3 vectorToTarget = target.Position - _turret.transform.position;
                 shotFired = _weapon.TryShoot(
-                    _target, vectorToTarget, distanceToTarget, isServer);
+                    target, vectorToTarget, distanceToTarget, isServer);
             }
 
             foreach (Turret turret in Children)
             {
-                shotFired |= turret.MaybeShoot(distanceToTarget, isServer);
+                shotFired |= turret.MaybeShoot(target, distanceToTarget, isServer);
             }
 
             return shotFired;
         }
 
-        public void HandleUpdate()
+        public void Rotate(TargetTuple target)
         {
             // Do not return from this method before we've called into each child's
             // update handler!
             foreach (Turret turret in Children)
             {
-                turret.HandleUpdate();
+                turret.Rotate(target);
             }
 
-            if (_target == null || !_target.Exists)
+            if (target == null || !target.Exists)
             {
                 TurnTurretBackToDefaultPosition();
                 return;
@@ -165,18 +160,18 @@ namespace PFW.Units.Component.Weapon
             float targetHorizontalAngle = 0f;
             float targetVerticalAngle = 0f;
 
-            if (_target.Position != Vector3.zero)
+            if (target.Position != Vector3.zero)
             {
                 aimed = true;
 
-                Vector3 directionToTarget = _target.Position - _turret.position;
+                Vector3 directionToTarget = target.Position - _turret.position;
                 directionToTarget = new Vector3(directionToTarget.x, 0, directionToTarget.z);
                 Quaternion rotationToTarget = Quaternion.LookRotation(
                         _turret.parent.transform.InverseTransformDirection(directionToTarget));
 
                 // Add any necessary cannon elevation to the rotation
                 rotationToTarget *= ShellBehaviour.CalculateBarrelAngle(
-                        _shellVelocity, _turret.transform.position, _target.Position, out _);
+                        _shellVelocity, _turret.transform.position, target.Position, out _);
 
                 targetHorizontalAngle = rotationToTarget.eulerAngles.y.unwrapDegree();
 
@@ -269,29 +264,6 @@ namespace PFW.Units.Component.Weapon
             }
 
             _turret.localEulerAngles = new Vector3(verticalAngle, horizontalAngle, 0);
-        }
-
-        public void ClearExplicitTarget()
-        {
-            _explicitTarget = null;
-            _target = null;
-            foreach (Turret turret in Children)
-            {
-                turret.ClearExplicitTarget();
-            }
-        }
-
-        /// <summary>
-        /// Sets a max-priority target for this turret.
-        /// </summary>
-        public void SetExplicitTarget(TargetTuple target)
-        {
-            _explicitTarget = target;
-            _target = target;  // TODO check if we can shoot it before setting this
-            foreach (Turret turret in Children)
-            {
-                turret.SetExplicitTarget(target);
-            }
         }
 
         /// <summary>

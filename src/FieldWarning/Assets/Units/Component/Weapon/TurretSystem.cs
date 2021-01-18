@@ -18,6 +18,7 @@ using Mirror;
 using PFW.Model.Match;
 using PFW.Model.Armory;
 using PFW.Model.Armory.JsonContents;
+using PFW.Units.Component.Vision;
 
 namespace PFW.Units.Component.Weapon
 {
@@ -26,9 +27,18 @@ namespace PFW.Units.Component.Weapon
     {
         public UnitDispatcher Unit { get; private set; } // TODO set
         private bool _movingTowardsTarget = false;
+
+        /// <summary>
+        /// The explicit target is one set by player input,
+        /// while the real target can either be that or something
+        /// picked automatically (for example, something that is in range
+        /// while the explicit target is not).
+        /// </summary>
         private TargetTuple _explicitTarget;
         private TargetTuple __targetBackingField;
         public List<Cannon> AllWeapons { get; private set; }
+
+        private VisionComponent _vision => Unit.VisionComponent;
 
         private TargetTuple _target 
         { 
@@ -82,7 +92,7 @@ namespace PFW.Units.Component.Weapon
         {
             foreach (Turret turret in Children)
             {
-                turret.HandleUpdate();
+                turret.Rotate(_target);
             }
 
             float distanceToTarget = 99999;
@@ -97,11 +107,11 @@ namespace PFW.Units.Component.Weapon
                     StopMoving();
                 }
                 else if (distanceToTarget >= _fireRange && !_movingTowardsTarget)
-                { 
+                {
                     // todo start chasing target again..
                 }
 
-                MaybeDropOutOfRangeTarget();
+                MaybeDropOutOfRangeTarget(distanceToTarget);
 
                 if (_target.IsUnit && !_target.Enemy.VisionComponent.IsSpotted)
                 {
@@ -120,7 +130,7 @@ namespace PFW.Units.Component.Weapon
 
                 foreach (Turret turret in Children)
                 {
-                    shotFired |= turret.MaybeShoot(distanceToTarget, isServer);
+                    shotFired |= turret.MaybeShoot(_target, distanceToTarget, isServer);
                 }
 
                 // If shooting at the ground, stop after the first shot:
@@ -128,10 +138,6 @@ namespace PFW.Units.Component.Weapon
                 {
                     _target = null;
                     _explicitTarget = null;
-                    foreach (Turret turret in Children)
-                    {
-                        turret.SetExplicitTarget(null);
-                    }
                 }
             }
             else
@@ -186,14 +192,13 @@ namespace PFW.Units.Component.Weapon
         /// If the target is an enemy unit and it is out of range,
         /// forget about it.
         /// </summary>
-        private void MaybeDropOutOfRangeTarget()
+        private void MaybeDropOutOfRangeTarget(float distanceToTarget)
         {
             // We only drop unit targets, not positions:
             if (_target.Enemy == null)
                 return;
 
-            float distance = Vector3.Distance(Unit.transform.position, _target.Position);
-            if (distance > _fireRange)
+            if (distanceToTarget > _fireRange)
             {
                 _target = null;
                 Logger.LogTargeting(
@@ -208,11 +213,6 @@ namespace PFW.Units.Component.Weapon
             _movingTowardsTarget = false;
             _explicitTarget = null;
             _target = null;
-
-            foreach (Turret turret in Children)
-            {
-                turret.ClearExplicitTarget();
-            }
         }
 
         /// <summary>
@@ -243,11 +243,6 @@ namespace PFW.Units.Component.Weapon
                 // TODO if the UnitDispatcher can detect that we're in range, we
                 // would be able to drop the handle to it
                 Unit.SetDestination(target.Position);
-            }
-            
-            foreach (Turret turret in Children)
-            {
-                turret.SetExplicitTarget(_explicitTarget);
             }
         }
 

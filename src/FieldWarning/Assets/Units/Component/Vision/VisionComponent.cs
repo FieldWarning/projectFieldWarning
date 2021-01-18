@@ -151,7 +151,7 @@ namespace PFW.Units.Component.Vision
             _spotters.RemoveWhere(
                 s => s == null
                 || !s.IsInSoftLineOfSight(this)
-                || !IsInHardLineOfSight(s));
+                || !IsInHardLineOfSightFast(s));
 
             if (_spotters.Count == 0)
                 ToggleUnitVisibility(false);
@@ -164,7 +164,7 @@ namespace PFW.Units.Component.Vision
         /// <param name="spotter"></param>
         private void MaybeReveal(VisionComponent spotter)
         {
-            if (spotter.IsInSoftLineOfSight(this) && IsInHardLineOfSight(spotter))
+            if (spotter.IsInSoftLineOfSight(this) && IsInHardLineOfSightFast(spotter))
             {
                 if (_spotters.Count == 0)
                 {
@@ -176,27 +176,31 @@ namespace PFW.Units.Component.Vision
         }
 
         /// <summary>
-        /// For a given point, check if there is a clear line
+        /// For two points, check if there is a clear line
         /// of sight. This does not use optics values, it only
         /// checks that there are no buildings/hills in the way.
         /// 
         /// The out parameter is set to the farthest visible point.
+        /// WARNING: Does not check the 350m tree limit!
         /// </summary>
-        public bool IsInHardLineOfSight(Vector3 point, out Vector3 visionBlocker)
+        public static bool IsInHardLineOfSightFast(
+                Vector3 spotterPosition, 
+                Vector3 targetPosition, 
+                out Vector3 visionBlocker)
         {
             int layerMask = 1 << LayerMask.NameToLayer("HardLosBlock");
             layerMask |= 1 << LayerMask.NameToLayer("Terrain");
-            Vector3 SpotterPosition = gameObject.transform.position;
-            SpotterPosition.y += RAYCAST_WORKAROUND;
-            Vector3 TargetPosition = point;
-            TargetPosition.y += RAYCAST_WORKAROUND;
-            Vector3 TargetDirection = TargetPosition - SpotterPosition;
-            float DistanceToTarget = Vector3.Distance(SpotterPosition, TargetPosition);
+            spotterPosition.y += RAYCAST_WORKAROUND;
+            targetPosition.y += RAYCAST_WORKAROUND;
+            Vector3 TargetDirection = spotterPosition - spotterPosition;
+            float DistanceToTarget = Vector3.Distance(spotterPosition, spotterPosition);
 
             RaycastHit hit;
-            if (!Physics.Raycast(SpotterPosition, TargetDirection, out hit, DistanceToTarget, layerMask))
+            if (!Physics.Raycast(
+                    spotterPosition, TargetDirection, out hit, DistanceToTarget, layerMask))
             {
-                visionBlocker = point;
+                visionBlocker = targetPosition;
+                visionBlocker.y -= RAYCAST_WORKAROUND;
 
                 return true;
             }
@@ -207,9 +211,13 @@ namespace PFW.Units.Component.Vision
                 return false;
             }
         }
+        public bool IsInHardLineOfSightFast(Vector3 other) =>
+                IsInHardLineOfSightFast(
+                        gameObject.transform.position, other, out _);
 
-        public bool IsInHardLineOfSight(VisionComponent other) =>
-                IsInHardLineOfSight(other.transform.position, out _);
+        public bool IsInHardLineOfSightFast(VisionComponent other) =>
+                IsInHardLineOfSightFast(
+                        gameObject.transform.position, other.transform.position, out _);
 
         /// <summary>
         /// Checks that the unit can be seen through forests
