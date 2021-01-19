@@ -11,8 +11,11 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using PFW.Model.Armory;
+using PFW.Model.Armory.JsonContents;
 using PFW.Model.Settings;
 using PFW.Model.Settings.JsonContents;
+using System.Collections.Generic;
 
 namespace PFW.Model
 {
@@ -32,12 +35,24 @@ namespace PFW.Model
         /// <summary>
         ///  Cached for use by the settings menu.
         /// </summary>
-        public SettingsConfig SettingsRaw; 
+        public SettingsConfig SettingsRaw;
+
+        public readonly Armory.Armory Armory;
+
+        public readonly Dictionary<string, DeckConfig> DecksRaw;
+        public readonly Dictionary<string, Deck> Decks;
 
         private GameSession()
         {
             SettingsRaw = ConfigReader.ParseSettingsRaw();
             Settings = new UserSettings(SettingsRaw);
+            Armory = ConfigReader.ParseArmory();
+            DecksRaw = ConfigReader.ParseDecksRaw();
+            Decks = new Dictionary<string, Deck>();
+            foreach (KeyValuePair<string, DeckConfig> kv in DecksRaw)
+            {
+                Decks.Add(kv.Key, new Deck(kv.Value, Armory));
+            }
         }
 
         public void ReloadSettings()

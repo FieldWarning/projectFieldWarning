@@ -20,6 +20,7 @@ using PFW.UI.Ingame;
 using PFW.Units;
 using PFW.Units.Component.Movement;
 using static PFW.Constants;
+using PFW.Model;
 
 namespace PFW.Networking
 {
@@ -124,9 +125,9 @@ namespace PFW.Networking
                     SpawnPointBehaviour spawn = MatchSession.Current.SpawnPoints[spawnPointId];
 
                     if (unitCategoryId < owner.Deck.Categories.Length
-                        && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
+                        && unitId < GameSession.Singleton.Armory.Categories[unitCategoryId].Count)
                     {
-                        Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
+                        Unit unit = GameSession.Singleton.Armory.Categories[unitCategoryId][unitId];
 
                         GhostPlatoonBehaviour g = 
                             GhostPlatoonBehaviour.CreatePreviewMode(unit, owner, unitCount);
@@ -136,18 +137,18 @@ namespace PFW.Networking
                     }
                     else
                     {
-                        if (unitCategoryId < MatchSession.Current.Armory.Categories.Length)
+                        if (unitCategoryId < GameSession.Singleton.Armory.Categories.Length)
                         {
                             Logger.LogNetworking(LogLevel.ERROR,
                                 $"Got bad unit id = {unitId} from " +
-                                $"the server. Total units = {MatchSession.Current.Armory.Categories[unitCategoryId].Count} " +
+                                $"the server. Total units = {GameSession.Singleton.Armory.Categories[unitCategoryId].Count} " +
                                 $"(category = {unitCategoryId}).");
                         }
                         else
                         {
                             Logger.LogNetworking(LogLevel.ERROR,
                                 $"Got bad category id = {unitCategoryId} from " +
-                                $"the server. Total categories = {MatchSession.Current.Armory.Categories.Length}");
+                                $"the server. Total categories = {GameSession.Singleton.Armory.Categories.Length}");
                         }
                     }
                 }
@@ -185,9 +186,9 @@ namespace PFW.Networking
             {
                 PlayerData owner = MatchSession.Current.Players[playerId];
                 if (unitCategoryId < owner.Deck.Categories.Length
-                    && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
+                    && unitId < GameSession.Singleton.Armory.Categories[unitCategoryId].Count)
                 {
-                    Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
+                    Unit unit = GameSession.Singleton.Armory.Categories[unitCategoryId][unitId];
                     Logger.LogNetworking(LogLevel.INFO, 
                         $"Spawning a platoon with category = {unitCategoryId}, unit id = {unitId}.");
 
@@ -217,18 +218,18 @@ namespace PFW.Networking
                 }
                 else
                 {
-                    if (unitCategoryId < MatchSession.Current.Armory.Categories.Length)
+                    if (unitCategoryId < GameSession.Singleton.Armory.Categories.Length)
                     {
                         Logger.LogNetworking(LogLevel.ERROR,
                             $"Got bad unit id = {unitId} from " +
-                            $"the server. Total units = {MatchSession.Current.Armory.Categories[unitCategoryId].Count} " +
+                            $"the server. Total units = {GameSession.Singleton.Armory.Categories[unitCategoryId].Count} " +
                             $"(category = {unitCategoryId}).");
                     }
                     else
                     {
                         Logger.LogNetworking(LogLevel.ERROR,
                             $"Got bad category id = {unitCategoryId} from " +
-                            $"the server. Total categories = {MatchSession.Current.Armory.Categories.Length}");
+                            $"the server. Total categories = {GameSession.Singleton.Armory.Categories.Length}");
                     }
                 }
             }

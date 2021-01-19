@@ -23,6 +23,7 @@ using PFW.Units.Component.OrderQueue;
 using PFW.Networking;
 using UnityEngine.EventSystems;
 using System.Linq;
+using PFW.Model;
 
 namespace PFW.Units
 {
@@ -75,26 +76,26 @@ namespace PFW.Units
                     PlayerData owner = MatchSession.Current.Players[playerId];
                     byte unitCategoryId = reader.ReadByte();
                     int unitId = reader.ReadInt32();
-                    if (unitCategoryId < MatchSession.Current.Armory.Categories.Length
-                        && unitId < MatchSession.Current.Armory.Categories[unitCategoryId].Count)
+                    if (unitCategoryId < GameSession.Singleton.Armory.Categories.Length
+                        && unitId < GameSession.Singleton.Armory.Categories[unitCategoryId].Count)
                     {
-                        Unit unit = MatchSession.Current.Armory.Categories[unitCategoryId][unitId];
+                        Unit unit = GameSession.Singleton.Armory.Categories[unitCategoryId][unitId];
                         Initialize(unit, owner);
                     }
                     else
                     {
-                        if (unitCategoryId < MatchSession.Current.Armory.Categories.Length)
+                        if (unitCategoryId < GameSession.Singleton.Armory.Categories.Length)
                         {
                             Logger.LogNetworking(LogLevel.ERROR,
                                 $"Got bad unit id = {unitId} from " +
-                                $"the server. Total units = {MatchSession.Current.Armory.Categories[unitCategoryId].Count} " +
+                                $"the server. Total units = {GameSession.Singleton.Armory.Categories[unitCategoryId].Count} " +
                                 $"(category = {unitCategoryId}).");
                         }
                         else
                         {
                             Logger.LogNetworking(LogLevel.ERROR,
                                 $"Got bad category id = {unitCategoryId} from " +
-                                $"the server. Total categories = {MatchSession.Current.Armory.Categories.Length}");
+                                $"the server. Total categories = {GameSession.Singleton.Armory.Categories.Length}");
                         }
                     }
                 }

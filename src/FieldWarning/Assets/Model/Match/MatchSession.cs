@@ -88,8 +88,6 @@ namespace PFW.Model.Match
 
         public SpawnPointBehaviour[] SpawnPoints;
 
-        public Armory.Armory Armory => _loadedData.Armory;
-
         private void Awake()
         {
             Current = this;
@@ -114,10 +112,8 @@ namespace PFW.Model.Match
                 Team blueTeam = GameObject.Find("Team_Blue").GetComponent<Team>();
                 Team redTeam = GameObject.Find("Team_Red").GetComponent<Team>();
 
-                Deck bluePlayerDeck = ConfigReader.ParseDeck(
-                        "player-blue", _loadedData.Armory);
-                Deck redPlayerDeck = ConfigReader.ParseDeck(
-                        "player-red", _loadedData.Armory);
+                Deck bluePlayerDeck = GameSession.Singleton.Decks["player-blue"];
+                Deck redPlayerDeck = GameSession.Singleton.Decks["player-red"];
 
                 PlayerData bluePlayer = new PlayerData(
                         bluePlayerDeck, blueTeam, (byte)Players.Count);

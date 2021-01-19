@@ -11,7 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
-using PFW.Model.Armory;
+using PFW.Model;
 using PFW.Units.Component.Movement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,7 +22,6 @@ namespace PFW.Loading
     {
         public TerrainMap TerrainData;
         public PathfinderData PathFinderData;
-        public Armory Armory;
         public static int SceneBuildId;
 
         //private Loading _loader;
@@ -33,14 +32,14 @@ namespace PFW.Loading
             DontDestroyOnLoad(this.gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
 
-            Armory = ConfigReader.ParseArmory();
-
             Terrain[] terrains = GameObject.FindObjectsOfType<Terrain>();
 
             TerrainData = new TerrainMap(terrains, SceneBuildId);
 
             PathFinderData = new PathfinderData(
-                    TerrainData, Armory.UniqueMobilityTypes, SceneBuildId);
+                    TerrainData, 
+                    GameSession.Singleton.Armory.UniqueMobilityTypes, 
+                    SceneBuildId);
         }
 
         private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)

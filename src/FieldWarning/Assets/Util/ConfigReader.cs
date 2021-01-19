@@ -32,7 +32,7 @@ namespace PFW
             return new Deck(config, armory);
         }
 
-        private static Dictionary<string, UnitConfig> ParseAllJsonFiles(
+        private static Dictionary<string, T> ParseAllJsonFiles<T>(
                 string directory)
         {
             string[] configFiles = new string[0];
@@ -47,7 +47,7 @@ namespace PFW
                         "due to a system exception.");
             }
 
-            var result = new Dictionary<string, UnitConfig>();
+            var result = new Dictionary<string, T>();
             
             foreach (string configFile in configFiles)
             {
@@ -63,7 +63,7 @@ namespace PFW
                 string configText = File.ReadAllText(configFile);
                 result.Add(
                         shortFileName,
-                        JsonConvert.DeserializeObject<UnitConfig>(configText));
+                        JsonConvert.DeserializeObject<T>(configText));
             }
 
             return result;
@@ -76,7 +76,7 @@ namespace PFW
                     "/UnitConfigs/";
 
             Logger.LogConfig(LogLevel.INFO, "Parsing unit configs.");
-            Dictionary<string, UnitConfig> configs = ParseAllJsonFiles(
+            Dictionary<string, UnitConfig> configs = ParseAllJsonFiles<UnitConfig>(
                     unitsPath);
 
             // Load the unit config templates, which look just like unit configs
@@ -85,7 +85,7 @@ namespace PFW
                     "/UnitConfigTemplates/";
 
             Logger.LogConfig(LogLevel.INFO, "Parsing unit template configs.");
-            Dictionary<string, UnitConfig> templateConfigs = ParseAllJsonFiles(
+            Dictionary<string, UnitConfig> templateConfigs = ParseAllJsonFiles<UnitConfig>(
                     templatesPath);
 
             return new Armory(configs, templateConfigs);
@@ -152,6 +152,15 @@ namespace PFW
                     fs.WriteByte((byte)c);
                 }
             }
+        }
+
+        public static Dictionary<string, DeckConfig> ParseDecksRaw() 
+        {
+            string templatesPath = Application.streamingAssetsPath +
+                    "/Decks/";
+
+            Logger.LogConfig(LogLevel.INFO, "Parsing local decks.");
+            return ParseAllJsonFiles<DeckConfig>(templatesPath); ;
         }
     }
 }
