@@ -253,6 +253,7 @@ namespace PFW.Units
         }
 
         public float MaxFirePosRange() => _turretSystem.MaxFirePosRange();
+        public float MaxFirePosRangeIndirectFire() => _turretSystem.MaxFirePosRangeIndirectFire();
 
         public bool CanCaptureZones => _unitData.CanCaptureZones;
 

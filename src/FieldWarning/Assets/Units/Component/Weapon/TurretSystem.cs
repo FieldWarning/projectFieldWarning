@@ -315,7 +315,7 @@ namespace PFW.Units.Component.Weapon
             => MaxRange(new TargetTuple(Vector3.zero), true, true);
         private float MaxFirePosRangeDirectFire()
             => MaxRange(new TargetTuple(Vector3.zero), true, false);
-        private float MaxFirePosRangeIndirectFire()
+        public float MaxFirePosRangeIndirectFire()
             => MaxRange(new TargetTuple(Vector3.zero), false, true);
 
         private float MaxRange(TargetTuple target)

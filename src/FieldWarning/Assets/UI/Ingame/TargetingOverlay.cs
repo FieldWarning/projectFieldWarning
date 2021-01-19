@@ -38,9 +38,11 @@ namespace PFW.UI.Ingame.UnitLabel
                     FindFarthestVisiblePosition(targetPosition);
 
             float fireRange = _unit.MaxFirePosRange();
+            bool isArty = fireRange == _unit.MaxFirePosRangeIndirectFire();
+
             float visionBlockerDistance = Vector3.Distance(
                 _unit.transform.position, farthestVisiblePoint);
-            if (fireRange > visionBlockerDistance)
+            if (fireRange > visionBlockerDistance && !isArty)
             {
                 // Cant reach due to vision blockers,
                 // or can reach (=> farthestVisiblePoint = targetPosition)
