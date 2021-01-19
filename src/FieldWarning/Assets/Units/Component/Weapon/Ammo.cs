@@ -94,8 +94,8 @@ namespace PFW.Units.Component.Weapon
             _heloRange = config.HeloRange * Constants.MAP_SCALE;
             Accuracy = config.Accuracy;
             Velocity = config.Velocity * Constants.MAP_SCALE;
-            IsIndirect = config.Indirect;
-            _isGuided = config.Guided;
+            IsIndirect = (bool)config.IsIndirect;
+            _isGuided = (bool)config.IsGuided;
             GameObject muzzleFlash = Resources.Load<GameObject>(config.MuzzleFlash);
             if (muzzleFlash != null)
             {

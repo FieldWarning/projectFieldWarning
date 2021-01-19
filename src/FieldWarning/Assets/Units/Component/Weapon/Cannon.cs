@@ -287,7 +287,9 @@ namespace PFW.Units.Component.Weapon
         ///     For every target type, find the max range
         ///     that this weapon can shoot it at (0 if it can't).
         /// </summary>
-        public float[] CalculateMaxRanges()
+        private float[] CalculateMaxRanges(
+                bool includeDirectFireAmmo,
+                bool includeIndirectFireAmmo)
         {
             float[] result = new float[(int)TargetType._SIZE];
 
@@ -295,6 +297,15 @@ namespace PFW.Units.Component.Weapon
             {
                 if (ammo.ShellCountRemaining > 0)
                 {
+                    if (ammo.IsIndirect && !includeIndirectFireAmmo)
+                    {
+                        continue;
+                    }
+                    if (!ammo.IsIndirect && !includeDirectFireAmmo)
+                    {
+                        continue;
+                    }
+
                     for (int i = 0; i < (int)TargetType._SIZE; i++)
                     {
                         float range = ammo.GetRangeAgainstTargetType((TargetType)i);
@@ -306,5 +317,8 @@ namespace PFW.Units.Component.Weapon
 
             return result;
         }
+        public float[] CalculateMaxRanges() => CalculateMaxRanges(true, true);
+        public float[] CalculateMaxRangesDirectFireAmmo() => CalculateMaxRanges(true, false);
+        public float[] CalculateMaxRangesIndirectFireAmmo() => CalculateMaxRanges(false, true);
     }
 }

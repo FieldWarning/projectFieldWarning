@@ -76,7 +76,8 @@
                             "DamageType" : "HE"
                         },
                         {
-                            "DamageType" : "KE"
+                            "DamageType" : "KE",
+                            "GroundRange" : 1000,
                         }
                     ]
                 }

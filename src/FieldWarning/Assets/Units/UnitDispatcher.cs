@@ -252,7 +252,7 @@ namespace PFW.Units
             _targetingOverlay.gameObject.SetActive(enabled);
         }
 
-        public float MaxRange() => _turretSystem.MaxRange();
+        public float MaxFirePosRange() => _turretSystem.MaxFirePosRange();
 
         public bool CanCaptureZones => _unitData.CanCaptureZones;
 

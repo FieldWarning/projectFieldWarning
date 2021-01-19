@@ -40,6 +40,8 @@ namespace PFW.Units.Component.Weapon
         ///     each possible target type.
         /// </summary>
         private readonly float[] _maxRanges;
+        private readonly float[] _maxRangesDirectFire;  
+        private readonly float[] _maxRangesIndirectFire;
 
         // The default here has significance because only the
         //      last turrets know the actual weapon's velocity. 
@@ -62,6 +64,8 @@ namespace PFW.Units.Component.Weapon
         public Turret(GameObject unit, TurretConfig turretConfig, List<Cannon> AllWeapons)
         {
             _maxRanges = new float[(int)TargetType._SIZE];
+            _maxRangesDirectFire = new float[(int)TargetType._SIZE];
+            _maxRangesIndirectFire = new float[(int)TargetType._SIZE];
             _arcHorizontal = turretConfig.ArcHorizontal;
             _arcUp = turretConfig.ArcUp;
             _arcDown = turretConfig.ArcDown;
@@ -100,6 +104,8 @@ namespace PFW.Units.Component.Weapon
                             barrelTip);
 
                     _maxRanges = _weapon.CalculateMaxRanges();
+                    _maxRangesDirectFire = _weapon.CalculateMaxRangesDirectFireAmmo();
+                    _maxRangesIndirectFire = _weapon.CalculateMaxRangesIndirectFireAmmo();
                     _shellVelocity = turretConfig.Cannon.Velocity * Constants.MAP_SCALE;
 
                     AllWeapons.Add(_weapon);
@@ -269,18 +275,51 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Get the range at which this turret can shoot at a specific target.
         /// </summary>
-        /// 
-        /// TODO In the future we will need to also return -1
-        /// for turrets that can't shoot the target at all.
-        public float MaxRange(TargetTuple target)
+        public float MaxRange(
+                TargetTuple target,
+                bool includeDirectFireAmmo,
+                bool includeIndirectFireAmmo)
         {
-            float maxRange = _maxRanges[(int)target.Type];
+
+            float maxRange;
+            if (includeDirectFireAmmo)
+            {
+                if (includeIndirectFireAmmo)
+                {
+                    maxRange = _maxRanges[(int)target.Type];
+                }
+                else
+                {
+                    maxRange = _maxRangesDirectFire[(int)target.Type];
+                }
+            }
+            else
+            {
+                if (includeIndirectFireAmmo)
+                {
+                    maxRange = _maxRangesIndirectFire[(int)target.Type];
+                }
+                else 
+                {
+                    maxRange = 0;
+                }
+            }
+
+
             foreach (Turret turret in Children)
             {
-                float turretMax = turret.MaxRange(target);
-                maxRange = maxRange > turretMax ? maxRange : turretMax;
+                float turretMax = turret.MaxRange(
+                        target, includeDirectFireAmmo, includeIndirectFireAmmo);
+                if (maxRange < turretMax)
+                {
+                    maxRange = turretMax;
+                }
             }
             return maxRange;
         }
+
+        public float MaxRange(TargetTuple target) => MaxRange(target, true, true);
+        public float MaxRangeDirectFire(TargetTuple target) => MaxRange(target, true, false);
+        public float MaxRangeIndirectFire(TargetTuple target) => MaxRange(target, false, true);
     }
 }

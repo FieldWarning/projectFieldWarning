@@ -37,7 +37,7 @@ namespace PFW.UI.Ingame.UnitLabel
             Vector3 farthestVisiblePoint =
                     FindFarthestVisiblePosition(targetPosition);
 
-            float fireRange = _unit.MaxRange();
+            float fireRange = _unit.MaxFirePosRange();
             float visionBlockerDistance = Vector3.Distance(
                 _unit.transform.position, farthestVisiblePoint);
             if (fireRange > visionBlockerDistance)

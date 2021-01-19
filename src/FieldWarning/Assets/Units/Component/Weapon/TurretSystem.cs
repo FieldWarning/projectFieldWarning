@@ -53,6 +53,7 @@ namespace PFW.Units.Component.Weapon
                 if (value != null)
                 {
                     _fireRange = MaxRange(value);
+                    //_fireRangeIsIndirect = _fireRange == MaxRangeIndirectFire(value);
                 }
             }
         }
@@ -68,7 +69,9 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// The max fire range to the current target, in unity units.
         /// </summary>
-        private float _fireRange;  
+        private float _fireRange;
+        //private bool _fireRangeIsIndirect;
+
         public List<Turret> Children; // sync
 
         /// <summary>
@@ -204,7 +207,7 @@ namespace PFW.Units.Component.Weapon
                 float distance = Vector3.Distance(
                         Unit.transform.position, 
                         enemy.Transform.position);
-                if (distance < MaxRange(enemy.TargetTuple) 
+                if (distance < MaxRangeDirectFire(enemy.TargetTuple) // Indirect weapons dont autotarget
                     && _vision.IsInHardLineOfSightFast(enemy.TargetTuple.Position)
                     && _vision.IsInSoftLineOfSight(enemy.TargetTuple.Position, 0))
                 {
@@ -267,13 +270,37 @@ namespace PFW.Units.Component.Weapon
         /// TODO: Code duplication can be reduced if we only implement this in 
         /// the turret class and have a fake toplevel turret we call this method on,
         /// but a fake turret like that also adds complexity, hard to decide.
-        private float MaxRange(TargetTuple target)
+        private float MaxRange(
+                TargetTuple target,
+                bool includeDirectFire,
+                bool includeIndirectFire)
         {
             float maxRange = 0;
             foreach (Turret turret in Children)
             {
-                float turretMax = turret.MaxRange(target);
-                maxRange = maxRange > turretMax ? maxRange : turretMax;
+                float turretMax;
+                if (includeDirectFire && includeIndirectFire)
+                {
+                    turretMax = turret.MaxRange(target);
+                }
+                else if (includeDirectFire)
+                {
+                    turretMax = turret.MaxRangeDirectFire(target);
+                }
+                else if (includeIndirectFire)
+                {
+                    turretMax = turret.MaxRangeIndirectFire(target);
+                }
+                else 
+                {
+                    turretMax = 0;
+                }
+
+
+                if (maxRange < turretMax)
+                {
+                    maxRange = turretMax;
+                }
             }
             return maxRange;
         }
@@ -284,9 +311,18 @@ namespace PFW.Units.Component.Weapon
         /// Note that this can change as weapons are disabled, and so
         /// return values from this method should not be cached.
         /// </summary>
-        public float MaxRange()
-        {
-            return MaxRange(new TargetTuple(Vector3.zero));
-        }
+        public float MaxFirePosRange()
+            => MaxRange(new TargetTuple(Vector3.zero), true, true);
+        private float MaxFirePosRangeDirectFire()
+            => MaxRange(new TargetTuple(Vector3.zero), true, false);
+        private float MaxFirePosRangeIndirectFire()
+            => MaxRange(new TargetTuple(Vector3.zero), false, true);
+
+        private float MaxRange(TargetTuple target)
+            => MaxRange(target, true, true);
+        private float MaxRangeDirectFire(TargetTuple target)
+            => MaxRange(target, true, false);
+        private float MaxRangeIndirectFire(TargetTuple target)
+            => MaxRange(target, false, true);
     }
 }

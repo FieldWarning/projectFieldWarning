@@ -503,6 +503,10 @@ namespace PFW.Model.Armory.JsonContents
                     ammo.Sound = Sound;
                 if (ammo.ShellCount == 0)
                     ammo.ShellCount = ShellCount;
+                if (ammo.IsIndirect == null)
+                    ammo.IsIndirect = IsIndirect;
+                if (ammo.IsGuided == null)
+                    ammo.IsGuided = IsGuided;
             }
             return true;
         }
@@ -520,8 +524,8 @@ namespace PFW.Model.Armory.JsonContents
         public int HeloRange;
         public float Accuracy;
         public int Velocity;  // meters per second
-        public bool Indirect;
-        public bool Guided;
+        public bool? IsIndirect;
+        public bool? IsGuided;
         public string MuzzleFlash;
         public string Shell;
         public string Sound;
