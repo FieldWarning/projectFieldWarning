@@ -47,9 +47,18 @@ namespace PFW.Networking
 
         // (On Server) Update chat messages
         [Command]
-        public void CmdUpdateChat(string msg)
+        public void CmdUpdateChat(
+                byte playerId, string msg)
         {
-            ChatManager.UpdateMessageText(msg);
+            if (MatchSession.Current.Players.Count > playerId)
+            {
+                ChatManager.UpdateMessageText(MatchSession.Current.Players[playerId], msg);
+            }
+            else
+            {
+                Logger.LogNetworking(LogLevel.ERROR,
+                    $"Client tried to send a chat msg with an invalid player id {playerId}.");
+            }
         }
 
         /// <summary>

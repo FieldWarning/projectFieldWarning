@@ -40,6 +40,7 @@ namespace PFW.Units
         public static readonly float UNIT_DISTANCE = 40 * Constants.MAP_SCALE;
 
         public PlayerData Owner { get; private set; }
+        public Team Team => Owner.Team;
 
         private WaypointOverlayBehavior _waypointOverlay;
 
@@ -212,7 +213,7 @@ namespace PFW.Units
         {
             Unit = unit;
             Owner = owner;
-            _platoonLabel.InitializeAsReal(unit, Owner.Team.ColorScheme, this);
+            _platoonLabel.InitializeAsReal(unit, Team.ColorScheme, this);
             _waypointOverlay = OverlayFactory.Instance.CreateWaypointOverlay(this);
             _waypointOverlay.gameObject.transform.parent = gameObject.transform;
             _mainCamera = Camera.main.gameObject;

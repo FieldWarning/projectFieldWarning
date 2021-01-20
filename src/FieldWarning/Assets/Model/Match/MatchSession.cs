@@ -116,12 +116,12 @@ namespace PFW.Model.Match
                 Deck redPlayerDeck = GameSession.Singleton.Decks["player-red"];
 
                 PlayerData bluePlayer = new PlayerData(
-                        bluePlayerDeck, blueTeam, (byte)Players.Count);
+                        bluePlayerDeck, blueTeam, "Reagan", (byte)Players.Count);
                 Players.Add(bluePlayer);
                 blueTeam.Players.Add(bluePlayer);
 
                 PlayerData redPlayer = new PlayerData(
-                        redPlayerDeck, redTeam, (byte)Players.Count);
+                        redPlayerDeck, redTeam, "Gorbachev", (byte)Players.Count);
                 Players.Add(redPlayer);
                 redTeam.Players.Add(redPlayer);
 
@@ -228,6 +228,28 @@ namespace PFW.Model.Match
             _visibilityManager.UpdateTeamBelonging();
             _deploymentMenu.UpdateTeamBelonging();
             CommandConnection.Connection.CmdChangeTeam(newTeam.Name);
+        }
+
+        /// <summary>
+        /// Change player + team when the team button is pressed.
+        /// This should not happen in real games, it's just a
+        /// development aid.
+        /// </summary>
+        public void RegisterDeckChange(PlayerData player, string newDeck)
+        {
+            bool exists = GameSession.Singleton.Decks.TryGetValue(newDeck, out Deck deck);
+            if (!exists)
+            {
+                Logger.LogLoading(
+                        LogLevel.ERROR, 
+                        $"Player {player.Id} tried to change " +
+                        $"to deck = '{newDeck}', but such a deck does not exist.");
+                return;
+            }
+
+            player.Deck = deck;
+            _deploymentMenu.UpdateTeamBelonging();
+            // TODO sync across network
         }
 
         /// <summary>

@@ -76,9 +76,31 @@ namespace PFW.UI.Ingame
         }
 
         [Server]
-        public void UpdateMessageText(string msg)
+        public void UpdateMessageText(
+                PlayerData sender, string msg)
         {
-            _sentMessages.Add(msg);
+            const string CHEAT_PREFIX = "/";
+            const string DECK_CHEAT = "/deck";
+            const string BETRAY_CHEAT = "/betray";
+
+            if (msg.StartsWith(CHEAT_PREFIX))
+            {
+                // cheat codes
+                if (msg.StartsWith(DECK_CHEAT))
+                {
+                    string deck = msg.Substring(DECK_CHEAT.Length);
+                    deck = deck.Trim();
+                    MatchSession.Current.RegisterDeckChange(sender, deck);
+                }
+                else if (msg.StartsWith(BETRAY_CHEAT))
+                {
+                    //MatchSession.Current.RegisterPlayerChange(_team.Players[0]);
+                }
+            }
+            else
+            {
+                _sentMessages.Add($"[{sender.Name}]: {msg}\n");
+            }
         }
 
         /// <summary>
@@ -92,10 +114,8 @@ namespace PFW.UI.Ingame
             {
                 if (!string.IsNullOrWhiteSpace(_inputField.text))
                 {
-                    // TODO Replace with the player name once we get accounts working
-                    string user = "[" + (_connection.isClientOnly ? "guest" : "host") + "]:";
-                    string newMessage = user + _inputField.text + "\n";
-                    _connection.CmdUpdateChat(newMessage);
+                    _connection.CmdUpdateChat(
+                            MatchSession.Current.LocalPlayer.Data.Id, _inputField.text);
                 }
                 IsChatOpen = false;
             }

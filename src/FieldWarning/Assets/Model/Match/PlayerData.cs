@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017-present, PFW Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
@@ -25,16 +25,17 @@ namespace PFW.Model.Match
         // Unique and must match the index the player is held in by MatchSession.Players
         public byte Id;
         public Team Team;
-
-        public Deck Deck { get; private set; }
+        public string Name;
+        public Deck Deck;
 
         public float Money = 1000;
         public float IncomeTick = 7;
 
-        public PlayerData(Deck deck, Team team, byte id)
+        public PlayerData(Deck deck, Team team, string name, byte id)
         {
             Deck = deck;
             Team = team;
+            Name = name;
             Id = id;
         }
     }

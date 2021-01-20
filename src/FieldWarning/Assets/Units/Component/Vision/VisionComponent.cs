@@ -108,7 +108,7 @@ namespace PFW.Units.Component.Vision
         private VisionCache _visionCache;
 
         private Team _team {
-            get { return _unit.Platoon.Owner.Team; }
+            get { return _unit.Platoon.Team; }
         }
 
         public void Initialize(UnitDispatcher dispatcher, DataComponent unitData)
@@ -132,7 +132,7 @@ namespace PFW.Units.Component.Vision
                             _maxSpottingRange);
 
             foreach (UnitDispatcher unit in units) {
-                if (unit.Platoon.Owner.Team != _team)
+                if (unit.Platoon.Team != _team)
                 {
                     unit.VisionComponent.MaybeReveal(this);
                 }

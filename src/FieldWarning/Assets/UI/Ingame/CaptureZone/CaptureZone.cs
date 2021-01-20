@@ -30,21 +30,17 @@ namespace PFW.UI.Ingame
         public Material Neutral;
         // How many points per tick this zone gives
         public int Worth = 3;
-        public Team.TeamName OwningTeam { 
-            get {
-                if (_owner == null)
-                    return Team.TeamName.UNDEFINED;
-                else
-                    return _owner.Team.Name;
-            }
-        }
-
-        // Maybe take out all that owner stuff and simply use
-        // an int or otherwise shorten the code
-        private PlayerData _owner;
+        public Team.TeamName OwningTeam { get; private set; } = Team.TeamName.UNDEFINED;
 
         // Command units currently in the zone
         private List<UnitDispatcher> _units = new List<UnitDispatcher>();
+
+        private MeshRenderer _renderer;
+
+        private void Start()
+        {
+            _renderer = GetComponent<MeshRenderer>();
+        }
 
         // Update is called once per frame
         private void Update()
@@ -55,16 +51,13 @@ namespace PFW.UI.Ingame
             // Check if Blue Red None or Both occupy the zone
             bool redIncluded = false;
             bool blueIncluded = false;
-            PlayerData newOwner = null;
             for (int i = 0; i < _units.Count; i++)
             {
                 UnitDispatcher unit = _units.ToArray()[i];
 
                 if (!unit.IsMoving())
                 {
-                    newOwner = unit.Platoon.Owner;
-                    // Names are USSR and NATO
-                    if (newOwner.Team.Name == Team.TeamName.USSR) 
+                    if (unit.Platoon.Team.Name == Team.TeamName.USSR) 
                     {
                         redIncluded = true;
                     }
@@ -77,53 +70,42 @@ namespace PFW.UI.Ingame
 
             if (redIncluded && blueIncluded || (!redIncluded && !blueIncluded))
             {
-                if (_owner != null) 
+                if (OwningTeam != Team.TeamName.UNDEFINED) 
                 {
-                    ChangeOwner(null);
+                    ChangeTeam(Team.TeamName.UNDEFINED);
                 }
             } 
             else if (redIncluded)
             {
-                if (_owner != newOwner)
+                if (OwningTeam != Team.TeamName.USSR)
                 {
-                    ChangeOwner(newOwner);
+                    ChangeTeam(Team.TeamName.USSR);
                 }
             }
             else
             {
-                if (_owner != newOwner)
+                if (OwningTeam != Team.TeamName.NATO)
                 {
-                    ChangeOwner(newOwner);
+                    ChangeTeam(Team.TeamName.NATO);
                 }
             }
         }
 
         // Needs to play sound
-        private void ChangeOwner(PlayerData newOwner)
+        private void ChangeTeam(Team.TeamName newTeam)
         {
-            if (_owner != null)
+            OwningTeam = newTeam;
+            switch (OwningTeam)
             {
-                _owner.IncomeTick -= Worth;
-            }
-            if (newOwner != null)
-            {
-                newOwner.IncomeTick += Worth;
-            }
-            _owner = newOwner;
-            if (_owner != null)
-            {
-                if (_owner.Team.Name == Team.TeamName.USSR)
-                {
-                    GetComponent<MeshRenderer>().material = Red;
-                }
-                else
-                {
-                    GetComponent<MeshRenderer>().material = Blue;
-                }
-            }
-            else
-            {
-                GetComponent<MeshRenderer>().material = Neutral;
+                case Team.TeamName.USSR:
+                    _renderer.material = Red;
+                    break;
+                case Team.TeamName.NATO:
+                    _renderer.material = Blue;
+                    break;
+                case Team.TeamName.UNDEFINED:
+                    _renderer.material = Neutral;
+                    break;
             }
         }
 

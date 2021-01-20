@@ -196,7 +196,7 @@ namespace PFW.Units.Component.Weapon
             // Maybe add Sphere shaped collider with the radius of the range and then 
             // use trigger enter and exit to keep a list of in range Units
 
-            foreach (UnitDispatcher enemy in MatchSession.Current.EnemiesByTeam[Unit.Platoon.Owner.Team])
+            foreach (UnitDispatcher enemy in MatchSession.Current.EnemiesByTeam[Unit.Platoon.Team])
             {
                 if (!enemy.VisionComponent.IsSpotted)
                 {

@@ -86,7 +86,7 @@ namespace PFW.Model.Match
         {
             Units.Add(unit);
 
-            Team unitTeam = unit.Platoon.Owner.Team;
+            Team unitTeam = unit.Platoon.Team;
             UnitsByTeam[unitTeam].Add(unit);
 
             // Add unit as enemy to all other teams:
@@ -113,7 +113,7 @@ namespace PFW.Model.Match
         {
             Units.Remove(unit);
 
-            Team unitTeam = unit.Platoon.Owner.Team;
+            Team unitTeam = unit.Platoon.Team;
             UnitsByTeam[unitTeam].Remove(unit);
             foreach (var pair in EnemiesByTeam)
                 if (pair.Key != unitTeam)
@@ -150,7 +150,7 @@ namespace PFW.Model.Match
             EnemyVisionComponents.Clear();
 
             foreach (UnitDispatcher unit in Units) {
-                if (_localTeam == unit.Platoon.Owner.Team) {
+                if (_localTeam == unit.Platoon.Team) {
                     AllyVisionComponents.Add(unit.VisionComponent);
                 } else {
                     EnemyVisionComponents.Add(unit.VisionComponent);
