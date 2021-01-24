@@ -1,0 +1,12 @@
+{
+    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultApcArmor", "DefaultGroundVision", "TurretBloodhoundSkyranger"],
+    
+    "CategoryKey": "SUP",
+    "Name": "Bloodhound Skyranger",
+    "Price": 50,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound Skyranger",
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 12
+}

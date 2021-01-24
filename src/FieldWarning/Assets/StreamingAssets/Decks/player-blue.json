@@ -1,16 +1,7 @@
 {
     "UnitIds": [
-        "HEMTT",
-        "RED/PLZ-5",
-        "Riflemen",
-        "Marines",
-        "FastTank",
-        "FastInfantry",
-        "Bloodhound",
-        "BloodhoundWeaponShowcase1",
-        "BloodhoundWeaponShowcase2",
-        "M1A2",
-        "ArmyRangers",
-        "AH-64D"
+        "BLU/BloodhoundCV"
+        "BLU/BloodhoundIFV"
+        "BLU/BloodhoundSkyranger"
     ]
 }
