@@ -26,11 +26,11 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "MG",
-                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "WeaponIcon": "WeaponIcons/NP_M2_HMG",
                     "Ammo": 
                     [
                         {
-                            "Description": ".50 cal machine gun",
+                            "Description": ".50 cal HMG",
                             "DamageType" : "HEAVY_ARMS",
                             "DamageValue": 0.75,
                             "ShellCount" : 200,
@@ -58,7 +58,7 @@
                     "Velocity": 3000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Autocannon",
-                    "WeaponIcon": "WeaponIcons/US_TNK_M1A2",
+                    "WeaponIcon": "WeaponIcons/Np_IFV_Cannon",
                     "Ammo": 
                     [
                         {
