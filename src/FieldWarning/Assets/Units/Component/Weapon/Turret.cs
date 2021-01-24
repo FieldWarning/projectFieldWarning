@@ -128,23 +128,23 @@ namespace PFW.Units.Component.Weapon
         /// <summary>
         /// Shoot at the current target if in range.
         /// </summary>
-        /// <returns>True if a shot was produced.</returns>
+        /// <returns>True if the last shot of a salvo was just fired.</returns>
         public bool MaybeShoot(TargetTuple target, float distanceToTarget, bool isServer)
         {
-            bool shotFired = false;
+            bool salvoConcluded = false;
             if (IsFacingTarget && TargetInRange(target, distanceToTarget))
             {
                 Vector3 vectorToTarget = target.Position - _turret.transform.position;
-                shotFired = _weapon.TryShoot(
+                salvoConcluded = _weapon.TryShoot(
                     target, vectorToTarget, distanceToTarget, isServer);
             }
 
             foreach (Turret turret in Children)
             {
-                shotFired |= turret.MaybeShoot(target, distanceToTarget, isServer);
+                salvoConcluded |= turret.MaybeShoot(target, distanceToTarget, isServer);
             }
 
-            return shotFired;
+            return salvoConcluded;
         }
 
         public void Rotate(TargetTuple target)
