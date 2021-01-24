@@ -1,6 +1,6 @@
 {
     "MovementSpeed": 150,
-    "ReverseSpeed": 15,
+    "ReverseSpeed": 75,
     "AccelRate": 13,
     "MaxRotationSpeed": 50,
     "MinTurnRadius": 0,

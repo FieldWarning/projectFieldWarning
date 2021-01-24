@@ -1,0 +1,12 @@
+{
+    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultApcArmor", "DefaultGroundVision"],
+    
+	"CategoryKey": "LOG",
+	"Name": "Bloodhound Command",
+	"Price": 100,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound Transport",
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": true,
+    "Availability": 6,
+}

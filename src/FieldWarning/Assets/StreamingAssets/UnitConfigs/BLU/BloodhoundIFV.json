@@ -1,0 +1,12 @@
+{
+    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultApcArmor", "DefaultGroundVision", "TurretBloodhoundIFV"],
+    
+    "CategoryKey": "INF",
+    "Name": "Bloodhound IFV",
+    "Price": 25,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20
+}
