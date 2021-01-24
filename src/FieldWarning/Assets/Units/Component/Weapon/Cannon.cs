@@ -212,7 +212,7 @@ namespace PFW.Units.Component.Weapon
         /// <param name="displacement">Vector from the firing unit to the target unit</param>
         /// <param name="distance">Distance from the firing unit to the target unit</param>
         /// <param name="isServer">Non-server code should only affect art.</param>
-        /// <returns>True if a shot was fired, false otherwise.</returns>
+        /// <returns>True if the last shot of a salvo was just fired.</returns>
         public bool TryShoot(
                 TargetTuple target,
                 Vector3 displacement,
@@ -242,7 +242,7 @@ namespace PFW.Units.Component.Weapon
                 _lastShotTimestamp = Time.time;
 
                 _salvoRemaining--;
-                return true;
+                return _salvoRemaining == 0;
             }
 
             return false;

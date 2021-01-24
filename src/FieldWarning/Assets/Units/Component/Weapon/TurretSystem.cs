@@ -146,15 +146,15 @@ namespace PFW.Units.Component.Weapon
             if (_target != null && _target.Exists)
             {
                 bool targetInRange = !_movingTowardsTarget;
-                bool shotFired = false;
+                bool salvoConcluded = false;
 
                 foreach (Turret turret in Children)
                 {
-                    shotFired |= turret.MaybeShoot(_target, distanceToTarget, isServer);
+                    salvoConcluded |= turret.MaybeShoot(_target, distanceToTarget, isServer);
                 }
 
-                // If shooting at the ground, stop after the first shot:
-                if (shotFired && _target.IsGround)
+                // If shooting at the ground, stop after the first salvo:
+                if (salvoConcluded && _target.IsGround)
                 {
                     _target = null;
                     _explicitTarget = null;
