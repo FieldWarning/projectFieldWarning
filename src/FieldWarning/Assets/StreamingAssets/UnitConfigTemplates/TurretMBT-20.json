@@ -1,0 +1,85 @@
+{    
+    "Turrets": [{
+        "TurretRef": "IFV",
+        "MountRef": "Bloodhound",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "Autocannon",
+                "ArcHorizontal": 3,
+                "ArcUp": 30,
+                "ArcDown": 10,
+                "RotationRate": 40,
+                "Cannon": {
+                    "GroundRange" : 3000,
+                    "Accuracy": 80,
+                    "ShotReload": 0,
+                    "SalvoLength": 1,
+                    "SalvoReload": 5,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 2000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Cannon",
+                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE",
+                            "Velocity" : 1800,
+                            "Shell": "Projectiles/Prefab/REDFOR Shell",
+                            "ShellCount" : 10,
+                        },
+                        {
+                            "DamageType" : "KE",
+							"Velocity" : 1800,
+                            "DamageValue": 28,
+                            "ShellCount" : 20,
+                        },
+                        {
+                            "DamageType" : "HEAT",
+							"Velocity" : 1200,
+                            "DamageValue": 12,
+                            "ShellCount" : 4,
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "MG",
+                "ArcHorizontal": 0,
+                "ArcUp": 80,
+                "ArcDown": 20,
+                "RotationRate": 90,
+                "Cannon": {
+                    "DamageValue": 1,
+                    "GroundRange" : 800,
+                    "Accuracy": 30,
+                    "ShotReload": 1,
+                    "SalvoLength": 12,
+                    "SalvoReload": 3,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/MG",
+                    "BarrelTipRef": "MG",
+                    "WeaponIcon": "WeaponIcons/US_TNK_M1A2",
+                    "Ammo": 
+                    [
+                        {
+                           "DamageType" : "HEAVY_ARMS",
+							"Velocity" : 1800,
+                            "DamageValue": 2,
+                            "ShellCount" : 200,
+                        }
+                    ]
+                }
+            }
+        ]
+    }]
+}

@@ -1,0 +1,8 @@
+{
+    "Armor": {
+        "FrontArmor": 28,
+        "SideArmor": 7,
+        "RearArmor": 2,
+        "TopArmor": 3
+    },
+}

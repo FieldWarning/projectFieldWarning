@@ -1,16 +1,16 @@
 {
-    "Inherits": ["Tank", "AmericanTankVoice", "DefaultMobility", "DefaultApcArmor", "DefaultGroundVision", "TurretBloodhound"],
-    "Name": "M1A2 Abrams",
-    "Price": 20,
+    "Inherits": ["Tank", "AmericanTankVoice", "DefaultMobility", "MBT-20Armor", "DefaultGroundVision", "TurretMBT-20"],
+    "Name": "MBT-20",
+    "Price": 180,
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
 	"ArmoryImage": "Armory Images/Bloodhound",
 	"ArmoryBackgroundImage": "Armory Backgrounds/SampleTankBackground",
     "CanCaptureZones": false,
-    "Availability": 20,
+    "Availability": 2,
 
-    "MovementSpeed": 50,
-    "ReverseSpeed": 15,
+    "MovementSpeed": 52,
+    "ReverseSpeed": 38,
     "AccelRate": 13,
-    "MaxRotationSpeed": 50,
+    "MaxRotationSpeed": 30,
     "MinTurnRadius": 0,
 }
