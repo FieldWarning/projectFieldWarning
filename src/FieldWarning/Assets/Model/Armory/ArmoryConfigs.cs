@@ -431,6 +431,8 @@ namespace PFW.Model.Armory.JsonContents
 
     public class CannonConfig
     {
+        // Short snippet that will show in the UI
+        public string Description;
         public string DamageType;
         public int DamageValue;
         // Beware: This is in meters, NOT unity units!
@@ -517,6 +519,8 @@ namespace PFW.Model.Armory.JsonContents
     /// </summary>
     public class AmmoConfig
     {
+        // Short snippet that will show in the UI
+        public string Description;
         public string DamageType;
         public float DamageValue;
         // Beware: This is in meters, NOT unity units!

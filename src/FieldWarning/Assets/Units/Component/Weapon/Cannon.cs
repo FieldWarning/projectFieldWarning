@@ -22,6 +22,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public sealed class Cannon
     {
+        public readonly string Description;
         private readonly float _aimTime;
         private float _aimStartedTimestamp;
         private readonly float _shotReload;
@@ -94,6 +95,7 @@ namespace PFW.Units.Component.Weapon
                 Transform barrelTip,
                 float shotVolume = 1.0f)
         {
+            Description = data.Description;
             _aimTime = data.AimTime;
             _shotReload = data.ShotReload;
             _salvoLength = data.SalvoLength;
@@ -235,7 +237,6 @@ namespace PFW.Units.Component.Weapon
             if (CanReloadSalvo)
                 _salvoRemaining = _salvoLength;
 
-            // TODO implement salvo + shot reload
             if (FireWeapon(target, displacement, distance, isServer))
             {
                 _lastShotTimestamp = Time.time;
