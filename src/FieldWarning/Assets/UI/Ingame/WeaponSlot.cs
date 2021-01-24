@@ -30,11 +30,13 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private Image _weaponIcon = null;
         [SerializeField]
-        private TextMeshProUGUI _traits = null;
+        private TextMeshProUGUI[] _shotsLeft = null;
         [SerializeField]
-        private TextMeshProUGUI _shotsLeft = null;
+        private TextMeshProUGUI[] _description = null;
         [SerializeField]
-        private TextMeshProUGUI _reload = null;
+        private Image _reload = null;
+        [SerializeField]
+        private Image _aim = null;
 
         private PlatoonBehaviour _platoon = null;
         private int _weaponId = -1;
@@ -45,41 +47,42 @@ namespace PFW.UI.Ingame
             _weaponId = weaponId;
             Cannon weapon = _platoon.Units[0].AllWeapons[_weaponId];
             _weaponIcon.sprite = weapon.HudIcon;
-            _traits.text = "";
-            foreach (Ammo ammo in weapon.Ammo)
+
+            int i = 0;
+            for (; i < weapon.Ammo.Length; i++)
             {
-                string trait;
-                switch (ammo.DamageType)
+                if (i > _description.Length)
                 {
-                    case DamageType.HEAVY_ARMS:
-                        trait = "HA";
-                        break;
-                    case DamageType.SMALL_ARMS:
-                        trait = "SA";
-                        break;
-                    default:
-                        trait = ammo.DamageType.ToString();
-                        break;
+                    break;
                 }
-                _traits.text += trait + ", ";
+
+                _description[i].gameObject.transform.parent.gameObject.SetActive(true);
+                _description[i].text = $" {weapon.Ammo[i].Description}";
             }
-            _traits.text = _traits.text.Substring(0, _traits.text.Length - 2);
+
+            for (; i < _description.Length; i++)
+            {
+                _description[i].gameObject.transform.parent.gameObject.SetActive(false);
+            }
         }
 
         private void Update()
         {
-            if (_platoon != null)
+            if (_platoon != null && _platoon.Units.Count != 0)
             {
                 Cannon weapon = _platoon.Units[0].AllWeapons[_weaponId];
                 if (weapon.PercentageAimed < 1)
                 {
-                    _reload.text = Mathf.Round(weapon.PercentageAimed * 100) + "% aim";
+                    _aim.fillOrigin = 0;
+                    _aim.fillAmount = weapon.PercentageAimed;
                 }
                 else
                 {
-                    _reload.text = Mathf.Round(weapon.PercentageReloaded * 100) + "% rld";
+                    _aim.fillOrigin = 1;
+                    _aim.fillAmount = 1 - weapon.PercentageReloaded;
+                    _reload.fillAmount = weapon.PercentageReloaded;
                 }
-                _shotsLeft.text = "";
+
                 for (int i = 0; i < weapon.Ammo.Length; i++)
                 {
                     int platoonShellsRemaining = 0;
@@ -89,12 +92,9 @@ namespace PFW.UI.Ingame
                             _platoon.Units[j].AllWeapons[_weaponId].Ammo[i].ShellCountRemaining;
                     }
 
-                    _shotsLeft.text += 
-                        platoonShellsRemaining + "/" + 
-                        weapon.Ammo[i].ShellCount * _platoon.Units.Count + ", ";
+                    _shotsLeft[i].text = platoonShellsRemaining.ToString();
+                        // + "/" + weapon.Ammo[i].ShellCount * _platoon.Units.Count + ", ";
                 }
-
-                _shotsLeft.text = _shotsLeft.text.Substring(0, _shotsLeft.text.Length - 2);
             }
         }
     }

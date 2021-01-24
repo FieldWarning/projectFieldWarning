@@ -15,7 +15,8 @@
                 "ArcDown": 20,
                 "RotationRate": 40,
                 "Cannon": {
-                    "GroundRange" : 20,
+                    "Description": ".50 cal machine gun",
+                    "GroundRange": 20,
                     "Accuracy": 40,
                     "ShotReload": 0.5,
                     "SalvoLength": 10,
@@ -29,6 +30,7 @@
                     "Ammo": 
                     [
                         {
+                            "Description": "magic russian boolet",
                             "DamageType" : "HEAVY_ARMS",
                             "DamageValue": 0.75,
                             "ShellCount" : 200,
@@ -59,17 +61,20 @@
                     "Ammo": 
                     [
                         {
+                            "Description": "88mm HE shell",
                             "DamageType" : "HE",
                             "Velocity" : 200,
                             "Shell": "Projectiles/Prefab/REDFOR Shell",
                             "ShellCount" : 10,
                         },
                         {
+                            "Description": "88mm AP shell",
                             "DamageType" : "KE",
                             "DamageValue": 8,
                             "ShellCount" : 10,
                         },
                         {
+                            "Description": "very cool ATGM",
                             "DamageType" : "HEAT",
                             "DamageValue": 12,
                             "GroundRange" : 1500,

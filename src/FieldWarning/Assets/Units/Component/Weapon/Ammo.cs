@@ -23,6 +23,7 @@ namespace PFW.Units.Component.Weapon
     /// </summary>
     public class Ammo
     {
+        public readonly string Description;
         public readonly DamageType DamageType;
         public readonly float DamageValue;
         public readonly float GroundRange;
@@ -83,7 +84,8 @@ namespace PFW.Units.Component.Weapon
                     $"Could not parse damage type value '{config.DamageType}'" +
                     $" in a weapon's ammo entry. Defaulting to KE.");
             }
-            
+
+            Description = config.Description;
             DamageValue = config.DamageValue;
             GroundRange = config.GroundRange * Constants.MAP_SCALE;
             if (DamageType == DamageType.KE)
