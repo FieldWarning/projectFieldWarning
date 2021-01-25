@@ -15,7 +15,7 @@ using PFW.Units;
 using PFW.Units.Component.Weapon;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace PFW.UI.Ingame
 {
@@ -25,40 +25,93 @@ namespace PFW.UI.Ingame
     /// </summary>
     public sealed class SelectionPane : MonoBehaviour
     {
-        private WeaponSlot[] _weaponSlots;
+        [SerializeField]
+        private WeaponSlot[] _weaponSlots = null;
+        [SerializeField]
+        private Image _unitBackgroundImage = null;
+        [SerializeField]
+        private Image _unitImage = null;
+        [SerializeField]
+        private Image[] _healthBars = null;
+        [SerializeField]
+        private TMPro.TextMeshProUGUI _unitName = null;
+        [SerializeField]
+        private Color _highHealth = Color.cyan;
+        [SerializeField]
+        private Color _lowHealth = Color.red;
+
+        private PlatoonBehaviour _selectedPlatoon;
 
         private void Start()
         {
-            _weaponSlots = GetComponentsInChildren<WeaponSlot>();
             foreach (WeaponSlot slot in _weaponSlots)
             {
                 slot.gameObject.SetActive(false);
             }
         }
 
+        private void Update()
+        {
+            if (_selectedPlatoon == null)
+                return;
+
+            for (int i = 0; i < _healthBars.Length; i++)
+            {
+                if (_selectedPlatoon.Units.Count > i)
+                {
+                    UnitDispatcher unit = _selectedPlatoon.Units[i];
+                    _healthBars[i].fillAmount = unit.GetHealth() / unit.MaxHealth;
+                    _healthBars[i].color = Util.InterpolateColors(
+                            _lowHealth, _highHealth, unit.GetHealth() / unit.MaxHealth);
+                    _healthBars[i].transform.parent.gameObject.SetActive(true);
+                }
+                else
+                {
+                    _healthBars[i].transform.parent.gameObject.SetActive(false);
+                }
+            }
+        }
+
         public void OnSelectionChanged(List<PlatoonBehaviour> selectedPlatoons)
         {
-            gameObject.SetActive(true);
-            List<Cannon> weapons = selectedPlatoons[0].Units[0].AllWeapons;
-            int i = 0;
-            foreach (WeaponSlot slot in _weaponSlots)
+            if (selectedPlatoons.Count == 1)
             {
-                if (i < weapons.Count)
-                {
-                    slot.gameObject.SetActive(true);
-                    slot.DisplayWeapon(selectedPlatoons[0], i);
-                }
-                else 
-                {
-                    slot.gameObject.SetActive(false);
-                }
+                gameObject.SetActive(true);
 
-                i++;
+                _selectedPlatoon = selectedPlatoons[0];
+                UnitDispatcher unit = _selectedPlatoon.Units[0];
+                _unitBackgroundImage.sprite = _selectedPlatoon.Unit.ArmoryBackgroundImage;
+                _unitImage.sprite = _selectedPlatoon.Unit.ArmoryImage;
+                _unitName.text = _selectedPlatoon.Unit.Name;
+
+                List<Cannon> weapons = unit.AllWeapons;
+                int i = 0;
+                foreach (WeaponSlot slot in _weaponSlots)
+                {
+                    if (i < weapons.Count)
+                    {
+                        slot.gameObject.SetActive(true);
+                        slot.DisplayWeapon(_selectedPlatoon, i);
+                    }
+                    else
+                    {
+                        slot.gameObject.SetActive(false);
+                    }
+
+                    i++;
+                }
+            }
+            else 
+            {
+                // TODO show a panel with a clickable selection button for each platoon;
+                gameObject.SetActive(false);
+                _selectedPlatoon = null;
             }
         }
         public void OnSelectionCleared()
         {
             gameObject.SetActive(false);
+            _selectedPlatoon = null;
         }
     }
 }

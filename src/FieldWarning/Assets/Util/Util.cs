@@ -203,5 +203,18 @@ namespace PFW
             interpolation = Mathf.Pow(interpolation, interpolationExponent);
             return interpolation * (max - min) + min;
         }
+
+        public static Color InterpolateColors(
+            Color c1, Color c2, float t)
+        {
+            Color result = new Color
+            {
+                a = Mathf.Lerp(c1.a, c2.a, t),
+                r = Mathf.Lerp(c1.r, c2.r, t),
+                g = Mathf.Lerp(c1.g, c2.g, t),
+                b = Mathf.Lerp(c1.b, c2.b, t)
+            };
+            return result;
+        }
     }
 }
