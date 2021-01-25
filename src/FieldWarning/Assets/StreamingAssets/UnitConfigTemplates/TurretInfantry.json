@@ -25,7 +25,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "GunIK",
-                    "WeaponIcon": "WeaponIcons/US_AR_M4A1",
+                    "WeaponIcon": "WeaponIcons/NP_RPK74",
                     "Ammo": 
                     [
                         {
@@ -53,7 +53,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "RPGIK",
-                    "WeaponIcon": "WeaponIcons/M72_LAW",
+                    "WeaponIcon": "WeaponIcons/NP_RPG7",
                     "Ammo": 
                     [
                         {
