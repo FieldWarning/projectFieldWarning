@@ -36,7 +36,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Gun",
-                    "WeaponIcon": "WeaponIcons/NLAW3Big",
+                    "WeaponIcon": "WeaponIcons/NP_GSH_301",
                     "Ammo": 
                     [
                         {
@@ -67,7 +67,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Missile",
-                    "WeaponIcon": "WeaponIcons/RUS_AR_AN94_7.62",
+                    "WeaponIcon": "WeaponIcons/NP_Missile_57E6",
                     "Ammo": 
                     [
                         {
