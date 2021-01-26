@@ -42,7 +42,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "cannon",
-                    "WeaponIcon": "WeaponIcons/RPG-7v",
+                    "WeaponIcon": "WeaponIcons/NP_GSH_301",
                     "Ammo": 
                     [
                         {
