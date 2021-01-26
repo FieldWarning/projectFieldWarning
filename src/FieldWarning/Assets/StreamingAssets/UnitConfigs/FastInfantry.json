@@ -3,8 +3,8 @@
 	"Name": "FastInfantry",
 	"Price": 20,
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
-	"ArmoryImage": "Armory Images/Anime",
-	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+	"ArmoryImage": "Armory Images/NP_Unit_icon_Test_11",
+	"ArmoryBackgroundImage": "Armory Backgrounds/NP_background_Test_Recon",
 
     "MovementSpeed": 250,
     "CanCaptureZones": true,

@@ -37,7 +37,7 @@
                     "Velocity": 1000,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "KPVT",
-                    "WeaponIcon": "WeaponIcons/AK74",
+                    "WeaponIcon": "WeaponIcons/NP_GSH_301",
                     "Ammo": 
                     [
                         {

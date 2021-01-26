@@ -2,8 +2,8 @@
     "Inherits": ["Infantry", "AmericanGenericVoice", "DefaultMobility", "TurretInfantry", "DefaultGroundVision"],
 	"Name": "Riflemen",
 	"Price": 20,
-	"ArmoryImage": "Armory Images/Bloodhound",
-	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+	"ArmoryImage": "Armory Images/NP_Unit_icon_Test_10",
+	"ArmoryBackgroundImage": "Armory Backgrounds/NP_background_Test_Inf",
     "CanCaptureZones": false,
     "Availability": 20,
 }
