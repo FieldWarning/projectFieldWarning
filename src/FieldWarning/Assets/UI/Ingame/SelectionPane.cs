@@ -48,6 +48,8 @@ namespace PFW.UI.Ingame
             {
                 slot.gameObject.SetActive(false);
             }
+            gameObject.SetActive(false);
+            _selectedPlatoon = null;
         }
 
         private void Update()
