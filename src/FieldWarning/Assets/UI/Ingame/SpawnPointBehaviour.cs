@@ -40,7 +40,7 @@ namespace PFW.UI.Ingame
             if (!_spawnQueue.Any())
                 return;
 
-            _spawnTime -= Time.deltaTime;
+            _spawnTime -= Time.deltaTime / _spawnQueue.Peek().UnitCount;
             if (_spawnTime > 0)
                 return;
 
