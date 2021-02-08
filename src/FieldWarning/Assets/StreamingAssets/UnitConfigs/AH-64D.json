@@ -1,5 +1,10 @@
 {
-    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultHeloArmor", "DefaultHeloVision", "TurretBloodhound"],
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultHeloArmor",
+    #include "DefaultHeloVision",
+    #include "TurretBloodhound",
     "LabelIcon": "D",
     
 	"CategoryKey": "HEL",

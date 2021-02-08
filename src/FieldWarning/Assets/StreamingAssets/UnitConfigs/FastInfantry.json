@@ -1,5 +1,9 @@
 {
-    "Inherits": ["Infantry", "AmericanGenericVoice", "DefaultMobility", "TurretInfantry", "DefaultGroundVision"],
+    #include "Infantry",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "TurretInfantry",
+    #include "DefaultGroundVision",
 	"Name": "FastInfantry",
 	"Price": 20,
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",

@@ -1,5 +1,5 @@
 {
-    "Inherits": ["Unit"],
+    #include "Unit",
     "CategoryKey": "TNK",
     "LabelIcon": "A",
     

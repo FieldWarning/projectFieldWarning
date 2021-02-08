@@ -1,5 +1,10 @@
 {
-    "Inherits": ["Tank", "AmericanTankVoice", "DefaultMobility", "MBT-20Armor", "DefaultGroundVision", "TurretMBT-20"],
+    #include "Tank",
+    #include "AmericanTankVoice",
+    #include "DefaultMobility",
+    #include "MBT-20Armor",
+    #include "DefaultGroundVision",
+    #include "TurretMBT-20",
     "Name": "MBT-20",
     "Price": 180,
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",

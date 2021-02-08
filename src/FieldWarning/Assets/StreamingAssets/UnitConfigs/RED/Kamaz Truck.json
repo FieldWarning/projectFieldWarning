@@ -1,5 +1,9 @@
 {
-    "Inherits": ["GenericTransporter", "AmericanGenericVoice", "DefaultMobility", "DefaultTruckArmor", "DefaultGroundVision"],
+    #include "GenericTransporter",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
 	"CategoryKey": "LOG",
 	"Name": "Kamaz",
 	"Price": 20,

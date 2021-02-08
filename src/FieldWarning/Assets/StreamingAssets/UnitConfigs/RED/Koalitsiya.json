@@ -1,5 +1,9 @@
 {
-    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultTruckArmor", "DefaultGroundVision"],
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
 
 	"CategoryKey": "SUP",
 	"Name": "Koalitsiya",

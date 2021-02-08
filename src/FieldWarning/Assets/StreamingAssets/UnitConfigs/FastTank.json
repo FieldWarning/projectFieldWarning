@@ -1,5 +1,9 @@
 {
-    "Inherits": ["Tank", "AmericanTankVoice", "DefaultMobility", "TurretFastTank"],
+    #include "Tank",
+    #include "AmericanTankVoice",
+    #include "DefaultMobility",
+    #include "TurretFastTank",
+    
     "Name": "FastTank",
     "Price": 20,
     "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",

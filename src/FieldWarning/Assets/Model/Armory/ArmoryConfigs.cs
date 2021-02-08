@@ -28,7 +28,6 @@ namespace PFW.Model.Armory.JsonContents
 
     public class UnitConfig
     {
-        public List<string> Inherits;
         public string CategoryKey;
         public string Name;
         public int? Price;
@@ -68,9 +67,7 @@ namespace PFW.Model.Armory.JsonContents
         ///     Do consistency checks and final post-parse
         ///     adjustments to the config contents.
         /// </summary>
-        public bool ParsingDone(
-                Dictionary<string, UnitConfig> templateConfigs, 
-                bool isTemplate)
+        public bool ParsingDone()
         {
             bool result = true;
             if (Turrets != null)
@@ -80,33 +77,6 @@ namespace PFW.Model.Armory.JsonContents
                     result &= turret.ParsingDone(Name);
                 }
             }
-
-            if (Inherits != null)
-            {
-                foreach (string templateConfig in Inherits)
-                {
-                    if (templateConfigs.ContainsKey(templateConfig))
-                    {
-                        Inherit(templateConfigs[templateConfig]);
-                    }
-                    else
-                    {
-                        if (!isTemplate)
-                        {
-                            Logger.LogConfig(
-                                    LogLevel.ERROR,
-                                    $"The unit config for {Name} declares inheritance" +
-                                    $" from {templateConfig}, but no such template config" +
-                                    $" exists. The unit will be dropped" +
-                                    $" as a consequence of this error.");
-                        }
-                        result = false;
-                    }
-                }
-            }
-
-            if (isTemplate)
-                return result;
 
             #region CheckThatValuesAreAllPresent
             if (!Price.HasValue)

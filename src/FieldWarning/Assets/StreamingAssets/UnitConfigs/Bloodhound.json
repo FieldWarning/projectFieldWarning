@@ -1,5 +1,10 @@
 {
-    "Inherits": ["GenericVehicle", "AmericanGenericVoice", "DefaultMobility", "DefaultApcArmor", "DefaultGroundVision", "TurretBloodhound"],
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultApcArmor",
+    #include "DefaultGroundVision",
+    #include "TurretBloodhound",
     
     "CategoryKey": "TNK",
     "Name": "Bloodhound",

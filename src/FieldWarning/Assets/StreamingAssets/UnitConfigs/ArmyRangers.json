@@ -1,5 +1,9 @@
 {
-    "Inherits": ["Infantry", "AmericanGenericVoice", "DefaultMobility", "TurretInfantry", "DefaultReconInfVision"],
+    #include "Infantry",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "TurretInfantry",
+    #include "DefaultReconInfVision",
 	"CategoryKey": "REC",
 	"Name": "U.S. Army Rangers",
 	"Price": 20,

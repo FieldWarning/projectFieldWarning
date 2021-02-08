@@ -1,5 +1,10 @@
 {
-    "Inherits": ["Tank", "AmericanTankVoice", "DefaultMobility", "DefaultTruckArmor", "DefaultGroundVision", "TurretBloodhound"],
+    #include "Tank",
+    #include "AmericanTankVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
+    #include "TurretBloodhound",
 	"CategoryKey": "SUP",
 	"Name": "PLZ-5",
 	"Price": 20,

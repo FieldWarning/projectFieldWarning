@@ -32,7 +32,101 @@ namespace PFW
             return new Deck(config, armory);
         }
 
-        private static Dictionary<string, T> ParseAllJsonFiles<T>(
+        /// <summary>
+        /// Given two maps of json files (which may be the same),
+        /// replace all #include lines in the specified file from the first map
+        /// with the content of files in the second map. If that content
+        /// also contains #include lines, recursively replace those too.
+        /// </summary>
+        private static void ResolveIncludesRecursive(
+                Dictionary<string, string> fileNameToFileContents,
+                string filename,
+                Dictionary<string, string> includeTargets,
+                int depth = 0)
+        {
+            const int MAX_DEPTH = 10;
+            const string INCLUDE_FIELD = "#include";
+
+            Logger.LogConfig(LogLevel.DEBUG,
+                    $"Resolving includes in {filename}.json.");
+
+            if (depth >= MAX_DEPTH)
+            {
+                Logger.LogConfig(
+                        LogLevel.ERROR,
+                        $"Max recursion level ({MAX_DEPTH}) reached when " +
+                        $"parsing the includes in {filename}. " +
+                        $"There is very likely an include loop here.");
+                return;
+            }
+
+            int pos = 0;
+            while (pos != -1)
+            {
+                pos = fileNameToFileContents[filename].IndexOf(INCLUDE_FIELD, pos);
+                if (pos != -1)
+                {
+                    int includeTargetNameStart = fileNameToFileContents[filename].IndexOf("\"", pos) + 1;
+                    int includeTargetNameEnd = fileNameToFileContents[filename].IndexOf("\"", includeTargetNameStart);
+                    if (includeTargetNameStart == 0 || includeTargetNameEnd == -1)
+                    {
+                        Logger.LogConfig(
+                                LogLevel.ERROR,
+                                $"Found what looks like an {INCLUDE_FIELD} directive, " +
+                                "but it was not followed by a file name surrounded in " +
+                                "double quotes (\").");
+                        break;
+                    }
+
+                    string includeTargetName = fileNameToFileContents[filename].Substring(
+                            includeTargetNameStart,
+                            includeTargetNameEnd - includeTargetNameStart);
+
+                    if (includeTargets.ContainsKey(includeTargetName))
+                    {
+                        ResolveIncludesRecursive(
+                                includeTargets, 
+                                includeTargetName,
+                                includeTargets,
+                                depth++);
+
+                        // Discard braces
+                        int includeStart = includeTargets[includeTargetName].IndexOf('{') + 1;
+                        int includeEnd = includeTargets[includeTargetName].LastIndexOf('}');
+
+                        // Some files have a trailing comma before the last brace, we have
+                        // to discard that if present:
+                        string includeContent = includeTargets[includeTargetName].Substring(
+                                    includeStart, includeEnd - includeStart);
+                        includeContent = includeContent.TrimEnd();
+                        includeContent = includeContent.TrimEnd(new char[]{','});
+
+                        fileNameToFileContents[filename] =
+                            fileNameToFileContents[filename].Substring(
+                                    0, pos)
+                            + includeContent
+                            + fileNameToFileContents[filename].Substring(
+                                    includeTargetNameEnd + 1);
+
+                        pos += includeTargets[includeTargetName].Length;
+                    }
+                }
+            }
+        }
+
+        private static void ResolveIncludes(
+                List<string> filenames,
+                Dictionary<string, string> fileNameToFileContents,
+                Dictionary<string, string> includeTargets)
+        {
+            foreach (string filename in filenames)
+            {
+                ResolveIncludesRecursive(
+                        fileNameToFileContents, filename, includeTargets);
+            }
+        }
+
+        private static Dictionary<string, string> ReadAllJsonFiles(
                 string directory)
         {
             string[] configFiles = new string[0];
@@ -47,8 +141,7 @@ namespace PFW
                         "due to a system exception.");
             }
 
-            var result = new Dictionary<string, T>();
-            
+            var fileNameToFileContents = new Dictionary<string, string>();
             foreach (string configFile in configFiles)
             {
                 // Turn 'C://UnitConfigTemplates/Tank.json' into 'Tank', which
@@ -57,13 +150,44 @@ namespace PFW
                 string shortFileName = configFile.Substring(
                         directory.Length, configFile.Length - ".json".Length - directory.Length);
                 shortFileName = shortFileName.Replace('\\', '/');  // Unix directory separators
-                Logger.LogConfig(LogLevel.DEBUG,
-                        $"Parsing config file: {shortFileName} at {configFile}");
 
                 string configText = File.ReadAllText(configFile);
+                fileNameToFileContents.Add(shortFileName, configText);
+            }
+
+            return fileNameToFileContents;
+        }
+
+        /// <summary>
+        /// Parses all json files in the given directory and subdirectories.
+        /// If the includeTargets argument is set, files that contain
+        /// a line with ' #include "xyz" ' will have that line replaced
+        /// with the contents of xyz.json, minus its enclosing brackets.
+        /// 
+        /// includeTargets is a map of json file names -> json file contents.
+        /// </summary>
+        private static Dictionary<string, T> ParseAllJsonFiles<T>(
+                string directory, Dictionary<string, string> includeTargets = null)
+        {
+            Dictionary<string, string> fileNameToFileContents = ReadAllJsonFiles(directory);
+
+            List<string> shortFilenames = new List<string>(fileNameToFileContents.Keys);
+
+            if (includeTargets != null)
+            {
+                ResolveIncludes(shortFilenames, fileNameToFileContents, includeTargets);
+            }
+
+            var result = new Dictionary<string, T>();
+            foreach (string shortFileName in shortFilenames)
+            {
+                Logger.LogConfig(LogLevel.DEBUG,
+                        $"Parsing config file: {shortFileName}.");
+
                 result.Add(
                         shortFileName,
-                        JsonConvert.DeserializeObject<T>(configText));
+                        JsonConvert.DeserializeObject<T>(
+                                fileNameToFileContents[shortFileName]));
             }
 
             return result;
@@ -71,24 +195,24 @@ namespace PFW
 
         public static Armory ParseArmory()
         {
+            // Load the includable unit configs, which don't turn into real units but
+            // are #included by real units and each other.
+            string includablesPath = Application.streamingAssetsPath +
+                    "/UnitConfigsIncludable/";
+
+            Logger.LogConfig(LogLevel.INFO, "Parsing unit template configs.");
+            Dictionary<string, string> includableConfigs = ReadAllJsonFiles(
+                    includablesPath);
+
             // We take all jsons in the UnitConfigs folder and subfolders
             string unitsPath = Application.streamingAssetsPath +
                     "/UnitConfigs/";
 
             Logger.LogConfig(LogLevel.INFO, "Parsing unit configs.");
             Dictionary<string, UnitConfig> configs = ParseAllJsonFiles<UnitConfig>(
-                    unitsPath);
+                    unitsPath, includableConfigs);
 
-            // Load the unit config templates, which look just like unit configs
-            // but don't turn into real units (real units inherit from them).
-            string templatesPath = Application.streamingAssetsPath +
-                    "/UnitConfigTemplates/";
-
-            Logger.LogConfig(LogLevel.INFO, "Parsing unit template configs.");
-            Dictionary<string, UnitConfig> templateConfigs = ParseAllJsonFiles<UnitConfig>(
-                    templatesPath);
-
-            return new Armory(configs, templateConfigs);
+            return new Armory(configs);
         }
 
         public static SettingsConfig ParseDefaultSettingsRaw()
