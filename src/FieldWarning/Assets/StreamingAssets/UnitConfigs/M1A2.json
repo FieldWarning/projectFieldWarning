@@ -1,0 +1,21 @@
+{
+    #include "Tank",
+    #include "AmericanTankVoice",
+    #include "DefaultMobility",
+    #include "MBT-20Armor",
+    #include "DefaultGroundVision",
+    #include "TurretMBT-20",
+    "Name": "MBT-20",
+    "Price": 180,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleTankBackground",
+    "CanCaptureZones": false,
+    "Availability": 2,
+
+    "MovementSpeed": 52,
+    "ReverseSpeed": 38,
+    "AccelRate": 13,
+    "MaxRotationSpeed": 30,
+    "MinTurnRadius": 0,
+}

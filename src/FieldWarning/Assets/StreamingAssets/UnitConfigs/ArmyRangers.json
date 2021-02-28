@@ -1,0 +1,14 @@
+{
+    #include "Infantry",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "TurretInfantry",
+    #include "DefaultReconInfVision",
+	"CategoryKey": "REC",
+	"Name": "U.S. Army Rangers",
+	"Price": 20,
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+}

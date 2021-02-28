@@ -1,0 +1,13 @@
+{
+    #include "Infantry",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "TurretInfantry",
+    #include "DefaultGroundVision",
+	"Name": "Riflemen",
+	"Price": 20,
+	"ArmoryImage": "Armory Images/NP_Unit_icon_Test_17",
+	"ArmoryBackgroundImage": "Armory Backgrounds/R_Inf_icon_RCN",
+    "CanCaptureZones": false,
+    "Availability": 20,
+}

@@ -1,0 +1,15 @@
+{
+    #include "GenericTransporter",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
+	"CategoryKey": "LOG",
+	"Name": "Kamaz",
+	"Price": 20,
+    "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Kamaz Truck Prefab",
+	"ArmoryImage": "Armory Images/Kamaz Truck",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+}

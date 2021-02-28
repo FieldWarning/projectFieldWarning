@@ -1,0 +1,90 @@
+{
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
+
+	"CategoryKey": "VHC",
+	"Name": "BTR-32 Zhalo",
+	"Price": 20,
+    "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 Zhalo",
+	"ArmoryImage": "Armory Images/Zhalo",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+    
+    
+    "Turrets": [{
+        "TurretRef": "turret",
+        "MountRef": "hull",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "aps",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "aps",
+                    "WeaponIcon": "WeaponIcons/NP_2S14_S",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "cannon",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 200,
+                    "Accuracy": 30,
+                    "ShotReload": 8,
+                    "SalvoLength": 1,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "cannon",
+                    "WeaponIcon": "WeaponIcons/NP_2A28_Art",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
+                }
+            }
+        ]
+    }]
+}

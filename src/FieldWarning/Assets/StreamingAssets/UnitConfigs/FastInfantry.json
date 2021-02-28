@@ -1,0 +1,22 @@
+{
+    #include "Infantry",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "TurretInfantry",
+    #include "DefaultGroundVision",
+	"Name": "FastInfantry",
+	"Price": 20,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/NP_Unit_icon_Test_11",
+	"ArmoryBackgroundImage": "Armory Backgrounds/R_Inf_icon_AA",
+
+    "MovementSpeed": 250,
+    "CanCaptureZones": true,
+    "Availability": 20,
+	
+	"Recon": {
+		"MaxSpottingRange": 20000,
+		"StealthPenetration": 5,
+		"Stealth": 10
+	},
+}

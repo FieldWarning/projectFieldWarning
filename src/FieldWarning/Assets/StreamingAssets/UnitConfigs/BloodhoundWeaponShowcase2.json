@@ -1,0 +1,22 @@
+{
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultApcArmor",
+    #include "DefaultGroundVision",
+    #include "TurretBloodhoundWeaponShowcase2",
+    
+    "CategoryKey": "TNK",
+    "Name": "BloodhoundWeaponShowcase2",
+    "Price": 15,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+    
+    "MovementSpeed": 40,
+    "ReverseSpeed": 12.5,
+    "AccelRate": 11.5,
+    "MaxRotationSpeed": 40,
+}

@@ -1,0 +1,89 @@
+{
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
+    
+	"CategoryKey": "SUP",
+	"Name": "Pantsir",
+	"Price": 20,
+    "ArtPrefabPath": "UnitModels/Kamaz-Pantsir-Koalitsiya/Pantsir Prefab",
+	"ArmoryImage": "Armory Images/Pantsir",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+    
+    "Turrets": [{
+        "TurretRef": "Turret",
+        "MountRef": "Pantsir",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "Gun",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Gun",
+                    "WeaponIcon": "WeaponIcons/NP_GSH_301",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
+                }
+            },
+            {
+                "Priority": 2,
+                "TurretRef": "Missile",
+                "ArcHorizontal": 0,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 200,
+                    "Accuracy": 30,
+                    "ShotReload": 8,
+                    "SalvoLength": 1,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "Missile",
+                    "WeaponIcon": "WeaponIcons/NP_Missile_57E6",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
+                }
+            }
+        ]
+    }]
+}

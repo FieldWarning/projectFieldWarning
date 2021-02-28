@@ -1,0 +1,29 @@
+{
+    #include "Tank",
+    #include "AmericanTankVoice",
+    #include "DefaultMobility",
+    #include "TurretFastTank",
+    
+    "Name": "FastTank",
+    "Price": 20,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleTankBackground",
+
+    "MovementSpeed": 250,
+    "CanCaptureZones": true,
+    "Availability": 20,
+	
+	"Recon": {
+		"MaxSpottingRange": 20000,
+		"StealthPenetration": 5,
+		"Stealth": 1
+	},
+    
+    "Armor": {
+        "FrontArmor": 10,
+        "SideArmor": 3,
+        "RearArmor": 0,
+        "TopArmor": 0
+    },
+}

@@ -1,0 +1,59 @@
+{
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
+    
+    "CategoryKey": "INF",
+    "Name": "Bumerang K-16",
+    "Price": 15,
+    "ArtPrefabPath": "UnitModels/Bumerang/Bumerang_K16",
+	"ArmoryImage": "Armory Images/K16",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+    
+    "Turrets": [{
+        "TurretRef": "APC",
+        "MountRef": "Bumerang_K16",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "KPVT",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 20,
+                    "HeloRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "KPVT",
+                    "WeaponIcon": "WeaponIcons/NP_GSH_301",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
+                }
+            }
+        ]
+    }]
+}

@@ -1,0 +1,18 @@
+{
+    #include "GenericVehicle",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultHeloArmor",
+    #include "DefaultHeloVision",
+    #include "TurretBloodhound",
+    "LabelIcon": "D",
+    
+	"CategoryKey": "HEL",
+	"Name": "AH64D Apache",
+	"Price": 20,
+    "ArtPrefabPath": "UnitModels/Bloodhound/Bloodhound IFV",
+	"ArmoryImage": "Armory Images/Bloodhound",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+}

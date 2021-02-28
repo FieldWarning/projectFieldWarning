@@ -1,0 +1,58 @@
+{
+    #include "GenericTransporter",
+    #include "AmericanGenericVoice",
+    #include "DefaultMobility",
+    #include "DefaultTruckArmor",
+    #include "DefaultGroundVision",
+    
+    "CategoryKey": "TNK",
+    "Name": "BTR-32",
+    "Price": 15,
+    "ArtPrefabPath": "UnitModels/BTR-32/BTR-32 APC",
+	"ArmoryImage": "Armory Images/BTR-32 APC",
+	"ArmoryBackgroundImage": "Armory Backgrounds/SampleFSVBackground",
+    "CanCaptureZones": false,
+    "Availability": 20,
+    
+    "Turrets": [{
+        "TurretRef": "APC",
+        "MountRef": "hull",
+        "ArcHorizontal": 180,
+        "ArcUp": 0,
+        "ArcDown": 0,
+        "RotationRate": 40,
+        "Children": [
+            {
+                "Priority": 1,
+                "TurretRef": "HMG",
+                "ArcHorizontal": 3,
+                "ArcUp": 40,
+                "ArcDown": 20,
+                "RotationRate": 40,
+                "Cannon": {
+                    "DamageValue": 4,
+                    "GroundRange" : 20,
+                    "Accuracy": 40,
+                    "ShotReload": 0.5,
+                    "SalvoLength": 10,
+                    "SalvoReload": 8,
+                    "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
+                    "Shell": "Projectiles/Prefab/BLUFOR Shell",
+                    "Velocity": 1000,
+                    "Sound": "WeaponSounds/Tank_gun",
+                    "BarrelTipRef": "HMG",
+                    "WeaponIcon": "WeaponIcons/NP_GSH_301",
+                    "Ammo": 
+                    [
+                        {
+                            "DamageType" : "HE"
+                        },
+                        {
+                            "DamageType" : "KE"
+                        }
+                    ]
+                }
+            }
+        ]
+    }]
+}
