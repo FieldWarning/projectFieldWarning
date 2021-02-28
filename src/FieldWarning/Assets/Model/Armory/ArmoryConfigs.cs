@@ -404,7 +404,7 @@ namespace PFW.Model.Armory.JsonContents
         // Short snippet that will show in the UI
         public string Description;
         public string DamageType;
-        public int DamageValue;
+        public float DamageValue;
         // Beware: This is in meters, NOT unity units!
         public int GroundRange;
         public int HeloRange;
