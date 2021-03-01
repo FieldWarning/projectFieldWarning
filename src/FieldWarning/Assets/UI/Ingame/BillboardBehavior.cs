@@ -11,6 +11,7 @@
  * the License for the specific language governing permissions and limitations under the License.
  */
 
+using PFW.Loading;
 using UnityEngine;
 
 namespace PFW.UI.Ingame
@@ -18,6 +19,7 @@ namespace PFW.UI.Ingame
     /// <summary>
     /// A billboard is a 2d texture that is always facing the camera.
     /// </summary>
+    [SelectionBase]
     public class BillboardBehavior : MonoBehaviour
     {
         [SerializeField]
@@ -25,10 +27,19 @@ namespace PFW.UI.Ingame
         [SerializeField]
         private float SIZE = 0.1f;
 
-        // Update is called once per frame
+        private LoadedData _loadedData;
+        private float _adjustedAltitude;
+
+        private void OnEnable()
+        {
+            _loadedData = FindObjectOfType<LoadedData>();
+            if (_loadedData)
+                _adjustedAltitude = ALTITUDE + _loadedData.TerrainData.GetTerrainHeight(transform.position);
+        }
+
         private void Update()
         {
-            transform.localPosition = ALTITUDE * Camera.main.transform.up;
+            transform.localPosition = _adjustedAltitude * Camera.main.transform.up;
             FaceCamera();
         }
 
