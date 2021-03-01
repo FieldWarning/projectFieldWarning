@@ -21,17 +21,11 @@ namespace PFW.UI.Ingame
     public class BillboardBehavior : MonoBehaviour
     {
         [SerializeField]
-        private float ALTITUDE;
+        private float ALTITUDE = 10f * Constants.MAP_SCALE;
         [SerializeField]
         private float SIZE = 0.1f;
 
-        private void OnEnable()
-        {
-            // HACK I don't know why, but setting this on declaration simply wasn't working, so I moved it here.
-            // Nothing else touches this, so I can only assume it is either a Unity bug or a magical network issue.
-            ALTITUDE = 10f * Constants.MAP_SCALE;
-        }
-
+        // Update is called once per frame
         private void Update()
         {
             transform.localPosition = ALTITUDE * Camera.main.transform.up;
@@ -41,7 +35,7 @@ namespace PFW.UI.Ingame
         private void FaceCamera()
         {
             transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-            float distance = (Camera.main.transform.position - transform.position).magnitude;
+            var distance = (Camera.main.transform.position - transform.position).magnitude;
             transform.localScale = SIZE * distance * Vector3.one;
         }
     }
