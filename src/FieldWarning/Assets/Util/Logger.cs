@@ -157,6 +157,25 @@ namespace PFW
         }
 
         [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        [System.Diagnostics.Conditional("PFW_LOG_MENU")]
+        public static void LogMenu(
+                LogLevel level,
+                string logMsg)
+        {
+            Log(logMsg, "Menu", level);
+        }
+
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
+        [System.Diagnostics.Conditional("PFW_LOG_MENU")]
+        public static void LogMenu(
+                LogLevel level,
+                Object context,
+                string logMsg)
+        {
+            Log(logMsg, context, "Menu", level);
+        }
+
+        [System.Diagnostics.Conditional("PFW_LOG_ALL")]
         [System.Diagnostics.Conditional("PFW_LOG_CONFIG")]
         public static void LogConfig(
                 LogLevel level,
