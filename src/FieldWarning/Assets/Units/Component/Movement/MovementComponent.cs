@@ -79,14 +79,13 @@ namespace PFW.Units.Component.Movement
         {
             //update position and velocity param of this unit
 
-
-
             Vector3 diff = (_moveStrategy.NextPosition - transform.position) * Time.deltaTime;
             Vector3 newPosition = transform.position;
             newPosition.x += TRANSLATION_RATE * diff.x;
             newPosition.y = _moveStrategy.NextPosition.y;
             newPosition.z += TRANSLATION_RATE * diff.z;
 
+            //calculate instantaneous velocity property to be read from outside for shell-lead
             Velocity.x = TRANSLATION_RATE * diff.x;
             Velocity.y = newPosition.y - transform.position.y;
             Velocity.z = TRANSLATION_RATE * diff.z;

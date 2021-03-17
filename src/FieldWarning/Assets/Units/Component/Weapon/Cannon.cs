@@ -184,7 +184,11 @@ namespace PFW.Units.Component.Weapon
             }
 
             ShellBehaviour shellBehaviour = shell.GetComponent<ShellBehaviour>();
-            shellBehaviour.Initialize(shellDestination, ammo, target.Enemy.gameObject.GetComponent<PFW.Units.Component.Movement.MovementComponent>().Velocity);
+            shellBehaviour.Initialize(
+                shellDestination, 
+                ammo, 
+                target.Enemy.gameObject.GetComponent<PFW.Units.Component.Movement.MovementComponent>().Velocity
+                );
 
             return true;
         }

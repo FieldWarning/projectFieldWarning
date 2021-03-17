@@ -46,9 +46,6 @@ namespace PFW.Units.Component.Weapon
 
         private Ammo _ammo;
 
-        private Collider _launchPlatform;
-        private bool _justLaunched = true;
-
         /// <summary>
         ///     Call in the weapon class to initialize the shell/bullet.
         /// </summary>
@@ -99,6 +96,7 @@ namespace PFW.Units.Component.Weapon
             Vector3 targetXZPos = new Vector3(target.x, 0.0f, target.z);
 
             float horizontalDistanceToTarget = Vector3.Distance(projectileXZPos, targetXZPos);
+            float verticalDistanceToTarget = target.y - start.y;
 
             // TODO adjust based on height difference between start and target points
             float distanceToHighestPoint = horizontalDistanceToTarget / 2f;
@@ -106,6 +104,7 @@ namespace PFW.Units.Component.Weapon
             float gravityEffectToHighestPoint = GRAVITY * timeToHighestPoint;
 
             verticalSpeed = gravityEffectToHighestPoint;
+            verticalSpeed = verticalSpeed + GRAVITY * verticalDistanceToTarget / (2f * verticalSpeed);
 
             // The vectors for the horizontal speed, vertical speed and 
             // the direction of the barrel form a triangle.
@@ -134,43 +133,32 @@ namespace PFW.Units.Component.Weapon
                     Space.World);
 
             _verticalSpeed -= GRAVITY * Time.deltaTime;
-
-            if (_justLaunched)
-            {
-                print("instant collision not avoided");
-            }
-            _justLaunched = false;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (_justLaunched)
-            {
-                _launchPlatform = other;
-                _justLaunched = false;
-                print("instant collision avoided now");
-            }
-            else if(_launchPlatform != other)
-            {
-                UnitDispatcher target = other.gameObject.GetComponentInParent<UnitDispatcher>();
+ 
+            UnitDispatcher target = other.gameObject.GetComponentInParent<UnitDispatcher>();
 
+            if (other.GetComponent<CaptureZone>() == null)
+            {
                 if (target != null && !_ammo.IsAoe)
                 {
-                    Kinetic(target);
+                    KineticHit(target);
                 }
-                else if (other.GetComponent<CaptureZone>() == null && _ammo.IsAoe)
+                else if (_ammo.IsAoe)
                 {
                     Explode();
                 }
                 else
                 {
-                    ///_verticalSpeed = -_verticalSpeed;
+                    ///_verticalSpeed = -_verticalSpeed; riccochet logic here?
                 }
             }
-
+            
         }
 
-        private void Kinetic(UnitDispatcher unit)
+        private void KineticHit(UnitDispatcher unit)
         {
             _dead = true;
 
