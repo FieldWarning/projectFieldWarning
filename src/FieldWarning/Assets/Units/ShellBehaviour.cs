@@ -53,13 +53,12 @@ namespace PFW.Units.Component.Weapon
         ///     Call in the weapon class to initialize the shell/bullet.
         /// </summary>
         /// <param name="velocity">In meters.</param>
-        public void Initialize(Vector3 target, Ammo ammo, Vector3 targetVelocity) ///, Collider launchPlatform)
+        public void Initialize(Vector3 target, Ammo ammo, Vector3 targetVelocity)
         {
             _targetCoordinates = target;
             _ammo = ammo;
             _targetVelocity = targetVelocity;
             _initialDistanceToTarget = (_targetCoordinates - transform.position).magnitude;
-            ///_launchPlatform = launchPlatform;
         }
 
         private void Start()
@@ -128,25 +127,13 @@ namespace PFW.Units.Component.Weapon
             worldForward = new Vector3(worldForward.x, 0, worldForward.z);
             Vector3 translation = _forwardSpeed * worldForward * Time.deltaTime
                                   + _verticalSpeed * Vector3.up * Time.deltaTime
-                                  + _targetVelocity * Time.deltaTime; // * Constants.MAP_SCALE;
-            transform.LookAt(transform.position + translation);
+                                  + _targetVelocity * Time.deltaTime; /// * Constants.MAP_SCALE;
+            ///transform.LookAt(transform.position + translation);
             transform.Translate(
                     translation,
                     Space.World);
 
             _verticalSpeed -= GRAVITY * Time.deltaTime;
-
-
-            // small trick to detect if shell has reached the target
-            //float distanceToTarget = Vector3.Distance(transform.position, _targetCoordinates);
-            //if (distanceToTarget > _prevDistanceToTarget)
-            //{
-            //    transform.position = _targetCoordinates;
-            //    Explode();
-            //}
-            //_prevDistanceToTarget = distanceToTarget;
-
-            //transform.rotation.SetLookRotation(translation);
 
             if (_justLaunched)
             {
@@ -175,8 +162,11 @@ namespace PFW.Units.Component.Weapon
                 {
                     Explode();
                 }
+                else
+                {
+                    ///_verticalSpeed = -_verticalSpeed;
+                }
             }
-            
 
         }
 
