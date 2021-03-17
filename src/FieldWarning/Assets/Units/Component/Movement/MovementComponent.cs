@@ -24,6 +24,7 @@ namespace PFW.Units.Component.Movement
         private const float ORIENTATION_RATE = 8.0f;
         private const float TRANSLATION_RATE = 6.0f;
 
+        public Vector3 Velocity; //{ get; private set; }
         public DataComponent Data { get; private set; }
         public Pathfinder Pathfinder { get; private set; }
 
@@ -74,13 +75,22 @@ namespace PFW.Units.Component.Movement
             UpdateCurrentPosition();
         }
 
-        private void UpdateCurrentPosition()
+        private void UpdateCurrentPosition()  
         {
+            //update position and velocity param of this unit
+
+
+
             Vector3 diff = (_moveStrategy.NextPosition - transform.position) * Time.deltaTime;
             Vector3 newPosition = transform.position;
             newPosition.x += TRANSLATION_RATE * diff.x;
             newPosition.y = _moveStrategy.NextPosition.y;
             newPosition.z += TRANSLATION_RATE * diff.z;
+
+            Velocity.x = TRANSLATION_RATE * diff.x;
+            Velocity.y = newPosition.y - transform.position.y;
+            Velocity.z = TRANSLATION_RATE * diff.z;
+            Velocity = Velocity / Time.deltaTime;
 
             transform.position = newPosition;
         }

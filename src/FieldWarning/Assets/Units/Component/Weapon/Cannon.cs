@@ -184,23 +184,7 @@ namespace PFW.Units.Component.Weapon
             }
 
             ShellBehaviour shellBehaviour = shell.GetComponent<ShellBehaviour>();
-            shellBehaviour.Initialize(shellDestination, ammo);
-
-            if (isServer)
-            {
-                if (target.IsUnit)
-                {
-                    if (isHit && !ammo.IsAoe)
-                    {
-                        target.Enemy.HandleHit(
-                                ammo.DamageType, ammo.DamageValue, displacement, distance);
-                    }
-                }
-                else
-                {
-                    // HE damage is applied by the shellBehavior when it explodes
-                }
-            }
+            shellBehaviour.Initialize(shellDestination, ammo, target.Enemy.gameObject.GetComponent<PFW.Units.Component.Movement.MovementComponent>().Velocity);
 
             return true;
         }

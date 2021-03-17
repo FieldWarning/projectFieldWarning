@@ -37,20 +37,29 @@ namespace PFW.Units.Component.Weapon
         private float _forwardSpeed => _ammo.Velocity;
         private float _verticalSpeed = 0F;
         private Vector3 _targetCoordinates;
+        private Vector3 _targetVelocity;
+        //targetVelocity is the instantaneous target velocity when this shell is fired.
 
         private bool _dead = false;
         private float _prevDistanceToTarget = 100000F;
+        private float _initialDistanceToTarget;
 
         private Ammo _ammo;
+
+        private Collider _launchPlatform;
+        private bool _justLaunched = true;
 
         /// <summary>
         ///     Call in the weapon class to initialize the shell/bullet.
         /// </summary>
         /// <param name="velocity">In meters.</param>
-        public void Initialize(Vector3 target,  Ammo ammo)
+        public void Initialize(Vector3 target, Ammo ammo, Vector3 targetVelocity) ///, Collider launchPlatform)
         {
             _targetCoordinates = target;
             _ammo = ammo;
+            _targetVelocity = targetVelocity;
+            _initialDistanceToTarget = (_targetCoordinates - transform.position).magnitude;
+            ///_launchPlatform = launchPlatform;
         }
 
         private void Start()
@@ -118,7 +127,8 @@ namespace PFW.Units.Component.Weapon
             Vector3 worldForward = transform.TransformDirection(Vector3.forward);
             worldForward = new Vector3(worldForward.x, 0, worldForward.z);
             Vector3 translation = _forwardSpeed * worldForward * Time.deltaTime
-                                  + _verticalSpeed * Vector3.up * Time.deltaTime;
+                                  + _verticalSpeed * Vector3.up * Time.deltaTime
+                                  + _targetVelocity * Time.deltaTime; // * Constants.MAP_SCALE;
             transform.LookAt(transform.position + translation);
             transform.Translate(
                     translation,
@@ -128,23 +138,59 @@ namespace PFW.Units.Component.Weapon
 
 
             // small trick to detect if shell has reached the target
-            float distanceToTarget = Vector3.Distance(transform.position, _targetCoordinates);
-            if (distanceToTarget > _prevDistanceToTarget)
-            {
-                transform.position = _targetCoordinates;
-                Explode();
-            }
-            _prevDistanceToTarget = distanceToTarget;
+            //float distanceToTarget = Vector3.Distance(transform.position, _targetCoordinates);
+            //if (distanceToTarget > _prevDistanceToTarget)
+            //{
+            //    transform.position = _targetCoordinates;
+            //    Explode();
+            //}
+            //_prevDistanceToTarget = distanceToTarget;
 
             //transform.rotation.SetLookRotation(translation);
+
+            if (_justLaunched)
+            {
+                print("instant collision not avoided");
+            }
+            _justLaunched = false;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.GetComponent<CaptureZone>() == null)
+            if (_justLaunched)
             {
-                Explode();
+                _launchPlatform = other;
+                _justLaunched = false;
+                print("instant collision avoided now");
             }
+            else if(_launchPlatform != other)
+            {
+                UnitDispatcher target = other.gameObject.GetComponentInParent<UnitDispatcher>();
+
+                if (target != null && !_ammo.IsAoe)
+                {
+                    Kinetic(target);
+                }
+                else if (other.GetComponent<CaptureZone>() == null && _ammo.IsAoe)
+                {
+                    Explode();
+                }
+            }
+            
+
+        }
+
+        private void Kinetic(UnitDispatcher unit)
+        {
+            _dead = true;
+
+            unit.HandleHit(
+                    _ammo.DamageType,
+                    _ammo.DamageValue,
+                    transform.TransformDirection(Vector3.forward),
+                    _initialDistanceToTarget);
+
+            Destroy(gameObject);
         }
 
         private void Explode()
@@ -165,21 +211,18 @@ namespace PFW.Units.Component.Weapon
                 //emission.enabled = false;
             }
 
-            if (_ammo.IsAoe)
-            {
-                List<UnitDispatcher> units = 
-                        MatchSession.Current.FindUnitsAroundPoint(
-                                transform.position, _ammo.ExplosionRadius);
+            List<UnitDispatcher> units = 
+                    MatchSession.Current.FindUnitsAroundPoint(
+                            transform.position, _ammo.ExplosionRadius);
 
-                foreach (UnitDispatcher unit in units)
-                {
-                    Vector3 vectorToTarget = unit.transform.position - transform.position;
-                    unit.HandleHit(
-                            _ammo.DamageType, 
-                            _ammo.DamageValue, 
-                            vectorToTarget, 
-                            vectorToTarget.magnitude);
-                }
+            foreach (UnitDispatcher unit in units)
+            {
+                Vector3 vectorToTarget = unit.transform.position - transform.position;
+                unit.HandleHit(
+                        _ammo.DamageType, 
+                        _ammo.DamageValue, 
+                        vectorToTarget, 
+                        vectorToTarget.magnitude);
             }
 
             Destroy(gameObject);
