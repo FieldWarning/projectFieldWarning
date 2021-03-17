@@ -183,11 +183,22 @@ namespace PFW.Units.Component.Weapon
                 }
             }
 
+
+            Vector3 targetVel;
+            if (target.IsUnit)
+            {
+                targetVel = target.Enemy.gameObject.GetComponent<PFW.Units.Component.Movement.MovementComponent>().Velocity;
+            }
+            else
+            {
+                targetVel = Vector3.zero;
+            }
+
             ShellBehaviour shellBehaviour = shell.GetComponent<ShellBehaviour>();
             shellBehaviour.Initialize(
                 shellDestination, 
-                ammo, 
-                target.Enemy.gameObject.GetComponent<PFW.Units.Component.Movement.MovementComponent>().Velocity
+                ammo,
+                targetVel
                 );
 
             return true;

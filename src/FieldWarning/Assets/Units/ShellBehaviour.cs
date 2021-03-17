@@ -40,6 +40,8 @@ namespace PFW.Units.Component.Weapon
         private Vector3 _targetVelocity;
         //targetVelocity is the instantaneous target velocity when this shell is fired.
 
+        private Vector3 _worldForward;
+
         private bool _dead = false;
         private float _prevDistanceToTarget = 100000F;
         private float _initialDistanceToTarget;
@@ -74,6 +76,10 @@ namespace PFW.Units.Component.Weapon
             // rotate the object to face the target
             transform.LookAt(_targetCoordinates);
             transform.rotation *= angle;
+
+            _worldForward = (_targetCoordinates - transform.position);
+            _worldForward.y = 0;
+            _worldForward = _worldForward.normalized;
         }
 
         /// <summary>
@@ -122,12 +128,12 @@ namespace PFW.Units.Component.Weapon
                 return;
             }
 
-            Vector3 worldForward = transform.TransformDirection(Vector3.forward);
-            worldForward = new Vector3(worldForward.x, 0, worldForward.z);
-            Vector3 translation = _forwardSpeed * worldForward * Time.deltaTime
+            //Vector3 worldForward = transform.TransformDirection(Vector3.forward);
+            //worldForward = new Vector3(worldForward.x, 0, worldForward.z);
+            Vector3 translation = _forwardSpeed * _worldForward * Time.deltaTime
                                   + _verticalSpeed * Vector3.up * Time.deltaTime
                                   + _targetVelocity * Time.deltaTime; /// * Constants.MAP_SCALE;
-            ///transform.LookAt(transform.position + translation);
+            transform.LookAt(transform.position + translation);
             transform.Translate(
                     translation,
                     Space.World);

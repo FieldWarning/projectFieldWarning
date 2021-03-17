@@ -69,7 +69,7 @@
                     "SalvoReload": 8,
                     "MuzzleFlash": "Effects/ParticleFX/Prefab/Muzzle Flash",
                     "Shell": "Projectiles/Prefab/BLUFOR Shell",
-                    "Velocity": 1000,
+                    "Velocity": 380,
                     "Sound": "WeaponSounds/Tank_gun",
                     "BarrelTipRef": "Cannon",
                     "WeaponIcon": "WeaponIcons/US_AR_M4A1",
