@@ -30,6 +30,7 @@ using MongoDB.Driver;
 using Newtonsoft.Json;
 using Shared.Models;
 using Jwt = PFW_OfficialHub.Models.Jwt;
+using PFW_OfficialHub.Lib;
 
 //using Shared.Models;
 
@@ -55,18 +56,25 @@ namespace PFW_OfficialHub.Controllers
 
 
         [HttpPost("send")]
-        public ActionResult Send([FromForm]WarchatMsg msg, [FromForm]Jwt jwt)
+        public ActionResult Send([FromForm]string jmsg, [FromForm] string token)
         {
+            var jwt = token.FromJson<Jwt>();
             if (!jwt.Verify()) return StatusCode(406);
 
+            var msg = jmsg.FromJson<WarchatMessage>();
+
+            msg.Username = jwt.Username;
             msg.Time = DateTime.UtcNow;
+            msg.Content = new string(msg.Content.Take(240).ToArray());
+
             Db.Warchat.InsertOne(msg);
             return StatusCode(200);
         }
 
         [HttpPost("get")]
-        public ActionResult<string> Get([FromForm]string time, [FromForm]Jwt jwt)
+        public ActionResult<string> Get([FromForm]string time, [FromForm]string token)
         {
+            var jwt = token.FromJson<Jwt>();
             if (!jwt.Verify()) return StatusCode(406);
             if (!DateTime.TryParse(time, out var since)) return StatusCode(400);
             if (since < DateTime.UtcNow - TimeSpan.FromMinutes(20))
@@ -78,9 +86,13 @@ namespace PFW_OfficialHub.Controllers
         }
 
         [HttpPost("pm/{playerId}")]
-        public ActionResult<string> Pm(string playerId, [FromForm]Jwt jwt, [FromForm]PrivateMessage msg)
+        public ActionResult<string> Pm(string playerId, [FromForm]string token, [FromForm]string jmessage)
         {
+            var jwt = token.FromJson<Jwt>();
             if (!jwt.Verify()) return BadRequest(412);
+            
+            var msg = jmessage.FromJson<PrivateMessage>();
+
             msg.Time = DateTime.UtcNow;
             var pt = Db.Players.Find(x => x.UserId == playerId).FirstOrDefaultAsync();
             if (msg.Content.Length > 240) msg.Content = msg.Content[0..240];

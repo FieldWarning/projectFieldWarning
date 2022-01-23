@@ -3446,21 +3446,19 @@
   },
   "packageFolders": {
     "C:\\Users\\admin\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Shared\\Shared.csproj",
+      "projectUniqueName": "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Shared\\Shared.csproj",
       "projectName": "Shared",
-      "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Shared\\Shared.csproj",
+      "projectPath": "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Shared\\Shared.csproj",
       "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Shared\\obj\\",
+      "outputPath": "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Shared\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
         "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -3476,6 +3474,7 @@
       },
       "frameworks": {
         "netstandard2.0": {
+          "targetAlias": "netstandard2.0",
           "projectReferences": {}
         }
       },
@@ -3487,6 +3486,7 @@
     },
     "frameworks": {
       "netstandard2.0": {
+        "targetAlias": "netstandard2.0",
         "dependencies": {
           "Microsoft.Extensions.Primitives": {
             "target": "Package",
@@ -3521,7 +3521,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

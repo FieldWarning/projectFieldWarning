@@ -24,9 +24,10 @@ namespace PFW_OfficialHub.Controllers
         }
 
         [HttpPost("logout")]
-        public ActionResult<dynamic> Logout([FromForm] Jwt jwt, [FromForm] bool all = false)
+        public ActionResult<dynamic> Logout([FromForm] string token, [FromForm] bool all = false)
         {
-
+            var jwt = token.FromJson<Jwt>();
+            
         }
 
         [HttpPost("verify")]

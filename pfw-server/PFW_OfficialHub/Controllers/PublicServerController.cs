@@ -33,17 +33,22 @@ namespace PFW_OfficialHub.Controllers
     public class PublicServerController : ControllerBase
     {
         [HttpPost("create")]
-        public ActionResult<dynamic> CreateLobby([FromForm] GameLobby lobby, [FromForm] Jwt jwt)
+        public ActionResult<dynamic> CreateLobby([FromForm] string jlobby, [FromForm] string token)
         {
+            var jwt = token.FromJson<Jwt>();
             if (!jwt.Verify()) return BadRequest(406);
+
+            var lobby = jlobby.FromJson<GameLobby>();
 
             lobby.Id = null;
             lobby.IsRunning = false;
             lobby.HostUserId = jwt.UserId;
             lobby.Name = lobby.Name ?? $"{jwt.Username}'s game";
             lobby.LastHeartbeat = DateTime.UtcNow;
+
             Db.GameLobbies.InsertOne(lobby);
-            return JsonConvert.SerializeObject(lobby);
+            
+            return lobby.ToJson();
         }
 
         [HttpPost("close/{id}")]

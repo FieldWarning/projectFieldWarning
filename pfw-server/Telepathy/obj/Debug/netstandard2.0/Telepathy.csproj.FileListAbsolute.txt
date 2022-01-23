@@ -7,3 +7,13 @@ C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\obj\Deb
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.AssemblyInfo.cs
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.dll
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.pdb
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\bin\Debug\netstandard2.0\Telepathy.deps.json
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\bin\Debug\netstandard2.0\Telepathy.dll
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\bin\Debug\netstandard2.0\Telepathy.pdb
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.csproj.AssemblyReference.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.AssemblyInfoInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.AssemblyInfo.cs
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.csproj.CoreCompileInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.dll
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Telepathy\obj\Debug\netstandard2.0\Telepathy.pdb

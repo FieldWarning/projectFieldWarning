@@ -1,21 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj": {}
+    "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj": {}
   },
   "projects": {
-    "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj": {
+    "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj",
+        "projectUniqueName": "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj",
         "projectName": "Tester",
-        "projectPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj",
+        "projectPath": "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj",
         "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Tester\\obj\\",
+        "outputPath": "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Tester\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
           "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -31,6 +30,7 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -42,6 +42,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "imports": [
             "net461",
             "net462",
@@ -52,12 +53,18 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[3.1.22, 3.1.22]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

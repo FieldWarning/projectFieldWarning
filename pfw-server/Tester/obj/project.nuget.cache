@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "CLYEHKp349QLtLE7ayEBo50TYKUeaI97d1YE/cYFY0icU2cb3h3alFRM9bzp/vUwMCENzpQmvu2zzWXWkQ+iNA==",
+  "dgSpecHash": "ZdSB0a6Gox5EIkaUOdiRuCeUsGR+TpRqYyDONOhUrKvOe5T+gH4nYD+iYDoN5YAQNleQn2pTjVdCTbl0lUov/Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\Documents\\GitHub\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "D:\\Dev\\OTaffLogger\\projectFieldWarning\\pfw-server\\Tester\\Tester.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\admin\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.22\\microsoft.netcore.app.host.win-x64.3.1.22.nupkg.sha512"
+  ],
   "logs": []
 }

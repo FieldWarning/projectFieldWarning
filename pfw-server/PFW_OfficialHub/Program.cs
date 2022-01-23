@@ -11,6 +11,10 @@
  * the License for the specific language governing permissions and limitations under the License.
 */
 
+global using PFW_OfficialHub.Lib;
+global using Shared.Models;
+global using Shared.Lib;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +46,7 @@ namespace PFW_OfficialHub
 
     public static class Configuration
     {
-        static List<WarchatMsg> Messages = new List<WarchatMsg>();
+        static List<WarchatMessage> Messages = new List<WarchatMessage>();
         
         //SynchronizedCollection<PrivateMessage> Pms = new SynchronizedCollection<PrivateMessage>();
     }

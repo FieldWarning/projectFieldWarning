@@ -1,0 +1,14 @@
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\bin\Debug\netcoreapp3.1\Tester.exe
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\bin\Debug\netcoreapp3.1\Tester.deps.json
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\bin\Debug\netcoreapp3.1\Tester.runtimeconfig.json
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\bin\Debug\netcoreapp3.1\Tester.runtimeconfig.dev.json
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\bin\Debug\netcoreapp3.1\Tester.dll
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\bin\Debug\netcoreapp3.1\Tester.pdb
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.csproj.AssemblyReference.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.AssemblyInfoInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.AssemblyInfo.cs
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.csproj.CoreCompileInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.dll
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.pdb
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Tester\obj\Debug\netcoreapp3.1\Tester.genruntimeconfig.cache

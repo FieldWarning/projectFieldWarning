@@ -18,9 +18,9 @@ using System.Threading.Tasks;
 using Database;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using Shared;
 using Shared.Models;
-using Jwt = PFW_OfficialHub.Models.Jwt;
 
 namespace PFW_OfficialHub.Lib
 {
@@ -58,6 +58,9 @@ namespace PFW_OfficialHub.Lib
 
         public static Task<Player> GetPlayer(Jwt jwt) => Task.FromResult(Db.Players.Find(x => x.Username == jwt.Username).FirstOrDefault());
         public static Task<User> GetUser(Jwt jwt) => Task.FromResult(Db.Users.Find(x => x.Username == jwt.Username).FirstOrDefault());
+
+        public static T FromJson<T>(this string s) => JsonConvert.DeserializeObject<T>(s);
+        public static string ToJson(this object o) => JsonConvert.SerializeObject(o);
     }
 
     public class CallLog

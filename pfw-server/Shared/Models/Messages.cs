@@ -31,7 +31,7 @@ namespace Shared.Models
     }
 
 
-    public class WarchatMsg
+    public class WarchatMessage
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

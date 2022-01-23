@@ -1,0 +1,6 @@
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\PFW_OfficialHub\obj\Debug\net6.0\PFW_OfficialHub.csproj.AssemblyReference.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\PFW_OfficialHub\obj\Debug\net6.0\PFW_OfficialHub.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\PFW_OfficialHub\obj\Debug\net6.0\PFW_OfficialHub.AssemblyInfoInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\PFW_OfficialHub\obj\Debug\net6.0\PFW_OfficialHub.AssemblyInfo.cs
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\PFW_OfficialHub\obj\Debug\net6.0\PFW_OfficialHub.csproj.CoreCompileInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\PFW_OfficialHub\obj\Debug\net6.0\PFW_OfficialHub.MvcApplicationPartsAssemblyInfo.cache

@@ -31,30 +31,24 @@ namespace Database
     {
         static Db()
         {
-            var path = "C:\\Users\\admin\\Documents\\pfwdb.txt";
+            var path = "config/pfwdb.txt";
             //TODO save default path for dev purposes
 
             while (!File.Exists(path))
             {
-                Console.Write("Db connection string file not found, add path to file (will crash if no file): ");
-                path = Console.ReadLine();
+                Console.Write("pfwdb.txt not found");
+                Environment.Exit(404);
             }
 
-            try
-            {
-                string conStr = File.ReadAllText(path);
-                Console.WriteLine("Found db file in => " + path);
-            }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var connectionString = File.ReadAllLines(path)[0];
+            Client = new MongoClient(connectionString);
 
-            Task.Run(delegate {
+
+            // run a cleanup task, TODO move this to workers
+            _ = Task.Run(delegate {
                 while (true) {
                     Task.Delay(10000).Wait();
-                    Players.DeleteManyAsync(x => x.LastSeen < DateTime.UtcNow - TimeSpan.FromSeconds(15));
+                    Players.DeleteManyAsync(x => x.LastSeen < DateTime.UtcNow - TimeSpan.FromSeconds(30));
                 }
             });
 
@@ -64,7 +58,7 @@ namespace Database
         /// <summary>
         /// To get access to online db, ask a dev
         /// </summary>
-        public static IMongoClient Client = new MongoClient();
+        public static IMongoClient Client;
         public static IMongoDatabase Database = Client.GetDatabase("FieldWarningServer");
 
         public static IMongoCollection<GameLobby> GameLobbies = Database.GetCollection<GameLobby>("GameLobbies");
@@ -72,7 +66,7 @@ namespace Database
 
         public static IMongoCollection<User> Users = Database.GetCollection<User>("Users");
         public static IMongoCollection<Player> Players = Database.GetCollection<Player>("Players");
-        public static IMongoCollection<WarchatMsg> Warchat = Database.GetCollection<WarchatMsg>("WarchatMessages");
+        public static IMongoCollection<WarchatMessage> Warchat = Database.GetCollection<WarchatMessage>("WarchatMessages");
         public static IMongoCollection<PrivateMessage> Messages = Database.GetCollection<PrivateMessage>("PrivateMessages");
         public static void Init() => Console.WriteLine("Db Init");
     }

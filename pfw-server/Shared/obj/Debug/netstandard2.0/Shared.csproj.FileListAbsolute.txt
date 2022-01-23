@@ -7,3 +7,10 @@ C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfo.cs
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.dll
 C:\Users\admin\Documents\GitHub\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.pdb
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.csproj.AssemblyReference.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfoInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.AssemblyInfo.cs
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.csproj.CoreCompileInputs.cache
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.dll
+D:\Dev\OTaffLogger\projectFieldWarning\pfw-server\Shared\obj\Debug\netstandard2.0\Shared.pdb

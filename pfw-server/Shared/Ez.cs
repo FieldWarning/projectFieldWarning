@@ -49,7 +49,7 @@ namespace Ez
 
             public static bool Login(string username, string password)
             {
-
+                return default;
             }
 
             public static void Logout()
@@ -117,7 +117,7 @@ namespace Ez
 
         public static class WarChat
         {
-            public static SynchronizedCollection<WarchatMsg> Messages = new SynchronizedCollection<WarchatMsg>();
+            public static SynchronizedCollection<WarchatMessage> Messages = new SynchronizedCollection<WarchatMessage>();
 
             public static Task GetMessages(DateTime since)
             {
@@ -127,12 +127,12 @@ namespace Ez
                     {"jwt", Session.Token.Serialize()}
                 }, "warchat/get");
                 //if ()
-                var msgs = JsonConvert.DeserializeObject<List<WarchatMsg>>(res);
+                var msgs = JsonConvert.DeserializeObject<List<WarchatMessage>>(res);
                 Parallel.ForEach(msgs, msg => Messages.Add(msg));
                 return Task.CompletedTask;
             }
 
-            public static Task SendMessage(WarchatMsg msg)
+            public static Task SendMessage(WarchatMessage msg)
             {
                 var res = Post(new Dictionary<string, string>()
                 {
